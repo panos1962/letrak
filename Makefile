@@ -31,6 +31,9 @@ all:
 	@echo 'This is "letrak" project!'
 	@make status
 
+test:
+	@bash local/test.sh
+
 # GIT SECTION
 
 .PHONY: status
