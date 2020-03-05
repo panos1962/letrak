@@ -56,3 +56,8 @@ commit:
 .PHONY: push
 push:
 	git push
+
+.PHONY: git
+git:
+	make commit && make push
+	git push
