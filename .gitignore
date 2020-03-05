@@ -1,0 +1,14 @@
+# Exclude local and private programs and data
+
+/local/*
+!/local/README.txt
+
+/private/*
+!/private/README.txt
+
+# Exclude temporary files
+
+*~
+*.sw?
+panos[0-9]*
+test[0-9]*
