@@ -58,7 +58,7 @@ commit:
 
 .PHONY: push
 push:
-	git push .
+	git push
 
 .PHONY: git
 git:
@@ -66,3 +66,7 @@ git:
 	make push
 	echo "###################################"
 	make status
+
+.PHONY: pull
+pull:
+	git pull
