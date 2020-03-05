@@ -61,4 +61,5 @@ push:
 git:
 	git commit --message "modifications" . 2>/dev/null; :
 	make push
+	echo "###################################"
 	make status
