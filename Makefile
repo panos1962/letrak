@@ -59,5 +59,6 @@ push:
 
 .PHONY: git
 git:
-	make commit 2>/dev/null; make push
+	make commit 2>/dev/null; :
+	make push
 	make status
