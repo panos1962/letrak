@@ -58,7 +58,7 @@ commit:
 
 .PHONY: push
 push:
-	git push
+	git push .
 
 .PHONY: git
 git:
