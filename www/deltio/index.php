@@ -32,3 +32,5 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 require_once("../../local/conf.php");
+require_once(LETRAK_BASEDIR . "/www/lib/letrakClient.php");
+

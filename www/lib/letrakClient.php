@@ -28,6 +28,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////@
 
+if (!class_exists("pandoraCore"))
+require_once(PANDORA_BASEDIR . "/lib/pandoraCore.php");
+
+if (!class_exists("pandora"))
+require_once(PANDORA_BASEDIR . "/www/lib/pandora.php");
+
 if (!class_exists("letrakCore"))
 require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
@@ -42,10 +48,10 @@ class letrak extends letrakCore {
 		self::$init_ok = TRUE;
 
 		if (!isset($_HOST))
-		pandora::klise_fige(0);
+		exit(0);
 
 		if (!isset($_SERVER))
-		pandora::klise_fige(0);
+		exit(0);
 print "<pre>";
 var_dump($_SERVER);
 print "</pre>";
