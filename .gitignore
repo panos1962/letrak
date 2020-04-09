@@ -6,6 +6,12 @@
 /private/*
 !/private/README.txt
 
+/mnt/*
+!/mnt/README.txt
+
+/www/mnt/*
+!/www/mnt/README.txt
+
 # Exclude temporary files
 
 *~

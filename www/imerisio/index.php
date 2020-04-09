@@ -13,7 +13,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/deltio/index.php —— Εφαρμογή διαχείρισης παρουσιολογίων
+// www/imerisio/index.php —— Εφαρμογή διαχείρισης παρουσιολογίων
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-09
 // Created: 2020-03-05
 // @HISTORY END
 //
@@ -34,3 +35,7 @@
 require_once("../../local/conf.php");
 require_once(LETRAK_BASEDIR . "/www/lib/letrakClient.php");
 
+pandora::
+document_head()::
+document_body()::
+document_close();

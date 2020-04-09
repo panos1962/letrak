@@ -9,18 +9,18 @@
 // @COPYRIGHT END
 //
 // @FILETYPE BEGIN
-// bash // awk // php // javascipt ** css html // makefile // C
+// php
 // @FILETYPE END
 //
 // @FILE BEGIN
-// FFFFFF —— DDDDDD
+// www/lib/letrakClient.php —— Βασική PHP βιβλιοθήκη για client εφαρμογές.
 // @FILE END
 //
 // @DESCRIPTION BEGIN
-// @@@@@@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-09
 // Created: 2020-03-05
 // @HISTORY END
 //
@@ -39,7 +39,6 @@ require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
 class letrak extends letrakCore {
 	private static $init_ok = FALSE;
-	private static $server = NULL;
 
 	public static function init() {
 		if (self::$init_ok)
@@ -47,17 +46,8 @@ class letrak extends letrakCore {
 
 		self::$init_ok = TRUE;
 
-		if (!isset($_HOST))
-		exit(0);
-
 		if (!isset($_SERVER))
 		exit(0);
-print "<pre>";
-var_dump($_SERVER);
-print "</pre>";
-	}
-
-	public static function url($x) {
 	}
 }
 
