@@ -32,6 +32,7 @@ all:
 	@make status
 
 test:
+	@(cd www/imerisio && make)
 	@bash local/test.sh
 
 # GIT SECTION
