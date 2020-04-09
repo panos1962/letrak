@@ -36,6 +36,8 @@ require_once("../../local/conf.php");
 require_once(LETRAK_BASEDIR . "/www/lib/letrakClient.php");
 
 pandora::
-document_head()::
+document_head([
+	"title" => "Παρουσιολόγια",
+])::
 document_body()::
 document_close();
