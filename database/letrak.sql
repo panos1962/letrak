@@ -253,15 +253,7 @@ COMMENT = 'Πίνακας εγγραφών παρουσιολογίου'
 CREATE TABLE `excuse` (
 	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
-	`logos`		ENUM (
-		'ΕΚΤΟΣ',
-		'ΑΙΜΟΔΟΣΙΑ',
-		'ΕΟΡΤΗ',
-		'ΥΓΕΙΑ',
-		'ΠΕΝΘΟΣ',
-		'ΑΝΑΓΚΗ'
-	) NULL DEFAULT NULL COMMENT 'Λόγος μη καταγραφής ώρας',
-	`info`		VARCHAR(4096) NULL DEFAULT NULL COMMENT 'Εκτενής τεκμηρίωση εξαίρεσης',
+	`logos`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Λόγος εξαίρεσης',
 
 	UNIQUE INDEX (
 		`imerisio`,
