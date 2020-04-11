@@ -38,6 +38,10 @@ require_once(LETRAK_BASEDIR . "/www/lib/letrakClient.php");
 pandora::
 document_head([
 	"title" => "Παρουσιολόγια",
+	"css" => [
+		"../mnt/pandora/lib/pandora",
+		"main",
+	],
 ])::
 document_body()::
 document_close();

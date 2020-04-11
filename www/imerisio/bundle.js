@@ -97,6 +97,17 @@ imerisio.selidaSetup = () => {
 	ofelimoSetup().
 	ribbonSetup();
 
+	imerisio.
+	toolbarSetup().
+	noop();
+
+	return imerisio;
+};
+
+imerisio.toolbarSetup = () => {
+	pd.toolbarRightDOM.
+	append(pd.tabDOM().append('xxx'));
+
 	return imerisio;
 };
 
@@ -491,6 +502,13 @@ pd.fyiError = (html) => {
 };
 
 pd.fyiClear = () => pd.fyiMessage();
+
+///////////////////////////////////////////////////////////////////////////////@
+
+pd.tabDOM = () => {
+	return $('<div>').
+	addClass('pnd-tab');
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 

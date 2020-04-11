@@ -25,5 +25,16 @@ imerisio.selidaSetup = () => {
 	ofelimoSetup().
 	ribbonSetup();
 
+	imerisio.
+	toolbarSetup().
+	noop();
+
+	return imerisio;
+};
+
+imerisio.toolbarSetup = () => {
+	pd.toolbarRightDOM.
+	append(pd.tabDOM().append('xxx'));
+
 	return imerisio;
 };
