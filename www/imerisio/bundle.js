@@ -79,6 +79,12 @@ require('../../mnt/pandora/www/lib/pandoraJQueryUI.js')(pd);
 const letrak = require('../lib/letrak.js');
 
 pd.domInit(() => {
+	pd.
+	toolbarSetup().
+	fyiSetup().
+	ofelimoSetup().
+	ribbonSetup();
+
 	imerisio.
 	selidaSetup().
 	noop();
@@ -91,12 +97,6 @@ const imerisio = {};
 imerisio.noop = () => imerisio;
 
 imerisio.selidaSetup = () => {
-	pd.
-	toolbarSetup().
-	fyiSetup().
-	ofelimoSetup().
-	ribbonSetup();
-
 	imerisio.
 	toolbarSetup().
 	noop();
@@ -434,7 +434,7 @@ pd.toolbarSetup = () => {
 	append(pd.toolbarLeftDOM = $('<td>').addClass('pnd-trLeft')).
 	append(pd.toolbarCenterDOM = $('<td>').addClass('pnd-trCenter')).
 	append(pd.toolbarRightDOM = $('<td>').addClass('pnd-trRight'))));
-	pd.bodyDOM.prepend(pd.toolbarDOM);
+	pd.bodyDOM.append(pd.toolbarDOM);
 
 	if (php.requestIsYes('debug')) {
 		pd.toolbarLeftDOM.text('Toolbar Left');

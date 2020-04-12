@@ -1,27 +1,28 @@
 #!/usr/bin/env make -f
 
 ###############################################################################@
-##
-## @BEGIN
-##
-## @COPYRIGHT BEGIN
-## Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
-## @COPYRIGHT END
-##
-## @FILETYPE BEGIN
-## makefile
-## @FILETYPE END
-##
-## @FILE BEGIN
-## Makefile —— Κεντρικό makefile εφαρμογής "letrak"
-## @FILE END
-##
-## @HISTORY BEGIN
-## Created: 2020-03-05
-## @HISTORY END
-##
-## @END
-##
+#
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# makefile
+# @FILETYPE END
+#
+# @FILE BEGIN
+# Makefile —— Κεντρικό makefile εφαρμογής "letrak"
+# @FILE END
+#
+# @HISTORY BEGIN
+# Updated: 2020-04-12
+# Created: 2020-03-05
+# @HISTORY END
+#
+# @END
+#
 ###############################################################################@
 
 .SILENT:
@@ -71,3 +72,9 @@ git:
 .PHONY: pull
 pull:
 	git pull
+
+# FILE SECTION
+
+.PHONY: cleanup
+cleanup:
+	@(cd www/imerisio && make cleanup)

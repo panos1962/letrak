@@ -7,6 +7,12 @@ require('../../mnt/pandora/www/lib/pandoraJQueryUI.js')(pd);
 const letrak = require('../lib/letrak.js');
 
 pd.domInit(() => {
+	pd.
+	toolbarSetup().
+	fyiSetup().
+	ofelimoSetup().
+	ribbonSetup();
+
 	imerisio.
 	selidaSetup().
 	noop();
@@ -19,12 +25,6 @@ const imerisio = {};
 imerisio.noop = () => imerisio;
 
 imerisio.selidaSetup = () => {
-	pd.
-	toolbarSetup().
-	fyiSetup().
-	ofelimoSetup().
-	ribbonSetup();
-
 	imerisio.
 	toolbarSetup().
 	noop();
