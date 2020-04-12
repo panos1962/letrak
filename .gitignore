@@ -12,10 +12,11 @@
 /www/mnt/*
 !/www/mnt/README.txt
 
-# Exclude temporary files
+# Exclude temporary and compiler generated files
 
 *~
 *.sw?
 panos[0-9]*
 test[0-9]*
 bundle.js
+*.css
