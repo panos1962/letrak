@@ -29,11 +29,11 @@
 
 .PHONY: all
 all:
-	@echo 'This is "letrak" project!'
-	@make status
+	@(cd www/lib && make)
+	@(cd www/imerisio && make)
 
 test:
-	@(cd www/imerisio && make)
+	@make all
 	@bash local/test.sh
 
 # GIT SECTION

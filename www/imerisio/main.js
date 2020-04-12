@@ -8,6 +8,7 @@ const letrak = require('../lib/letrak.js');
 
 pd.domInit(() => {
 	pd.
+	domSetup().
 	toolbarSetup().
 	fyiSetup().
 	ofelimoSetup().
@@ -34,7 +35,23 @@ imerisio.selidaSetup = () => {
 
 imerisio.toolbarSetup = () => {
 	pd.toolbarRightDOM.
-	append(pd.tabDOM().append('xxx'));
+	append(imerisio.isodosTab());
 
+	pd.domFixup();
 	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.isodosTab = () => {
+	let tabDOM = pd.tabDOM().
+	css('cursor', 'pointer');
+
+	if (pd.noXristis()) {
+		tabDOM.append('Είσοδος');
+		return tabDOM;
+	}
+
+	tabDOM.append('xxxxxxxxx');
+	return tabDOM;
 };
