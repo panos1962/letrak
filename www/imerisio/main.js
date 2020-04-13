@@ -30,28 +30,28 @@ imerisio.selidaSetup = () => {
 	toolbarSetup().
 	noop();
 
-	return imerisio;
-};
-
-imerisio.toolbarSetup = () => {
-	pd.toolbarRightDOM.
-	append(imerisio.isodosTab());
-
 	pd.domFixup();
 	return imerisio;
 };
 
-///////////////////////////////////////////////////////////////////////////////@
+imerisio.toolbarSetup = () => {
+	if (letrak.noXristis()) {
+		let pubkey = php.requestGet('pubkey');
 
-imerisio.isodosTab = () => {
-	let tabDOM = pd.tabDOM().
-	css('cursor', 'pointer');
+		if (!pubkey)
+		return imerisio;
 
-	if (pd.noXristis()) {
-		tabDOM.append('Είσοδος');
-		return tabDOM;
+		pd.toolbarRightDOM.
+		append(pd.tabDOM().
+		append('Είσοδος').
+		css('cursor', 'pointer').
+		on('click', (e) => {
+			e.stopPropagation();
+			self.location = '/kartel/isodos?pubkey=' + php.requestGet('pubkey');
+		}));
 	}
 
-	tabDOM.append('xxxxxxxxx');
-	return tabDOM;
+	return imerisio;
 };
+
+///////////////////////////////////////////////////////////////////////////////@
