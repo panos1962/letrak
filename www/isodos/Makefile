@@ -13,12 +13,11 @@
 # @FILETYPE END
 #
 # @FILE BEGIN
-# www/imerisio/Makefile —— Makefile
+# www/isodos/Makefile —— Makefile
 # @FILE END
 #
 # @HISTORY BEGIN
-# Updated: 2020-04-12
-# Created: 2020-04-10
+# Created: 2020-04-14
 # @HISTORY END
 #
 # @END
@@ -26,12 +25,9 @@
 ###############################################################################@
 
 PANDORA_DIR = ../../mnt/pandora
-
 MAIN_CSS = main.css
 DEBUG_CSS = mainDebug.css
-
 BUNDLE_JS = bundle.js
-
 PARAGOGA = $(MAIN_CSS) $(DEBUG_CSS) $(BUNDLE_JS)
 
 BROWSERIFY_OPTS = -t envify -p tinyify

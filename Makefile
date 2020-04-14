@@ -29,12 +29,13 @@
 
 .PHONY: all
 all:
-	@(cd www/lib && make)
-	@(cd www/imerisio && make)
+	(cd www/lib && make)
+	(cd www/imerisio && make)
+	(cd www/isodos && make)
 
 test:
-	@make all
-	@bash local/test.sh
+	make all
+	bash local/test.sh
 
 # GIT SECTION
 

@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 require_once("../../local/conf.php");
-require_once(LETRAK_BASEDIR . "/www/lib/letrakClient.php");
+require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
 
 pandora::
 document_head([

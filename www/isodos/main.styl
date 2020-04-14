@@ -11,13 +11,12 @@
 * @FILETYPE END
 *
 * @FILE BEGIN
-* www/imerisio/main.css —— Αρχείο προδιαγραφών CSS για την εφαρμογή των
-* ημερήσιων παρουσιολογίων.
+* www/isodos/main.css —— Αρχείο προδιαγραφών CSS για τη σελίδα εισόδου στην
+* εφαρμογή ημερήσιων παρουσιολογίων.
 * @FILE END
 *
 * @HISTORY BEGIN
-* Updated: 2020-04-12
-* Created: 2020-04-09
+* Created: 2020-04-14
 * @HISTORY END
 *
 * @END
@@ -26,8 +25,30 @@
 
 @import '../lib/letrak.styl'
 
-html
+label
+	display inline-block
+	width 6em
+
+input
 	background-color ivory
 
-body
+.pnd-ofelimo
+	padding 20px
+
+.inputLine
+	padding 4px
+
+.formPanel
+	padding 4px
+
+.formPanel > input[type="button"]
+	padding 2px 4px
 	background-color ivory
+	border-radius 4px
+	cursor pointer
+
+#login
+	width 6em
+
+#sesami
+	width 6em
