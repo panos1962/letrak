@@ -36,18 +36,22 @@ imerisio.selidaSetup = () => {
 
 imerisio.toolbarSetup = () => {
 	if (letrak.noXristis()) {
-		let pubkey = php.requestGet('pubkey');
-
-		if (!pubkey)
-		return imerisio;
-
 		pd.toolbarRightDOM.
 		append(pd.tabDOM().
 		append('Είσοδος').
 		css('cursor', 'pointer').
 		on('click', (e) => {
+			let href = self.location.href;
 			e.stopPropagation();
-			self.location = '/kartel/isodos?pubkey=' + php.requestGet('pubkey');
+			$.post({
+				'url': '../mnt/pandora/lib/session.php',
+				'data': {
+					'list': php._POST,
+				},
+			});
+
+			self.location = '/letrak/isodos?url=' +
+				encodeURIComponent(self.location.href);
 		}));
 	}
 

@@ -4,6 +4,7 @@ const pd =
 require('../../mnt/pandora/www/lib/pandoraClient.js');
 
 const letrak = require('../lib/letrak.js');
+const isodos = {};
 
 pd.domInit(() => {
 	pd.
@@ -14,20 +15,13 @@ pd.domInit(() => {
 	ribbonSetup();
 
 	isodos.
-	selidaSetup();
-});
-
-///////////////////////////////////////////////////////////////////////////////@
-
-const isodos = {};
-
-isodos.selidaSetup = () => {
-	isodos.
 	ofelimoSetup();
 
 	pd.domFixup();
 	return isodos;
-};
+});
+
+///////////////////////////////////////////////////////////////////////////////@
 
 isodos.ofelimoSetup = () => {
 	$('<form>').
@@ -91,16 +85,18 @@ isodos.ofelimoSetup = () => {
 	}).
 	on('click', (e) => {
 		e.stopPropagation();
-console.log(self.location);
-return;
 
-		let url = php._POST.url;
-
-		if (!url)
-		url = php._GET.url;
+		let url = php._GET.url;
 
 		if (!url)
 		url = php._SERVER.HTTP_HOST + '/letrak'
+
+		$.post({
+			'url': '../mnt/pandora/lib/session.php',
+			'data': {
+				'list': php._POST,
+			},
+		});
 
 		self.location = url;
 	}))).
