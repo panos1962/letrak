@@ -31,6 +31,9 @@ isodos.selidaSetup = () => {
 
 isodos.ofelimoSetup = () => {
 	$('<form>').
+	attr({
+		'id': 'isodosForma',
+	}).
 
 	append($('<div>').
 	addClass('inputLine').
@@ -38,8 +41,8 @@ isodos.ofelimoSetup = () => {
 	append($('<label>').
 	attr({
 		'for': 'login',
-	}).text('Αρ. μητρώου')).
-	append($('<input>').
+	}).text('Αριθμός μητρώου')).
+	append(isodos.ipalilosDOM = $('<input>').
 	attr({
 		'id': 'login',
 		'type': 'text',
@@ -53,8 +56,8 @@ isodos.ofelimoSetup = () => {
 	append($('<label>').
 	attr({
 		'for': 'sesami',
-	}).text('Κωδικός')).
-	append($('<input>').
+	}).text('Κωδικός εισόδου')).
+	append(isodos.sesamiDOM = $('<input>').
 	attr({
 		'id': 'sesami',
 		'type': 'password',
@@ -68,10 +71,51 @@ isodos.ofelimoSetup = () => {
 	append($('<input>').
 	attr({
 		'type': 'button',
-		'value': 'Υποβολή',
+		'value': 'Είσοδος',
+	}).
+	on('click', (e) => {
+		e.stopPropagation();
+	})).
+
+	append(isodos.clearDOM = $('<input>').
+	attr({
+		'type': 'button',
+		'value': 'Καθαρισμός',
+	}).
+	on('click', (e) => isodos.formaClear())).
+
+	append($('<input>').
+	attr({
+		'type': 'button',
+		'value': 'Άκυρο',
+	}).
+	on('click', (e) => {
+		e.stopPropagation();
+console.log(self.location);
+return;
+
+		let url = php._POST.url;
+
+		if (!url)
+		url = php._GET.url;
+
+		if (!url)
+		url = php._SERVER.HTTP_HOST + '/letrak'
+
+		self.location = url;
 	}))).
 
 	appendTo(pd.ofelimoDOM);
+
+	return isodos;
+};
+
+isodos.formaClear = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	isodos.sesamiDOM.val('');
+	isodos.ipalilosDOM.val('').focus();
 
 	return isodos;
 };
