@@ -43,6 +43,7 @@ require_once("../../local/conf.php");
 require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
 
 pandora::
+session_init()::
 document_head([
 	"title" => "Είσοδος",
 	"css" => [

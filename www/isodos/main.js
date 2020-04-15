@@ -7,6 +7,7 @@ const letrak = require('../lib/letrak.js');
 const isodos = {};
 
 pd.domInit(() => {
+console.log(php);
 	pd.
 	domSetup().
 	toolbarSetup().
@@ -85,11 +86,17 @@ isodos.ofelimoSetup = () => {
 	}).
 	on('click', (e) => {
 		e.stopPropagation();
+console.log(php);
 
-		let url = php._GET.url;
+		let post = php._SESSION['_pandoraSessionPost'];
+console.log(post);
+return;
+		let uri = letrakPOST[php._POST._letrakUri];
+console.log(php._POST);
+return;
 
-		if (!url)
-		url = php._SERVER.HTTP_HOST + '/letrak'
+		if (!uri)
+		uri = php._SERVER.HTTP_HOST + '/letrak'
 
 		$.post({
 			'url': '../mnt/pandora/lib/session.php',
@@ -98,7 +105,7 @@ isodos.ofelimoSetup = () => {
 			},
 		});
 
-		self.location = url;
+		self.location = uri;
 	}))).
 
 	appendTo(pd.ofelimoDOM);

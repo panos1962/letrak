@@ -41,17 +41,16 @@ imerisio.toolbarSetup = () => {
 		append('Είσοδος').
 		css('cursor', 'pointer').
 		on('click', (e) => {
-			let href = self.location.href;
 			e.stopPropagation();
+			php._POST['_letrakUri'] = self.location.href;
 			$.post({
 				'url': '../mnt/pandora/lib/session.php',
 				'data': {
-					'list': php._POST,
+					'_pandoraSessionPost': php._POST,
 				},
+				'success': () => self.location = '/letrak/isodos',
+				'error': (e) => console.error(e),
 			});
-
-			self.location = '/letrak/isodos?url=' +
-				encodeURIComponent(self.location.href);
 		}));
 	}
 
