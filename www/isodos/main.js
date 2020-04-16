@@ -7,7 +7,6 @@ const letrak = require('../lib/letrak.js');
 const isodos = {};
 
 pd.domInit(() => {
-console.log(php);
 	pd.
 	domSetup().
 	toolbarSetup().
@@ -86,26 +85,24 @@ isodos.ofelimoSetup = () => {
 	}).
 	on('click', (e) => {
 		e.stopPropagation();
-console.log(php);
 
-		let post = php._SESSION['_pandoraSessionPost'];
-console.log(post);
-return;
-		let uri = letrakPOST[php._POST._letrakUri];
-console.log(php._POST);
-return;
+		let href = php._SESSION[php.defs.PANDORA_SESSION_HREF];
 
-		if (!uri)
-		uri = php._SERVER.HTTP_HOST + '/letrak'
+		if (!href)
+		href = php._SERVER.HTTP_HOST + '/letrak'
+
+		let list = {};
+		list[php.defs.PANDORA_SESSION_POST] = JSON.stringify(php._POST);
 
 		$.post({
 			'url': '../mnt/pandora/lib/session.php',
-			'data': {
-				'list': php._POST,
+			'data': { 'list': list },
+			'success': () => self.location = href,
+			'error': (e) => {
+				pd.fyiError('Αδυναμία ακύρωσης της φόρμας εισόδου');
+				console.error(e);
 			},
 		});
-
-		self.location = uri;
 	}))).
 
 	appendTo(pd.ofelimoDOM);
