@@ -38,8 +38,6 @@ if (!class_exists("letrakCore"))
 require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
 define("LETRAK_SESSION_IPALILOS", "ipalilos");
-define("LETRAK_SESSION_IPIRESIA", "ipiresia");
-define("LETRAK_SESSION_PROSVASI", "prosvasi");
 
 class letrak extends letrakCore {
 	private static $init_ok = FALSE;
@@ -52,6 +50,14 @@ class letrak extends letrakCore {
 
 		if (!isset($_SERVER))
 		exit(0);
+	}
+
+	public static function is_xristis() {
+		return pandora::session_get(LETRAK_SESSION_IPALILOS);
+	}
+
+	public static function oxi_xristis() {
+		return !self::is_xrists();
 	}
 }
 

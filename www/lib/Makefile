@@ -36,5 +36,5 @@ STYLUS_OPTS = --print
 .PHONY: all
 all: $(PARAGOGA)
 
-$(LETRAK_CSS): letrak.styl $(PANDORA_DIR)/lib/pandora.css
+$(LETRAK_CSS): letrak.styl $(PANDORA_DIR)/lib/pandora.styl
 	stylus $(STYLUS_OPTS) letrak.styl >$@

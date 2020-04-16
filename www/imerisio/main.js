@@ -41,23 +41,32 @@ imerisio.toolbarSetup = () => {
 		append('Είσοδος').
 		css('cursor', 'pointer').
 		on('click', (e) => {
-php._POST['aaa'] = 'This is aaa';
-php._POST['bbb'] = {
-	'x': 1,
-	'y': 2,
-};
+			e.stopPropagation();
+			self.location = '/letrak/isodos';
+		}));
+	}
+
+	else {
+		pd.toolbarRightDOM.
+		append(pd.tabDOM().
+		append('Έξοδος').
+		css('cursor', 'pointer').
+		on('click', (e) => {
 			e.stopPropagation();
 
 			let list = {};
-			list[php.defs.PANDORA_SESSION_POST] = JSON.stringify(php._POST);
-			list[php.defs.PANDORA_SESSION_HREF] = self.location.href;
+			list[php.defs['LETRAK_SESSION_IPALILOS']] = undefined;
 
 			$.post({
 				'url': '../mnt/pandora/lib/session.php',
-				'data': { 'list': list },
-				'success': () => self.location = '/letrak/isodos',
+				'data': {
+					'unset': true,
+					'list': list,
+				},
+				'success': () => $.noop(),
+				//'success': () => self.location = '/letrak/imerisio',
 				'error': (e) => {
-					pd.fyiError('Αδυναμία μετάβασης στη φόρμα εισόδου');
+					pd.fyiError('Αδυναμία εξόδου');
 					console.error(e);
 				},
 			});

@@ -25,8 +25,33 @@ pd.domInit(() => {
 
 isodos.ofelimoSetup = () => {
 	$('<form>').
+	addClass('pnd-forma').
 	attr({
 		'id': 'isodosForma',
+	}).
+	on('submit', (e) => {
+		e.stopPropagation();
+		pd.fyiClear();
+		$.post({
+			'url': 'isodos.php',
+			'data': {
+				'ipalilos': isodos.ipalilosDOM.val(),
+				'kodikos': isodos.sesamiDOM.val(),
+			},
+			'success': (rsp) => {
+				if (!rsp)
+				return self.location = '/letrak/imerisio';
+
+				pd.fyiError(rsp);
+				console.error(rsp);
+			},
+			'error': (e) => {
+				pd.fyiError('Σφάλμα εισόδου');
+				console.error(e);
+			},
+		});
+
+		return false;
 	}).
 
 	append($('<div>').
@@ -64,7 +89,7 @@ isodos.ofelimoSetup = () => {
 
 	append($('<input>').
 	attr({
-		'type': 'button',
+		'type': 'submit',
 		'value': 'Είσοδος',
 	}).
 	on('click', (e) => {
@@ -83,30 +108,11 @@ isodos.ofelimoSetup = () => {
 		'type': 'button',
 		'value': 'Άκυρο',
 	}).
-	on('click', (e) => {
-		e.stopPropagation();
-
-		let href = php._SESSION[php.defs.PANDORA_SESSION_HREF];
-
-		if (!href)
-		href = php._SERVER.HTTP_HOST + '/letrak'
-
-		let list = {};
-		list[php.defs.PANDORA_SESSION_POST] = JSON.stringify(php._POST);
-
-		$.post({
-			'url': '../mnt/pandora/lib/session.php',
-			'data': { 'list': list },
-			'success': () => self.location = href,
-			'error': (e) => {
-				pd.fyiError('Αδυναμία ακύρωσης της φόρμας εισόδου');
-				console.error(e);
-			},
-		});
-	}))).
+	on('click', () => self.location = '/letrak/imerisio'))).
 
 	appendTo(pd.ofelimoDOM);
 
+	isodos.ipalilosDOM.focus();
 	return isodos;
 };
 
@@ -114,6 +120,7 @@ isodos.formaClear = (e) => {
 	if (e)
 	e.stopPropagation();
 
+	pd.fyiClear();
 	isodos.sesamiDOM.val('');
 	isodos.ipalilosDOM.val('').focus();
 
