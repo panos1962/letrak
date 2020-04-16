@@ -35,43 +35,56 @@ imerisio.selidaSetup = () => {
 };
 
 imerisio.toolbarSetup = () => {
-	if (letrak.noXristis()) {
+	let ipalilos = letrak.isXristis();
+
+	if (!ipalilos) {
 		pd.toolbarRightDOM.
 		append(pd.tabDOM().
 		append('Είσοδος').
-		css('cursor', 'pointer').
 		on('click', (e) => {
 			e.stopPropagation();
 			self.location = '/letrak/isodos';
 		}));
+
+		return imerisio;
 	}
 
-	else {
-		pd.toolbarRightDOM.
-		append(pd.tabDOM().
-		append('Έξοδος').
-		css('cursor', 'pointer').
-		on('click', (e) => {
-			e.stopPropagation();
+	ipalilos = JSON.parse(ipalilos);
 
-			let list = {};
-			list[php.defs['LETRAK_SESSION_IPALILOS']] = undefined;
+	if (ipalilos.prosvasi)
+	pd.toolbarRightDOM.
+	append(pd.tabDOM().
+	html(ipalilos.prosvasi));
 
-			$.post({
-				'url': '../mnt/pandora/lib/session.php',
-				'data': {
-					'unset': true,
-					'list': list,
-				},
-				'success': () => $.noop(),
-				//'success': () => self.location = '/letrak/imerisio',
-				'error': (e) => {
-					pd.fyiError('Αδυναμία εξόδου');
-					console.error(e);
-				},
-			});
-		}));
-	}
+	if (ipalilos.ipiresia)
+	pd.toolbarRightDOM.
+	append(pd.tabDOM().
+	html(ipalilos.ipiresia));
+
+	pd.toolbarRightDOM.
+	append(pd.tabDOM().
+	html(ipalilos.kodikos + ' ' + ipalilos.onomateponimo)).
+	append(pd.tabDOM().
+	text('Έξοδος').
+	on('click', (e) => {
+		e.stopPropagation();
+
+		let list = {};
+		list[php.defs['LETRAK_SESSION_IPALILOS']] = true;
+
+		$.post({
+			'url': '../mnt/pandora/lib/session.php',
+			'data': {
+				'unset': true,
+				'list': list,
+			},
+			'success': () => self.location = '/letrak/imerisio',
+			'error': (e) => {
+				pd.fyiError('Αδυναμία εξόδου');
+				console.error(e);
+			},
+		});
+	}));
 
 	return imerisio;
 };

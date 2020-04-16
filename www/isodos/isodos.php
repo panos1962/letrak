@@ -44,6 +44,9 @@ $kodikos = pandora::post_get("ipalilos");
 if (!isset($kodikos))
 lathos("Ακαθόριστος κωδικός υπαλλήλου");
 
+if (pandora::is_integer($kodikos, 1, 999999999) === FALSE)
+lathos("Μη αποδεκτός κωδικός υπαλλήλου");
+
 $password = pandora::post_get("kodikos");
 
 if (!isset($password))

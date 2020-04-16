@@ -37,7 +37,7 @@ require_once(PANDORA_BASEDIR . "/www/lib/pandora.php");
 if (!class_exists("letrakCore"))
 require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
-define("LETRAK_SESSION_IPALILOS", "ipalilos");
+define("LETRAK_SESSION_IPALILOS", "letrak_session_ipalilos");
 
 class letrak extends letrakCore {
 	private static $init_ok = FALSE;
