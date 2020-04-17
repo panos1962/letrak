@@ -40,7 +40,6 @@ session_init()::
 document_head([
 	"title" => "Παρουσιολόγια",
 	"css" => [
-		"../mnt/pandora/lib/pandora",
 		"main",
 	],
 ])::

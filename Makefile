@@ -30,8 +30,8 @@
 .PHONY: all
 all:
 	(cd www/lib && make)
-	(cd www/imerisio && make)
 	(cd www/isodos && make)
+	(cd www/imerisio && make)
 
 test:
 	make all
@@ -79,3 +79,5 @@ pull:
 .PHONY: cleanup
 cleanup:
 	@(cd www/imerisio && make cleanup)
+	@(cd www/isodos && make cleanup)
+	@(cd www/lib && make cleanup)

@@ -1,4 +1,10 @@
-@import '../mnt/pandora/lib/pandora.styl'
+$fontSteno = "Roboto Condensed", "Trebuchet MS", "Helvetica", sans-serif
+$pliktroBorderColor = #b1b1b1
+$pliktroBorderColorHover = #7d7d7d
+$pliktroColorHover = khaki
+$pliktroSkia = 1px 1px 2px #888888;
+$pliktroSkiaHover = 2px 2px 2px #888888;
+$boldShadow = 0.1px 0px 0px grey, -0.1px 0 0 grey
 
 body
 	font-family "Roboto", "Trebuchet MS", "Helvetica", sans-serif
@@ -16,18 +22,68 @@ label
 	display inline-block
 	padding-right 8px
 	text-align right
+	font-family $fontSteno
 	font-style italic
+
+.toolbarTitlos
+	font-weight bold
+
+.toolbarTab
+	display inline-block
+	padding 0px 4px
+	margin 0px 4px
+	font-family $fontSteno
+	background-color beige
+	border-style solid
+	border-width 1px
+	border-color $pliktroBorderColor
+	border-radius 2px
+	box-shadow $pliktroSkia
+	&:hover
+		text-shadow $boldShadow
+		background-color $pliktroColorHover
+		border-color $pliktroBorderColorHover
+		box-shadow $pliktroSkiaHover
+		cursor pointer
+
+.toolbarIpalilosKodikos
+	display inline-block
+	vertical-align bottom
+	padding 0px 2px
+	font-weight bold
+
+.toolbarIpalilosOnomateponimo
+	display inline-block
+	vertical-align bottom
+	padding 0px 2px
+
+	width 12em
+	white-space nowrap
+	overflow-x hidden
+	text-overflow ellipsis
 
 .inputLine
 	padding 4px
 
-.formPanel
+.formaPanel
 	margin-top 8px
 	padding 4px
 
-.formPanel > input[type="button"], input[type="submit"]
+.formaPliktro
 	margin 2px 8px
-	padding 2px 4px
-	background-color ivory
+	padding 0px 4px
+
+	font-family $fontSteno
+	font-size 18px
+	background-color #fffabc
+
+	border-width 1px;
+	border-color $pliktroBorderColor
 	border-radius 4px
-	cursor pointer
+	box-shadow $pliktroSkia
+	&:hover
+		text-shadow $boldShadow
+		background-color $pliktroColorHover
+		border-color $pliktroBorderColorHover
+		box-shadow $pliktroSkiaHover
+		cursor pointer

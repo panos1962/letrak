@@ -43,7 +43,7 @@ STYLUS_OPTS = --print
 .PHONY: all
 all: $(PARAGOGA)
 
-$(MAIN_CSS): main.styl ../lib/letrak.css
+$(MAIN_CSS): main.styl ../lib/letrak.css ../lib/pandora.css ../mnt/pandora/lib/pandora.css
 	stylus $(STYLUS_OPTS) main.styl >$@
 
 $(DEBUG_CSS): mainDebug.styl

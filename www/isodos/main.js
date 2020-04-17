@@ -1,13 +1,13 @@
 "use strict";
 
-const pd =
-require('../../mnt/pandora/www/lib/pandoraClient.js');
-
-const letrak = require('../lib/letrak.js');
+const pnd =
+require('../mnt/pandora/lib/pandora.js');
+const letrak =
+require('../lib/letrak.js');
 const isodos = {};
 
-pd.domInit(() => {
-	pd.
+pnd.domInit(() => {
+	pnd.
 	domSetup().
 	toolbarSetup().
 	fyiSetup().
@@ -17,7 +17,10 @@ pd.domInit(() => {
 	isodos.
 	ofelimoSetup();
 
-	pd.domFixup();
+	letrak.
+	toolbarCenterSetup();
+
+	pnd.domFixup();
 	return isodos;
 });
 
@@ -31,7 +34,7 @@ isodos.ofelimoSetup = () => {
 	}).
 	on('submit', (e) => {
 		e.stopPropagation();
-		pd.fyiClear();
+		pnd.fyiClear();
 		$.post({
 			'url': 'isodos.php',
 			'data': {
@@ -42,11 +45,11 @@ isodos.ofelimoSetup = () => {
 				if (!rsp)
 				return self.location = '/letrak/imerisio';
 
-				pd.fyiError(rsp);
+				pnd.fyiError(rsp);
 				console.error(rsp);
 			},
 			'error': (e) => {
-				pd.fyiError('Σφάλμα εισόδου');
+				pnd.fyiError('Σφάλμα εισόδου');
 				console.error(e);
 			},
 		});
@@ -55,7 +58,7 @@ isodos.ofelimoSetup = () => {
 	}).
 
 	append($('<div>').
-	addClass('inputLine').
+	addClass('letrak-inputLine').
 
 	append($('<label>').
 	attr({
@@ -70,7 +73,7 @@ isodos.ofelimoSetup = () => {
 	}))).
 
 	append($('<div>').
-	addClass('inputLine').
+	addClass('letrak-inputLine').
 
 	append($('<label>').
 	attr({
@@ -85,9 +88,10 @@ isodos.ofelimoSetup = () => {
 	}))).
 
 	append($('<div>').
-	addClass('formPanel').
+	addClass('letrak-formaPanel').
 
 	append($('<input>').
+	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'submit',
 		'value': 'Είσοδος',
@@ -97,6 +101,7 @@ isodos.ofelimoSetup = () => {
 	})).
 
 	append(isodos.clearDOM = $('<input>').
+	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
 		'value': 'Καθαρισμός',
@@ -104,13 +109,14 @@ isodos.ofelimoSetup = () => {
 	on('click', (e) => isodos.formaClear())).
 
 	append($('<input>').
+	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
 		'value': 'Άκυρο',
 	}).
 	on('click', () => self.location = '/letrak/imerisio'))).
 
-	appendTo(pd.ofelimoDOM);
+	appendTo(pnd.ofelimoDOM);
 
 	isodos.ipalilosDOM.focus();
 	return isodos;
@@ -120,7 +126,7 @@ isodos.formaClear = (e) => {
 	if (e)
 	e.stopPropagation();
 
-	pd.fyiClear();
+	pnd.fyiClear();
 	isodos.sesamiDOM.val('');
 	isodos.ipalilosDOM.val('').focus();
 

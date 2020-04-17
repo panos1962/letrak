@@ -17,6 +17,7 @@
 # @FILE END
 #
 # @HISTORY BEGIN
+# Updated: 2020-04-17
 # Created: 2020-04-13
 # @HISTORY END
 #
@@ -24,11 +25,11 @@
 #
 ###############################################################################@
 
-PANDORA_DIR = ../mnt/pandora
-
 LETRAK_CSS = letrak.css
+LETRAK_DEBUG_CSS = letrakDebug.css
+PANDORA_CSS = pandora.css
 
-PARAGOGA = $(LETRAK_CSS)
+PARAGOGA = $(LETRAK_CSS) $(LETRAK_DEBUG_CSS) $(PANDORA_CSS)
 
 STYLUS_OPTS = --print --compress
 STYLUS_OPTS = --print
@@ -36,5 +37,15 @@ STYLUS_OPTS = --print
 .PHONY: all
 all: $(PARAGOGA)
 
-$(LETRAK_CSS): letrak.styl $(PANDORA_DIR)/lib/pandora.styl
-	stylus $(STYLUS_OPTS) letrak.styl >$@
+$(LETRAK_CSS): letrak.styl
+	stylus $(STYLUS_OPTS) --prefix 'letrak-' letrak.styl >$@
+
+$(LETRAK_DEBUG_CSS): letrakDebug.styl
+	stylus $(STYLUS_OPTS) --prefix 'letrak-' letrakDebug.styl >$@
+
+$(PANDORA_CSS): pandora.styl
+	stylus $(STYLUS_OPTS) --prefix 'pnd-' pandora.styl >$@
+
+.PHONY: cleanup
+cleanup:
+	@rm -f $(PARAGOGA)
