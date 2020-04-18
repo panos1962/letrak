@@ -1,10 +1,28 @@
-$fontSteno = "Roboto Condensed", "Trebuchet MS", "Helvetica", sans-serif
-$pliktroBorderColor = #b1b1b1
-$pliktroBorderColorHover = #7d7d7d
-$pliktroColorHover = khaki
-$pliktroSkia = 1px 1px 2px #888888;
-$pliktroSkiaHover = 2px 2px 2px #888888;
-$boldShadow = 0.1px 0px 0px grey, -0.1px 0 0 grey
+/*******************************************************************************
+*
+* @BEGIN
+*
+* @COPYRIGHT BEGIN
+* Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+* @COPYRIGHT END
+*
+* @FILETYPE BEGIN
+* stylus
+* @FILETYPE END
+*
+* @FILE BEGIN
+* www/lib/letrak.styl —— Προδιαγραφές CSS για την εφαρμογή "letrak"
+* @FILE END
+*
+* @HISTORY BEGIN
+* Created: 2020-04-18
+* @HISTORY END
+*
+* @END
+*
+*******************************************************************************/
+
+@import 'common.styl'
 
 body
 	font-family "Roboto", "Trebuchet MS", "Helvetica", sans-serif
@@ -34,10 +52,11 @@ label
 	margin 0px 4px
 	font-family $fontSteno
 	background-color beige
+
 	border-style solid
 	border-width 1px
 	border-color $pliktroBorderColor
-	border-radius 2px
+	border-radius 4px
 	box-shadow $pliktroSkia
 	&:hover
 		text-shadow $boldShadow
@@ -62,6 +81,10 @@ label
 	overflow-x hidden
 	text-overflow ellipsis
 
+.ribbonCopyright
+	padding 0 4px
+	font-family $fontSteno
+
 .inputLine
 	padding 4px
 
@@ -77,10 +100,12 @@ label
 	font-size 18px
 	background-color #fffabc
 
+	border-style solid
 	border-width 1px;
 	border-color $pliktroBorderColor
 	border-radius 4px
 	box-shadow $pliktroSkia
+
 	&:hover
 		text-shadow $boldShadow
 		background-color $pliktroColorHover

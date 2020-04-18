@@ -47,6 +47,9 @@ session_init()::
 document_head([
 	"title" => "Είσοδος",
 	"css" => [
+		"../mnt/pandora/lib/pandora",
+		"../lib/pandora",
+		"../lib/letrak",
 		"main",
 	],
 ])::
