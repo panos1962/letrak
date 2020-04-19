@@ -25,12 +25,12 @@
 @import 'common.styl'
 
 body
-	font-family "Roboto", "Trebuchet MS", "Helvetica", sans-serif
-	font-size 18px
+	font-family $fontNormal
+	font-size $fontSizeNormal
 	background-color: #fffff0;
 
 textarea, input
-	font-size 16px
+	font-size $fontSizeInput
 
 input
 	padding 2px 2px
@@ -41,6 +41,7 @@ label
 	padding-right 8px
 	text-align right
 	font-family $fontSteno
+	font-size $fontSizeNormal
 	font-style italic
 
 .ipiresiaInput
@@ -61,6 +62,11 @@ label
 	border-color $pliktroBorderColor
 	border-radius 4px
 	box-shadow $pliktroSkia
+
+	-webkit-user-select none
+	-ms-user-select none
+	user-select none
+
 	&:hover
 		text-shadow $boldShadow
 		background-color $pliktroColorHover

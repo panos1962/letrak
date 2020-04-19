@@ -17,11 +17,12 @@
 //
 // @DESCRIPTION BEGIN
 // Πρόκειται για το πρόγραμμα οδήγησης της βασικής σελίδας της εφαρμογής
-// ελέγχου και διαχείρισης παρουσιολογίων. Ο χρήστης καταχωρεί κριτήρια
-// επιλογής με βάση την ημερομηνία και την υπηρεσία και μετά την εμφάνιση
-// των παρουσιολογίων που πληρούν τα κριτήρια επιλογής, μπορεί είτε να
-// διαχειριστεί κάποιο από τα επιλεγμένα παρουσιολόγια, είτε να δημιουργήσει
-// νέο παρουσιολόγιο (συνήθως ως αντίγραφο πρόσφατου σχετικού παρουσιολογίου).
+// ελέγχου και διαχείρισης παρουσιολογίων "letrak". Ο χρήστης καταχωρεί
+// κριτήρια επιλογής με βάση την ημερομηνία και την υπηρεσία και μετά την
+// εμφάνιση των παρουσιολογίων που πληρούν τα κριτήρια επιλογής, μπορεί
+// είτε να διαχειριστεί τα επιλεγμένα παρουσιολόγια, είτε να δημιουργήσει
+// νέα παρουσιολόγια (συνήθως ως αντίγραφα ήδη υφισταμένων πρόσφατων
+// σχετικών παρουσιολογίων).
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -44,9 +45,15 @@ const letrak =
 require('../lib/letrak.js');
 const imerisio = {};
 
-imerisio.misc = {
+imerisio.minima = {
+	'filtraTabLabel': 'Φίλτρα',
 	'filtraHideTitle': 'Απόκρυψη φίλτρων',
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
+	'filtraImerominiaLabel': 'Ημερομηνία',
+	'filtraIpiresiaLabel': 'Υπηρεσία',
+	'filtraFormaIpovoli': 'Υποβολή',
+	'filtraFormaClear': 'Καθαρισμός',
+	'filtraFormaCancel': 'Άκυρο',
 };
 	
 
@@ -63,57 +70,14 @@ pnd.domInit(() => {
 	selidaSetup();
 });
 
-///////////////////////////////////////////////////////////////////////////////@
-
 imerisio.selidaSetup = () => {
-	imerisio.
-	toolbarSetup().
-	ribbonSetup().
-	ofelimoSetup();
-
-	return imerisio;
-};
-
-imerisio.toolbarSetup = () => {
 	letrak.
 	toolbarTitlosSetup().
-	toolbarXristisSetup();
-
-	if (letrak.noXristis())
-	return imerisio;
-
-	pnd.toolbarLeftDOM.
-	append(imerisio.filtraTabDOM = letrak.tabDOM().
-	append('Φίλτρα').
-	on('click', (e) => {
-		e.stopPropagation();
-		imerisio.filtraToggle(true);
-	}));
-
-	return imerisio;
-};
-
-imerisio.ribbonSetup = () => {
-	letrak.
+	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
-	return imerisio;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-imerisio.ofelimoSetup = () => {
 	if (letrak.noXristis())
 	return imerisio.welcome();
-
-	pnd.bodyDOM.
-	append(imerisio.filtraDOM = $('<div>').
-	attr('id', 'filtra'));
-
-	pnd.ofelimoDOM.
-	empty().
-	append(imerisio.browserDOM = $('<div>').
-	addClass('browser'));
 
 	imerisio.
 	filtraSetup().
@@ -122,117 +86,11 @@ imerisio.ofelimoSetup = () => {
 	return imerisio;
 };
 
-imerisio.filtraSetup = () => {
-	imerisio.filtraDOM.
-
-	append($('<div>').
-	addClass('filtroPedio').
-	append($('<label>').
-	attr('for', 'imerominiaFiltro').
-	text('Ημερομηνία')).
-	append(imerisio.imerominiaFiltroDOM = $('<input>').
-	attr('id', 'imerominiaFiltro').
-	addClass('pnd-imerominiaInput').
-	datepicker())).
-
-	append($('<div>').
-	addClass('filtroPedio').
-	append($('<label>').
-	attr('for', 'ipiresiaFiltro').
-	text('Υπηρεσία')).
-	append(imerisio.ipiresiaFiltroDOM = $('<input>').
-	attr('id', 'ipiresiaFiltro').
-	addClass('letrak-ipiresiaInput')));
-
-	imerisio.filtraDOM.dialog({
-		'title': 'Κριτήρια επιλογής',
-		'autoOpen': false,
-
-		'width': 'auto',
-		'height': 'auto',
-		'position': {
-			'my': 'left+50 top+60',
-			'at': 'left top',
-		},
-
-		'open': function() {
-			imerisio.filtraTabDOM.data('status', 'visible');
-			imerisio.filtraToggle();
-		},
-
-		'show': {
-			'effect': 'drop',
-			'direction': 'up',
-			'duration': 100,
-		},
-
-		'close': function() {
-			imerisio.filtraTabDOM.data('status', 'hidden');
-			imerisio.filtraToggle();
-		},
-
-		'hide': {
-			'effect': 'drop',
-			'direction': 'up',
-			'duration': 100,
-		},
-	});
-
-	return imerisio;
-};
-
-imerisio.filtraToggle = function(act) {
-	if (imerisio.filtraDisabled())
-	imerisio.filtraEnable(act);
-
-	else
-	imerisio.filtraDisable(act);
-
-	return imerisio;
-};
-
-imerisio.filtraEnable = function(act) {
-	imerisio.filtraTabDOM.
-	removeClass('filtraTabOff').
-	attr('title', imerisio.misc.filrtaHideTitle);
-
-	if (!act)
-	return imerisio;
-
-	imerisio.filtraDOM.dialog('open');
-	return imerisio;
-};
-
-imerisio.filtraDisable = function(act) {
-	imerisio.filtraTabDOM.
-	addClass('filtraTabOff').
-	attr('title', imerisio.misc.filrtaHideTitle);
-
-	if (!act)
-	return imerisio;
-
-	imerisio.filtraDOM.dialog('close');
-	return imerisio;
-};
-
-imerisio.filtraDisabled = function() {
-	return (imerisio.filtraTabDOM.data('status') === 'hidden');
-};
-
-imerisio.browserSetup = () => {
-	let i;
-
-	for (i = 0; i < 100; i++)
-	imerisio.browserDOM.
-	append($('<div>').text(i));
-
-	return imerisio;
-};
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.welcome = () => {
 	pnd.ofelimoDOM.
+	empty().
 	append($('<div>').
 	attr('id', 'welcome').
 	html(
@@ -243,6 +101,170 @@ imerisio.welcome = () => {
 	'και αποχώρησης υπαλλήλων, σύμφωνα με τα διακαιώματα που σας ' +
 	'σας έχουν αποδοθεί.'
 	));
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.filtraSetup = () => {
+	pnd.toolbarLeftDOM.
+	append(imerisio.filtraTabDOM = letrak.tabDOM().
+	attr('title', imerisio.minima.filtraShowTitle).
+	data('status', 'hidden').
+	append(imerisio.minima.filtraTabLabel).
+	on('click', (e) => imerisio.filtraToggle(e)));
+
+	pnd.bodyDOM.
+	append(imerisio.filtraDOM = $('<div>').
+	append($('<form>').
+	attr('id', 'filtraForma').
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(imerisio.filtraIpiresiaDOM = $('<label>').
+	attr('for', 'ipiresiaFiltro').
+	text(imerisio.minima.filtraIpiresiaLabel)).
+	append(imerisio.filtraIpiresiaDOM = $('<input>').
+	attr('id', 'ipiresiaFiltro').
+	addClass('filtraInput'))).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append($('<label>').
+	attr('for', 'imerominiaFiltro').
+	text(imerisio.minima.filtraImerominiaLabel)).
+	append(imerisio.filtraImerominiaDOM = $('<input>').
+	attr('id', 'imerominiaFiltro').
+	addClass('filtraInput').
+	datepicker())).
+
+	append($('<div>').
+	addClass('letrak-formaPanel').
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'submit',
+		'value': imerisio.minima.filtraFormaIpovoli,
+	}).
+	on('click', (e) => imerisio.filtraFormaIpovoli(e))).
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'button',
+		'value': imerisio.minima.filtraFormaClear,
+	}).
+	on('click', (e) => imerisio.filtraFormaClear(e))).
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'button',
+		'value': imerisio.minima.filtraFormaCancel,
+	}).
+	on('click', (e) => imerisio.filtraFormaCancel(e))))));
+
+	imerisio.filtraDOM.dialog({
+		'title': 'Κριτήρια επιλογής',
+		'autoOpen': false,
+
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left+100 top+100',
+			'at': 'left top',
+		},
+
+		'open': () => imerisio.filtraEnable(),
+		'show': {
+			'effect': 'drop',
+			'direction': 'up',
+			'duration': 100,
+		},
+
+		'close': () => imerisio.filtraDisable(),
+		'hide': {
+			'effect': 'drop',
+			'direction': 'up',
+			'duration': 100,
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.filtraToggle = function(e) {
+	e.stopPropagation();
+
+	if (imerisio.filtraDisabled())
+	imerisio.filtraDOM.dialog('open');
+
+	else
+	imerisio.filtraDOM.dialog('close');
+
+	return imerisio;
+};
+
+imerisio.filtraEnable = function() {
+	imerisio.filtraTabDOM.
+	data('status', 'visible').
+	addClass('filtraTabEnabled').
+	attr('title', imerisio.minima.filtraHideTitle);
+
+	return imerisio;
+};
+
+imerisio.filtraDisable = function(act) {
+	imerisio.filtraTabDOM.
+	data('status', 'hidden').
+	removeClass('filtraTabEnabled').
+	attr('title', imerisio.minima.filtraShowTitle);
+
+	return imerisio;
+};
+
+imerisio.filtraEnabled = function() {
+	return (imerisio.filtraTabDOM.data('status') === 'visible');
+};
+
+imerisio.filtraDisabled = function() {
+	return !imerisio.filtraEnabled();
+};
+
+// XXX
+imerisio.filtraFormaIpovoli = (e) => {
+	e.stopPropagation();
+	return false;
+};
+
+imerisio.filtraFormaClear = (e) => {
+	e.stopPropagation();
+	imerisio.filtraIpiresiaDOM.val('').focus();
+	imerisio.filtraImerominiaDOM.val('');
+
+	return imerisio;
+};
+
+imerisio.filtraFormaCancel = (e) => {
+	e.stopPropagation();
+	imerisio.filtraDOM.dialog('close');
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.browserSetup = () => {
+	pnd.ofelimoDOM.
+	empty().
+	append(imerisio.browserDOM = $('<div>').
+	addClass('browser'));
+
+	for (let i = 0; i < 100; i++)
+	imerisio.browserDOM.
+	append($('<div>').text(i));
 
 	return imerisio;
 };

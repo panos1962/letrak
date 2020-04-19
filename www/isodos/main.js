@@ -42,6 +42,13 @@ const letrak =
 require('../lib/letrak.js');
 const isodos = {};
 
+isodos.minima = {
+	'isodos': 'Είσοδος',
+	'clear': 'Καθαρισμός',
+	'cancel': 'Άκυρο',
+	'error': 'Σφάλμα διαδικασίας εισόδου',
+};
+
 pnd.domInit(() => {
 	pnd.
 	toolbarSetup().
@@ -115,17 +122,15 @@ isodos.ofelimoSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'submit',
-		'value': 'Είσοδος',
+		'value': isodos.minima.isodos,
 	}).
-	on('click', (e) => {
-		e.stopPropagation();
-	})).
+	on('click', (e) => isodos.isodos(e))).
 
 	append(isodos.clearDOM = $('<input>').
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': 'Καθαρισμός',
+		'value': isodos.minima.clear,
 	}).
 	on('click', (e) => isodos.formaClear())).
 
@@ -133,7 +138,7 @@ isodos.ofelimoSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': 'Άκυρο',
+		'value': isodos.minima.cancel
 	}).
 	on('click', () => self.location = '/letrak/imerisio'))).
 
@@ -144,7 +149,9 @@ isodos.ofelimoSetup = () => {
 };
 
 isodos.isodos = (e) => {
+	if (e)
 	e.stopPropagation();
+
 	pnd.fyiClear();
 	$.post({
 		'url': 'isodos.php',
@@ -160,7 +167,7 @@ isodos.isodos = (e) => {
 			console.error(rsp);
 		},
 		'error': (e) => {
-			pnd.fyiError('Σφάλμα εισόδου');
+			pnd.fyiError(isodos.minima.error);
 			console.error(e);
 		},
 	});
