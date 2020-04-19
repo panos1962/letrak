@@ -1,3 +1,40 @@
+///////////////////////////////////////////////////////////////////////////////@
+//
+// @BEGIN
+//
+// @COPYRIGHT BEGIN
+// Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+// @COPYRIGHT END
+//
+// @FILETYPE BEGIN
+// javascipt
+// @FILETYPE END
+//
+// @FILE BEGIN
+// www/imerisio/main.js —— Πρόγραμμα οδήγησης σελίδας ελέγχου και διαχείρισης
+// παρουσιολογίων.
+// @FILE END
+//
+// @DESCRIPTION BEGIN
+// Πρόκειται για το πρόγραμμα οδήγησης της βασικής σελίδας της εφαρμογής
+// ελέγχου και διαχείρισης παρουσιολογίων. Ο χρήστης καταχωρεί κριτήρια
+// επιλογής με βάση την ημερομηνία και την υπηρεσία και μετά την εμφάνιση
+// των παρουσιολογίων που πληρούν τα κριτήρια επιλογής, μπορεί είτε να
+// διαχειριστεί κάποιο από τα επιλεγμένα παρουσιολόγια, είτε να δημιουργήσει
+// νέο παρουσιολόγιο (συνήθως ως αντίγραφο πρόσφατου σχετικού παρουσιολογίου).
+// @DESCRIPTION END
+//
+// @HISTORY BEGIN
+// Updated: 2020-04-19
+// Updated: 2020-04-18
+// Updated: 2020-04-17
+// Created: 2020-04-09
+// @HISTORY END
+//
+// @END
+//
+///////////////////////////////////////////////////////////////////////////////@
+
 "use strict";
 
 const pnd =
@@ -39,8 +76,8 @@ imerisio.selidaSetup = () => {
 
 imerisio.toolbarSetup = () => {
 	letrak.
-	toolbarCenterSetup().
-	xristisSetup();
+	toolbarTitlosSetup().
+	toolbarXristisSetup();
 
 	if (letrak.noXristis())
 	return imerisio;
@@ -58,7 +95,7 @@ imerisio.toolbarSetup = () => {
 
 imerisio.ribbonSetup = () => {
 	letrak.
-	ribbonRightSetup();
+	ribbonCopyrightSetup();
 
 	return imerisio;
 };
@@ -70,27 +107,23 @@ imerisio.ofelimoSetup = () => {
 	return imerisio.welcome();
 
 	pnd.bodyDOM.
-	append(imerisio.panelDOM = $('<div>').
-	attr('id', 'panel'));
+	append(imerisio.filtraDOM = $('<div>').
+	attr('id', 'filtra'));
 
 	pnd.ofelimoDOM.
+	empty().
 	append(imerisio.browserDOM = $('<div>').
 	addClass('browser'));
 
 	imerisio.
-	panelSetup().
+	filtraSetup().
 	browserSetup();
-
-let i;
-for (i = 0; i < 100; i++)
-imerisio.browserDOM.
-append($('<div>').text(i));
 
 	return imerisio;
 };
 
-imerisio.panelSetup = () => {
-	imerisio.panelDOM.
+imerisio.filtraSetup = () => {
+	imerisio.filtraDOM.
 
 	append($('<div>').
 	addClass('filtroPedio').
@@ -111,7 +144,7 @@ imerisio.panelSetup = () => {
 	attr('id', 'ipiresiaFiltro').
 	addClass('letrak-ipiresiaInput')));
 
-	imerisio.panelDOM.dialog({
+	imerisio.filtraDOM.dialog({
 		'title': 'Κριτήρια επιλογής',
 		'autoOpen': false,
 
@@ -187,8 +220,16 @@ imerisio.filtraDisabled = function() {
 };
 
 imerisio.browserSetup = () => {
+	let i;
+
+	for (i = 0; i < 100; i++)
+	imerisio.browserDOM.
+	append($('<div>').text(i));
+
 	return imerisio;
 };
+
+///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.welcome = () => {
 	pnd.ofelimoDOM.

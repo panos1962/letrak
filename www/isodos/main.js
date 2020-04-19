@@ -1,3 +1,39 @@
+///////////////////////////////////////////////////////////////////////////////@
+//
+// @BEGIN
+//
+// @COPYRIGHT BEGIN
+// Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+// @COPYRIGHT END
+//
+// @FILETYPE BEGIN
+// javascipt
+// @FILETYPE END
+//
+// @FILE BEGIN
+// www/isodos/main.js —— Πρόγραμμα οδήγησης φόρμας εισόδου στην εφαρμογή
+// @FILE END
+//
+// @DESCRIPTION BEGIN
+// Ο χρήστης συμπληρώνει τον αριθμό μητρώου που φέρει ως εργαζόμενος στο
+// Δήμο Θεσσαλονίκης και τον μυστικό κωδικό του (password) και εισέρχεται
+// στην εφαρμογή "letrak", ελέγχου και διαχείρισης παρουσιολογίων.
+//
+// Τα διαπιστευτήρια του χρήστη είναι τα ίδια με αυτά της εφαρμογής "kartel",
+// ελέγχου χτυπημάτων καρτών.
+// @DESCRIPTION END
+//
+// @HISTORY BEGIN
+// Updated: 2020-04-19
+// Updated: 2020-04-18
+// Updated: 2020-04-17
+// Created: 2020-04-09
+// @HISTORY END
+//
+// @END
+//
+///////////////////////////////////////////////////////////////////////////////@
+
 "use strict";
 
 const pnd =
@@ -8,54 +44,39 @@ const isodos = {};
 
 pnd.domInit(() => {
 	pnd.
-	domSetup().
 	toolbarSetup().
 	fyiSetup().
 	ofelimoSetup().
-	ribbonSetup();
+	ribbonSetup().
+	domSetup().
+	domFixup();
+
+	isodos.
+	selidaSetup();
+
+	return isodos;
+});
+
+///////////////////////////////////////////////////////////////////////////////@
+
+isodos.selidaSetup = () => {
+	letrak.
+	toolbarTitlosSetup().
+	ribbonCopyrightSetup();
 
 	isodos.
 	ofelimoSetup();
 
-	letrak.
-	toolbarCenterSetup();
-
-	pnd.domFixup();
 	return isodos;
-});
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 isodos.ofelimoSetup = () => {
 	$('<form>').
 	addClass('pnd-forma').
-	attr({
-		'id': 'isodosForma',
-	}).
-	on('submit', (e) => {
-		e.stopPropagation();
-		pnd.fyiClear();
-		$.post({
-			'url': 'isodos.php',
-			'data': {
-				'ipalilos': isodos.ipalilosDOM.val(),
-				'kodikos': isodos.sesamiDOM.val(),
-			},
-			'success': (rsp) => {
-				if (!rsp)
-				return self.location = '/letrak/imerisio';
-
-				pnd.fyiError(rsp);
-				console.error(rsp);
-			},
-			'error': (e) => {
-				pnd.fyiError('Σφάλμα εισόδου');
-				console.error(e);
-			},
-		});
-
-		return false;
-	}).
+	attr('id', 'isodosForma').
+	on('submit', (e) => isodos.isodos(e)).
 
 	append($('<div>').
 	addClass('letrak-inputLine').
@@ -120,6 +141,31 @@ isodos.ofelimoSetup = () => {
 
 	isodos.ipalilosDOM.focus();
 	return isodos;
+};
+
+isodos.isodos = (e) => {
+	e.stopPropagation();
+	pnd.fyiClear();
+	$.post({
+		'url': 'isodos.php',
+		'data': {
+			'ipalilos': isodos.ipalilosDOM.val(),
+			'kodikos': isodos.sesamiDOM.val(),
+		},
+		'success': (rsp) => {
+			if (!rsp)
+			return self.location = '/letrak/imerisio';
+
+			pnd.fyiError(rsp);
+			console.error(rsp);
+		},
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα εισόδου');
+			console.error(e);
+		},
+	});
+
+	return false;
 };
 
 isodos.formaClear = (e) => {
