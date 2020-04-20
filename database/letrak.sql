@@ -239,6 +239,7 @@ CREATE TABLE `parousia` (
 	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
 	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
+	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
 	`meraora`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα προσέλευσης/αποχώρησης',
 
 	UNIQUE INDEX (
