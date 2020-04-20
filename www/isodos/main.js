@@ -69,6 +69,7 @@ pnd.domInit(() => {
 isodos.selidaSetup = () => {
 	letrak.
 	toolbarTitlosSetup().
+	toolbarArxikiSetup().
 	ribbonCopyrightSetup();
 
 	isodos.

@@ -55,7 +55,6 @@ imerisio.minima = {
 	'filtraFormaClear': 'Καθαρισμός',
 	'filtraFormaCancel': 'Άκυρο',
 };
-	
 
 pnd.domInit(() => {
 	pnd.
@@ -77,30 +76,14 @@ imerisio.selidaSetup = () => {
 	ribbonCopyrightSetup();
 
 	if (letrak.noXristis())
-	return imerisio.welcome();
+	return letrak.arxikiSelida(imerisio);
+
+	letrak.
+	toolbarArxikiSetup();
 
 	imerisio.
 	filtraSetup().
 	browserSetup();
-
-	return imerisio;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-imerisio.welcome = () => {
-	pnd.ofelimoDOM.
-	empty().
-	append($('<div>').
-	attr('id', 'welcome').
-	html(
-	'Καλωσήλθατε στην εφαρμογή <b>letrak</b> διαχείρισης ' +
-	'παρουσιολογίων. Κάντε κλικ στο πλήκτρο εισόδου που ' +
-	'βρίσκεται στο επάνω δεξιά μέρος της σελίδας προκειμένου ' +
-	'να ελέγξετε ή να διαχειριστείτε ημερήσια δελτία προσέλευσης ' +
-	'και αποχώρησης υπαλλήλων, σύμφωνα με τα διακαιώματα που σας ' +
-	'σας έχουν αποδοθεί.'
-	));
 
 	return imerisio;
 };

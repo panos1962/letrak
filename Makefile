@@ -29,7 +29,7 @@
 
 .PHONY: all
 all:
-	(cd www/lib && make)
+	(cd www && make)
 	(cd www/isodos && make)
 	(cd www/imerisio && make)
 
