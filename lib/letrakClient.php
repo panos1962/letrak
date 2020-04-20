@@ -57,7 +57,7 @@ class letrak extends letrakCore {
 	}
 
 	public static function oxi_xristis() {
-		return !self::is_xrists();
+		return !self::is_xristis();
 	}
 }
 

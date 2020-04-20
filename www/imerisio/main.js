@@ -52,6 +52,7 @@ imerisio.minima = {
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'filtraImerominiaLabel': 'Ημερομηνία',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
+	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 };
 
 pnd.domInit(() => {
@@ -80,8 +81,7 @@ imerisio.selidaSetup = () => {
 	toolbarArxikiSetup();
 
 	imerisio.
-	filtraSetup().
-	browserSetup();
+	erpotaFetch();
 
 	return imerisio;
 };
@@ -246,6 +246,45 @@ imerisio.browserSetup = () => {
 	for (let i = 0; i < 100; i++)
 	imerisio.browserDOM.
 	append($('<div>').text(i));
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.erpotaFetch = () => {
+	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
+	$.post({
+		'url': 'erpotaFetch.php',
+		'dataType': 'json',
+		'success': (rsp) => imerisio.erpotaProcess(rsp),
+		'error': (e) => {
+			pnd.fyiError(imerisio.minima.erpotaFetchError);
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.erpotaProcess = (rsp) => {
+	if (!rsp.hasOwnProperty('error')) {
+		pnd.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
+		return imerisio;
+	}
+
+	if (rsp.error) {
+		pnd.fyiError(rsp.error);
+		return imerisio;
+	}
+
+	pnd.fyiClear();
+	imerisio.ipiresiaList = rsp.ipiresia;
+	imerisio.ipalilosList = rsp.ipalilos;
+
+	imerisio.
+	browserSetup().
+	filtraSetup();
 
 	return imerisio;
 };
