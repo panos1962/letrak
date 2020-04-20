@@ -43,9 +43,7 @@ require('../lib/letrak.js');
 const isodos = {};
 
 isodos.minima = {
-	'isodos': 'Είσοδος',
-	'clear': 'Καθαρισμός',
-	'cancel': 'Άκυρο',
+	'isodosPliktroLabel': 'Είσοδος',
 	'error': 'Σφάλμα διαδικασίας εισόδου',
 };
 
@@ -123,7 +121,7 @@ isodos.ofelimoSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'submit',
-		'value': isodos.minima.isodos,
+		'value': isodos.minima.isodosPliktroLabel,
 	}).
 	on('click', (e) => isodos.isodos(e))).
 
@@ -131,7 +129,7 @@ isodos.ofelimoSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': isodos.minima.clear,
+		'value': letrak.minima.clearPliktroLabel,
 	}).
 	on('click', (e) => isodos.formaClear())).
 
@@ -139,7 +137,7 @@ isodos.ofelimoSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': isodos.minima.cancel
+		'value': letrak.minima.cancelPliktroLabel,
 	}).
 	on('click', () => self.location = '/letrak/imerisio'))).
 

@@ -55,3 +55,5 @@ document_head([
 ])::
 document_body()::
 document_close();
+
+unset($_SESSION[LETRAK_SESSION_IPALILOS]);

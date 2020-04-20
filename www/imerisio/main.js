@@ -26,6 +26,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-20
 // Updated: 2020-04-19
 // Updated: 2020-04-18
 // Updated: 2020-04-17
@@ -51,9 +52,6 @@ imerisio.minima = {
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'filtraImerominiaLabel': 'Ημερομηνία',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
-	'filtraFormaIpovoli': 'Υποβολή',
-	'filtraFormaClear': 'Καθαρισμός',
-	'filtraFormaCancel': 'Άκυρο',
 };
 
 pnd.domInit(() => {
@@ -129,7 +127,7 @@ imerisio.filtraSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'submit',
-		'value': imerisio.minima.filtraFormaIpovoli,
+		'value': letrak.minima.ipovoliPliktroLabel,
 	}).
 	on('click', (e) => imerisio.filtraFormaIpovoli(e))).
 
@@ -137,7 +135,7 @@ imerisio.filtraSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': imerisio.minima.filtraFormaClear,
+		'value': letrak.minima.clearPliktroLabel,
 	}).
 	on('click', (e) => imerisio.filtraFormaClear(e))).
 
@@ -145,7 +143,7 @@ imerisio.filtraSetup = () => {
 	addClass('letrak-formaPliktro').
 	attr({
 		'type': 'button',
-		'value': imerisio.minima.filtraFormaCancel,
+		'value': letrak.minima.cancelPliktroLabel,
 	}).
 	on('click', (e) => imerisio.filtraFormaCancel(e))))));
 
