@@ -24,6 +24,7 @@
 *
 *******************************************************************************/
 
+@import '../mnt/pandora/lib/common.styl'
 @import '../lib/common.styl'
 
 .pnd-ofelimo
@@ -49,16 +50,19 @@
 	padding 2px
 	white-space nowrap
 	color #333333
-	border-style none none solid none
-	border-color grey
-	border-width 1px
+	border-style solid
+	border-color transparent transparent grey transparent
+	border-width 2px
+	vendor('user-select', none)
+	cursor pointer
 	> div
 		display inline-block
 		padding 0px 4px
-	&:hover
-		color #000000
-		background-color #fff577
-		cursor pointer
+
+.imerisioCandi
+	color #000000
+	text-shadow 0.5px 0px 0px #000000
+	background-color #ffc49a
 
 .imerisioKodikos
 	width 5em
@@ -82,3 +86,9 @@
 
 .imerisioClosed
 	width 5em
+
+.candiTab
+	display none !important
+
+.candiTabVisible
+	display inline-block !important

@@ -60,7 +60,7 @@ $x = pandora::parameter_get("ipiresia");
 
 if ($x) {
 	$query .= $enotiko . " (`ipiresia` LIKE " .
-	pandora::sql_string($x + '%') . ")";
+	pandora::sql_string($x . '%') . ")";
 	$enotiko = " AND ";
 }
 
@@ -72,9 +72,13 @@ if ($x) {
 }
 
 $query .= " ORDER BY `imerominia`, `ipiresia`, `kodikos` LIMIT 20";
+
+print '"imerisioQuery":' . pandora::json_string($query) . ",";
+print '"imerisio":[';
+
 $result = pandora::query($query);
 
-$enotiko = '"imerisio":[';
+$enotiko = '';
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	print $enotiko . pandora::json_string($row);
 	$enotiko = ",";

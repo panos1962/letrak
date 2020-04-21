@@ -243,7 +243,74 @@ imerisio.browserSetup = () => {
 	pnd.ofelimoDOM.
 	empty().
 	append(imerisio.browserDOM = $('<div>').
-	attr('id', 'browser'));
+	attr('id', 'browser').
+	on('mouseenter', '.imerisio', function(e) {
+		e.stopPropagation();
+
+		if ($(this).data('candi'))
+		return;
+
+		$(this).
+		addClass('imerisioCandi');
+	}).
+	on('mouseleave', '.imerisio', function(e) {
+		e.stopPropagation();
+
+		if ($(this).data('candi'))
+		return;
+
+		$(this).
+		removeClass('imerisioCandi');
+	}).
+	on('click', '.imerisio', function(e) {
+		e.stopPropagation();
+
+		let wasCandi = $(this).data('candi');
+
+		$('.imerisioCandi').
+		removeData('candi').
+		removeClass('imerisioCandi');
+
+		if (wasCandi)
+		return imerisio.candiTabsHide();
+
+		$(this).
+		data('candi', true).
+		addClass('imerisioCandi');
+		imerisio.candiTabsShow();
+	}));
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.candiTabsSetup = () => {
+	pnd.toolbarLeftDOM.
+
+	append(letrak.tabDOM().
+	addClass('candiTab').
+	text('Κλώνος')).
+
+	append(letrak.tabDOM().
+	addClass('candiTab').
+	text('Διαγραφή'));
+
+	return imerisio;
+};
+
+imerisio.candiTabsShow = () => {
+	pnd.toolbarDOM.
+	find('.candiTab').
+	addClass('candiTabVisible');
+
+	return imerisio;
+};
+
+imerisio.candiTabsHide = () => {
+	pnd.toolbarDOM.
+	find('.candiTab').
+	removeClass('candiTabVisible');
 
 	return imerisio;
 };
@@ -283,6 +350,7 @@ imerisio.erpotaProcess = (rsp) => {
 	imerisio.
 	browserSetup().
 	filtraSetup().
+	candiTabsSetup().
 	autoFind();
 
 	return imerisio;
@@ -376,7 +444,7 @@ Imerisio.prototype.DOM = function() {
 
 	let dom = $('<div>').
 	addClass('imerisio').
-	data('kodikos', kodikos).
+	data('data', this).
 
 	append($('<div>').
 	addClass('imerisioKodikos').
