@@ -173,6 +173,8 @@ imerisio.filtraSetup = () => {
 		},
 	});
 
+	imerisio.filtraIpiresiaDOM.val(letrak.xristisIpiresiaGet());
+	imerisio.filtraImerominiaDOM.val(pnd.dateTime(undefined, '%D-%M-%Y'));
 	return imerisio;
 };
 
@@ -241,11 +243,7 @@ imerisio.browserSetup = () => {
 	pnd.ofelimoDOM.
 	empty().
 	append(imerisio.browserDOM = $('<div>').
-	addClass('browser'));
-
-	for (let i = 0; i < 100; i++)
-	imerisio.browserDOM.
-	append($('<div>').text(i));
+	attr('id', 'browser'));
 
 	return imerisio;
 };
@@ -284,9 +282,122 @@ imerisio.erpotaProcess = (rsp) => {
 
 	imerisio.
 	browserSetup().
-	filtraSetup();
+	filtraSetup().
+	autoFind();
 
 	return imerisio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.autoFind = () => {
+	pnd.fyiMessage('Επιλογή παρουσιολογίων…');
+	$.post({
+		'url': 'imerisio.php',
+		'data': {
+			'ipiresia': letrak.xristisIpiresiaGet(),
+		},
+		'dataType': 'json',
+		'success': (rsp) => imerisio.imerisioProcess(rsp),
+		'error': (e) => {
+			pnd.fyiError('Αδυναμία επιλογής παρουσιολογίων');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.imerisioProcess = (x) => {
+	pnd.fyiClear();
+	imerisio.browserDOM.empty();
+
+	if (x.error) {
+		pnd.fyiError(x.error);
+		return imerisio;
+	}
+
+	let ilist = x.imerisio;
+
+	pnd.arrayWalk(ilist, function(v, k) {
+		ilist[k] = new Imerisio(v);
+		imerisio.browserDOM.
+		append(ilist[k].DOM());
+	});
+
+	pnd.zebraFix(imerisio.browserDOM);
+
+console.log(ilist);
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+function Imerisio(x) {
+	let that = this;
+
+	pnd.objectWalk(x, (v, k) => {
+		that[k] = v;
+	});
+
+	if (this.hasOwnProperty('d'))
+	this.d = new Date(this.d);
+
+	if (this.hasOwnProperty('c') && this.c)
+	this.c = new Date(this.c);
+};
+
+Imerisio.prototype.kodikosGet = function() {
+	return this.k;
+};
+
+Imerisio.prototype.imerominiaGet = function() {
+	return this.d;
+};
+
+Imerisio.prototype.ipiresiaGet = function() {
+	return this.i;
+};
+
+Imerisio.prototype.tiposGet = function() {
+	return this.t;
+};
+
+Imerisio.prototype.perigrafiGet = function() {
+	return this.p;
+};
+
+Imerisio.prototype.closedGet = function() {
+	return this.c;
+};
+
+Imerisio.prototype.DOM = function() {
+	let kodikos = this.kodikosGet();
+
+	let dom = $('<div>').
+	addClass('imerisio').
+	data('kodikos', kodikos).
+
+	append($('<div>').
+	addClass('imerisioKodikos').
+	attr('title', 'Κωδικός παρουσιολογίου').
+	text(kodikos)).
+
+	append($('<div>').
+	addClass('imerisioImerominia').
+	text(pnd.date(this.imerominiaGet(), '%D-%M-%Y'))).
+
+	append($('<div>').
+	addClass('imerisioIpiresia').
+	text(this.ipiresiaGet())).
+
+	append($('<div>').
+	addClass('imerisioTipos').
+	text(this.tiposGet())).
+
+	append($('<div>').
+	addClass('imerisioPerigrafi').
+	text(this.perigrafiGet()));
+
+	return dom;
+};
