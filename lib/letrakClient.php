@@ -40,6 +40,13 @@ require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 define("LETRAK_SESSION_IPALILOS", "letrak_session_ipalilos");
 
 class letrak extends letrakCore {
+	public static $imerisioPrjcols =
+		"`kodikos` AS `k`," .
+		"`imerominia` AS `d`," .
+		"`ipiresia` AS `i`," .
+		"`prosapo` AS `t`," .
+		"`perigrafi` AS `p`," .
+		"`closed` AS `c`";
 	private static $init_ok = FALSE;
 
 	public static function init() {

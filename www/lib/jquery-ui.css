@@ -1,0 +1,19 @@
+.ui-button {
+	padding: 2px 4px !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+    margin: 8px 16px 8px 0 !important;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	padding: 8px 16px !important;
+}
+
+.ui-widget {
+	font-size: 16px !important;
+}
+
+.ui-widget-header {
+	font-size: 18px !important;
+}

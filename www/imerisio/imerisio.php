@@ -34,19 +34,11 @@ header_json()::
 session_init()::
 database();
 
-$response = array();
 print "{";
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT " .
-	"`kodikos` AS `k`, " .
-	"`imerominia` AS `d`, " .
-	"`ipiresia` AS `i`, " .
-	"`prosapo` AS `t`, " .
-	"`closed` AS `c` " .
-	"FROM `letrak`.`imerisio`";
-
+$query = "SELECT " . letrak::$imerisioPrjcols . " FROM `letrak`.`imerisio`";
 $enotiko = " WHERE";
 
 $x = pandora::parameter_get("imerominia");
@@ -71,7 +63,7 @@ if ($x) {
 	$enotiko = " AND ";
 }
 
-$query .= " ORDER BY `imerominia`, `ipiresia`, `kodikos` LIMIT 20";
+$query .= " ORDER BY `imerominia`, `ipiresia`, `kodikos` LIMIT 50";
 
 print '"imerisioQuery":' . pandora::json_string($query) . ",";
 print '"imerisio":[';

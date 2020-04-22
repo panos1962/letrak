@@ -77,6 +77,9 @@ imerisio.selidaSetup = () => {
 	if (letrak.noXristis())
 	return letrak.arxikiSelida(imerisio);
 
+	pnd.
+	keepAlive();
+
 	letrak.
 	toolbarArxikiSetup();
 
@@ -290,11 +293,13 @@ imerisio.candiTabsSetup = () => {
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	text('Κλώνος')).
+	text('Κλωνισμός').
+	on('click', (e) => imerisio.klonismos(e))).
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	text('Διαγραφή'));
+	text('Διαγραφή').
+	on('click', (e) => imerisio.diagrafiConfirm(e)));
 
 	return imerisio;
 };
@@ -311,6 +316,168 @@ imerisio.candiTabsHide = () => {
 	pnd.toolbarDOM.
 	find('.candiTab').
 	removeClass('candiTabVisible');
+
+	return imerisio;
+};
+
+imerisio.clearCandi = () => {
+	$('.imerisio').
+	removeData('candi').
+	removeClass('imerisioCandi');
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.klonismos = (e) => {
+	e.stopPropagation();
+
+	let x = $('.imerisioCandi').
+	first().
+	data('data');
+
+	if (!x) {
+		pnd.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
+		return imerisio;
+	}
+
+	try {
+		var kodikos = x.kodikosGet();
+	}
+
+	catch (e) {
+		pnd.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
+		return imerisio;
+	}
+
+	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos +
+		'</b> σε εξέλιξη…');
+	$.post({
+		'url': 'klonismos.php',
+		'data': {
+			"kodikos": kodikos,
+		},
+		'dataType': 'json',
+		'success': (rsp) => imerisio.klonosProcess(rsp, kodikos),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα κλωνισμού');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.klonosProcess = (x, protipo) => {
+	if (x.error) {
+		pnd.fyiError(x.error);
+		console.error(x.error);
+		return imerisio;
+	}
+
+	if (!x.hasOwnProperty('imerisio')) {
+		pnd.fyiError('Δεν επστράφησαν στοιχεία αντιγράφου');
+		console.error(x);
+		return imerisio;
+	}
+
+	pnd.fyiMessage('Δημιουργήθηκε παρουσιολόγιο <b>' +
+	x.imerisio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
+	protipo + '</b>');
+
+	imerisio.clearCandi();
+
+	imerisio.browserDOM.
+	prepend((new Imerisio(x.imerisio)).
+	DOM().
+	data('candi', true).
+	addClass('imerisioCandi'));
+
+	imerisio.candiTabsShow();
+	pnd.ofelimoDOM.scrollTop(0);
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.diagrafiConfirm = (e) => {
+	e.stopPropagation();
+
+	let dom = $('.imerisioCandi').first();
+
+	if (!dom.length) {
+		pnd.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
+		return imerisio;
+	}
+
+	try {
+		var kodikos = dom.data('data').kodikosGet();
+	}
+
+	catch (e) {
+		pnd.fyiError('Απροσδιόριστο παρουσιολόγιο προς διαγραφή');
+		console.error(e);
+	}
+
+	let dialogDOM = $('<div>').
+	attr('title', 'Διαγραφή παρουσιολογίου').
+	append($('<div>').
+	html('Να διαγραφεί το παρουσιολόγιο <b>' + kodikos + '</b>;')).
+	dialog({
+		'resizable': false,
+		'height': 'auto',
+		'width': '350px',
+		'modal': true,
+		'buttons': {
+			'Διαγραφή': function() {
+				imerisio.diagrafi(kodikos, dom);
+				$(this).dialog('close');
+			},
+			'Άκυρο': function() {
+				$(this).dialog('close');
+			},
+		},
+		'close': function() {
+			dialogDOM.remove();
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.diagrafi = (kodikos, dom) => {
+	pnd.fyiMessage('Διαγραφή παρουσιολογίου <b>' + kodikos +
+		'</b> σε εξέλιξη…');
+	$.post({
+		'url': 'diagrafi.php',
+		'data': {
+			"kodikos": kodikos,
+		},
+		'success': (rsp) => imerisio.diagrafiProcess(rsp, kodikos, dom),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα διαγραφής');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.diagrafiProcess = (msg, kodikos, dom) => {
+	if (msg) {
+		pnd.fyiError(msg);
+		console.error(msg);
+		return imerisio;
+	}
+
+	dom.remove();
+	pnd.zebraFix(imerisio.browserDOM);
+	imerisio.clearCandi().candiTabsHide();
+
+	pnd.fyiMessage('Το παρουσιολόγιο <b>' + kodikos +
+	'</b> διεγράφη επιτυχώς');
 
 	return imerisio;
 };
@@ -386,6 +553,7 @@ imerisio.imerisioProcess = (x) => {
 	}
 
 	let ilist = x.imerisio;
+console.log(ilist);
 
 	pnd.arrayWalk(ilist, function(v, k) {
 		ilist[k] = new Imerisio(v);

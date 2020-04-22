@@ -38,12 +38,8 @@ header_json()::
 session_init()::
 database();
 
-$response = array();
-
-if (letrak::oxi_xristis()) {
-	$response["error"] = "Διαπιστώθηκε ανώνυμη χρήση";
-	exit(0);
-}
+if (letrak::oxi_xristis())
+lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -51,10 +47,8 @@ $query = "SELECT `timi` FROM `kartel`.`parametros` WHERE `kodikos` = " .
 	pandora::sql_string("erpota12");
 $row = pandora::first_row($query);
 
-if (!$row) {
-	$response["error"] = "Ακαθόριστη έκδοση database προσωπικού";
-	exit(0);
-}
+if (!$row)
+lathos("Ακαθόριστη έκδοση database προσωπικού");
 
 switch ($row["timi"]) {
 case 1:
@@ -62,8 +56,7 @@ case 2:
 	$erpota12 = "erpota" . $row["timi"];
 	break;
 default:
-	$response["error"] = "Μη αποδεκτή έκδοση database προσωπικού";
-	exit(0);
+	lathos("Μη αποδεκτή έκδοση database προσωπικού");
 }
 
 print '{';
