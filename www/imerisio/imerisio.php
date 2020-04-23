@@ -63,7 +63,11 @@ if ($x) {
 	$enotiko = " AND ";
 }
 
-$query .= " ORDER BY `imerominia`, `ipiresia`, `kodikos` LIMIT 50";
+$query .= " ORDER BY " .
+"`imerominia` DESC, " .
+"`ipiresia`, " .
+"`kodikos` DESC " .
+"LIMIT 50";
 
 print '"imerisioQuery":' . pandora::json_string($query) . ",";
 print '"imerisio":[';

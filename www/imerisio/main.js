@@ -84,6 +84,8 @@ imerisio.selidaSetup = () => {
 	toolbarArxikiSetup();
 
 	imerisio.
+	browserSetup().
+	autoFind().
 	erpotaFetch();
 
 	return imerisio;
@@ -394,6 +396,7 @@ imerisio.klonosProcess = (x, protipo) => {
 	data('candi', true).
 	addClass('imerisioCandi'));
 
+	pnd.zebraFix(imerisio.browserDOM);
 	imerisio.candiTabsShow();
 	pnd.ofelimoDOM.scrollTop(0);
 
@@ -430,6 +433,11 @@ imerisio.diagrafiConfirm = (e) => {
 		'height': 'auto',
 		'width': '350px',
 		'modal': true,
+		'position': {
+			'my': 'left+50 top+50',
+			'at': 'left top',
+		},
+
 		'buttons': {
 			'Διαγραφή': function() {
 				imerisio.diagrafi(kodikos, dom);
@@ -515,10 +523,8 @@ imerisio.erpotaProcess = (rsp) => {
 	imerisio.ipalilosList = rsp.ipalilos;
 
 	imerisio.
-	browserSetup().
 	filtraSetup().
-	candiTabsSetup().
-	autoFind();
+	candiTabsSetup();
 
 	return imerisio;
 };
