@@ -85,8 +85,10 @@ imerisio.selidaSetup = () => {
 
 	imerisio.
 	browserSetup().
+	filtraSetup().
 	autoFind().
-	erpotaFetch();
+	erpotaFetch().
+	candiTabsSetup();
 
 	return imerisio;
 };
@@ -184,6 +186,7 @@ imerisio.filtraSetup = () => {
 };
 
 imerisio.filtraToggle = function(e) {
+	if (e)
 	e.stopPropagation();
 
 	if (imerisio.filtraDisabled())
@@ -339,18 +342,15 @@ imerisio.klonismos = (e) => {
 	first().
 	data('data');
 
-	if (!x) {
-		pnd.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
-		return imerisio;
-	}
+	if (!x)
+	return imerisio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
 
 	try {
 		var kodikos = x.kodikosGet();
 	}
 
 	catch (e) {
-		pnd.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
-		return imerisio;
+		return imerisio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
 	}
 
 	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos +
@@ -391,8 +391,8 @@ imerisio.klonosProcess = (x, protipo) => {
 	imerisio.clearCandi();
 
 	imerisio.browserDOM.
-	prepend((new Imerisio(x.imerisio)).
-	DOM().
+	prepend((new letrak.imerisio(x.imerisio)).
+	domGet().
 	data('candi', true).
 	addClass('imerisioCandi'));
 
@@ -410,10 +410,8 @@ imerisio.diagrafiConfirm = (e) => {
 
 	let dom = $('.imerisioCandi').first();
 
-	if (!dom.length) {
-		pnd.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
-		return imerisio;
-	}
+	if (!dom.length)
+	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
 
 	try {
 		var kodikos = dom.data('data').kodikosGet();
@@ -508,23 +506,15 @@ imerisio.erpotaFetch = () => {
 };
 
 imerisio.erpotaProcess = (rsp) => {
-	if (!rsp.hasOwnProperty('error')) {
-		pnd.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
-		return imerisio;
-	}
+	if (!rsp.hasOwnProperty('error'))
+	return imerisio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
 
-	if (rsp.error) {
-		pnd.fyiError(rsp.error);
-		return imerisio;
-	}
+	if (rsp.error)
+	return imerisio.fyiError(rsp.error);
 
 	pnd.fyiClear();
 	imerisio.ipiresiaList = rsp.ipiresia;
 	imerisio.ipalilosList = rsp.ipalilos;
-
-	imerisio.
-	filtraSetup().
-	candiTabsSetup();
 
 	return imerisio;
 };
@@ -532,11 +522,16 @@ imerisio.erpotaProcess = (rsp) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.autoFind = () => {
+	let ipiresia = letrak.xristisIpiresiaGet();
+
+	if (!ipiresia)
+	return imerisio.filtraToggle();
+
 	pnd.fyiMessage('Επιλογή παρουσιολογίων…');
 	$.post({
 		'url': 'imerisio.php',
 		'data': {
-			'ipiresia': letrak.xristisIpiresiaGet(),
+			'ipiresia': ipiresia,
 		},
 		'dataType': 'json',
 		'success': (rsp) => imerisio.imerisioProcess(rsp),
@@ -553,93 +548,28 @@ imerisio.imerisioProcess = (x) => {
 	pnd.fyiClear();
 	imerisio.browserDOM.empty();
 
-	if (x.error) {
-		pnd.fyiError(x.error);
-		return imerisio;
-	}
+	if (x.error)
+	return imerisio.fyiError(x.error);
 
-	let ilist = x.imerisio;
-console.log(ilist);
-
-	pnd.arrayWalk(ilist, function(v, k) {
-		ilist[k] = new Imerisio(v);
-		imerisio.browserDOM.
-		append(ilist[k].DOM());
+	pnd.arrayWalk(x.imerisio, function(v) {
+		(new letrak.imerisio(v)).
+		domGet().
+		appendTo(imerisio.browserDOM);
 	});
 
 	pnd.zebraFix(imerisio.browserDOM);
 
-console.log(ilist);
 	return imerisio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-function Imerisio(x) {
-	let that = this;
-
-	pnd.objectWalk(x, (v, k) => {
-		that[k] = v;
-	});
-
-	if (this.hasOwnProperty('d'))
-	this.d = new Date(this.d);
-
-	if (this.hasOwnProperty('c') && this.c)
-	this.c = new Date(this.c);
+imerisio.fyiMessage = (s) => {
+	pnd.fyiMessage(s);
+	return imerisio;
 };
 
-Imerisio.prototype.kodikosGet = function() {
-	return this.k;
-};
-
-Imerisio.prototype.imerominiaGet = function() {
-	return this.d;
-};
-
-Imerisio.prototype.ipiresiaGet = function() {
-	return this.i;
-};
-
-Imerisio.prototype.tiposGet = function() {
-	return this.t;
-};
-
-Imerisio.prototype.perigrafiGet = function() {
-	return this.p;
-};
-
-Imerisio.prototype.closedGet = function() {
-	return this.c;
-};
-
-Imerisio.prototype.DOM = function() {
-	let kodikos = this.kodikosGet();
-
-	let dom = $('<div>').
-	addClass('imerisio').
-	data('data', this).
-
-	append($('<div>').
-	addClass('imerisioKodikos').
-	attr('title', 'Κωδικός παρουσιολογίου').
-	text(kodikos)).
-
-	append($('<div>').
-	addClass('imerisioImerominia').
-	text(pnd.date(this.imerominiaGet(), '%D-%M-%Y'))).
-
-	append($('<div>').
-	addClass('imerisioIpiresia').
-	text(this.ipiresiaGet())).
-
-	append($('<div>').
-	addClass('imerisioTipos').
-	text(this.tiposGet())).
-
-	append($('<div>').
-	addClass('imerisioPerigrafi').
-	text(this.perigrafiGet()));
-
-	return dom;
+imerisio.fyiError = (s) => {
+	pnd.fyiError(s);
+	return imerisio;
 };

@@ -42,10 +42,10 @@ define("LETRAK_SESSION_IPALILOS", "letrak_session_ipalilos");
 class letrak extends letrakCore {
 	public static $imerisioPrjcols =
 		"`kodikos` AS `k`," .
-		"`imerominia` AS `d`," .
-		"`ipiresia` AS `i`," .
-		"`prosapo` AS `t`," .
-		"`perigrafi` AS `p`," .
+		"`imerominia` AS `i`," .
+		"`ipiresia` AS `r`," .
+		"`prosapo` AS `o`," .
+		"`perigrafi` AS `e`," .
 		"`closed` AS `c`";
 	private static $init_ok = FALSE;
 

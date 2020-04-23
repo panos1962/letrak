@@ -65,9 +65,9 @@ if ($x) {
 
 $query .= " ORDER BY " .
 "`imerominia` DESC, " .
-"`ipiresia`, " .
+"`ipiresia` DESC, " .
 "`kodikos` DESC " .
-"LIMIT 50";
+"LIMIT 20";
 
 print '"imerisioQuery":' . pandora::json_string($query) . ",";
 print '"imerisio":[';
