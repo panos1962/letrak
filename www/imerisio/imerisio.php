@@ -39,6 +39,17 @@ database();
 $query = "SELECT " . letrak::$imerisioPrjcols . " FROM `letrak`.`imerisio`";
 $enotiko = " WHERE";
 
+///////////////////////////////////////////////////////////////////////////////@
+
+$x = pandora::parameter_get("kodikos");
+
+if ($x) {
+	$query .= $enotiko . " (`kodikos` < " . $x . ")";
+	$enotiko = " AND";
+}
+
+///////////////////////////////////////////////////////////////////////////////@
+
 $x = pandora::parameter_get("imerominia");
 
 if ($x) {
@@ -54,32 +65,28 @@ if ($x) {
 
 	$query .= $enotiko . " (`imerominia` <= " .
 		pandora::sql_string($d) . ")";
-	$enotiko = " AND ";
+	$enotiko = " AND";
 }
+
+///////////////////////////////////////////////////////////////////////////////@
 
 $x = pandora::parameter_get("ipiresia");
 
 if ($x) {
 	$query .= $enotiko . " (`ipiresia` LIKE " .
 	pandora::sql_string($x . '%') . ")";
-	$enotiko = " AND ";
+	$enotiko = " AND";
 }
 
-$x = pandora::parameter_get("kodikos");
+///////////////////////////////////////////////////////////////////////////////@
 
-if ($x) {
-	$query .= $enotiko . " (`kodikos` < " . $x . ")";
-	$enotiko = " AND ";
-}
+$query .= " ORDER BY `imerominia` DESC, `ipiresia` ASC, `kodikos` DESC" .
+	" LIMIT 12";
 
-$query .= " ORDER BY " .
-"`imerominia` DESC, " .
-"`ipiresia` ASC, " .
-"`kodikos` DESC " .
-"LIMIT 12";
+///////////////////////////////////////////////////////////////////////////////@
 
-print "{";
-print '"imerisioQuery":' . pandora::json_string($query) . ",";
+print '{';
+print '"imerisioQuery":' . pandora::json_string($query) . ',';
 print '"imerisio":[';
 
 $result = pandora::query($query);
@@ -91,11 +98,10 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 }
 
 print '],';
-
-///////////////////////////////////////////////////////////////////////////////@
-
 print '"error":""}';
 exit(0);
+
+///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($s) {
 	print $s;
