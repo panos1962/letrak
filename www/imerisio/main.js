@@ -54,10 +54,12 @@ imerisio.minima = {
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
-	'klonosTabLabel': 'Κλώνος',
-	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
 	'diagrafiTabLabel': 'Διαγραφή',
 	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
+	'klonosTabLabel': 'Κλώνος',
+	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
+	'prosopaTabLabel': 'Επεξεργασία',
+	'prosopaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 };
 
@@ -323,15 +325,21 @@ imerisio.candiTabsSetup = () => {
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
+	attr('title', imerisio.minima.diagrafiTitle).
+	text(imerisio.minima.diagrafiTabLabel).
+	on('click', (e) => imerisio.diagrafiConfirm(e))).
+
+	append(letrak.tabDOM().
+	addClass('candiTab').
 	attr('title', imerisio.minima.klonosTitle).
 	text(imerisio.minima.klonosTabLabel).
 	on('click', (e) => imerisio.klonismos(e))).
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	attr('title', imerisio.minima.diagrafiTitle).
-	text(imerisio.minima.diagrafiTabLabel).
-	on('click', (e) => imerisio.diagrafiConfirm(e)));
+	attr('title', imerisio.minima.prosopaTitle).
+	text(imerisio.minima.prosopaTabLabel).
+	on('click', (e) => imerisio.prosopa(e)));
 
 	return imerisio;
 };
@@ -411,76 +419,6 @@ imerisio.paleotera = (e) => {
 		'onEmpty': () => pnd.fyiMessage
 			('Δεν βρέθηκαν παλαιότερα παρουσιολόγια'),
 	});
-	return imerisio;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-imerisio.klonismos = (e) => {
-	e.stopPropagation();
-
-	let x = $('.imerisioCandi').
-	first().
-	data('data');
-
-	if (!x)
-	return imerisio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
-
-	try {
-		var kodikos = x.kodikosGet();
-	}
-
-	catch (e) {
-		return imerisio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
-	}
-
-	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos +
-		'</b> σε εξέλιξη…');
-	$.post({
-		'url': 'klonismos.php',
-		'data': {
-			"kodikos": kodikos,
-		},
-		'dataType': 'json',
-		'success': (rsp) => imerisio.klonosProcess(rsp, kodikos),
-		'error': (e) => {
-			pnd.fyiError('Σφάλμα κλωνισμού');
-			console.error(e);
-		},
-	});
-
-	return imerisio;
-};
-
-imerisio.klonosProcess = (x, protipo) => {
-	if (x.error) {
-		pnd.fyiError(x.error);
-		console.error(x.error);
-		return imerisio;
-	}
-
-	if (!x.hasOwnProperty('imerisio')) {
-		pnd.fyiError('Δεν επστράφησαν στοιχεία αντιγράφου');
-		console.error(x);
-		return imerisio;
-	}
-
-	pnd.fyiMessage('Δημιουργήθηκε παρουσιολόγιο <b>' +
-	x.imerisio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
-	protipo + '</b>');
-
-	imerisio.clearCandi();
-
-	imerisio.browserDOM.
-	prepend((new letrak.imerisio(x.imerisio)).
-	domGet().
-	data('candi', true).
-	addClass('imerisioCandi'));
-
-	pnd.zebraFix(imerisio.browserDOM);
-	imerisio.candiTabsShow();
-	pnd.ofelimoDOM.scrollTop(0);
-
 	return imerisio;
 };
 
@@ -566,6 +504,106 @@ imerisio.diagrafiProcess = (msg, kodikos, dom) => {
 	pnd.fyiMessage('Το παρουσιολόγιο <b>' + kodikos +
 	'</b> διεγράφη επιτυχώς');
 
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.klonismos = (e) => {
+	e.stopPropagation();
+
+	let x = $('.imerisioCandi').
+	first().
+	data('data');
+
+	if (!x)
+	return imerisio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
+
+	try {
+		var kodikos = x.kodikosGet();
+	}
+
+	catch (e) {
+		return imerisio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
+	}
+
+	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos +
+		'</b> σε εξέλιξη…');
+	$.post({
+		'url': 'klonismos.php',
+		'data': {
+			"kodikos": kodikos,
+		},
+		'dataType': 'json',
+		'success': (rsp) => imerisio.klonosProcess(rsp, kodikos),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα κλωνισμού');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.klonosProcess = (x, protipo) => {
+	if (x.error) {
+		pnd.fyiError(x.error);
+		console.error(x.error);
+		return imerisio;
+	}
+
+	if (!x.hasOwnProperty('imerisio')) {
+		pnd.fyiError('Δεν επστράφησαν στοιχεία αντιγράφου');
+		console.error(x);
+		return imerisio;
+	}
+
+	pnd.fyiMessage('Δημιουργήθηκε παρουσιολόγιο <b>' +
+	x.imerisio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
+	protipo + '</b>');
+
+	imerisio.clearCandi();
+
+	imerisio.browserDOM.
+	prepend((new letrak.imerisio(x.imerisio)).
+	domGet().
+	data('candi', true).
+	addClass('imerisioCandi'));
+
+	pnd.zebraFix(imerisio.browserDOM);
+	imerisio.candiTabsShow();
+	pnd.ofelimoDOM.scrollTop(0);
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.prosopa = (e) => {
+	e.stopPropagation();
+
+	let x = $('.imerisioCandi').
+	first().
+	data('data');
+
+	if (!x)
+	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
+
+	try {
+		var kodikos = x.kodikosGet();
+	}
+
+	catch (e) {
+		return imerisio.fyiError
+			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
+	}
+
+	imerisio.erpotaFetch(kodikos);
+	return imerisio;
+};
+
+imerisio.prosopaOpen = (kodikos) => {
+	window.open('../prosopa?imerisio=' + kodikos, '_blank');
 	return imerisio;
 };
 
@@ -677,12 +715,15 @@ imerisio.imerisioProcess = (x, opts) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.erpotaFetch = () => {
+imerisio.erpotaFetch = (kodikos) => {
+	if (imerisio.hasOwnProperty('ipiresiaList'))
+	return imerisio.prosopaOpen(kodikos);
+
 	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
 	$.post({
 		'url': 'erpotaFetch.php',
 		'dataType': 'json',
-		'success': (rsp) => imerisio.erpotaProcess(rsp),
+		'success': (rsp) => imerisio.erpotaProcess(rsp, kodikos),
 		'error': (e) => {
 			pnd.fyiError(imerisio.minima.erpotaFetchError);
 			console.error(e);
@@ -692,7 +733,7 @@ imerisio.erpotaFetch = () => {
 	return imerisio;
 };
 
-imerisio.erpotaProcess = (rsp) => {
+imerisio.erpotaProcess = (rsp, kodikos) => {
 	if (!rsp.hasOwnProperty('error'))
 	return imerisio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
 
@@ -703,6 +744,7 @@ imerisio.erpotaProcess = (rsp) => {
 	imerisio.ipiresiaList = rsp.ipiresia;
 	imerisio.ipalilosList = rsp.ipalilos;
 
+	imerisio.prosopaOpen(kodikos);
 	return imerisio;
 };
 
