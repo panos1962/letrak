@@ -81,7 +81,7 @@ imerisio.selidaSetup = () => {
 	return letrak.arxikiSelida(imerisio);
 
 	pnd.
-	keepAlive();
+	keepAlive('../mnt/pandora');
 
 	letrak.
 	toolbarArxikiSetup();
@@ -244,9 +244,6 @@ imerisio.filtraFormaIpovoli = (e) => {
 		'imerominia': imerisio.filtraImerominiaDOM.val(),
 	};
 
-	if (data.imerominia)
-	data.imerominia = pnd.date2date(data.imerominia, 'DMY', '%Y-%M-%D');
-
 	imerisio.imerisioEpilogi(data, {
 		'clean': true,
 		'onFound': () => imerisio.filtraDOM.dialog('close'),
@@ -361,13 +358,26 @@ imerisio.clearCandi = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Η function "paleotera" εντοπίζει τον μικρότερο κωδικό παρουσιολογίου από τα
+// ήδη επιλεγμένα παρουσιολόγια και αιτείται νέα «παρτίδα» παρουσιολογίων με
+// προγενέστερους κωδικούς τηρώντας και τα κριτήρια επιλογής που ενδεχομένως
+// έχουν καθοριστεί, εκτός του κριτηρίου της ημερομηνίας. Πράγματι, εφόσον
+// ζητάμε παλαιότερα παρουσιολόγια, έχουμε τον έλεγχο της ημερομηνίας μέσω
+// του κωδικού.
+
 imerisio.paleotera = (e) => {
 	e.stopPropagation();
+
+	// Αρχικά αιτούμεθα παρουσιολόγια με βάση τα κριτήρια που ενδεχομένως
+	// έχουν δοθεί στη φόρμα καταχώρησης κριτηρίων (φίλτρα).
 
 	let data = {
 		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
 		'imerominia': imerisio.filtraImerominiaDOM.val(),
 	};
+
+	// Διατρέχουμε τα ήδη επιλεγμένα παρουσιολόγια με σκοπό να εντοπίσουμε
+	// το παρουσιολόγιο με τον μικρότερο κωδικό.
 
 	$('.imerisio').each(function() {
 		let kodikos = $(this).data('data').kodikosGet();
@@ -381,14 +391,19 @@ imerisio.paleotera = (e) => {
 		data.kodikos = kodikos;
 	});
 
+	// Αν έχουμε εντοπίσει το παρουσιολόγιο με τον μικρότερο κωδικό
+	// θα πορευτούμε με αυτό το κριτήριο όσον αφορά την παλαιότητα,
+	// οπότε διαγράφουμε το κριτήριο επιλογής με βάση την ημερομηνία.
+
 	if (data.kodikos)
 	delete data.imerominia;
 
-	if (data.imerominia)
-	data.imerominia = pnd.date2date(data.imerominia, 'DMY', '%Y-%M-%D');
-
 	imerisio.imerisioEpilogi(data, {
-		'onFound': () => imerisio.filtraDOM.dialog('close'),
+		'onFound': () => {
+			imerisio.filtraDOM.dialog('close');
+			pnd.ofelimoDOM.
+			scrollTop(pnd.ofelimoDOM.prop('scrollHeight'));
+		},
 		'onEmpty': () => pnd.fyiMessage
 			('Δεν βρέθηκαν παλαιότερα παρουσιολόγια'),
 	});

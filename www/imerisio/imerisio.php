@@ -34,8 +34,6 @@ header_json()::
 session_init()::
 database();
 
-print "{";
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 $query = "SELECT " . letrak::$imerisioPrjcols . " FROM `letrak`.`imerisio`";
@@ -44,8 +42,18 @@ $enotiko = " WHERE";
 $x = pandora::parameter_get("imerominia");
 
 if ($x) {
+	$d = DateTime::createFromFormat("d-m-Y", $x);
+
+	if ($d === FALSE)
+	lathos_imerominia($x);
+
+	$d = $d->format("Y-m-d");
+
+	if ($d === FALSE)
+	lathos_imerominia($x);
+
 	$query .= $enotiko . " (`imerominia` <= " .
-		pandora::sql_string($x) . ")";
+		pandora::sql_string($d) . ")";
 	$enotiko = " AND ";
 }
 
@@ -70,6 +78,7 @@ $query .= " ORDER BY " .
 "`kodikos` DESC " .
 "LIMIT 12";
 
+print "{";
 print '"imerisioQuery":' . pandora::json_string($query) . ",";
 print '"imerisio":[';
 
@@ -87,4 +96,14 @@ print '],';
 
 print '"error":""}';
 exit(0);
+
+function lathos($s) {
+	print $s;
+	exit(0);
+}
+
+function lathos_imerominia($s) {
+	lathos($s . ": λανθασμένη ημερομηνία");
+}
+
 ?>
