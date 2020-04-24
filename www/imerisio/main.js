@@ -90,7 +90,6 @@ imerisio.selidaSetup = () => {
 	browserSetup().
 	filtraSetup().
 	autoFind().
-	erpotaFetch().
 	candiTabsSetup();
 
 	return imerisio;
@@ -567,37 +566,6 @@ imerisio.diagrafiProcess = (msg, kodikos, dom) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.erpotaFetch = () => {
-	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
-	$.post({
-		'url': 'erpotaFetch.php',
-		'dataType': 'json',
-		'success': (rsp) => imerisio.erpotaProcess(rsp),
-		'error': (e) => {
-			pnd.fyiError(imerisio.minima.erpotaFetchError);
-			console.error(e);
-		},
-	});
-
-	return imerisio;
-};
-
-imerisio.erpotaProcess = (rsp) => {
-	if (!rsp.hasOwnProperty('error'))
-	return imerisio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
-
-	if (rsp.error)
-	return imerisio.fyiError(rsp.error);
-
-	pnd.fyiClear();
-	imerisio.ipiresiaList = rsp.ipiresia;
-	imerisio.ipalilosList = rsp.ipalilos;
-
-	return imerisio;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
 // Η function "autoFind" καλείται κατά την είσοδο του χρήστη στη σελίδα και
 // σκοπό έχει την αυτόματη επιλογή και εμφάνιση των πρόσφατων παρουσιολογίων
 // που αφορούν τον χρήστη με βάση την υπηρεσία του χρήστη. Αν π.χ. ο χρήστης
@@ -698,6 +666,37 @@ imerisio.imerisioProcess = (x, opts) => {
 
 	else if (opts.onEmpty)
 	opts.onEmpty();
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.erpotaFetch = () => {
+	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
+	$.post({
+		'url': 'erpotaFetch.php',
+		'dataType': 'json',
+		'success': (rsp) => imerisio.erpotaProcess(rsp),
+		'error': (e) => {
+			pnd.fyiError(imerisio.minima.erpotaFetchError);
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.erpotaProcess = (rsp) => {
+	if (!rsp.hasOwnProperty('error'))
+	return imerisio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
+
+	if (rsp.error)
+	return imerisio.fyiError(rsp.error);
+
+	pnd.fyiClear();
+	imerisio.ipiresiaList = rsp.ipiresia;
+	imerisio.ipalilosList = rsp.ipalilos;
 
 	return imerisio;
 };
