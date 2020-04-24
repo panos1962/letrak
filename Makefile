@@ -33,6 +33,7 @@ all:
 	(cd www && make)
 	(cd www/isodos && make)
 	(cd www/imerisio && make)
+	(cd www/prosopa && make)
 
 test:
 	make all

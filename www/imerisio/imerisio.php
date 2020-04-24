@@ -38,6 +38,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-24
 // Created: 2020-04-21
 // @HISTORY END
 //
@@ -53,7 +54,8 @@ header_json()::
 session_init()::
 database();
 
-print '{';
+if (letrak::oxi_xristis())
+lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -116,6 +118,7 @@ $query .= " ORDER BY `imerominia` DESC, `ipiresia` ASC, `kodikos` DESC" .
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+print '{';
 print '"imerisioQuery":' . pandora::json_string($query) . ',';
 print '"imerisio":[';
 
@@ -134,7 +137,7 @@ exit(0);
 ///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($s) {
-	print '"error":' . pandora::json_string($s) . "}";
+	print '{"error":' . pandora::json_string($s) . "}";
 	exit(0);
 }
 

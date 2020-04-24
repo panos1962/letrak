@@ -26,6 +26,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-24
 // Updated: 2020-04-20
 // Updated: 2020-04-19
 // Updated: 2020-04-18
@@ -111,7 +112,7 @@ imerisio.filtraSetup = () => {
 	append(imerisio.minima.filtraTabLabel).
 	on('click', (e) => imerisio.filtraToggle(e))).
 
-	append(letrak.tabDOM().
+	append(imerisio.paleoteraTabDOM = letrak.tabDOM().
 	attr('title', imerisio.minima.paleoteraTitle).
 	append(imerisio.minima.paleoteraTabLabel).
 	on('click', (e) => imerisio.paleotera(e)));
@@ -321,6 +322,15 @@ imerisio.browserSetup = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.candiTabsSetup = () => {
+	letrak.arxikiTabDOM.
+	addClass('indacTab');
+
+	imerisio.filtraTabDOM.
+	addClass('indacTab');
+
+	imerisio.paleoteraTabDOM.
+	addClass('indacTab');
+
 	pnd.toolbarLeftDOM.
 
 	append(letrak.tabDOM().
@@ -349,6 +359,10 @@ imerisio.candiTabsShow = () => {
 	find('.candiTab').
 	addClass('candiTabVisible');
 
+	pnd.toolbarDOM.
+	find('.indacTab').
+	addClass('indacTabHidden');
+
 	return imerisio;
 };
 
@@ -356,6 +370,10 @@ imerisio.candiTabsHide = () => {
 	pnd.toolbarDOM.
 	find('.candiTab').
 	removeClass('candiTabVisible');
+
+	pnd.toolbarDOM.
+	find('.indacTab').
+	removeClass('indacTabHidden');
 
 	return imerisio;
 };
