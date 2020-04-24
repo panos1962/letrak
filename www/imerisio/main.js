@@ -52,6 +52,9 @@ imerisio.minima = {
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'filtraImerominiaLabel': 'Ημερομηνία',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
+	'paleoteraTabLabel': 'Παλαιότερα',
+	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
+	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 };
 
@@ -97,11 +100,17 @@ imerisio.selidaSetup = () => {
 
 imerisio.filtraSetup = () => {
 	pnd.toolbarLeftDOM.
+
 	append(imerisio.filtraTabDOM = letrak.tabDOM().
 	attr('title', imerisio.minima.filtraShowTitle).
 	data('status', 'hidden').
 	append(imerisio.minima.filtraTabLabel).
-	on('click', (e) => imerisio.filtraToggle(e)));
+	on('click', (e) => imerisio.filtraToggle(e))).
+
+	append(letrak.tabDOM().
+	attr('title', imerisio.minima.paleoteraTitle).
+	append(imerisio.minima.paleoteraTabLabel).
+	on('click', (e) => imerisio.paleotera(e)));
 
 	pnd.bodyDOM.
 	append(imerisio.filtraDOM = $('<div>').
@@ -226,7 +235,6 @@ imerisio.filtraDisabled = function() {
 
 // Η function "filtraFormaIpovoli" καλείται με το πάτημα του φερώνυμου
 // πλήκτρου στη φόρμα καταχώρησης κριτηρίων επιλογής παρουσιολογίων.
-// Τα κριτήρια επιλογής αφορούν στην ημερομηνία και στην υπηρεσία.
 
 imerisio.filtraFormaIpovoli = (e) => {
 	e.stopPropagation();
@@ -241,6 +249,8 @@ imerisio.filtraFormaIpovoli = (e) => {
 
 	imerisio.imerisioEpilogi(data, {
 		'clean': true,
+		'onFound': () => imerisio.filtraDOM.dialog('close'),
+		'onEmpty': () => pnd.fyiMessage('Δεν βρέθηκαν παρουσιολόγια'),
 	});
 
 	return false;
@@ -346,6 +356,42 @@ imerisio.clearCandi = () => {
 	removeData('candi').
 	removeClass('imerisioCandi');
 
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.paleotera = (e) => {
+	e.stopPropagation();
+
+	let data = {
+		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
+		'imerominia': imerisio.filtraImerominiaDOM.val(),
+	};
+
+	$('.imerisio').each(function() {
+		let kodikos = $(this).data('data').kodikosGet();
+
+		if (!kodikos)
+		return;
+
+		if (data.hasOwnProperty('kodikos') && (data.kodikos < kodikos))
+		return;
+
+		data.kodikos = kodikos;
+	});
+
+	if (data.kodikos)
+	delete data.imerominia;
+
+	if (data.imerominia)
+	data.imerominia = pnd.date2date(data.imerominia, 'DMY', '%Y-%M-%D');
+
+	imerisio.imerisioEpilogi(data, {
+		'onFound': () => imerisio.filtraDOM.dialog('close'),
+		'onEmpty': () => pnd.fyiMessage
+			('Δεν βρέθηκαν παλαιότερα παρουσιολόγια'),
+	});
 	return imerisio;
 };
 
@@ -619,13 +665,24 @@ imerisio.imerisioProcess = (x, opts) => {
 	if (opts.clean)
 	imerisio.browserDOM.empty();
 
+	let count = 0;
+
 	pnd.arrayWalk(x.imerisio, function(v) {
+		count++;
 		(new letrak.imerisio(v)).
 		domGet().
 		appendTo(imerisio.browserDOM);
 	});
 
-	pnd.zebraFix(imerisio.browserDOM);
+	if (count) {
+		pnd.zebraFix(imerisio.browserDOM);
+
+		if (opts.onFound)
+		opts.onFound();
+	}
+
+	else if (opts.onEmpty)
+	opts.onEmpty();
 
 	return imerisio;
 };
