@@ -54,7 +54,10 @@ imerisio.minima = {
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
-	'filtraShowTitle': 'Εμφάνιση φίλτρων',
+	'klonosTabLabel': 'Κλώνος',
+	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
+	'diagrafiTabLabel': 'Διαγραφή',
+	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 };
 
@@ -320,12 +323,14 @@ imerisio.candiTabsSetup = () => {
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	text('Κλώνος').
+	attr('title', imerisio.minima.klonosTitle).
+	text(imerisio.minima.klonosTabLabel).
 	on('click', (e) => imerisio.klonismos(e))).
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	text('Διαγραφή').
+	attr('title', imerisio.minima.diagrafiTitle).
+	text(imerisio.minima.diagrafiTabLabel).
 	on('click', (e) => imerisio.diagrafiConfirm(e)));
 
 	return imerisio;
