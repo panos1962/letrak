@@ -224,9 +224,25 @@ imerisio.filtraDisabled = function() {
 	return !imerisio.filtraEnabled();
 };
 
-// XXX
+// Η function "filtraFormaIpovoli" καλείται με το πάτημα του φερώνυμου
+// πλήκτρου στη φόρμα καταχώρησης κριτηρίων επιλογής παρουσιολογίων.
+// Τα κριτήρια επιλογής αφορούν στην ημερομηνία και στην υπηρεσία.
+
 imerisio.filtraFormaIpovoli = (e) => {
 	e.stopPropagation();
+
+	let data = {
+		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
+		'imerominia': imerisio.filtraImerominiaDOM.val(),
+	};
+
+	if (data.imerominia)
+	data.imerominia = pnd.date2date(data.imerominia, 'DMY', '%Y-%M-%D');
+
+	imerisio.imerisioEpilogi(data, {
+		'clean': true,
+	});
+
 	return false;
 };
 
@@ -298,7 +314,7 @@ imerisio.candiTabsSetup = () => {
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	text('Κλωνισμός').
+	text('Κλώνος').
 	on('click', (e) => imerisio.klonismos(e))).
 
 	append(letrak.tabDOM().
@@ -521,20 +537,67 @@ imerisio.erpotaProcess = (rsp) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Η function "autoFind" καλείται κατά την είσοδο του χρήστη στη σελίδα και
+// σκοπό έχει την αυτόματη επιλογή και εμφάνιση των πρόσφατων παρουσιολογίων
+// που αφορούν τον χρήστη με βάση την υπηρεσία του χρήστη. Αν π.χ. ο χρήστης
+// έχει υπηρεσία την "Β090003", τότε θα επιλεγούν τα πρόσφατα παρουσιολόγια
+// του Τμήματος Μηχανογραφικής Υποστήριξης. Αν ο χρήστης έχει υπηρεσία την
+// "Β09", τότε θα επιλεγούν αυτόματα τα πρόσφατα παρουσιολόγια της ΔΕΠΣΤΠΕ.
+// Αν το πεδίο της υπηρεσίας είναι null, τότε σημαίνει ότι ο χρήστης έχει
+// πρόσβαση μόνο στα προσωπικά του στοιχεία, οπότε σ' αυτήν την περίπτωση
+// επιλέγονται τα παρουσιολόγια που τον αφορούν ως συμμετέχοντα σε αυτά.
+// Τέλος, αν η υπηρεσία είναι κενή σημαίνει ότι ο χρήστης έχει πρόσβαση σε
+// όλες τις υπηρεσίες· σ' αυτήν την περίπτωση δεν επιλέγονται αυτοματα
+// παρουσιολόγια, αλλά εμφανίζεται η φόρμα καταχώρησης κριτηρίων επιλογής.
+
 imerisio.autoFind = () => {
+	let data = {};
 	let ipiresia = letrak.xristisIpiresiaGet();
 
-	if (!ipiresia)
-	return imerisio.filtraToggle();
+	// Η περίπτωση null κωδικού υπηρεσίας θεωρείται ταυτόσημη με την
+	// περίπτωση της ακαθόριστης (undefined) υπηρεσίας 
+
+	if (ipiresia === null)
+	ipiresia = undefined;
+
+	// Αν δεν έχει καθορστεί υπηρεσία, τότε ο χρήστης έχει πρόσβαση
+	// μόνο σε παρουσιολόγια που τον αφορούν ως συμμετέχοντα σε αυτά.
+
+	if (ipiresia === undefined)
+	data.ipalilos = letrak.xristis.kodikos;
+
+	// Αν η υπηρεσία είναι καθορισμένη, τότε η τιμή είναι «μάσκα»
+	// επιλογής, π.χ. "Β09" έχει πρόσβαση σε όποια υπηρεσία εκκινεί
+	// με "Β09" όπως "Β09", "Β090001", "Β0090002" κοκ. Αν η υπηρεσία
+	// είναι "Β" έχει πρόσβαση στις "Β010001", "Β020003" κοκ, δηλαδή
+	// σε όποια υπηρεσία της οποίας ο κωδικός εκκινεί με το γράμμα "Β".
+
+	else if (ipiresia)
+	imerisio.imerisioEpilogi({
+		'ipiresia': ipiresia,
+	});
+
+	// Με αυτή τη λογική, η καθορισμένη αλλά κενή υπηρεσία σημαίνει ότι
+	// ο χρήστης έχει πρόσβαση σε όλες τις υπηρεσίες. Στην περίπτωση αυτή
+	// δεν επιλέγουμε αυτόματα παρουσιολόγια, αλλά εμφανίζουμε τη φόρμα
+	// καταχώρησης κριτηρίων επιλογής.
+
+	else
+	imerisio.filtraToggle();
+
+	return imerisio;
+};
+
+imerisio.imerisioEpilogi = (data, opts) => {
+	if (!opts)
+	opts = {};
 
 	pnd.fyiMessage('Επιλογή παρουσιολογίων…');
 	$.post({
 		'url': 'imerisio.php',
-		'data': {
-			'ipiresia': ipiresia,
-		},
+		'data': data,
 		'dataType': 'json',
-		'success': (rsp) => imerisio.imerisioProcess(rsp),
+		'success': (rsp) => imerisio.imerisioProcess(rsp, opts),
 		'error': (e) => {
 			pnd.fyiError('Αδυναμία επιλογής παρουσιολογίων');
 			console.error(e);
@@ -544,12 +607,17 @@ imerisio.autoFind = () => {
 	return imerisio;
 };
 
-imerisio.imerisioProcess = (x) => {
-	pnd.fyiClear();
-	imerisio.browserDOM.empty();
+imerisio.imerisioProcess = (x, opts) => {
+	if (!opts)
+	opts = {};
 
 	if (x.error)
 	return imerisio.fyiError(x.error);
+
+	pnd.fyiClear();
+
+	if (opts.clean)
+	imerisio.browserDOM.empty();
 
 	pnd.arrayWalk(x.imerisio, function(v) {
 		(new letrak.imerisio(v)).

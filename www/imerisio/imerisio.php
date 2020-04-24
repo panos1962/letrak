@@ -44,7 +44,8 @@ $enotiko = " WHERE";
 $x = pandora::parameter_get("imerominia");
 
 if ($x) {
-	$query .= $enotiko . " (`imerominia` <= '2020-04-25')";
+	$query .= $enotiko . " (`imerominia` <= " .
+		pandora::sql_string($x) . ")";
 	$enotiko = " AND ";
 }
 
