@@ -33,12 +33,23 @@ require('../mnt/pandora/lib/pandora.js');
 require('../mnt/pandora/lib/pandoraJQueryUI.js')(pnd);
 const letrak =
 require('../lib/letrak.js');
+
+// Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
+// θέτω το "imr" να δείχνει σε globas που έχουν οριστεί στην εν λόγω σελίδα
+// προκειμένου να μπορούμε να επιτελέσουμε διάφορες ενέργειες και σε αυτή τη
+// σελίδα.
+
+const imr = (self.opener && self.opener.hasOwnProperty('LETRAK') &&
+	self.opener.LETRAK.imerisio) ? self.opener.LETRAK : undefined;
+
 const prosopa = {};
 
 prosopa.minima = {
+	'imerisioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 };
 
 pnd.domInit(() => {
+	prosopa.opener
 	pnd.
 	toolbarSetup().
 	fyiSetup().
@@ -53,20 +64,81 @@ pnd.domInit(() => {
 
 prosopa.selidaSetup = () => {
 	letrak.
-	toolbarTitlosSetup().
+	toolbarTitlosSetup('<b>Επεξεργασία Παρουσιολογίου</b>').
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
+	let x = php.requestGet('imerisio');
+
+	if (!x) {
+		pnd.fyiError(prosopa.minima.imerisioAkathoristo);
+		return prosopa;
+	}
+
+	letrak.
+	toolbarTitlosSet('Παρουσιολόγιο <b>' + x + '</b>');
+
 	if (letrak.noXristis())
-	return letrak.arxikiSelida(imerisio);
+	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
 	pnd.
 	keepAlive('../mnt/pandora');
 
 	pnd.ofelimoDOM.
-	append(php.requestGet('imerisio'));
+	append(x);
+
+	prosopa.
+	imerisioSetup(x);
+
+	return prosopa;
+};
+
+prosopa.imerisioSetup = (kodikos) => {
+	let imerisio;
+
+	if (imr && imr.hasOwnProperty('imerisioROW') &&
+	(imr.imerisioROW.kodikosGet() != kodikos))
+	return prosopa.fyiError('Προβληματικό παρουσιολόγιο');
+
+	$.post({
+		'url': 'imerisio.php',
+		'dataType': 'json',
+		'data': {
+			'imerisio': kodikos,
+		},
+		'success': (rsp) => {
+			if (rsp.error)
+			return pnd.fyiError(rsp.error);
+
+			prosopa.imerisioCheck(kodikos, rsp.imerisio);
+		},
+		'error': (err) => {
+			pnd.fyiError('Αδυναμία λήψης στοιχείων παρουσιολογίου');
+			console.error(err);
+		},
+	});
+
+console.log(imr.imerisioROW);
+imr.imerisioDOM.css('background-color', 'red');
+
+	return prosopa;
+};
+
+prosopa.imerisioCheck = (kodikos, imerisio) => {
+	imerisio = new letrak.imerisio(imerisio);
+	console.log(kodikos, imerisio);
 
 	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.fyiMessage = (s) => {
+	pnd.fyiMessage(s);
+	return prosopa;
+};
+
+prosopa.fyiError = (s) => {
+	pnd.fyiError(s);
+	return prosopa;
+};

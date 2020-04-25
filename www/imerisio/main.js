@@ -47,6 +47,10 @@ const letrak =
 require('../lib/letrak.js');
 const imerisio = {};
 
+self.LETRAK.pnd = pnd;
+self.LETRAK.letrak = letrak;
+self.LETRAK.imerisio = imerisio;
+
 imerisio.minima = {
 	'filtraTabLabel': 'Φίλτρα',
 	'filtraHideTitle': 'Απόκρυψη φίλτρων',
@@ -600,9 +604,12 @@ imerisio.klonosProcess = (x, protipo) => {
 imerisio.prosopa = (e) => {
 	e.stopPropagation();
 
-	let x = $('.imerisioCandi').
-	first().
-	data('data');
+	let dom = $('.imerisioCandi').first();
+
+	if (dom.length !== 1)
+	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
+
+	let x = dom.data('data');
 
 	if (!x)
 	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
@@ -616,11 +623,15 @@ imerisio.prosopa = (e) => {
 			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
 	}
 
+	self.LETRAK.imerisioROW = x;
+	self.LETRAK.imerisioDOM = dom;
 	imerisio.erpotaFetch(kodikos);
+
 	return imerisio;
 };
 
 imerisio.prosopaOpen = (kodikos) => {
+	self.LETRAK.imerisio
 	window.open('../prosopa?imerisio=' + kodikos, '_blank');
 	return imerisio;
 };
