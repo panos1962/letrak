@@ -26,6 +26,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-25
 // Updated: 2020-04-24
 // Updated: 2020-04-20
 // Updated: 2020-04-19
@@ -392,45 +393,23 @@ imerisio.clearCandi = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// Η function "paleotera" εντοπίζει τον μικρότερο κωδικό παρουσιολογίου από τα
-// ήδη επιλεγμένα παρουσιολόγια και αιτείται νέα «παρτίδα» παρουσιολογίων με
-// προγενέστερους κωδικούς τηρώντας και τα κριτήρια επιλογής που ενδεχομένως
-// έχουν καθοριστεί, εκτός του κριτηρίου της ημερομηνίας. Πράγματι, εφόσον
-// ζητάμε παλαιότερα παρουσιολόγια, έχουμε τον έλεγχο της ημερομηνίας μέσω
-// του κωδικού.
-
 imerisio.paleotera = (e) => {
 	e.stopPropagation();
 
-	// Αρχικά αιτούμεθα παρουσιολόγια με βάση τα κριτήρια που ενδεχομένως
-	// έχουν δοθεί στη φόρμα καταχώρησης κριτηρίων (φίλτρα).
+	// Αρχικά θέτουμε το κριτήριο ημερομηνίας με βάση την ημερομηνία
+	// από την τελευταία παρτίδα που έχουμε ήδη παραλάβει.
 
 	let data = {
 		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
-		'imerominia': imerisio.filtraImerominiaDOM.val(),
+		'imerominia': imerisio.imerominiaLast,
 	};
 
-	// Διατρέχουμε τα ήδη επιλεγμένα παρουσιολόγια με σκοπό να εντοπίσουμε
-	// το παρουσιολόγιο με τον μικρότερο κωδικό.
+	// Αν δεν έχουμε παραλάβει παρουσιολόγια μέχρι στιγμής, τότε
+	// θέτουμε το κριτήριο ημερομηνίας με βάση το σχετικό φίλτρο
+	// από τη φόρμα καταχώρησης κριτηρίων επιλογής.
 
-	$('.imerisio').each(function() {
-		let kodikos = $(this).data('data').kodikosGet();
-
-		if (!kodikos)
-		return;
-
-		if (data.hasOwnProperty('kodikos') && (data.kodikos < kodikos))
-		return;
-
-		data.kodikos = kodikos;
-	});
-
-	// Αν έχουμε εντοπίσει το παρουσιολόγιο με τον μικρότερο κωδικό
-	// θα πορευτούμε με αυτό το κριτήριο όσον αφορά την παλαιότητα,
-	// οπότε διαγράφουμε το κριτήριο επιλογής με βάση την ημερομηνία.
-
-	if (data.kodikos)
-	delete data.imerominia;
+	if (!data.imerominia)
+	data.imerominia = imerisio.filtraImerominiaDOM.val();
 
 	imerisio.imerisioEpilogi(data, {
 		'onFound': () => {
@@ -717,17 +696,27 @@ imerisio.imerisioProcess = (x, opts) => {
 
 	pnd.fyiClear();
 
-	if (opts.clean)
-	imerisio.browserDOM.empty();
+	if (opts.clean) {
+		imerisio.browserDOM.empty();
+		delete imerisio.imerominiaLast;
+	}
 
 	let count = 0;
+	let ilast = undefined;
 
 	pnd.arrayWalk(x.imerisio, function(v) {
 		count++;
 		(new letrak.imerisio(v)).
 		domGet().
 		appendTo(imerisio.browserDOM);
+		ilast = v.i;
 	});
+
+	if (ilast) {
+		ilast = new Date(ilast);
+		ilast.setDate(ilast.getDate() - 1);
+		imerisio.imerominiaLast = pnd.date(ilast, '%D-%M-%Y');
+	}
 
 	if (count) {
 		pnd.zebraFix(imerisio.browserDOM);

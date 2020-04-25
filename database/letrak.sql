@@ -238,9 +238,18 @@ COMMENT = 'Πίνακας υπογραφών παρουσιολογίου'
 CREATE TABLE `parousia` (
 	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
-	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
 	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
+	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
 	`meraora`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα προσέλευσης/αποχώρησης',
+	`excuse`	ENUM (
+		'ΕΚΤΟΣ ΕΔΡΑΣ',
+		'ΑΙΜΟΔΟΣΙΑ',
+		'ΕΟΡΤΗ',
+		'ΑΣΘΕΝΕΙΑ',
+		'ΠΕΝΘΟΣ',
+		'ΕΚΤΑΚΤΩΣ'
+	) NULL DEFAULT NULL COMMENT 'Αιτιολόγηση απουσίας',
+	`info`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Σχόλια',
 
 	UNIQUE INDEX (
 		`imerisio`,
@@ -249,20 +258,6 @@ CREATE TABLE `parousia` (
 )
 
 COMMENT = 'Πίνακας εγγραφών παρουσιολογίου'
-;
-
-CREATE TABLE `excuse` (
-	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
-	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
-	`logos`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Λόγος εξαίρεσης',
-
-	UNIQUE INDEX (
-		`imerisio`,
-		`ipalilos`
-	) USING BTREE
-)
-
-COMMENT = 'Πίνακας εξαιρέσεων καταγραφής ώρας προσέλευσης/αποχώρησης'
 ;
 
 COMMIT WORK
@@ -280,13 +275,6 @@ ALTER TABLE `ipografi` ADD FOREIGN KEY (
 ;
 
 ALTER TABLE `parousia` ADD FOREIGN KEY (
-	`imerisio`
-) REFERENCES `imerisio` (
-	`kodikos`
-) ON UPDATE CASCADE ON DELETE CASCADE
-;
-
-ALTER TABLE `excuse` ADD FOREIGN KEY (
 	`imerisio`
 ) REFERENCES `imerisio` (
 	`kodikos`
