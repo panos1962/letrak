@@ -67,24 +67,9 @@ $ipalilos = array(
 	"prosvasi" => $row["level"],
 );
 
-$query = "SELECT `timi` FROM `kartel`.`parametros` WHERE `kodikos` = " .
-	pandora::sql_string("erpota12");
-$row = pandora::first_row($query);
-
-if (!$row)
-lathos("Ακαθόριστη έκδοση βάσης δεδομένων 'erpota'");
-
-switch ($row["timi"]) {
-case 1:
-case 2:
-	break;
-default:
-	lathos("Μη αποδεκτή έκδοση βάσης δεδομένων 'erpota'");
-}
-
-$query = "SELECT `kodikos`, `eponimo`, `onoma`, `patronimo` " .
-	"FROM `erpota" . $row["timi"] . "`.`ipalilos` " .
-	"WHERE `kodikos` = " . $kodikos;
+$query = "SELECT `kodikos`, `eponimo`, `onoma`, `patronimo`" .
+	" FROM " . letrak::erpota12("ipalilos") .
+	" WHERE `kodikos` = " . $kodikos;
 $row = pandora::first_row($query);
 
 if ((!isset($row)) || ($row["kodikos"] != $kodikos))

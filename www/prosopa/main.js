@@ -101,7 +101,7 @@ prosopa.imerisioSetup = (kodikos) => {
 	return prosopa.fyiError('Προβληματικό παρουσιολόγιο');
 
 	$.post({
-		'url': 'imerisio.php',
+		'url': 'prosopa.php',
 		'dataType': 'json',
 		'data': {
 			'imerisio': kodikos,

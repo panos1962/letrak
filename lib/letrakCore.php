@@ -30,7 +30,39 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 class letrakCore {
+	public static $erpota_version = NULL;
+
 	public static function pathname($x) {
 		return LETRAK_BASEDIR . "/" . $x;
+	}
+
+	public static function erpota12($s) {
+		if (!isset(self::$erpota_version))
+		self::erpota_version_set();
+
+		if ($s)
+		return "`erpota" . self::$erpota_version . "`.`" . $s . "`";
+
+		return self::$erpota_version;
+	}
+
+	private static function erpota_version_set() {
+		$query = "SELECT `timi` FROM `kartel`.`parametros`" .
+			" WHERE `kodikos` = " .
+			pandora::sql_string("erpota12");
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!$row)
+		throw new Exception("undefined 'erpota' database version");
+
+
+		switch ($row[0]) {
+		case 1:
+		case 2:
+			self::$erpota_version = (int)($row[0]);
+			return self::$erpota_version;
+		}
+
+		throw new Exception("invalid 'erpota' database version");
 	}
 }
