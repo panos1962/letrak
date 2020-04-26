@@ -1,5 +1,4 @@
 <?php
-
 ///////////////////////////////////////////////////////////////////////////////@
 //
 // @BEGIN
@@ -22,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-26
 // Created: 2020-03-05
 // @HISTORY END
 //
@@ -30,15 +30,24 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 class letrakCore {
+	// Η property "erpota_version" παίρνει τιμές 1 ή 2 ανάλογα με την
+	// τρέχουσα version της database "erpota".
+
 	public static $erpota_version = NULL;
 
 	public static function pathname($x) {
 		return LETRAK_BASEDIR . "/" . $x;
 	}
 
+	// Η μέθοδος "erpota12" επιστρέφει την τρέχουσα version της database
+	// "erpota". Μπορούμε να περάσουμε το όνομα πίνακα οπότε επιστρέφεται
+	// το πλήρες όνομα του πίνακα (μαζί με την τρέχουσα database "erpota"),
+	// π.χ. αν περάσουμε "ipalilos" θα επιστραφεί "`erpota2`.`ipalilos`",
+	// εφόσον η τρέχουσα "erpota" database version είναι 2.
+
 	public static function erpota12($s) {
 		if (!isset(self::$erpota_version))
-		self::erpota_version_set();
+		self::erpota_version_get();
 
 		if ($s)
 		return "`erpota" . self::$erpota_version . "`.`" . $s . "`";
@@ -46,7 +55,7 @@ class letrakCore {
 		return self::$erpota_version;
 	}
 
-	private static function erpota_version_set() {
+	private static function erpota_version_get() {
 		$query = "SELECT `timi` FROM `kartel`.`parametros`" .
 			" WHERE `kodikos` = " .
 			pandora::sql_string("erpota12");

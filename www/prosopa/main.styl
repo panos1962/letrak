@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2020-04-26
 * Created: 2020-04-24
 * @HISTORY END
 *
@@ -28,3 +29,88 @@
 
 .pnd-ofelimo
 	padding 0px
+
+.imerisioArea
+	background-color #ffe290
+
+.imerisio
+	padding 4px
+	font-weight bold
+	color #252525
+	border-style solid none double none
+	border-width 2px 0px 3px 0px
+	border-color grey
+	> div
+		display inline-block
+
+.imerisioKodikos::after
+	content '.'
+	margin-right 2px
+
+.imerisioProsapo
+	margin 0px 16px
+	padding-left 4px
+	padding-right 4px
+	font-weight bold
+	border-style solid
+	border-width 1px
+	border-radius 4px
+
+.imerisioProsapoProselefsi
+	background-color yellow
+	color midnightblue
+
+.imerisioProsapoApoxorisi
+	background-color midnightblue
+	color yellow
+
+.parousia
+	padding 0px
+	white-space nowrap
+	font-family $fontSteno
+	color #232323
+	border-style none none solid none
+	border-width 0px 0px 2px 0px
+	border-color grey
+	vendor('user-select', none)
+	cursor pointer
+	> div
+		display inline-block
+		padding 2px 4px
+
+		border-style none solid none none
+		border-width 0px 1px 0px 0px
+		border-color grey
+		&::before
+			content '\200B'
+
+.parousiaOrdinal
+	width 3em
+	text-align right
+	color saddlebrown
+
+.parousiaIpalilos
+	width 3.5em
+	text-align right
+
+.parousiaOnomateponimo
+	width 16em
+	vertical-align bottom
+	overflow-x hidden
+	text-overflow ellipsis
+
+.parousiaKarta
+	width 3.5em
+	text-align right
+
+.parousiaOrario
+	width 5em
+
+.parousiaMeraora
+	width 7em
+
+.parousiaExcuse
+	width 6em
+
+.parousiaInfo
+	border-style none !important

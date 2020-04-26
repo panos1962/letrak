@@ -759,6 +759,7 @@ imerisio.imerisioProcess = (x, opts) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.erpotaFetch = (kodikos) => {
+return imerisio.prosopaOpen(kodikos);
 	if (imerisio.hasOwnProperty('ipiresiaList'))
 	return imerisio.prosopaOpen(kodikos);
 
@@ -789,6 +790,39 @@ imerisio.erpotaProcess = (rsp, kodikos) => {
 
 	imerisio.prosopaOpen(kodikos);
 	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+letrak.imerisio.prototype.domGet = function() {
+	let kodikos = this.kodikosGet();
+
+	let dom = $('<div>').
+	data('data', this).
+	addClass('imerisio').
+
+	append($('<div>').
+	addClass('imerisioKodikos').
+	attr('title', 'Κωδικός παρουσιολογίου').
+	text(kodikos)).
+
+	append($('<div>').
+	addClass('imerisioImerominia').
+	text(pnd.date(this.imerominiaGet(), '%D-%M-%Y'))).
+
+	append($('<div>').
+	addClass('imerisioIpiresia').
+	text(this.ipiresiaGet())).
+
+	append($('<div>').
+	addClass('imerisioTipos').
+	text(this.prosapoGet())).
+
+	append($('<div>').
+	addClass('imerisioPerigrafi').
+	text(this.perigrafiGet()));
+
+	return dom;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

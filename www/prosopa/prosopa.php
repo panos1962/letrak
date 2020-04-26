@@ -75,7 +75,7 @@ $ipl . ".`patronimo` AS `p`" .
 " WHERE " . $par . ".`imerisio` = " . $kodikos .
 " ORDER BY `eponimo`, `onoma`, `patronimo`, `ipalilos`";
 
-print '"parousia":[';
+print '"prosopa":[';
 $enotiko = "";
 $result = pandora::query($query);
 
