@@ -205,6 +205,7 @@ this.karta = 1234567;
 this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
+this.orario = new letrak.orario('830-1430');
 	let dom = $('<div>').
 	data('data', this).
 	addClass('parousia').
@@ -229,7 +230,7 @@ this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 	append($('<div>').
 	attr('title', 'Ωράριο υπαλλήλου').
 	addClass('parousiaOrario').
-	text(this.orarioGet())).
+	text(this.orarioGet().toString())).
 
 	append($('<div>').
 	addClass('parousiaMeraora').
