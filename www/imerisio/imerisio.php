@@ -28,9 +28,12 @@
 //		π.χ. η τιμή παραμέτρου είναι "Β01", τότε θα επιλεγούν
 //		παρουσιολόγια με κωδικό υπηρεσίας "B010001", "Β010002",
 //		"Β010003", "Β01" κλπ.
+// ipalilos	Κωδικός υπαλλήλου. Επιλέγονται μόνο παρουσιολόγια στα οποία
+//		συμμετέχει ο συγκεκριμένος υπάλληλος.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-26
 // Updated: 2020-04-25
 // Updated: 2020-04-24
 // Created: 2020-04-21
@@ -88,6 +91,16 @@ $x = pandora::parameter_get("ipiresia");
 if ($x) {
 	$query .= $enotiko . " (`ipiresia` LIKE " .
 		pandora::sql_string($x . '%') . ")";
+	$enotiko = " AND";
+}
+
+///////////////////////////////////////////////////////////////////////////////@
+
+$x = pandora::parameter_get("ipalilos");
+
+if ($x) {
+	$query .= $enotiko . " (`kodikos` IN (SELECT `imerisio`" .
+		" FROM `letrak`.`parousia` WHERE `ipalilos` = " . $x . "))";
 	$enotiko = " AND";
 }
 

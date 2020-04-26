@@ -56,6 +56,7 @@ imerisio.minima = {
 	'filtraTabLabel': 'Φίλτρα',
 	'filtraHideTitle': 'Απόκρυψη φίλτρων',
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
+	'filtraIpalilosLabel': 'Υπάλληλος',
 	'filtraImerominiaLabel': 'Ημερομηνία',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
@@ -147,6 +148,15 @@ imerisio.filtraSetup = () => {
 	datepicker())).
 
 	append($('<div>').
+	addClass('letrak-inputLine').
+	append(imerisio.filtraIpalilosDOM = $('<label>').
+	attr('for', 'ipalilosFiltro').
+	text(imerisio.minima.filtraIpalilosLabel)).
+	append(imerisio.filtraIpalilosDOM = $('<input>').
+	attr('id', 'ipalilosFiltro').
+	addClass('filtraInput'))).
+
+	append($('<div>').
 	addClass('letrak-formaPanel').
 
 	append($('<input>').
@@ -199,8 +209,18 @@ imerisio.filtraSetup = () => {
 		},
 	});
 
-	imerisio.filtraIpiresiaDOM.val(letrak.xristisIpiresiaGet());
+	let ipiresia = letrak.xristisIpiresiaGet();
+
+	if (ipiresia === undefined)
+	imerisio.filtraIpalilosDOM.
+	attr('disabled', true).
+	val(letrak.xristisIpalilosGet());
+
+	else
+	imerisio.filtraIpiresiaDOM.val(ipiresia);
+
 	imerisio.filtraImerominiaDOM.val(pnd.dateTime(undefined, '%D-%M-%Y'));
+
 	return imerisio;
 };
 
@@ -252,12 +272,12 @@ imerisio.filtraFormaIpovoli = (e) => {
 	let data = {
 		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
 		'imerominia': imerisio.filtraImerominiaDOM.val(),
+		'ipalilos': imerisio.filtraIpalilosDOM.val(),
 	};
 
 	imerisio.imerisioEpilogi(data, {
 		'clean': true,
 		'onFound': () => imerisio.filtraDOM.dialog('close'),
-		'onEmpty': () => pnd.fyiMessage('Δεν βρέθηκαν παρουσιολόγια'),
 	});
 
 	return false;
@@ -631,7 +651,6 @@ imerisio.prosopaOpen = (kodikos) => {
 // παρουσιολόγια, αλλά εμφανίζεται η φόρμα καταχώρησης κριτηρίων επιλογής.
 
 imerisio.autoFind = () => {
-	let data = {};
 	let ipiresia = letrak.xristisIpiresiaGet();
 
 	// Η περίπτωση null κωδικού υπηρεσίας θεωρείται ταυτόσημη με την
@@ -640,11 +659,13 @@ imerisio.autoFind = () => {
 	if (ipiresia === null)
 	ipiresia = undefined;
 
-	// Αν δεν έχει καθορστεί υπηρεσία, τότε ο χρήστης έχει πρόσβαση
+	// Αν δεν έχει καθοριστεί υπηρεσία, τότε ο χρήστης έχει πρόσβαση
 	// μόνο σε παρουσιολόγια που τον αφορούν ως συμμετέχοντα σε αυτά.
 
 	if (ipiresia === undefined)
-	data.ipalilos = letrak.xristis.kodikos;
+	imerisio.imerisioEpilogi({
+		'ipalilos': letrak.xristisIpalilosGet(),
+	});
 
 	// Αν η υπηρεσία είναι καθορισμένη, τότε η τιμή είναι «μάσκα»
 	// επιλογής, π.χ. "Β09" έχει πρόσβαση σε όποια υπηρεσία εκκινεί
@@ -671,6 +692,9 @@ imerisio.autoFind = () => {
 imerisio.imerisioEpilogi = (data, opts) => {
 	if (!opts)
 	opts = {};
+
+	if (!opts.hasOwnProperty('onEmpty'))
+	opts.onEmpty = () => pnd.fyiMessage('Δεν βρέθηκαν παρουσιολόγια');
 
 	pnd.fyiMessage('Επιλογή παρουσιολογίων…');
 	$.post({
