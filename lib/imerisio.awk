@@ -1,35 +1,35 @@
 #!/usr/bin/env awk -f
 
 ###############################################################################@
-##
-## @BEGIN
-##
-## @COPYRIGHT BEGIN
-## Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
-## @COPYRIGHT END
-##
-## @FILETYPE BEGIN
-## awk
-## @FILETYPE END
-##
-## @FILE BEGIN
-## lib/imerisio.awk —— Δημιουργία παρουσιολογίων με βάση τον κωδικό υπηρεσίας
-## @FILE END
-##
-## @DESCRIPTION BEGIN
-## Το παρόν πρόγραμμα διαβάζει κωδικούς υπηρεσιών και δημιουργεί παρουσιολόγια
-## που αφορούν στις συγκεκριμένες υπηρεσίες. Στο input μπορούν να υπάρχουν και
-## επιπλέον πεδία χωρισμένα μεταξύ τους με tabs. Το δεύτερο πεδίο είναι η
-## περιγραφή του παρουσιολογίου και το τρίτο πεδίο είναι ο τύπος (προσέλευση ή
-## αποχώρηση).
-## @DESCRIPTION END
-##
-## @HISTORY BEGIN
-## Created: 2020-04-21
-## @HISTORY END
-##
-## @END
-##
+#
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# awk
+# @FILETYPE END
+#
+# @FILE BEGIN
+# lib/imerisio.awk —— Δημιουργία παρουσιολογίων με βάση τον κωδικό υπηρεσίας
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# Το παρόν πρόγραμμα διαβάζει κωδικούς υπηρεσιών και δημιουργεί παρουσιολόγια
+# που αφορούν στις συγκεκριμένες υπηρεσίες. Στο input μπορούν να υπάρχουν και
+# επιπλέον πεδία χωρισμένα μεταξύ τους με tabs. Το δεύτερο πεδίο είναι η
+# περιγραφή του παρουσιολογίου και το τρίτο πεδίο είναι ο τύπος (προσέλευση ή
+# αποχώρηση).
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2020-04-21
+# @HISTORY END
+#
+# @END
+#
 ###############################################################################@
 
 @include "/var/opt/pandora/lib/pandora.awk"

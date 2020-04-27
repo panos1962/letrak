@@ -289,6 +289,9 @@ imerisio.filtraFormaClear = (e) => {
 	imerisio.filtraIpiresiaDOM.val('').focus();
 	imerisio.filtraImerominiaDOM.val('');
 
+	if (!imerisio.filtraIpalilosDOM.attr('disabled'))
+	imerisio.filtraIpalilosDOM.val('');
+
 	return imerisio;
 };
 

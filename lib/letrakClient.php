@@ -66,6 +66,20 @@ class letrak extends letrakCore {
 	public static function oxi_xristis() {
 		return !self::is_xristis();
 	}
+
+	public static function prosvasi_get() {
+		$prosvasi = new prosvasi();
+		$ipalilos = pandora::session_get(LETRAK_SESSION_IPALILOS);
+
+		if (!$ipalilos)
+		return $prosvasi;
+
+		$ipalilos = json_decode($ipalilos);
+
+		return $prosvasi->
+		ipalilos_set($ipalilos->kodikos)->
+		fromdb();
+	}
 }
 
 letrak::init();

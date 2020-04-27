@@ -74,15 +74,18 @@ prosopa.selidaSetup = () => {
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
+	// Ο κωδικός του προς επεξεργασία παρουσιολογίου δίνεται ως POST
+	// ή GET παράμετρος με το όνομα "imerisio".
+
 	let imerisio = php.requestGet('imerisio');
 
-	if (!imerisio) {
-		pnd.fyiError(prosopa.minima.imerisioAkathoristo);
-		return prosopa;
-	}
+	if (!imerisio)
+	return prosopa.fyiError(prosopa.minima.imerisioAkathoristo);
 
 	letrak.
 	toolbarTitlosSet('Παρουσιολόγιο <b>' + imerisio + '</b>');
+
+	document.title = imerisio;
 
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
@@ -250,17 +253,6 @@ this.orario = new letrak.orario('830-1430');
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.fyiMessage = (s) => {
-	pnd.fyiMessage(s);
-	return prosopa;
-};
-
-prosopa.fyiError = (s) => {
-	pnd.fyiError(s);
-	return prosopa;
-};
-
-
 prosopa.browserFix = () => {
 	let i = 0;
 	let zebra1 = 'pnd-zebra1';
@@ -279,5 +271,15 @@ prosopa.browserFix = () => {
 		text(i);
 	});
 
+	return prosopa;
+};
+
+prosopa.fyiMessage = (s) => {
+	pnd.fyiMessage(s);
+	return prosopa;
+};
+
+prosopa.fyiError = (s) => {
+	pnd.fyiError(s);
 	return prosopa;
 };

@@ -39,7 +39,9 @@ header_json()::
 session_init()::
 database();
 
-if (letrak::oxi_xristis())
+$prosvasi = letrak::prosvasi_get();
+
+if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("imerisio");
@@ -73,8 +75,14 @@ $ipl . ".`onoma` AS `f`, " .
 $ipl . ".`patronimo` AS `p`" .
 " FROM " . $par . " LEFT JOIN " . $ipl .
 " ON " . $ipl . ".`kodikos` = " . $par . ".`ipalilos`" .
-" WHERE " . $par . ".`imerisio` = " . $kodikos .
-" ORDER BY `eponimo`, `onoma`, `patronimo`, `ipalilos`";
+" WHERE (" . $par . ".`imerisio` = " . $kodikos . ")";
+
+if ($prosvasi->oxi_prosvasi($imerisio["ipiresia"]))
+$query .= " AND (" . $par . ".`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
+
+$query .= " ORDER BY `eponimo`, `onoma`, `patronimo`, `ipalilos`";
+
+print '"query":' . pandora::json_string($query) . ',';
 
 print '"prosopa":[';
 $enotiko = "";
