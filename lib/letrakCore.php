@@ -21,6 +21,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-28
+// Updated: 2020-04-27
 // Updated: 2020-04-26
 // Created: 2020-03-05
 // @HISTORY END
@@ -138,6 +140,10 @@ class Prosvasi {
 
 	public $epipedo = NULL;
 
+	// Κατά τη δημιουργία νέου αντικειμένου πρόσβασης όλα τα πεδία
+	// τίθενται σε null τιμές, ωστόσο μπορούμε να καθορίσουμε τον
+	// αριθμό μητρώου του χρήστη ως εργαζομένου στον Δήμο Θεσσαλονίκης.
+
 	public function __construct($kodikos = NULL) {
 		$this->ipalilos_set($kodikos);
 		$this->ipiresia_set(NULL);
@@ -147,18 +153,9 @@ class Prosvasi {
 	public function ipalilos_set($ipalilos) {
 		$this->ipalilos = NULL;
 
-		if (!isset($ipalilos))
-		return $this;
+		if (pandora::is_integer($ipalilos, 1, 999999))
+		$this->ipalilos = (int)$ipalilos;
 
-		if ((int)$ipalilos != $ipalilos)
-		return $this;
-
-		$ipalilos = (int)$ipalilos;
-
-		if ($ipalilos <= 0)
-		return $this;
-
-		$this->ipalilos = $ipalilos;
 		return $this;
 	}
 
@@ -192,6 +189,10 @@ class Prosvasi {
 		return $this->epipedo;
 	}
 
+	// Η μέθοδος "is_ipalilos" ελέγχει αν είναι καθορισμένος ο υπάλληλος,
+	// επομένως μπορεί να χρησιμοποιηθεί και για τον έλεγχο ακαθόριστων
+	// προσβάσεων.
+
 	public function is_ipalilos() {
 		return isset($this->ipalilos);
 	}
@@ -207,6 +208,10 @@ class Prosvasi {
 	public function oxi_ipiresia() {
 		return !$this->is_ipiresia();
 	}
+
+	// Η μέθοδος "fromdb" θέτει τα πεδία της πρόσβασης σε τιμές που
+	// λαμβάνει από τον πίνακα "prosvasi" της database "erpota",
+	// εφόσον ο χρήστης είναι συμπληρωμένος.
 
 	public function fromdb() {
 		$this->ipiresia = NULL;
@@ -229,21 +234,43 @@ class Prosvasi {
 		return $this;
 	}
 
-	public function is_prosvasi($ipiresia) {
-		$prosvasi_ipiresia = $this->ipiresia_get();
+	// Η μέθοδος "is_prosvasi" είναι σημαντική καθώς δέχεται έναν κωδικό
+	// υπηρεσίας και ελέγχει αν η ανά χείρας πρόσβαση «ταιριάζει» στη
+	// συγκεκριμένη υπηρεσία με βάση τη «μάσκα» κωδικού υπηρεσίας.
 
-		if (!isset($prosvasi_ipiresia))
+	public function is_prosvasi($ipiresia) {
+		$maska = $this->ipiresia_get();
+
+		// Αν η μάσκα κωδικού υπηρεσίας δεν έχει καθοριστεί, τότε
+		// ο χρήστης έχει πρόσβαση μόνο στα προσωπικά του σχτοιχεία
+		// επομένως δεν έχει καμία πρόσβαση σε επίπεδο υπηρεσίας.
+
+		if (!isset($maska))
 		return FALSE;
 
-		if ($prosvasi_ipiresia === "")
+		// Αντίθετα, αν η μάσκα κωδικού υπηρεσίας έχει καθοριστεί
+		// αλλά είναι κενή, αυτό σημαίνει ότι η πρόσβαση αφορά σε
+		// όλες τις υπηρεσίες.
+
+		if ($maska === "")
 		return TRUE;
+
+		// Αν ο κωδικός υπηρεσίας είναι ακαθόριστος, τότε δεν
+		// μπορούμε να ελέγξουμε την πρόσβαση οπότε η απάντησή
+		// μας είναι αρνητική.
 
 		if (!isset($ipiresia))
 		return FALSE;
 
-		$l = mb_strlen($prosvasi_ipiresia);
+		// Ήρθε η στιγμή να δούμε αν ο κωδικός της ελεγχόμενης
+		// υπηρεσίας ταιριάζει με τη μάσκα κωδικού υπηρεσίας.
 
-		return (mb_substr($ipiresia, 0, $l) === $prosvasi_ipiresia);
+		$l = strlen($maska);
+
+		if ($l === 0)
+		return TRUE;
+
+		return (substr($ipiresia, 0, $l) === $maska);
 	}
 
 	public function oxi_prosvasi($ipiresia) {

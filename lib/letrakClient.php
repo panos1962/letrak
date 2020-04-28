@@ -68,17 +68,20 @@ class letrak extends letrakCore {
 	}
 
 	public static function prosvasi_get() {
-		$prosvasi = new prosvasi();
+		$prosvasi = new Prosvasi();
 		$ipalilos = pandora::session_get(LETRAK_SESSION_IPALILOS);
 
 		if (!$ipalilos)
 		return $prosvasi;
 
-		$ipalilos = json_decode($ipalilos);
+		try {
+			$ipalilos = json_decode($ipalilos);
+			$prosvasi->ipalilos_set($ipalilos->kodikos);
+		} catch (Exception $e) {
+			return $prosvasi;
+		}
 
-		return $prosvasi->
-		ipalilos_set($ipalilos->kodikos)->
-		fromdb();
+		return $prosvasi->fromdb();
 	}
 }
 
