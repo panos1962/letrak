@@ -32,14 +32,14 @@
 
 .imerisioArea
 	background-color #ffe290
+	border-style double none double none
+	border-width 3px 0px 3px 0px
+	border-color grey
 
 .imerisio
 	padding 4px
 	font-weight bold
 	color #252525
-	border-style solid none double none
-	border-width 2px 0px 3px 0px
-	border-color grey
 	> div
 		display inline-block
 
@@ -113,4 +113,65 @@
 	width 6em
 
 .parousiaInfo
+	border-style none !important
+
+.ipografiTabHide
+	color red
+
+.ipografesAreaHidden
+	display none
+
+.ipografesPanel
+	padding 4px 0px
+
+.ipografi
+	padding 0px
+	white-space nowrap
+	font-family $fontSteno
+	color #232323
+	background-color #e6f1cb
+	border-style solid none none none
+	border-width 2px 0px 0px 0px
+	border-color grey
+	vendor('user-select', none)
+	cursor pointer
+	> div
+		display inline-block
+		padding 2px 4px
+
+		border-style none solid none none
+		border-width 0px 1px 0px 0px
+		border-color grey
+		&::before
+			content '\200B'
+
+.ipografiCandi
+	color #000000
+	text-shadow 0.5px 0px 0px #000000
+	background-color #ffc49a
+	
+
+.ipografiTaxinomisi
+	width 3em
+	text-align right
+	color #313786
+
+.ipografiArmodios
+	width 3.5em
+	text-align right
+
+.ipografiOnomateponimo
+	width 16em
+	vertical-align bottom
+	overflow-x hidden
+	text-overflow ellipsis
+
+.ipografiTitlos
+	width 414px
+	vertical-align bottom
+	overflow-x hidden
+	text-overflow ellipsis
+
+.ipografiCheckok
+	width 7em
 	border-style none !important

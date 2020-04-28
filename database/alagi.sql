@@ -1,3 +1,3 @@
-ALTER TABLE `parousia`
-ADD COLUMN `orario` VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου'
+ALTER TABLE `ipografi`
+ADD COLUMN `checkok` DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα υπογραφής'
 ;

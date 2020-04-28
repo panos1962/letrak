@@ -226,6 +226,13 @@ CREATE TABLE `ipografi` (
 	`titlos`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Τίτλος αρμοδίου',
 	`armodios`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Αρμόδιος υπάλληλος',
 
+	-- Το πεδίο "checok" συμπληρώνεται από τον υπογράφοντα και υποδηλώνει
+	-- τη χρονική στιγμή κατά την οποία ο υπογράφων επικυρώνει τα στοιχεία
+	-- του παρουσιολογίου. Ουσιαστικά πρόκειται για το υποκατάστατο της
+	-- της φυσικής υπογραφής του παρουσιολογίου.
+
+	`checkok`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα ελέγχου',
+
 	UNIQUE INDEX (
 		`imerisio`,
 		`taxinomisi`

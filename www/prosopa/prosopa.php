@@ -49,7 +49,10 @@ $kodikos = pandora::parameter_get("imerisio");
 if ((!$kodikos) || ((int)$kodikos != $kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
+$ipalilos_table = letrak::erpota12("ipalilos");
+
 print '{';
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 $query = "SELECT * FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
@@ -60,10 +63,9 @@ lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 print '"imerisio":' . pandora::json_string($imerisio) . ",";
 
-
 $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " FROM `letrak`.`parousia` AS `parousia`" .
-" LEFT JOIN " . letrak::erpota12("ipalilos") . " AS `ipalilos` " .
+" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 " ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
 " WHERE (`parousia`.`imerisio` = " . $kodikos . ")";
 
@@ -90,7 +92,43 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 }
 
 print '],';
+
 ///////////////////////////////////////////////////////////////////////////////@
+
+$query = "SELECT " .
+"`ipografi`.`taxinomisi` AS `x`, " .
+"`ipografi`.`titlos` AS `t`, " .
+"`ipografi`.`armodios` AS `a`, " .
+"`ipalilos`.`eponimo` AS `e`, " .
+"`ipalilos`.`onoma` AS `o`, " .
+"`ipografi`.`checkok` AS `c`" .
+" FROM `letrak`.`ipografi` AS `ipografi` " .
+" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
+" ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
+" WHERE (`ipografi`.`imerisio` = " . $kodikos . ")";
+" ORDER BY `x`";
+
+print '"queryIpografi":' . pandora::json_string($query) . ',';
+
+print '"ipografes":[';
+$enotiko = "";
+$result = pandora::query($query);
+
+while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	// Απαλοιφή των πεδίων με null τιμές
+	foreach ($row as $k => $v) {
+		if (!isset($v))
+		unset($row[$k]);
+	}
+
+	print $enotiko . pandora::json_string($row);
+	$enotiko = ",";
+}
+
+print '],';
+
+///////////////////////////////////////////////////////////////////////////////@
+
 print '"error":""}';
 
 function lathos($s) {

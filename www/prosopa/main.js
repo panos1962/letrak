@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-28
 // Updated: 2020-04-26
 // Updated: 2020-04-25
 // Created: 2020-04-24
@@ -52,6 +53,7 @@ const prosopa = {};
 
 prosopa.minima = {
 	'imerisioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
+	'ipografesTabLabel': 'Υπογραφές',
 };
 
 pnd.domInit(() => {
@@ -77,15 +79,15 @@ prosopa.selidaSetup = () => {
 	// Ο κωδικός του προς επεξεργασία παρουσιολογίου δίνεται ως POST
 	// ή GET παράμετρος με το όνομα "imerisio".
 
-	let imerisio = php.requestGet('imerisio');
+	prosopa.imerisio = php.requestGet('imerisio');
 
-	if (!imerisio)
+	if (!prosopa.imerisio)
 	return prosopa.fyiError(prosopa.minima.imerisioAkathoristo);
 
 	letrak.
-	toolbarTitlosSet('Παρουσιολόγιο <b>' + imerisio + '</b>');
+	toolbarTitlosSet('Παρουσιολόγιο <b>' + prosopa.imerisio + '</b>');
 
-	document.title = imerisio;
+	document.title = prosopa.imerisio;
 
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
@@ -94,21 +96,27 @@ prosopa.selidaSetup = () => {
 	keepAlive('../mnt/pandora');
 
 	pnd.ofelimoDOM.
-	append(prosopa.imerisioDOM = $('<div>').
+	append(prosopa.imerisioAreaDOM = $('<div>').
 	addClass('imerisioArea')).
 	append(prosopa.browserDOM = $('<div>').
 	addClass('browser'));
 
 	prosopa.
-	imerisioSetup(imerisio);
+	imerisioSetup();
 
 	return prosopa;
 };
 
-prosopa.imerisioSetup = (imerisio) => {
+prosopa.imerisioSetup = () => {
+	prosopa.imerisioAreaDOM.
+	append(prosopa.ipografesAreaDOM = $('<div>').
+	addClass('ipografesAreaHidden'));
+
+	prosopa.ipografesSetup();
+
 /*
 	if (imr && imr.hasOwnProperty('imerisioROW') &&
-	(imr.imerisioROW.kodikosGet() != imerisio))
+	(imr.imerisioROW.kodikosGet() != prosopa.imerisio))
 	return prosopa.fyiError('Προβληματικό παρουσιολόγιο');
 */
 
@@ -118,7 +126,7 @@ prosopa.imerisioSetup = (imerisio) => {
 		'url': 'prosopa.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': imerisio,
+			'imerisio': prosopa.imerisio,
 		},
 		'success': (rsp) => {
 			if (rsp.error)
@@ -127,6 +135,7 @@ prosopa.imerisioSetup = (imerisio) => {
 			pnd.fyiClear();
 			prosopa.
 			imerisioProcess(rsp.imerisio).
+			ipografesProcess(rsp.ipografes).
 			prosopaProcess(rsp.prosopa);
 		},
 		'error': (err) => {
@@ -143,11 +152,147 @@ imr.imerisioDOM.css('background-color', 'red');
 	return prosopa;
 };
 
+prosopa.ipografesSetup = () => {
+	prosopa.ipografesAreaDOM.
+
+	append($('<div>').
+	addClass('ipografesPanel').
+
+	append($('<input>').
+	attr('type', 'button').
+	addClass('letrak-formaPliktro').
+	val('Προσθήκη υπογραφής')).
+
+	append(prosopa.ipografiDiagrafiTabDOM = $('<input>').
+	attr('type', 'button').
+	addClass('letrak-formaPliktro').
+	addClass('letrak-pliktroHidden').
+	val('Διαγραφή υπογραφής').
+	on('click', (e) => prosopa.ipografiDiagrafi()))).
+
+	append(prosopa.ipografesDOM = $('<div>').
+	addClass('ipografes').
+	on('click', '.ipografi', function(e) {
+		let candi = $(this).hasClass('ipografiCandi');
+		prosopa.ipografiCandiTabsHide();
+
+		$('.ipografiCandi').removeClass('ipografiCandi');
+
+		if (candi)
+		return;
+
+		$(this).addClass('ipografiCandi');
+		prosopa.ipografiCandiTabsShow();
+	}));
+
+	pnd.toolbarLeftDOM.
+	append(prosopa.ipografesTabDOM = letrak.tabDOM().
+	text(prosopa.minima.ipografesTabLabel).
+	on('click', function(e) {
+		e.stopPropagation();
+
+		let visible = $(this).data('visible');
+
+		if (visible) {
+			$(this).
+			removeData('visible').
+			removeClass('ipografiTabHide');
+			prosopa.ipografesAreaDOM.addClass('ipografesAreaHidden');
+		}
+
+		else {
+			$(this).
+			data('visible', true).
+			addClass('ipografiTabHide');
+			prosopa.ipografesAreaDOM.removeClass('ipografesAreaHidden');
+		}
+	}));
+};
+
+prosopa.ipografiCandiTabsHide = () => {
+	prosopa.ipografiDiagrafiTabDOM.
+	addClass('letrak-pliktroHidden');
+
+	return prosopa;
+};
+
+prosopa.ipografiCandiTabsShow = () => {
+	prosopa.ipografiDiagrafiTabDOM.
+	removeClass('letrak-pliktroHidden');
+
+	return prosopa;
+};
+
+prosopa.ipografiDiagrafi = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let dom = $('.ipografiCandi');
+
+	if (dom.length !== 1)
+	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς διαγραφή');
+
+	let taxinomisi = dom.data('taxinomisi');
+
+	$.post({
+		'url': 'ipografiDelete.php',
+		'dataType': 'text',
+		'data': {
+			'imerisio': prosopa.imerisio,
+			'taxinomisi': taxinomisi,
+		},
+		'success': (rsp) => {
+			if (rsp)
+			return prosopa.fyiError(rsp);
+
+			$('.ipografi').
+			removeClass('ipografiCandi').
+			each(function() {
+				let t = $(this).data('taxinomisi');
+
+				if (t <= taxinomisi)
+				return true;
+
+				t--;
+				$(this).
+				data('taxinomisi', t).
+				children('.ipografiTaxinomisi').
+				text(t);
+			});
+
+			prosopa.ipografiCandiTabsHide();
+			dom.remove();
+		},
+		'error': (err) => {
+			prosopa.fyiError('Αδυναμία διαγραφής υπογραφής');
+			console.error(err);
+		},
+	});
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 prosopa.imerisioProcess = (imerisio) => {
 	imerisio = new letrak.imerisio(imerisio);
 
-	prosopa.imerisioDOM.
-	append(imerisio.domGet());
+	prosopa.imerisioAreaDOM.
+	prepend(imerisio.domGet());
+
+	return prosopa;
+};
+
+prosopa.ipografesProcess = (ipografes) => {
+	if (!ipografes)
+	return prosopa;
+
+	pnd.arrayWalk(ipografes, (v) => {
+		v = new letrak.ipografi(v);
+		prosopa.ipografesDOM.
+		append(v.domGet().
+		data('taxinomisi', v.taxinomisiGet()));
+	});
 
 	return prosopa;
 };
@@ -155,9 +300,9 @@ prosopa.imerisioProcess = (imerisio) => {
 prosopa.prosopaProcess = (parousia) => {
 	pnd.
 	arrayWalk(parousia, (v, k) => {
-		parousia[k] = new letrak.parousia(v);
+		v = new letrak.parousia(v);
 		prosopa.browserDOM.
-		append(parousia[k].domGet());
+		append(v.domGet());
 	});
 
 	prosopa.
@@ -247,6 +392,38 @@ this.orario = new letrak.orario('830-1430');
 	attr('title', 'Παρατηρήσεις').
 	addClass('parousiaInfo').
 	text(this.infoGet()));
+
+	return dom;
+};
+
+letrak.ipografi.prototype.domGet = function() {
+	let checkok = this.checkokGet();
+
+	if (checkok)
+	checkok = pnd.date(checok, '%D-%M-%Y %h:%s');
+
+	let dom = $('<div>').
+	addClass('ipografi').
+
+	append($('<div>').
+	addClass('ipografiTaxinomisi').
+	text(this.taxinomisiGet())).
+
+	append($('<div>').
+	addClass('ipografiArmodios').
+	text(this.armodiosGet())).
+
+	append($('<div>').
+	addClass('ipografiOnomateponimo').
+	text(this.onomateponimoGet())).
+
+	append($('<div>').
+	addClass('ipografiTitlos').
+	text(this.titlosGet())).
+
+	append($('<div>').
+	addClass('ipografiCheckok').
+	text(checkok));
 
 	return dom;
 };
