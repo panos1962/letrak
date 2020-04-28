@@ -38,15 +38,25 @@ if (!class_exists("letrakCore"))
 require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
 define("LETRAK_SESSION_IPALILOS", "letrak_session_ipalilos");
+define("LETRAK_IMERISIO_PROJECTION_COLUMNS",
+	"`kodikos` AS `k`," .
+	"`imerominia` AS `i`," .
+	"`ipiresia` AS `r`," .
+	"`prosapo` AS `o`," .
+	"`perigrafi` AS `e`," .
+	"`closed` AS `c`");
+define("LETRAK_PROSOPA_PROJECTION_COLUMNS",
+	"`parousia`.`ipalilos` AS `i`, " .
+	"`parousia`.`karta` AS `k`, " .
+	"`parousia`.`orario` AS `o`, " .
+	"`parousia`.`meraora` AS `t`, " .
+	"`parousia`.`excuse` AS `e`, " .
+	"`parousia`.`info` AS `s`, " .
+	"`ipalilos`.`eponimo` AS `l`, " .
+	"`ipalilos`.`onoma` AS `f`, " .
+	"`ipalilos`.`patronimo` AS `p`");
 
 class letrak extends letrakCore {
-	public static $imerisioPrjcols =
-		"`kodikos` AS `k`," .
-		"`imerominia` AS `i`," .
-		"`ipiresia` AS `r`," .
-		"`prosapo` AS `o`," .
-		"`perigrafi` AS `e`," .
-		"`closed` AS `c`";
 	private static $init_ok = FALSE;
 
 	public static function init() {

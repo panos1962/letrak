@@ -60,27 +60,17 @@ lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 print '"imerisio":' . pandora::json_string($imerisio) . ",";
 
-$par = "`letrak`.`parousia`";
-$ipl = letrak::erpota12("ipalilos");
 
-$query = "SELECT " .
-$par . ".`ipalilos` AS `i`, " .
-$par . ".`karta` AS `k`, " .
-$par . ".`orario` AS `o`, " .
-$par . ".`meraora` AS `t`, " .
-$par . ".`excuse` AS `e`, " .
-$par . ".`info` AS `s`, " .
-$ipl . ".`eponimo` AS `l`, " .
-$ipl . ".`onoma` AS `f`, " .
-$ipl . ".`patronimo` AS `p`" .
-" FROM " . $par . " LEFT JOIN " . $ipl .
-" ON " . $ipl . ".`kodikos` = " . $par . ".`ipalilos`" .
-" WHERE (" . $par . ".`imerisio` = " . $kodikos . ")";
+$query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
+" FROM `letrak`.`parousia` AS `parousia`" .
+" LEFT JOIN " . letrak::erpota12("ipalilos") . " AS `ipalilos` " .
+" ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
+" WHERE (`parousia`.`imerisio` = " . $kodikos . ")";
 
 if ($prosvasi->oxi_prosvasi($imerisio["ipiresia"]))
-$query .= " AND (" . $par . ".`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
+$query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
-$query .= " ORDER BY `eponimo`, `onoma`, `patronimo`, `ipalilos`";
+$query .= " ORDER BY `l`, `f`, `p`, `i`";
 
 print '"query":' . pandora::json_string($query) . ',';
 

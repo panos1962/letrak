@@ -77,13 +77,15 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 ipalilos_check();
 
 // Ελέγχουμε αν οι προσβάσεις του υπαλλήλου είναι κατάφωρα αντιφατικές.
+// Τα υπόλοιπα θέματα προσβάσεων θα ελεγχθούν στην πορεία.
 
 if (oxi_prosvasi($prosvasi))
 lathos("Access denied!");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT " . letrak::$imerisioPrjcols . " FROM `letrak`.`imerisio`";
+$query = "SELECT " . LETRAK_IMERISIO_PROJECTION_COLUMNS .
+	" FROM `letrak`.`imerisio`";
 $enotiko = " WHERE";
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -117,7 +119,7 @@ if ($x) {
 $x = pandora::parameter_get("ipiresia");
 
 if ($x) {
-	$query .= $enotiko . " (`ipiresia` LIKE " .
+	$query .= $enotiko . " (`r` LIKE " .
 		pandora::sql_string($x . '%') . ")";
 	$enotiko = " AND";
 }
@@ -128,7 +130,7 @@ if ($x) {
 $x = $prosvasi->ipiresia_get();
 
 if (isset($x) && ($x != "")) {
-	$query .= $enotiko . " (`ipiresia` LIKE " .
+	$query .= $enotiko . " (`r` LIKE " .
 		pandora::sql_string($x . '%') . ")";
 	$enotiko = " AND";
 }
@@ -149,18 +151,14 @@ else
 $x = pandora::parameter_get("ipalilos");
 
 if ($x) {
-	$query .= $enotiko . " (`kodikos` IN (SELECT `imerisio`" .
+	$query .= $enotiko . " (`k` IN (SELECT `imerisio`" .
 		" FROM `letrak`.`parousia` WHERE `ipalilos` = " . $x . "))";
 	$enotiko = " AND";
 }
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query .= " ORDER BY" .
-" `imerominia` DESC," .
-" `ipiresia`," .
-" `prosapo` DESC," .
-" `kodikos` DESC";
+$query .= " ORDER BY `i` DESC, `r`, `o` DESC, `k` DESC";
 
 ///////////////////////////////////////////////////////////////////////////////@
 

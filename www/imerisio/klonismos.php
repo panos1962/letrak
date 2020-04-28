@@ -69,8 +69,8 @@ pandora::query($query);
 
 pandora::query("COMMIT WORK");
 
-$query = "SELECT " . letrak::$imerisioPrjcols . " FROM `letrak`.`imerisio` " .
-	"WHERE `kodikos` = " . $kodikos;
+$query = "SELECT " . LETRAK_IMERISIO_PROJECTION_COLUMNS .
+	" FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
 $row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$row)
