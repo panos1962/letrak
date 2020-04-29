@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-29
 // Updated: 2020-04-28
 // Updated: 2020-04-26
 // Updated: 2020-04-25
@@ -92,36 +93,26 @@ prosopa.selidaSetup = () => {
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
+	if (imr && imr.hasOwnProperty('imerisioROW') &&
+	(imr.imerisioROW.kodikosGet() != prosopa.imerisio))
+	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
+
 	pnd.
 	keepAlive('../mnt/pandora');
 
+	///////////////////////////////////////////////////////////////////////@
+
 	pnd.ofelimoDOM.
+
 	append(prosopa.imerisioAreaDOM = $('<div>').
 	addClass('imerisioArea')).
+
 	append(prosopa.browserDOM = $('<div>').
 	addClass('browser'));
 
-	prosopa.
-	imerisioSetup();
-
-	return prosopa;
-};
-
-prosopa.imerisioSetup = () => {
-	prosopa.imerisioAreaDOM.
-	append(prosopa.ipografesAreaDOM = $('<div>').
-	addClass('ipografesAreaHidden'));
-
-	prosopa.ipografesSetup();
-
-/*
-	if (imr && imr.hasOwnProperty('imerisioROW') &&
-	(imr.imerisioROW.kodikosGet() != prosopa.imerisio))
-	return prosopa.fyiError('Προβληματικό παρουσιολόγιο');
-*/
+	///////////////////////////////////////////////////////////////////////@
 
 	pnd.fyiMessage('Αναζήτηση στοιχείων παρουσιολογίου…');
-
 	$.post({
 		'url': 'prosopa.php',
 		'dataType': 'json',
@@ -132,11 +123,17 @@ prosopa.imerisioSetup = () => {
 			if (rsp.error)
 			return pnd.fyiError(rsp.error);
 
-			pnd.fyiClear();
 			prosopa.
+			fyiClear().
 			imerisioProcess(rsp.imerisio).
 			ipografesProcess(rsp.ipografes).
 			prosopaProcess(rsp.prosopa);
+
+			// XXX
+			// Προσωρινό για να δείξουμε τη διασύνδεση με την
+			// πατρική σελίδα σε επίπεδο DOM.
+
+			imr.imerisioDOM.css('background-color', 'red');
 		},
 		'error': (err) => {
 			pnd.fyiError('Αδυναμία λήψης στοιχείων παρουσιολογίου');
@@ -144,146 +141,21 @@ prosopa.imerisioSetup = () => {
 		},
 	});
 
-/*
-console.log(imr.imerisioROW);
-imr.imerisioDOM.css('background-color', 'red');
-*/
-
 	return prosopa;
 };
-
-prosopa.ipografesSetup = () => {
-	prosopa.ipografesAreaDOM.
-
-	append($('<div>').
-	addClass('ipografesPanel').
-
-	append($('<input>').
-	attr('type', 'button').
-	addClass('letrak-formaPliktro').
-	val('Προσθήκη υπογραφής')).
-
-	append(prosopa.ipografiDiagrafiTabDOM = $('<input>').
-	attr('type', 'button').
-	addClass('letrak-formaPliktro').
-	addClass('letrak-pliktroHidden').
-	val('Διαγραφή υπογραφής').
-	on('click', (e) => prosopa.ipografiDiagrafi()))).
-
-	append(prosopa.ipografesDOM = $('<div>').
-	addClass('ipografes').
-	on('click', '.ipografi', function(e) {
-		let candi = $(this).hasClass('ipografiCandi');
-		prosopa.ipografiCandiTabsHide();
-
-		$('.ipografiCandi').removeClass('ipografiCandi');
-
-		if (candi)
-		return;
-
-		$(this).addClass('ipografiCandi');
-		prosopa.ipografiCandiTabsShow();
-	}));
-
-	pnd.toolbarLeftDOM.
-	append(prosopa.ipografesTabDOM = letrak.tabDOM().
-	text(prosopa.minima.ipografesTabLabel).
-	on('click', function(e) {
-		e.stopPropagation();
-
-		let visible = $(this).data('visible');
-
-		if (visible) {
-			$(this).
-			removeData('visible').
-			removeClass('ipografiTabHide');
-			prosopa.ipografesAreaDOM.addClass('ipografesAreaHidden');
-		}
-
-		else {
-			$(this).
-			data('visible', true).
-			addClass('ipografiTabHide');
-			prosopa.ipografesAreaDOM.removeClass('ipografesAreaHidden');
-		}
-	}));
-};
-
-prosopa.ipografiCandiTabsHide = () => {
-	prosopa.ipografiDiagrafiTabDOM.
-	addClass('letrak-pliktroHidden');
-
-	return prosopa;
-};
-
-prosopa.ipografiCandiTabsShow = () => {
-	prosopa.ipografiDiagrafiTabDOM.
-	removeClass('letrak-pliktroHidden');
-
-	return prosopa;
-};
-
-prosopa.ipografiDiagrafi = (e) => {
-	if (e)
-	e.stopPropagation();
-
-	let dom = $('.ipografiCandi');
-
-	if (dom.length !== 1)
-	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς διαγραφή');
-
-	let taxinomisi = dom.data('taxinomisi');
-
-	$.post({
-		'url': 'ipografiDelete.php',
-		'dataType': 'text',
-		'data': {
-			'imerisio': prosopa.imerisio,
-			'taxinomisi': taxinomisi,
-		},
-		'success': (rsp) => {
-			if (rsp)
-			return prosopa.fyiError(rsp);
-
-			$('.ipografi').
-			removeClass('ipografiCandi').
-			each(function() {
-				let t = $(this).data('taxinomisi');
-
-				if (t <= taxinomisi)
-				return true;
-
-				t--;
-				$(this).
-				data('taxinomisi', t).
-				children('.ipografiTaxinomisi').
-				text(t);
-			});
-
-			prosopa.ipografiCandiTabsHide();
-			dom.remove();
-		},
-		'error': (err) => {
-			prosopa.fyiError('Αδυναμία διαγραφής υπογραφής');
-			console.error(err);
-		},
-	});
-
-	return prosopa;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.imerisioProcess = (imerisio) => {
 	imerisio = new letrak.imerisio(imerisio);
 
 	prosopa.imerisioAreaDOM.
-	prepend(imerisio.domGet());
+	append(imerisio.domGet());
 
 	return prosopa;
 };
 
 prosopa.ipografesProcess = (ipografes) => {
+	prosopa.ipografesSetup();
+
 	if (!ipografes)
 	return prosopa;
 
@@ -310,6 +182,153 @@ prosopa.prosopaProcess = (parousia) => {
 
 	return prosopa;
 };
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.ipografesSetup = () => {
+	prosopa.imerisioAreaDOM.
+	append(prosopa.ipografesAreaDOM = $('<div>').
+	addClass('ipografesAreaHidden').
+
+	append($('<div>').
+	addClass('ipografesPanel').
+
+	append($('<input>').
+	attr('type', 'button').
+	addClass('letrak-formaPliktro').
+	val('Προσθήκη υπογραφής').
+	on('click', (e) => prosopa.ipografiInsert())).
+
+	append(prosopa.ipografiDiagrafiTabDOM = $('<input>').
+	attr('type', 'button').
+	addClass('letrak-formaPliktro').
+	addClass('ipografiPliktroNoCandi').
+	val('Διαγραφή υπογραφής').
+	on('click', (e) => prosopa.ipografiDiagrafi()))).
+
+	append(prosopa.ipografesDOM = $('<div>').
+	addClass('ipografes').
+	on('click', '.ipografi', function(e) {
+		prosopa.ipografiCandiToggle(e, $(this));
+	})));
+
+	pnd.toolbarLeftDOM.
+	append(prosopa.ipografesTabDOM = letrak.tabDOM().
+	text(prosopa.minima.ipografesTabLabel).
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if ($(this).hasClass('ipografiTabHide')) {
+			$(this).removeClass('ipografiTabHide');
+			prosopa.ipografesAreaDOM.addClass('ipografesAreaHidden');
+			prosopa.browserDOM.removeClass('browserEmfanesOrio');
+		}
+
+		else {
+			$(this).addClass('ipografiTabHide');
+			prosopa.ipografesAreaDOM.removeClass('ipografesAreaHidden');
+			prosopa.browserDOM.addClass('browserEmfanesOrio');
+		}
+	}));
+};
+
+prosopa.ipografiCandiToggle = function(e, ipografiDOM) {
+	if (e)
+	e.stopPropagation();
+
+	let candi = ipografiDOM.hasClass('ipografiCandi');
+
+	// Είναι μια καλή ευκαιρία να καθαρίσουμε το πεδίο από τυχόν
+	// άλλες υποψήφιες υπογραφές.
+
+	$('.ipografiCandi').removeClass('ipografiCandi');
+	prosopa.ipografiCandiTabsHide();
+
+	if (candi)
+	return prosopa;
+
+	ipografiDOM.addClass('ipografiCandi');
+	prosopa.ipografiCandiTabsShow();
+
+	return prosopa;
+};
+
+prosopa.ipografiCandiTabsHide = () => {
+	prosopa.ipografiDiagrafiTabDOM.
+	addClass('ipografiPliktroNoCandi');
+
+	return prosopa;
+};
+
+prosopa.ipografiCandiTabsShow = () => {
+	prosopa.ipografiDiagrafiTabDOM.
+	removeClass('ipografiPliktroNoCandi');
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.ipografiInsert = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	return prosopa;
+};
+
+prosopa.ipografiDiagrafi = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let dom = $('.ipografiCandi');
+
+	if (dom.length !== 1)
+	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς διαγραφή');
+
+	let taxinomisi = dom.data('taxinomisi');
+
+	pnd.fyiMessage('Διαγραφή υπογραφής…');
+	$.post({
+		'url': 'ipografiDelete.php',
+		'dataType': 'text',
+		'data': {
+			'imerisio': prosopa.imerisio,
+			'taxinomisi': taxinomisi,
+		},
+		'success': (rsp) => prosopa.
+			ipografiDiagrafiPost(rsp, dom, taxinomisi),
+		'error': (err) => {
+			prosopa.fyiError('Αδυναμία διαγραφής υπογραφής');
+			console.error(err);
+		},
+	});
+
+	return prosopa;
+};
+
+prosopa.ipografiDiagrafiPost = (rsp, dom, taxdel) => {
+	if (rsp)
+	return prosopa.fyiError(rsp);
+
+	pnd.fyiClear();
+	dom.remove();
+	prosopa.ipografiCandiTabsHide();
+
+	$('.ipografi').
+	removeClass('ipografiCandi').
+	each(function() {
+		let tax = $(this).data('taxinomisi');
+
+		if (tax <= taxdel)
+		return;
+
+		tax--;
+		$(this).
+		data('taxinomisi', tax).
+		children('.ipografiTaxinomisi').
+		text(tax);
+	});
+},
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -458,5 +477,10 @@ prosopa.fyiMessage = (s) => {
 
 prosopa.fyiError = (s) => {
 	pnd.fyiError(s);
+	return prosopa;
+};
+
+prosopa.fyiClear = (s) => {
+	pnd.fyiClear();
 	return prosopa;
 };

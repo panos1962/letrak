@@ -49,6 +49,9 @@ const letrak =
 require('../lib/letrak.js');
 const imerisio = {};
 
+// Χρησιμοποιούμε το global singleton "LETRAK" ως μέσο κοινοποίησης constant
+// αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows.
+
 self.LETRAK.pnd = pnd;
 self.LETRAK.letrak = letrak;
 self.LETRAK.imerisio = imerisio;

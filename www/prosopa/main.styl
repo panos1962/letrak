@@ -27,13 +27,15 @@
 @import '../mnt/pandora/lib/common.styl'
 @import '../lib/common.styl'
 
+$emfanesOrio = #0b8dfd
+
 .pnd-ofelimo
 	padding 0px
 
 .imerisioArea
 	background-color #ffe290
-	border-style double none double none
-	border-width 3px 0px 3px 0px
+	border-style double none none none
+	border-width 3px 0px 0px 0px
 	border-color grey
 
 .imerisio
@@ -63,6 +65,14 @@
 .imerisioProsapoApoxorisi
 	background-color midnightblue
 	color yellow
+
+.browser
+	border-style double none none none
+	border-width 3px 0px 0px 0px
+	border-color grey
+
+.browserEmfanesOrio
+	border-color $emfanesOrio
 
 .parousia
 	padding 0px
@@ -122,17 +132,20 @@
 	display none
 
 .ipografesPanel
-	padding 4px 0px
+	padding 0px 0px 4px 0px
+
+.ipografiPliktroNoCandi
+	display none
 
 .ipografi
 	padding 0px
 	white-space nowrap
 	font-family $fontSteno
 	color #232323
-	background-color #e6f1cb
+	background-color #f3f5ef
 	border-style solid none none none
 	border-width 2px 0px 0px 0px
-	border-color grey
+	border-color $emfanesOrio
 	vendor('user-select', none)
 	cursor pointer
 	> div
@@ -141,20 +154,20 @@
 
 		border-style none solid none none
 		border-width 0px 1px 0px 0px
-		border-color grey
+		border-color $emfanesOrio
 		&::before
 			content '\200B'
 
 .ipografiCandi
 	color #000000
 	text-shadow 0.5px 0px 0px #000000
-	background-color #ffc49a
+	background-color #adddf9
 	
 
 .ipografiTaxinomisi
 	width 3em
 	text-align right
-	color #313786
+	color #14440c
 
 .ipografiArmodios
 	width 3.5em
