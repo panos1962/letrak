@@ -223,7 +223,7 @@ COMMENT = 'Πίνακας παρουσιολογίων'
 CREATE TABLE `ipografi` (
 	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`taxinomisi`	TINYINT UNSIGNED NOT NULL COMMENT 'Τάξη υπογραφής',
-	`titlos`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Τίτλος αρμοδίου',
+	`titlos`	VARCHAR(128) NULL DEFAULT NULL COMMENT 'Τίτλος αρμοδίου',
 	`armodios`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Αρμόδιος υπάλληλος',
 
 	-- Το πεδίο "checok" συμπληρώνεται από τον υπογράφοντα και υποδηλώνει
@@ -233,7 +233,7 @@ CREATE TABLE `ipografi` (
 
 	`checkok`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα ελέγχου',
 
-	UNIQUE INDEX (
+	INDEX (
 		`imerisio`,
 		`taxinomisi`
 	) USING BTREE

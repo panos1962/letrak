@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/prosopa/ipogarfiDiagrafi.php —— Διαγραφή υπογραφής παρουσιολογίου
+// www/prosopa/ipogarfiDelete.php —— Διαγραφή υπογραφής παρουσιολογίου
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -52,7 +52,7 @@ lathos("Μη αποδεκτός αύξων αριθμός υπογραφής");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-pandora::query("BEGIN WORK");
+pandora::autocommit(FALSE);
 
 $query = "DELETE FROM `letrak`.`ipografi` " .
 	" WHERE (`imerisio` = " . $imerisio . ")" .
@@ -60,7 +60,7 @@ $query = "DELETE FROM `letrak`.`ipografi` " .
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {
-	pandora::query("ROLLBACK WORK");
+	pandora::rollback();
 	lathos("Απέτυχε η διαγραφή υπογραφής");
 }
 
@@ -70,7 +70,7 @@ $query = "UPDATE `letrak`.`ipografi` " .
 	" AND (`taxinomisi` > " . $taxinomisi . ")";
 pandora::query($query);
 
-pandora::query("COMMIT WORK");
+pandora::commit();
 
 ///////////////////////////////////////////////////////////////////////////////@
 

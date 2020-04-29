@@ -26,6 +26,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-29
 // Updated: 2020-04-26
 // Updated: 2020-04-25
 // Updated: 2020-04-24
@@ -381,7 +382,9 @@ imerisio.candiTabsSetup = () => {
 	addClass('candiTab').
 	attr('title', imerisio.minima.prosopaTitle).
 	text(imerisio.minima.prosopaTabLabel).
-	on('click', (e) => imerisio.prosopa(e)));
+	on('click', (e) => imerisio.prosopa({
+		'clickEvent': e,
+	})));
 
 	return imerisio;
 };
@@ -598,17 +601,24 @@ imerisio.klonosProcess = (x, protipo) => {
 	data('candi', true).
 	addClass('imerisioCandi'));
 
-	pnd.zebraFix(imerisio.browserDOM);
-	imerisio.candiTabsShow();
-	pnd.ofelimoDOM.scrollTop(0);
+	pnd.
+	zebraFix(imerisio.browserDOM).
+	ofelimoDOM.scrollTop(0);
+
+	imerisio.
+	candiTabsShow().
+	prosopa({
+		'klonos': true,
+	});
 
 	return imerisio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.prosopa = (e) => {
-	e.stopPropagation();
+imerisio.prosopa = (opts) => {
+	if (opts.hasOwnProperty('clickEvent'))
+	opts.clickEvent.stopPropagation();
 
 	let dom = $('.imerisioCandi').first();
 
@@ -629,15 +639,21 @@ imerisio.prosopa = (e) => {
 			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
 	}
 
-	self.LETRAK.imerisioROW = x;
-	self.LETRAK.imerisioDOM = dom;
-	imerisio.erpotaFetch(kodikos);
+	// Κρατάμε σε global μεταβλητές το παρουσιολόγιο ως αντικείμενο και
+	// ως DOM element, προκειμένου να μπορούμε να τα προσπελάσουμε από
+	// τη σελίδα επεξεργασίας παρουσιολογίου.
 
+	self.LETRAK.imerisio = {
+		'row': x,
+		'dom': dom,
+		'klonos': opts.klonos,
+	};
+
+	imerisio.erpotaFetch(kodikos);
 	return imerisio;
 };
 
 imerisio.prosopaOpen = (kodikos) => {
-	self.LETRAK.imerisio
 	window.open('../prosopa?imerisio=' + kodikos, '_blank');
 	return imerisio;
 };
@@ -765,7 +781,8 @@ imerisio.imerisioProcess = (x, opts) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.erpotaFetch = (kodikos) => {
-return imerisio.prosopaOpen(kodikos);
+	return imerisio.prosopaOpen(kodikos);
+
 	if (imerisio.hasOwnProperty('ipiresiaList'))
 	return imerisio.prosopaOpen(kodikos);
 

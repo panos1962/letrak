@@ -48,7 +48,7 @@ lathos("Ακαθόριστος κωδικός προτύπου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-pandora::query("START TRANSACTION");
+pandora::autocommit(FALSE);
 
 $query = "INSERT INTO `letrak`.`imerisio` " .
 "(`protipo`, `imerominia`, `ipiresia`, `prosapo`, `perigrafi`) " .
@@ -56,8 +56,10 @@ $query = "INSERT INTO `letrak`.`imerisio` " .
 "FROM `letrak`.`imerisio` WHERE `kodikos` = " . $protipo;
 pandora::query($query);
 
-if (pandora::affected_rows() !== 1)
-lathos("Αποτυχία δημιουργίας αντιγράφου");
+if (pandora::affected_rows() !== 1) {
+	pandora::rollback();
+	lathos("Αποτυχία δημιουργίας αντιγράφου");
+}
 
 $kodikos = pandora::insert_id();
 
@@ -67,7 +69,13 @@ $query = "INSERT INTO `letrak`.`parousia` " .
 "FROM `letrak`.`parousia` WHERE `imerisio` = " . $protipo;
 pandora::query($query);
 
-pandora::query("COMMIT WORK");
+$query = "INSERT INTO `letrak`.`ipografi` " .
+"(`imerisio`, `taxinomisi`, `titlos`, `armodios`) " .
+"SELECT " . $kodikos . ", `taxinomisi`, `titlos`, `armodios` " .
+"FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo;
+pandora::query($query);
+
+pandora::commit();
 
 $query = "SELECT " . LETRAK_IMERISIO_PROJECTION_COLUMNS .
 	" FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
