@@ -56,7 +56,7 @@ lathos("Μη αποδεκτός αριθμός μητρώου υπογράφον
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
-if (isset($taxinomisi) &&
+if ($taxinomisi &&
 	pandora::not_integer($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
 lathos("Μη αποδεκτός ταξινομικός αριθμός");
 

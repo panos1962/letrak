@@ -730,11 +730,7 @@ letrak.ipografi.prototype.domGet = function() {
 
 	append($('<div>').
 	addClass('ipografiTitlos').
-	text(this.titlosGet())).
-
-	append($('<div>').
-	addClass('ipografiCheckok').
-	text(checkok));
+	text(this.titlosGet()));
 
 	return dom;
 };
