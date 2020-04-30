@@ -209,21 +209,21 @@ prosopa.ipografesSetup = () => {
 	append($('<input>').
 	attr('type', 'button').
 	addClass('letrak-formaPliktro').
-	val('Προσθήκη υπογραφής').
+	val('Προσθήκη').
 	on('click', (e) => prosopa.ipografiInsert())).
 
 	append(prosopa.ipografiDiagrafiTabDOM = $('<input>').
 	attr('type', 'button').
 	addClass('letrak-formaPliktro').
 	addClass('ipografiPliktroNoCandi').
-	val('Διαγραφή υπογραφής').
+	val('Διαγραφή').
 	on('click', (e) => prosopa.ipografiDiagrafi())).
 
 	append(prosopa.ipografiEditTabDOM = $('<input>').
 	attr('type', 'button').
 	addClass('letrak-formaPliktro').
 	addClass('ipografiPliktroNoCandi').
-	val('Επεξεργασία υπογραφής').
+	val('Επεξεργασία').
 	on('click', (e) => prosopa.ipografiEdit()))).
 
 	append(prosopa.ipografesDOM = $('<div>').
@@ -711,7 +711,7 @@ letrak.ipografi.prototype.domGet = function() {
 	let checkok = this.checkokGet();
 
 	if (checkok)
-	checkok = pnd.date(checok, '%D-%M-%Y %h:%s');
+	checkok = pnd.date(checkok, '%D-%M-%Y %h:%s');
 
 	let dom = $('<div>').
 	addClass('ipografi').
@@ -730,7 +730,11 @@ letrak.ipografi.prototype.domGet = function() {
 
 	append($('<div>').
 	addClass('ipografiTitlos').
-	text(this.titlosGet()));
+	text(this.titlosGet())).
+
+	append($('<div>').
+	addClass('ipografiCheckok').
+	html('&#x2714;'));
 
 	return dom;
 };
