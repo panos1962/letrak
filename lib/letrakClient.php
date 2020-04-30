@@ -93,6 +93,55 @@ class letrak extends letrakCore {
 
 		return $prosvasi->fromdb();
 	}
+
+	public static function ipografes_taxinomisi($imerisio, $tax = "tax") {
+		pandora::query("SET @" . $tax . " := 0");
+
+		$query = "UPDATE `letrak`.`ipografi` SET `taxinomisi` =" .
+			" (SELECT @" . $tax . " := @" . $tax . " + 1)" .
+			" WHERE `imerisio` = " . $imerisio .
+			" ORDER BY `taxinomisi`";
+		pandora::query($query);
+		return __CLASS__;
+	}
+
+	public static function ipografes_json($imerisio, $opts = NULL) {
+		if (!isset($opts))
+		$opts = array();
+
+		$ipalilos_table = letrak::erpota12("ipalilos");
+		$query = "SELECT " .
+			"`ipografi`.`taxinomisi` AS `x`, " .
+			"`ipografi`.`titlos` AS `t`, " .
+			"`ipografi`.`armodios` AS `a`, " .
+			"`ipalilos`.`eponimo` AS `e`, " .
+			"`ipalilos`.`onoma` AS `o`, " .
+			"`ipografi`.`checkok` AS `c`" .
+			" FROM `letrak`.`ipografi` AS `ipografi` " .
+			" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
+			" ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
+			" WHERE (`ipografi`.`imerisio` = " . $imerisio . ")" .
+			" ORDER BY `x`";
+		$result = pandora::query($query);
+
+		if (array_key_exists("query", $opts) && $opts["query"])
+		print pandora::json_string($opts["query"]) . ':' .
+			pandora::json_string($query) . ',';
+
+		if (!array_key_exists("ipografes", $opts))
+		$opts["ipografes"] = "ipografes";
+
+		print pandora::json_string($opts["ipografes"]) . ':[';
+
+		$enotiko = "";
+		while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+			print $enotiko . pandora::json_string
+				(pandora::null_purge($row));
+			$enotiko = ",";
+		}
+
+		print ']';
+	}
 }
 
 letrak::init();

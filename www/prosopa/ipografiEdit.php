@@ -111,48 +111,14 @@ pandora::query($query);
 if (pandora::affected_rows() !== 1)
 lathos("Απέτυχε η προσθήκη υπογραφής");
 
-pandora::query("SET @taxinomisi := 0");
-
-$query = "UPDATE `letrak`.`ipografi` SET `taxinomisi` =" .
-	" (SELECT @taxinomisi := @taxinomisi + 1)" .
-	" WHERE `imerisio` = " . $imerisio .
-	" ORDER BY `taxinomisi`";
-pandora::query($query);
-
+letrak::ipografes_taxinomisi($imerisio);
 pandora::commit();
 
-///////////////////////////////////////////////////////////////////////////////@
+print '{';
+letrak::ipografes_json($imerisio);
+print '}';
 
-$query = "SELECT " .
-"`ipografi`.`taxinomisi` AS `x`, " .
-"`ipografi`.`titlos` AS `t`, " .
-"`ipografi`.`armodios` AS `a`, " .
-"`ipalilos`.`eponimo` AS `e`, " .
-"`ipalilos`.`onoma` AS `o`, " .
-"`ipografi`.`checkok` AS `c`" .
-" FROM `letrak`.`ipografi` AS `ipografi` " .
-" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
-" ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-" WHERE (`ipografi`.`imerisio` = " . $imerisio . ")" .
-" ORDER BY `x`";
-
-print '{"queryIpografi":' . pandora::json_string($query) . ',';
-
-print '"ipografes":[';
-$enotiko = "";
-$result = pandora::query($query);
-
-while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	foreach ($row as $k => $v) {
-		if (!isset($v))
-		unset($row[$k]);
-	}
-
-	print $enotiko . pandora::json_string($row);
-	$enotiko = ",";
-}
-
-print ']}';
+exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
