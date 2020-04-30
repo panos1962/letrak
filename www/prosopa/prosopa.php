@@ -105,7 +105,7 @@ $query = "SELECT " .
 " FROM `letrak`.`ipografi` AS `ipografi` " .
 " LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 " ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-" WHERE (`ipografi`.`imerisio` = " . $kodikos . ")";
+" WHERE (`ipografi`.`imerisio` = " . $kodikos . ")" .
 " ORDER BY `x`";
 
 print '"queryIpografi":' . pandora::json_string($query) . ',';

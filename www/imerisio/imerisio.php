@@ -119,7 +119,7 @@ if ($x) {
 $x = pandora::parameter_get("ipiresia");
 
 if ($x) {
-	$query .= $enotiko . " (`r` LIKE " .
+	$query .= $enotiko . " (`ipiresia` LIKE " .
 		pandora::sql_string($x . '%') . ")";
 	$enotiko = " AND";
 }
@@ -130,7 +130,7 @@ if ($x) {
 $x = $prosvasi->ipiresia_get();
 
 if (isset($x) && ($x != "")) {
-	$query .= $enotiko . " (`r` LIKE " .
+	$query .= $enotiko . " (`ipiresia` LIKE " .
 		pandora::sql_string($x . '%') . ")";
 	$enotiko = " AND";
 }
@@ -151,7 +151,7 @@ else
 $x = pandora::parameter_get("ipalilos");
 
 if ($x) {
-	$query .= $enotiko . " (`k` IN (SELECT `imerisio`" .
+	$query .= $enotiko . " (`kodikos` IN (SELECT `imerisio`" .
 		" FROM `letrak`.`parousia` WHERE `ipalilos` = " . $x . "))";
 	$enotiko = " AND";
 }

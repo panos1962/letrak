@@ -305,20 +305,12 @@ prosopa.ipografiInsert = (e) => {
 	removeClass('ipografiCandi');
 	prosopa.ipografiCandiTabsHide();
 
-	let forma = {}
-	let dialogDOM = $('<div>').
+	let forma = {};
+	forma.dialogDOM = $('<div>').
 
 	attr('title', 'Προσθήκη υπογράφοντος').
 		append($('<form>').
 		attr('id', 'ipografiForma').
-
-			append($('<div>').
-			addClass('letrak-inputLine').
-				append($('<label>').
-				attr('for', 'ipografiFormaTaxinomisi').
-				text('Α/Α')).
-				append(forma.taxinomisiDOM = $('<input>').
-				attr('id', 'ipografiFormaTaxinomisi'))).
 
 			append($('<div>').
 			addClass('letrak-inputLine').
@@ -334,7 +326,15 @@ prosopa.ipografiInsert = (e) => {
 				attr('for', 'ipografiFormaTitlos').
 				text('Τίτλος')).
 				append(forma.titlosDOM = $('<input>').
-				attr('id', 'ipografiFormaTitlos')))).
+				attr('id', 'ipografiFormaTitlos'))).
+
+			append($('<div>').
+			addClass('letrak-inputLine').
+				append($('<label>').
+				attr('for', 'ipografiFormaTaxinomisi').
+				text('Α/Α')).
+				append(forma.taxinomisiDOM = $('<input>').
+				attr('id', 'ipografiFormaTaxinomisi')))).
 
 	dialog({
 		'resizable': false,
@@ -346,17 +346,22 @@ prosopa.ipografiInsert = (e) => {
 			'at': 'left top',
 		},
 		'buttons': {
-			'Προσθήκη': function() {
-				forma.dom = $(this);
-				prosopa.ipografiInsertExec(forma);
-			},
-			'Άκυρο': function() {
-				$(this).dialog('close');
-			},
+			'Προσθήκη': () => prosopa.ipografiInsertExec(forma),
+			'Άκυρο': () => forma.dialogDOM.dialog('close'),
 		},
-		'close': function() {
-			dialogDOM.remove();
-		},
+		'close': () => forma.dialogDOM.remove(),
+	});
+
+	forma.dialogDOM.
+	find('.letrak-inputLine').
+	children('input').
+	on('keypress', (e) => {
+		e.stopPropagation();
+
+		if (e.which !== 13)
+		return;
+
+		prosopa.ipografiInsertExec(forma);
 	});
 
 	return prosopa;
@@ -400,7 +405,17 @@ prosopa.ipografiInsertPost = (rsp, forma) => {
 		data('taxinomisi', v.taxinomisiGet()));
 	});
 
-	forma.dom.dialog('close');
+	// XXX
+	// Δεν κλείνουμε τη φόρμα διαλόγου με σκοπό να περνάει ο χρήστης
+	// την μια υπογραφή μετά την άλλη. Απλώς κάνουμε reset.
+	// forma.dialogDOM.dialog('close');
+
+	forma.dialogDOM.
+	find('.letrak-inputLine').
+	children('input').
+	val('');
+
+	forma.armodiosDOM.focus();
 	return prosopa;
 };
 
@@ -423,8 +438,8 @@ prosopa.ipografiEdit = (e) => {
 
 	let forma = {
 		'isimonixat': ipografi.taxinomisiGet(),
-	}
-	let dialogDOM = $('<div>').
+	};
+	forma.dialogDOM = $('<div>').
 
 	attr('title', 'Επεξεργασία υπογραφής…').
 		append($('<form>').
@@ -467,17 +482,22 @@ prosopa.ipografiEdit = (e) => {
 			'at': 'left top',
 		},
 		'buttons': {
-			'Υποβολή': function() {
-				forma.dom = $(this);
-				prosopa.ipografiEditExec(forma);
-			},
-			'Άκυρο': function() {
-				$(this).dialog('close');
-			},
+			'Υποβολή': () => prosopa.ipografiEditExec(forma),
+			'Άκυρο': () => forma.dialogDOM.dialog('close'),
 		},
-		'close': function() {
-			dialogDOM.remove();
-		},
+		'close': () => forma.dialogDOM.remove(),
+	});
+
+	forma.dialogDOM.
+	find('.letrak-inputLine').
+	children('input').
+	on('keypress', (e) => {
+		e.stopPropagation();
+
+		if (e.which !== 13)
+		return;
+
+		prosopa.ipografiEditExec(forma);
 	});
 
 	return prosopa;
@@ -521,14 +541,32 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	ipografesDOM.
 	empty();
 
+	let found = false;
+	let armodios = parseInt(forma.armodiosDOM.val());
+
 	pnd.arrayWalk(rsp.ipografes, (v) => {
 		v = new letrak.ipografi(v);
+		let tax = v.taxinomisiGet();
+		let dom = v.domGet().data('taxinomisi', tax);
+
 		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
+		append(dom);
+
+		if (found)
+		return;
+
+		if (v.armodiosGet() !== armodios)
+		return;
+
+		found = true;
+		dom.addClass('ipografiCandi');
 	});
 
-	forma.dom.dialog('close');
+	if (found)
+	prosopa.
+	ipografiCandiTabsShow();
+
+	forma.dialogDOM.dialog('close');
 	return prosopa;
 };
 

@@ -51,7 +51,7 @@ lathos($isimonixat . "Μη αποδεκτός υφιστάμενος ταξιν�
 
 $armodios = pandora::parameter_get("armodios");
 
-if (pandora::not_integer($armodios, 1))
+if (pandora::not_integer($armodios, 1, 999999))
 lathos("Μη αποδεκτός αρμόδιος");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
@@ -133,7 +133,7 @@ $query = "SELECT " .
 " FROM `letrak`.`ipografi` AS `ipografi` " .
 " LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 " ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-" WHERE (`ipografi`.`imerisio` = " . $imerisio . ")";
+" WHERE (`ipografi`.`imerisio` = " . $imerisio . ")" .
 " ORDER BY `x`";
 
 print '{"queryIpografi":' . pandora::json_string($query) . ',';
