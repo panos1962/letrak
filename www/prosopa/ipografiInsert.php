@@ -16,9 +16,14 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρό πρόγραμμα καλείται από τη σελίδα επεξεργασίας παρουσιολογίου και
+// σκοπό έχει την προσθήκη νέου υπογράφοντος. Η νέα εγγραφή προστίθεται σε
+// σημείο που υποδηλώνει ο ταξινομικός αριθμός, ενώ παράλληλα ακυρώνει τυχόν
+// ήδη επικυρωμένες υπογραφές.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-30
 // Created: 2020-04-29
 // @HISTORY END
 //
@@ -41,21 +46,21 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1))
+if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $armodios = pandora::parameter_get("armodios");
 
-if (pandora::not_integer($armodios, 1, 999999))
-lathos("Μη αποδεκτός αρμόδιος");
+if (pandora::not_integer($armodios, 1, LETRAK_IPALILOS_KODIKOS_MAX))
+lathos("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
-if ($taxinomisi && pandora::not_integer($taxinomisi, 1, 250))
+if (isset($taxinomisi) &&
+	pandora::not_integer($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
 lathos("Μη αποδεκτός ταξινομικός αριθμός");
 
 $titlos = pandora::parameter_get("titlos");
-$ipalilos_table = letrak::erpota12("ipalilos");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -63,13 +68,14 @@ pandora::autocommit(FALSE);
 
 if ($taxinomisi) {
 	$query = "UPDATE `letrak`.`ipografi`" .
-		" SET `taxinomisi` = `taxinomisi` + 1 WHERE (`imerisio` = " .
-		$imerisio . ") AND (`taxinomisi` >= " . $taxinomisi . ")";
+		" SET `taxinomisi` = `taxinomisi` + 1" .
+		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" AND (`taxinomisi` >= " . $taxinomisi . ")";
 	pandora::query($query);
 }
 
 else
-$taxinomisi = 255;
+$taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 
 $query = "INSERT INTO `letrak`.`ipografi` " .
 	" (`imerisio`, `taxinomisi`, `armodios`, `titlos`)" .

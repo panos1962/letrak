@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-30
 // Created: 2020-04-22
 // @HISTORY END
 //
@@ -38,7 +39,9 @@ header_json()::
 session_init()::
 database();
 
-if (letrak::oxi_xristis())
+$prosvasi = letrak::prosvasi_get();
+
+if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $protipo = pandora::parameter_get("kodikos");
@@ -51,8 +54,9 @@ lathos("Ακαθόριστος κωδικός προτύπου");
 pandora::autocommit(FALSE);
 
 $query = "INSERT INTO `letrak`.`imerisio` " .
-"(`protipo`, `imerominia`, `ipiresia`, `prosapo`, `perigrafi`) " .
-"SELECT " . $protipo . ", NOW(), `ipiresia`, `prosapo`, `perigrafi` " .
+"(`protipo`, `ipalilos`, `imerominia`, `ipiresia`, `prosapo`, `perigrafi`) " .
+"SELECT " . $protipo . ", " . $prosvasi->ipalilos_get() . ", " .
+"NOW(), `ipiresia`, `prosapo`, `perigrafi` " .
 "FROM `letrak`.`imerisio` WHERE `kodikos` = " . $protipo;
 pandora::query($query);
 
@@ -69,28 +73,32 @@ $query = "INSERT INTO `letrak`.`parousia` " .
 "FROM `letrak`.`parousia` WHERE `imerisio` = " . $protipo;
 pandora::query($query);
 
-$query = "INSERT INTO `letrak`.`ipografi` " .
-"(`imerisio`, `taxinomisi`, `titlos`, `armodios`) " .
-"SELECT " . $kodikos . ", `taxinomisi`, `titlos`, `armodios` " .
-"FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo;
+pandora::query("SET @tax := 0");
+
+$query = "INSERT INTO `letrak`.`ipografi`" .
+	" (`imerisio`, `taxinomisi`, `titlos`, `armodios`)" .
+	" SELECT " . $kodikos . ", (@tax := @tax + 1), `titlos`, `armodios`" .
+	" FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo .
+	" ORDER BY `taxinomisi`";
 pandora::query($query);
 
 pandora::commit();
 
 $query = "SELECT " . LETRAK_IMERISIO_PROJECTION_COLUMNS .
-	" FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
+	" FROM `letrak`.`imerisio`" .
+	" WHERE `kodikos` = " . $kodikos;
 $row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$row)
 lathos("Αποτυχία εντοπισμού αντιγράφου");
 
-print '{"imerisio":' . pandora::json_string($row) . ',"error":""}';
+print '{"imerisio":' . pandora::json_string($row) . '}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($msg) {
-	print pandora::json_string(array("error" => $msg));
+	print '{"error":' . pandora_json_string($msg) . '}';
 	exit(0);
 }
 ?>

@@ -94,12 +94,19 @@ class letrak extends letrakCore {
 		return $prosvasi->fromdb();
 	}
 
+	// Η μέθοδος "ipografes_taxinomisi" επιχειρεί επεναρίθμηση των
+	// υπογραφόντων παρουσιολογίου. Πιο συγκεκριμένα, διατρέχει τις
+	// υπογραφές με σειρά που καθορίζεται από τους υφιστάμενους
+	// ταξινομικούς αριθμούς και επανριθμεί εκκινώντας από τον
+	// αριθμό 1. Παράλληλα ακυρώνει τυχόν επικυρώσεις που ίσως
+	// έχουν γίνει σε κάποιες ή σε όλες τις υπογραφές.
+
 	public static function ipografes_taxinomisi($imerisio, $tax = "tax") {
 		pandora::query("SET @" . $tax . " := 0");
 
 		$query = "UPDATE `letrak`.`ipografi` SET `taxinomisi` =" .
-			" (SELECT @" . $tax . " := @" . $tax . " + 1)" .
-			" WHERE `imerisio` = " . $imerisio .
+			" (SELECT @" . $tax . " := @" . $tax . " + 1)," .
+			" `checkok` = NULL WHERE `imerisio` = " . $imerisio .
 			" ORDER BY `taxinomisi`";
 		pandora::query($query);
 		return __CLASS__;

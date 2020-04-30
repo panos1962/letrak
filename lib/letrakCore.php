@@ -31,6 +31,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////@
 
+define("LETRAK_IPALILOS_KODIKOS_MAX", 999999);
+define("LETRAK_IMERISIO_KODIKOS_MAX", 999999);
+define("LETRAK_IPOGRAFI_TAXINOMISI_MAX", 255);
+
 class letrakCore {
 	// Η property "erpota_version" παίρνει τιμές 1 ή 2 ανάλογα με την
 	// τρέχουσα version της database "erpota".

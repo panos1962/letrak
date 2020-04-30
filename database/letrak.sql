@@ -181,6 +181,7 @@ COMMENT = 'Πίνακας αδειών υπαλλήλων'
 
 CREATE TABLE `imerisio` (
 	`kodikos`	MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Κωδικός παρουσιολογίου',
+	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Αρμόδιος υπάλληλος',
 
 	-- Ακολουθεί ο κωδικός προτύπου παρουσιολογίου, δηλαδή ο κωδικός του
 	-- παρουσιολογίου που χρησιμοποιήθηκε ως πρότυπο για το ανά χείρας

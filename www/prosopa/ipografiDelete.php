@@ -16,9 +16,14 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα καλείται από τη σελίδα επεξεργασίας παρουσιολογίου και
+// σκοπό έχει την απαλοιφή συγκεκριμένου υπογράφοντος από το παρουσιολόγιο.
+// Παράλληλα επαναριθμούνται οι υπόλοιποι υπογράφοντες και ακυρώνονται τυχόν
+// επικυρώσεις υπογραφόντων.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-30
 // Updated: 2020-04-26
 // Created: 2020-04-25
 // @HISTORY END
@@ -42,13 +47,13 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1))
+if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
-if (pandora::not_integer($taxinomisi, 1))
-lathos("Μη αποδεκτός αύξων αριθμός υπογραφής");
+if (pandora::not_integer($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
+lathos("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -64,19 +69,19 @@ if (pandora::affected_rows() !== 1) {
 	lathos("Απέτυχε η διαγραφή υπογραφής");
 }
 
-$query = "UPDATE `letrak`.`ipografi` " .
-	" SET `taxinomisi` = `taxinomisi` - 1 " .
-	" WHERE (`imerisio` = " . $imerisio . ")" .
-	" AND (`taxinomisi` > " . $taxinomisi . ")";
-pandora::query($query);
-
+letrak::ipografes_taxinomisi($imerisio);
 pandora::commit();
+
+print '{';
+letrak::ipografes_json($imerisio);
+print '}';
+
+exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($s) {
-	print $s;
+	print '{"error":' . pandora::json_string($s) . "}";
 	exit(0);
 }
-
 ?>

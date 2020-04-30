@@ -16,9 +16,15 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα καλείται από τη σελίδα επεξεργασίας παρουσιολογίου με
+// σκοπό να ενημερώσει κάποια εγγραφή υπογραφής. Η ενημέρωση μπορεί να αφορά
+// σε οποιοδήποτε στοιχείο της υπογραφής, όπως ταξινομικό αριθμό, αρμόδιο
+// υπάλληλο, τίτλο κλπ. Οποιαδήποτε ενημέρωση επισύρει και ακύρωση τυχόν
+// ήδη επικυρωμένων υπογραφών.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-30
 // Created: 2020-04-29
 // @HISTORY END
 //
@@ -41,36 +47,35 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1))
+if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $isimonixat = pandora::parameter_get("isimonixat");
 
-if (pandora::not_integer($isimonixat, 1, 250))
+if (pandora::not_integer($isimonixat, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
 lathos($isimonixat . "Μη αποδεκτός υφιστάμενος ταξινομικός αριθμός");
 
 $armodios = pandora::parameter_get("armodios");
 
-if (pandora::not_integer($armodios, 1, 999999))
-lathos("Μη αποδεκτός αρμόδιος");
+if (pandora::not_integer($armodios, 1, LETRAK_IPALILOS_KODIKOS_MAX))
+lathos("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
 if (!isset($taxinomisi))
-$taxinomisi = 255;
+$taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 
-elseif (pandora::not_integer($taxinomisi, 1, 255))
+elseif (pandora::not_integer($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
 lathos("Μη αποδεκτός νέος ταξινομικός αριθμός");
 
 $titlos = pandora::parameter_get("titlos");
-$ipalilos_table = letrak::erpota12("ipalilos");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
 
-$query = "SELECT COUNT(*) FROM `letrak`.`ipografi` WHERE `imerisio` = " .
-	$imerisio;
+$query = "SELECT COUNT(*) FROM `letrak`.`ipografi`" .
+	" WHERE `imerisio` = " . $imerisio;
 $row = pandora::first_row($query, MYSQLI_NUM);
 
 $taxmax = (int)$row[0];

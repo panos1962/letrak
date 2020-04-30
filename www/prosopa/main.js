@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-04-30
 // Updated: 2020-04-29
 // Updated: 2020-04-28
 // Updated: 2020-04-26
@@ -405,10 +406,9 @@ prosopa.ipografiInsertPost = (rsp, forma) => {
 		data('taxinomisi', v.taxinomisiGet()));
 	});
 
-	// XXX
-	// Δεν κλείνουμε τη φόρμα διαλόγου με σκοπό να περνάει ο χρήστης
-	// την μια υπογραφή μετά την άλλη. Απλώς κάνουμε reset.
-	// forma.dialogDOM.dialog('close');
+	// Δεν κλείνουμε τη φόρμα διαλόγου ώστε να μπορεί ο χρήστης να
+	// περνά τη μια υπογραφή μετά την άλλη· απλώς καθαρίζουμε τα
+	// πεδία τής φόρμας.
 
 	forma.dialogDOM.
 	find('.letrak-inputLine').
@@ -587,13 +587,12 @@ prosopa.ipografiDiagrafi = (e) => {
 	pnd.fyiMessage('Διαγραφή υπογραφής…');
 	$.post({
 		'url': 'ipografiDelete.php',
-		'dataType': 'text',
+		'dataType': 'json',
 		'data': {
 			'imerisio': prosopa.imerisio,
 			'taxinomisi': taxinomisi,
 		},
-		'success': (rsp) => prosopa.
-			ipografiDiagrafiPost(rsp, dom, taxinomisi),
+		'success': (rsp) => prosopa.ipografiDiagrafiPost(rsp),
 		'error': (err) => {
 			prosopa.fyiError('Αδυναμία διαγραφής υπογραφής');
 			console.error(err);
@@ -603,29 +602,24 @@ prosopa.ipografiDiagrafi = (e) => {
 	return prosopa;
 };
 
-prosopa.ipografiDiagrafiPost = (rsp, dom, taxdel) => {
-	if (rsp)
-	return prosopa.fyiError(rsp);
+prosopa.ipografiDiagrafiPost = (rsp) => {
+	if (rsp.error)
+	return pnd.fyiError(rsp.error);
 
-	pnd.fyiClear();
-	dom.remove();
-	prosopa.ipografiCandiTabsHide();
+	prosopa.
+	fyiClear().
+	ipografiCandiTabsHide().
+	ipografesDOM.
+	empty();
 
-	prosopa.ipografesDOM.
-	children('.ipografi').
-	removeClass('ipografiCandi').
-	each(function() {
-		let tax = $(this).data('taxinomisi');
-
-		if (tax <= taxdel)
-		return;
-
-		tax--;
-		$(this).
-		data('taxinomisi', tax).
-		children('.ipografiTaxinomisi').
-		text(tax);
+	pnd.arrayWalk(rsp.ipografes, (v) => {
+		v = new letrak.ipografi(v);
+		prosopa.ipografesDOM.
+		append(v.domGet().
+		data('taxinomisi', v.taxinomisiGet()));
 	});
+
+	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

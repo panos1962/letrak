@@ -734,12 +734,12 @@ imerisio.imerisioEpilogi = (data, opts) => {
 	return imerisio;
 };
 
-imerisio.imerisioProcess = (x, opts) => {
+imerisio.imerisioProcess = (rsp, opts) => {
 	if (!opts)
 	opts = {};
 
-	if (x.error)
-	return imerisio.fyiError(x.error);
+	if (rsp.hasOwnProperty('error'))
+	return imerisio.fyiError(rsp.error);
 
 	pnd.fyiClear();
 
@@ -751,7 +751,7 @@ imerisio.imerisioProcess = (x, opts) => {
 	let count = 0;
 	let ilast = undefined;
 
-	pnd.arrayWalk(x.imerisio, function(v) {
+	pnd.arrayWalk(rsp.imerisio, function(v) {
 		count++;
 		(new letrak.imerisio(v)).
 		domGet().

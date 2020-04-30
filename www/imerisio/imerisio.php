@@ -203,8 +203,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	$enotiko = ",";
 }
 
-print '],';
-print '"error":""}';
+print ']}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
