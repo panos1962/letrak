@@ -59,6 +59,9 @@ prosopa.minima = {
 	'imerisioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 	'ipografesTabLabel': 'Υπογραφές',
 
+	'ipografiAnaneosiTabLabel': 'Ανανέωση',
+	'ipografiAnaneosiTabTitle': 'Ανανέωση εικόνας υπογραφών',
+
 	'ipografiInsertTabLabel': 'Προσθήκη',
 	'ipografiInsertTabTitle': 'Προσθήκη υπογράφοντος υπαλλήλου',
 
@@ -68,8 +71,8 @@ prosopa.minima = {
 	'ipografiDeleteTabLabel': 'Απαλοιφή',
 	'ipografiDeleteTabTitle': 'Απαλοιφή υπογράφοντος υπαλλήλου',
 
-	'ipografiPraxiTabLabel': 'Επικύρωση',
-	'ipografiPraxiTabTitle': 'Επικύρωση στοιχείων παρουσιολογίου',
+	'ipografiEpikirosiTabLabel': 'Επικύρωση',
+	'ipografiEpikirosiTabTitle': 'Επικύρωση στοιχείων παρουσιολογίου',
 
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
@@ -173,10 +176,10 @@ prosopa.selidaSetup = () => {
 };
 
 prosopa.imerisioProcess = (imerisio) => {
-	imerisio = new letrak.imerisio(imerisio);
+	prosopa.imerisio = new letrak.imerisio(imerisio);
 
 	prosopa.imerisioAreaDOM.
-	append(imerisio.domGet());
+	append(prosopa.imerisio.domGet());
 
 	return prosopa;
 };
@@ -194,7 +197,7 @@ prosopa.ipografesProcess = (ipografes) => {
 		data('taxinomisi', v.taxinomisiGet()));
 	});
 
-	prosopa.ipografiPraxiTabRefresh();
+	prosopa.ipografiTabsRefresh();
 	return prosopa;
 };
 
@@ -219,13 +222,37 @@ prosopa.ipografesSetup = () => {
 	append(prosopa.ipografesAreaDOM = $('<div>').
 	addClass('ipografesAreaHidden').
 
-	append($('<div>').
+	append(prosopa.ipografesPanelDOM = $('<div>').
 	addClass('ipografesPanel').
 
-	append(prosopa.ipografiPraxiTabDOM = $('<input>').
-	attr('type', 'button').
+	append($('<input>').
+	attr({
+		'type': 'button',
+		'title': prosopa.minima.ipografiAnaneosiTabTitle,
+	}).
 	addClass('letrak-formaPliktro').
-	on('click', (e) => prosopa.ipografiToggle(e))).
+	val(prosopa.minima.ipografiAnaneosiTabLabel).
+	on('click', (e) => prosopa.ipografiAnaneosi(e))).
+
+	append(prosopa.ipografiEpikirosiTabDOM = $('<input>').
+	attr({
+		'type': 'button',
+		'title': prosopa.minima.ipografiEpikirosiTabTitle,
+	}).
+	addClass('letrak-formaPliktro').
+	addClass('praxiPliktro').
+	val(prosopa.minima.ipografiEpikirosiTabLabel).
+	on('click', (e) => prosopa.ipografiPraxi(e, 'epikirosi'))).
+
+	append(prosopa.ipografiAkirosiTabDOM = $('<input>').
+	attr({
+		'type': 'button',
+		'title': prosopa.minima.ipografiAkirosiTabTitle,
+	}).
+	addClass('letrak-formaPliktro').
+	addClass('praxiPliktro').
+	val(prosopa.minima.ipografiAkirosiTabLabel).
+	on('click', (e) => prosopa.ipografiPraxi(e, 'akirosi'))).
 
 	append($('<input>').
 	attr({
@@ -233,6 +260,7 @@ prosopa.ipografesSetup = () => {
 		'title': prosopa.minima.ipografiInsertTabTitle,
 	}).
 	addClass('letrak-formaPliktro').
+	addClass('ipografiUpdatePliktro').
 	val(prosopa.minima.ipografiInsertTabLabel).
 	on('click', (e) => prosopa.ipografiInsert(e))).
 
@@ -242,6 +270,7 @@ prosopa.ipografesSetup = () => {
 		'title': prosopa.minima.ipografiDeleteTabTitle,
 	}).
 	addClass('letrak-formaPliktro').
+	addClass('ipografiUpdatePliktro').
 	addClass('ipografiPliktroNoCandi').
 	val(prosopa.minima.ipografiDeleteTabLabel).
 	on('click', (e) => prosopa.ipografiDiagrafi(e))).
@@ -252,6 +281,7 @@ prosopa.ipografesSetup = () => {
 		'title': prosopa.minima.ipografiEditTabTitle,
 	}).
 	addClass('letrak-formaPliktro').
+	addClass('ipografiUpdatePliktro').
 	addClass('ipografiPliktroNoCandi').
 	val(prosopa.minima.ipografiEditTabLabel).
 	on('click', (e) => prosopa.ipografiEdit(e)))).
@@ -282,35 +312,74 @@ prosopa.ipografesSetup = () => {
 	}));
 };
 
-prosopa.ipografiPraxiTabRefresh = () => {
-	let ipografi = prosopa.xristisIsIpografon();
+///////////////////////////////////////////////////////////////////////////////@
 
-	if (!ipografi) {
-		prosopa.ipografiPraxiTabDOM.
-		css('display', 'none');
-		return prosopa;
-	}
+prosopa.ipografiTabsRefresh = () => {
+	return prosopa.
+	ipografiUpdateTabsRefresh().
+	ipografiPraxiTabsRefresh();
+};
 
-	let label;
-	let title;
+prosopa.ipografiUpdateTabsRefresh = () => {
+	let ipiresia = prosopa.imerisio.ipiresiaGet();
+	let prosvasi = letrak.prosvasiIsUpdate(ipiresia);
 
-	if (ipografi.checkokGet()) {
-		label = prosopa.minima.ipografiPraxiTabLabel;
-		title = prosopa.minima.ipografiPraxiTabTitle;
-	}
-
-	else {
-		label = prosopa.minima.ipografiAkirosiTabLabel;
-		title = prosopa.minima.ipografiAkirosiTabTitle;
-	}
-
-	prosopa.ipografiPraxiTabDOM.
-	css('display', '').
-	attr('title', title).
-	val(label);
+	prosopa.ipografesPanelDOM.
+	children('.ipografiUpdatePliktro').
+	css('display', prosvasi ? '' : 'none');
 
 	return prosopa;
 };
+
+prosopa.ipografiPraxiTabsRefresh = () => {
+	let xristis = letrak.xristisIpalilosGet();
+	let alosprin = false;
+	let epikirosi = false;
+	let akirosi = false;
+
+	prosopa.ipografesDOM.
+	children('.ipografi').
+	each(function() {
+		let armodios = $(this).children('.ipografiArmodios').text();
+
+		armodios = parseInt(armodios);
+
+		if (!armodios)
+		return;
+
+		let checkok = $(this).children('.ipografiCheckok').text();
+
+		if (armodios !== xristis) {
+			if (!checkok)
+			alosprin = true;
+			return;
+		}
+
+		if (checkok) {
+			akirosi = true;
+			return;
+		}
+
+		if (!alosprin)
+		epikirosi = true;
+	});
+
+	prosopa.ipografesPanelDOM.
+	children('.praxiPliktro').
+	css('display', 'none');
+
+	if (epikirosi)
+	prosopa.ipografiEpikirosiTabDOM.
+	css('display', '');
+
+	if (akirosi)
+	prosopa.ipografiAkirosiTabDOM.
+	css('display', '');
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.ipografiIpografon = () => {
 	let dom;
@@ -359,10 +428,12 @@ prosopa.xristisIsIpografon = () => {
 	each(function() {
 		let armodios = $(this).children('.ipografiArmodios').text();
 
+		armodios = parseInt(armodios);
+
 		if (!armodios)
 		return;
 
-		if (armodios != xristis)
+		if (armodios !== xristis)
 		return;
 
 		dom = $(this);
@@ -372,10 +443,11 @@ prosopa.xristisIsIpografon = () => {
 	if (!dom)
 	return false;
 
-	return new letrak.ipografi().
-	armodiosSet(dom.children('.ipografArmodios').text()).
-	titlosSet(dom.children('.ipografTitlos').text()).
-	checkokSet(dom.children('.ipografCheckok').text());
+	return (new letrak.ipografi()).
+	taxinomisiSet(dom.children('.ipografiTaxinomisi').text()).
+	armodiosSet(dom.children('.ipografiArmodios').text()).
+	titlosSet(dom.children('.ipografiTitlos').text()).
+	checkokSet(dom.children('.ipografiCheckok').text());
 };
 
 prosopa.xristisNotIpografon = () => {
@@ -505,7 +577,7 @@ prosopa.ipografiInsertExec = function(forma) {
 		'url': 'ipografiInsert.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio,
+			'imerisio': prosopa.imerisio.kodikosGet(),
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
 			'titlos': forma.titlosDOM.val(),
@@ -521,22 +593,8 @@ prosopa.ipografiInsertExec = function(forma) {
 };
 
 prosopa.ipografiInsertPost = (rsp, forma) => {
-	if (rsp.error)
-	return pnd.fyiError(rsp.error);
-
-	prosopa.
-	fyiClear().
-	ipografesDOM.
-	empty();
-
-	pnd.arrayWalk(rsp.ipografes, (v) => {
-		v = new letrak.ipografi(v);
-		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
-	});
-
-	prosopa.ipografiPraxiTabRefresh();
+	if (prosopa.ipografesRefreshErrorCheck(rsp))
+	return prosopa;
 
 	// Δεν κλείνουμε τη φόρμα διαλόγου ώστε να μπορεί ο χρήστης να
 	// περνά τη μια υπογραφή μετά την άλλη· απλώς καθαρίζουμε τα
@@ -642,7 +700,7 @@ prosopa.ipografiEditExec = function(forma) {
 		'url': 'ipografiEdit.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio,
+			'imerisio': prosopa.imerisio.kodikosGet(),
 			'isimonixat': forma.isimonixat,
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
@@ -695,12 +753,11 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	});
 
 	if (found)
-	prosopa.
-	ipografiCandiTabsShow();
+	prosopa.ipografiCandiTabsShow();
 
-	prosopa.ipografiPraxiTabRefresh();
-
+	prosopa.ipografiTabsRefresh();
 	forma.dialogDOM.dialog('close');
+
 	return prosopa;
 };
 
@@ -723,10 +780,10 @@ prosopa.ipografiDiagrafi = (e) => {
 		'url': 'ipografiDelete.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio,
+			'imerisio': prosopa.imerisio.kodikosGet(),
 			'taxinomisi': taxinomisi,
 		},
-		'success': (rsp) => prosopa.ipografiDiagrafiPost(rsp),
+		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {
 			prosopa.fyiError('Αδυναμία διαγραφής υπογραφής');
 			console.error(err);
@@ -736,30 +793,33 @@ prosopa.ipografiDiagrafi = (e) => {
 	return prosopa;
 };
 
-prosopa.ipografiDiagrafiPost = (rsp) => {
-	if (rsp.error)
-	return pnd.fyiError(rsp.error);
+///////////////////////////////////////////////////////////////////////////////@
 
-	prosopa.
-	fyiClear().
-	ipografiCandiTabsHide().
-	ipografesDOM.
-	empty();
+prosopa.ipografiAnaneosi = (e) => {
+	if (e)
+	e.stopPropagation();
 
-	pnd.arrayWalk(rsp.ipografes, (v) => {
-		v = new letrak.ipografi(v);
-		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
+	pnd.fyiMessage('Ανανέωση εικόνας υπογραφών');
+	$.post({
+		'url': 'ipografiAnaneosi.php',
+		'dataType': 'json',
+		'data': {
+			'imerisio': prosopa.imerisio.kodikosGet(),
+		},
+		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
+		'error': (err) => {
+			prosopa.fyiError
+				('Αδυναμία ανανέωσης εικόνας υπογραφών');
+			console.error(err);
+		},
 	});
 
-	prosopa.ipografiPraxiTabRefresh();
 	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.ipografiToggle = (e) => {
+prosopa.ipografiPraxi = (e, praxi) => {
 	if (e)
 	e.stopPropagation();
 
@@ -770,17 +830,14 @@ prosopa.ipografiToggle = (e) => {
 
 	let minima;
 	let errmsg;
-	let praxi;
 
-	if (ipografi.checkokGet()) {
+	if (praxi === 'akirosi') {
 		minima = 'Αναίρεση υπογραφής…';
-		praxi = 'akirosi';
 		errmsg = 'Αδυναμία αναίρεσης υπογραφής';
 	}
 
 	else {
 		minima = 'Επικύρωση στοιχείων…';
-		praxi = 'epikirosi';
 		errmsg = 'Αδυναμία επικύρωσης στοιχείων';
 	}
 
@@ -789,11 +846,11 @@ prosopa.ipografiToggle = (e) => {
 		'url': 'ipografiPraxi.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio,
+			'imerisio': prosopa.imerisio.kodikosGet(),
 			'armodios': ipografi.armodiosGet(),
 			'praxi': praxi,
 		},
-		'success': (rsp) => prosopa.ipografiPraxiPost(rsp),
+		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {
 			prosopa.fyiError(errmsg);
 			console.error(err);
@@ -803,30 +860,11 @@ prosopa.ipografiToggle = (e) => {
 	return prosopa;
 };
 
-prosopa.ipografiPraxiPost = (rsp) => {
-	if (rsp.error)
-	return pnd.fyiError(rsp.error);
-
-	prosopa.
-	fyiClear().
-	ipografiCandiTabsHide().
-	ipografesDOM.
-	empty();
-
-	pnd.arrayWalk(rsp.ipografes, (v) => {
-		v = new letrak.ipografi(v);
-		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
-	});
-
-	prosopa.ipografiPraxiTabRefresh();
-	return prosopa;
-};
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 letrak.imerisio.prototype.domGet = function() {
+	let ipiresia = this.ipiresiaGet();
+	let ipiresiaDOM;
 	let prosapo = this.prosapoGet();
 	let imerominia = this.imerominiaGet().toLocaleDateString('el-GR', {
 		'weekday': 'long',
@@ -846,6 +884,10 @@ letrak.imerisio.prototype.domGet = function() {
 	addClass('imerisioPerigrafi').
 	text(this.perigrafiGet())).
 
+	append(ipiresiaDOM = $('<div>').
+	addClass('imerisioIpiresia').
+	text(ipiresia)).
+
 	append($('<div>').
 	addClass('imerisioProsapo').
 	addClass('imerisioProsapo' +
@@ -855,6 +897,9 @@ letrak.imerisio.prototype.domGet = function() {
 	append($('<div>').
 	addClass('imerisioImerominia').
 	text(imerominia));
+
+	if (letrak.prosvasiIsUpdate(ipiresia))
+	ipiresiaDOM.addClass('imerisioIpiresiaUpdate');
 
 	return dom;
 };
@@ -936,12 +981,35 @@ letrak.ipografi.prototype.domGet = function() {
 
 	append($('<div>').
 	addClass('ipografiCheckok').
-	html('&#x2714;'));
+	html(checkok ? '&#x2714;' : ''));
 
 	return dom;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.ipografesRefreshErrorCheck = (rsp) => {
+	if (rsp.error) {
+		pnd.fyiError(rsp.error);
+		return true;
+	};
+
+	prosopa.
+	fyiClear().
+	ipografiCandiTabsHide().
+	ipografesDOM.
+	empty();
+
+	pnd.arrayWalk(rsp.ipografes, (v) => {
+		v = new letrak.ipografi(v);
+		prosopa.ipografesDOM.
+		append(v.domGet().
+		data('taxinomisi', v.taxinomisiGet()));
+	});
+
+	prosopa.ipografiTabsRefresh();
+	return false;
+};
 
 prosopa.browserFix = () => {
 	let i = 0;

@@ -82,6 +82,63 @@ class letrakCore {
 	}
 }
 
+class Ipografi {
+	public $imerisio = NULL;
+	public $taxinomisi = NULL;
+	public $armodios = NULL;
+	public $titlos = NULL;
+	public $checkok = NULL;
+
+	public function __construct($x) {
+		foreach ($x as $k => $v) {
+			try {
+				$func = $k . "_set";
+				$this->$func($v);
+			}
+
+			catch (Exception $e) {
+				continue;
+			}
+		}
+	}
+
+	public function imerisio_set($x) {
+		$this->imerisio = $x;
+		return $this;
+	}
+
+	public function taxinomisi_set($x) {
+		$this->taxinomisi = $x;
+		return $this;
+	}
+
+	public function armodios_set($x) {
+		$this->armodios = $x;
+		return $this;
+	}
+
+	public function checkok_set($x) {
+		$this->checkok = $x;
+		return $this;
+	}
+
+	public function imerisio_get($x) {
+		return $this->imerisio;
+	}
+
+	public function taxinomisi_get($x) {
+		return $this->taxinomisi;
+	}
+
+	public function armodios_get($x) {
+		return $this->armodios;
+	}
+
+	public function checkok_get($x) {
+		return $this->checkok;
+	}
+}
+
 // Η κλάση "Prosvasi" απεικονίζει εγγραφές πρόσβασης χρηστών στα χρονικά
 // δεδομένα προσέλευσης και αποχώρησης των υπαλλήλων. Οι προσβάσεις των
 // χρηστών καθορίζονται στον πίνακα "prosvasi" της database "erpota".
