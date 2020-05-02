@@ -83,15 +83,20 @@ exit(0);
 ///////////////////////////////////////////////////////////////////////////////@
 
 function epikirosi($imerisio, $xristis) {
-	$query = "SELECT MIN(`taxinomisi`) FROM `letrak`.`ipografi`" .
+	$query = "SELECT `taxinomisi` FROM `letrak`.`ipografi`" .
 		" WHERE (`imerisio` = " . $imerisio . ")" .
 		" AND (`checkok` IS NULL)";
-	$row = pandora::first_row($query, MYSQLI_NUM);
+	$result = pandora::query($query);
 
-	if (!$row)
+	$tax = LETRAK_IPOGRAFI_TAXINOMISI_MAX + 1;
+
+	while ($row = $result->fetch_array(MYSQLI_NUM)) {
+		if ($row[0] < $tax)
+		$tax = $row[0];
+	}
+
+	if ($tax > LETRAK_IPOGRAFI_TAXINOMISI_MAX)
 	lathos("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
-
-	$tax = $row[0];
 
 	$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
 		" WHERE (`imerisio` = " . $imerisio . ")" .

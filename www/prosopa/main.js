@@ -23,6 +23,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-02
+// Updated: 2020-05-01
 // Updated: 2020-04-30
 // Updated: 2020-04-29
 // Updated: 2020-04-28
@@ -56,6 +58,13 @@ const imr = (self.opener && self.opener.hasOwnProperty('LETRAK') &&
 const prosopa = {};
 
 prosopa.minima = {
+	'ipografiCheckSymbol': '&#x2714;',
+
+	'imerisioKatastasiNeoSymbol': '&#x25D4;',
+	'imerisioKatastasiEkremesSymbol': '&#x25D1;',
+	'imerisioKatastasiReadySymbol': '&#x25D5;',
+	'imerisioKatastasiClosedSymbol': '&#x2714;',
+
 	'imerisioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 	'ipografesTabLabel': 'Υπογραφές',
 
@@ -877,6 +886,10 @@ letrak.imerisio.prototype.domGet = function() {
 	addClass('imerisio').
 
 	append($('<div>').
+	addClass('imerisioKatastasi').
+	html(prosopa.minima.imerisioKatastasiClosedSymbol)).
+
+	append($('<div>').
 	addClass('imerisioKodikos').
 	text(this.kodikosGet())).
 
@@ -981,7 +994,7 @@ letrak.ipografi.prototype.domGet = function() {
 
 	append($('<div>').
 	addClass('ipografiCheckok').
-	html(checkok ? '&#x2714;' : ''));
+	html(checkok ? prosopa.minima.ipografiCheckSymbol : ''));
 
 	return dom;
 };

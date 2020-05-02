@@ -28,6 +28,7 @@
 @import '../lib/common.styl'
 
 $emfanesOrio = #0b8dfd
+$checkSize = 32px
 
 .pnd-ofelimo
 	padding 0px
@@ -39,12 +40,24 @@ $emfanesOrio = #0b8dfd
 	border-color grey
 
 .imerisio
+	position relative
 	padding 4px
 	font-weight bold
 	color #252525
 	> div
 		display inline-block
 		margin-right 8px
+
+.imerisioKatastasi
+	position absolute
+	left 8px
+	top -6px
+	font-size $checkSize
+	font-weight normal
+	color red
+
+.imerisioKodikos
+	margin-left 40px
 
 .imerisioKodikos::after
 	content '.'
@@ -204,7 +217,7 @@ $emfanesOrio = #0b8dfd
 	position absolute
 	top -8px
 	left 4px
-	font-size 180%
+	font-size $checkSize
 	color green
 	border-style none !important
 
