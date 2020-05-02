@@ -363,7 +363,7 @@ prosopa.imerisioKatastasiGet = () => {
 	children('.ipografi').
 	each(function() {
 		count++;
-		let ipografi = prosopa.dom2ipografi($(this));
+		let ipografi = $(this).data('ipografi')
 
 		if (!ipografi.checkokGet())
 		return;
@@ -406,7 +406,7 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		let ipografi = prosopa.dom2ipografi($(this));
+		let ipografi = $(this).data('ipografi');
 		let armodios = ipografi.armodiosGet();
 		let checkok = ipografi.checkokGet();
 
@@ -448,7 +448,7 @@ prosopa.ipografiIpografon = () => {
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		let x = prosopa.dom2ipografi($(this));
+		let x = $(this).data('ipografi');
 
 		if (!x.checkokGet())
 		return;
@@ -484,7 +484,7 @@ prosopa.xristisIsIpografon = () => {
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		let x = prosopa.dom2ipografi($(this));
+		let x = $(this).data('ipografi');
 
 		if (x.armodiosGet() !== xristis)
 		return;
@@ -667,7 +667,7 @@ prosopa.ipografiEdit = (e) => {
 	if (dom.length !== 1)
 	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς επεξεργασία');
 
-	let ipografi = prosopa.dom2ipografi(dom);
+	let ipografi = dom.data('ipografi');
 
 	let forma = {
 		'isimonixat': ipografi.taxinomisiGet(),
@@ -1009,6 +1009,7 @@ letrak.ipografi.prototype.domGet = function() {
 
 	let dom = $('<div>').
 	addClass('ipografi').
+	data('ipografi', this).
 
 	append($('<div>').
 	addClass('ipografiTaxinomisi').
@@ -1031,14 +1032,6 @@ letrak.ipografi.prototype.domGet = function() {
 	html(checkok ? prosopa.minima.ipografiCheckSymbol : ''));
 
 	return dom;
-};
-
-prosopa.dom2ipografi = (dom) => {
-	return (new letrak.ipografi()).
-	taxinomisiSet(dom.children('.ipografiTaxinomisi').text()).
-	armodiosSet(dom.children('.ipografiArmodios').text()).
-	titlosSet(dom.children('.ipografiTitlos').text()).
-	checkokSet(dom.children('.ipografiCheckok').text());
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
