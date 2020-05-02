@@ -357,13 +357,13 @@ imerisio.browserSetup = () => {
 
 imerisio.candiTabsSetup = () => {
 	letrak.arxikiTabDOM.
-	addClass('indacTab');
+	addClass('idnacTab');
 
 	imerisio.filtraTabDOM.
-	addClass('indacTab');
+	addClass('idnacTab');
 
 	imerisio.paleoteraTabDOM.
-	addClass('indacTab');
+	addClass('idnacTab');
 
 	pnd.toolbarLeftDOM.
 
@@ -396,8 +396,8 @@ imerisio.candiTabsShow = () => {
 	addClass('candiTabVisible');
 
 	pnd.toolbarDOM.
-	find('.indacTab').
-	addClass('indacTabHidden');
+	find('.idnacTab').
+	addClass('idnacTabHidden');
 
 	return imerisio;
 };
@@ -408,8 +408,8 @@ imerisio.candiTabsHide = () => {
 	removeClass('candiTabVisible');
 
 	pnd.toolbarDOM.
-	find('.indacTab').
-	removeClass('indacTabHidden');
+	find('.idnacTab').
+	removeClass('idnacTabHidden');
 
 	return imerisio;
 };

@@ -380,8 +380,12 @@ prosopa.imerisioKatastasiGet = () => {
 };
 
 prosopa.ipografiUpdateTabsRefresh = () => {
-	let ipiresia = prosopa.imerisio.ipiresiaGet();
-	let prosvasi = letrak.prosvasiIsUpdate(ipiresia);
+	let prosvasi = false;
+
+	if (!prosopa.imerisio.closedGet()) {
+		let ipiresia = prosopa.imerisio.ipiresiaGet();
+		prosvasi = letrak.prosvasiIsUpdate(ipiresia);
+	}
 
 	prosopa.ipografesPanelDOM.
 	children('.ipografiUpdatePliktro').
@@ -391,6 +395,13 @@ prosopa.ipografiUpdateTabsRefresh = () => {
 };
 
 prosopa.ipografiPraxiTabsRefresh = () => {
+	prosopa.ipografesPanelDOM.
+	children('.praxiPliktro').
+	css('display', 'none');
+
+	if (prosopa.imerisio.closedGet())
+	return prosopa;
+
 	let xristis = letrak.xristisIpalilosGet();
 	let alosprin = false;
 	let epikirosi = false;
@@ -417,10 +428,6 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 		if (!alosprin)
 		epikirosi = true;
 	});
-
-	prosopa.ipografesPanelDOM.
-	children('.praxiPliktro').
-	css('display', 'none');
 
 	if (epikirosi)
 	prosopa.ipografiEpikirosiTabDOM.
