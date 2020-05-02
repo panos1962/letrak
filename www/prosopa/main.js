@@ -229,6 +229,7 @@ prosopa.prosopaProcess = (parousia) => {
 prosopa.ipografesSetup = () => {
 	prosopa.imerisioAreaDOM.
 	append(prosopa.ipografesAreaDOM = $('<div>').
+	addClass('ipografesArea').
 	addClass('ipografesAreaHidden').
 
 	append(prosopa.ipografesPanelDOM = $('<div>').
