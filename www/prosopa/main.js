@@ -349,14 +349,9 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		let armodios = $(this).children('.ipografiArmodios').text();
-
-		armodios = parseInt(armodios);
-
-		if (!armodios)
-		return;
-
-		let checkok = $(this).children('.ipografiCheckok').text();
+		let ipografi = prosopa.dom2ipografi($(this));
+		let armodios = ipografi.armodiosGet();
+		let checkok = ipografi.checkokGet();
 
 		if (armodios !== xristis) {
 			if (!checkok)
@@ -391,24 +386,21 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.ipografiIpografon = () => {
-	let dom;
+	let ipografi;
 
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		if ($(this).children('.ipografiCheckok').text())
+		let x = prosopa.dom2ipografi($(this));
+
+		if (!x.checkokGet())
 		return;
 
-		dom = $(this);
+		ipografi = x;
 		return false;
 	});
 
-	if (!dom)
-	return undefined;
-
-	return new letrak.ipografi().
-	armodiosSet(dom.children('.ipografiArmodios').text()).
-	titlosSet(dom.children('.ipografiTitlos').text());
+	return ipografi;
 };
 
 prosopa.ipografiProtos = () => {
@@ -430,33 +422,21 @@ prosopa.xristisIsIpografon = () => {
 	return false;
 
 	let xristis = letrak.xristisIpalilosGet();
-	let dom;
+	let ipografi;
 
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
-		let armodios = $(this).children('.ipografiArmodios').text();
+		let x = prosopa.dom2ipografi($(this));
 
-		armodios = parseInt(armodios);
-
-		if (!armodios)
+		if (x.armodiosGet() !== xristis)
 		return;
 
-		if (armodios !== xristis)
-		return;
-
-		dom = $(this);
+		ipografi = x;
 		return false;
 	});
 
-	if (!dom)
-	return false;
-
-	return (new letrak.ipografi()).
-	taxinomisiSet(dom.children('.ipografiTaxinomisi').text()).
-	armodiosSet(dom.children('.ipografiArmodios').text()).
-	titlosSet(dom.children('.ipografiTitlos').text()).
-	checkokSet(dom.children('.ipografiCheckok').text());
+	return ipografi;
 };
 
 prosopa.xristisNotIpografon = () => {
@@ -630,10 +610,7 @@ prosopa.ipografiEdit = (e) => {
 	if (dom.length !== 1)
 	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς επεξεργασία');
 
-	let ipografi = (new letrak.ipografi()).
-	taxinomisiSet(dom.data('taxinomisi')).
-	armodiosSet(dom.children('.ipografiArmodios').text()).
-	titlosSet(dom.children('.ipografiTitlos').text());
+	let ipografi = prosopa.dom2ipografi(dom);
 
 	let forma = {
 		'isimonixat': ipografi.taxinomisiGet(),
@@ -997,6 +974,14 @@ letrak.ipografi.prototype.domGet = function() {
 	html(checkok ? prosopa.minima.ipografiCheckSymbol : ''));
 
 	return dom;
+};
+
+prosopa.dom2ipografi = (dom) => {
+	return (new letrak.ipografi()).
+	taxinomisiSet(dom.children('.ipografiTaxinomisi').text()).
+	armodiosSet(dom.children('.ipografiArmodios').text()).
+	titlosSet(dom.children('.ipografiTitlos').text()).
+	checkokSet(dom.children('.ipografiCheckok').text());
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
