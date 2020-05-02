@@ -73,6 +73,7 @@ imerisio.minima = {
 	'prosopaTabLabel': 'Επεξεργασία',
 	'prosopaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
+	'imerisioKatastasiClosedSymbol': '&#x2714;',
 };
 
 pnd.domInit(() => {
@@ -464,7 +465,7 @@ imerisio.diagrafiConfirm = (e) => {
 	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
 
 	try {
-		var kodikos = dom.data('data').kodikosGet();
+		var kodikos = dom.data('imerisio').kodikosGet();
 	}
 
 	catch (e) {
@@ -543,9 +544,7 @@ imerisio.diagrafiProcess = (msg, kodikos, dom) => {
 imerisio.klonismos = (e) => {
 	e.stopPropagation();
 
-	let x = $('.imerisioCandi').
-	first().
-	data('data');
+	let x = $('.imerisioCandi').first().data('imerisio');
 
 	if (!x)
 	return imerisio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
@@ -625,7 +624,7 @@ imerisio.prosopa = (opts) => {
 	if (dom.length !== 1)
 	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
 
-	let x = dom.data('data');
+	let x = dom.data('imerisio');
 
 	if (!x)
 	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
@@ -821,8 +820,16 @@ letrak.imerisio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
 
 	let dom = $('<div>').
-	data('data', this).
-	addClass('imerisio').
+	data('imerisio', this).
+	addClass('imerisio');
+
+	if (this.closedGet())
+	dom.
+	append($('<div>').
+	addClass('imerisioClosed').
+	html(imerisio.minima.imerisioKatastasiClosedSymbol));
+
+	dom.
 
 	append($('<div>').
 	addClass('imerisioKodikos').

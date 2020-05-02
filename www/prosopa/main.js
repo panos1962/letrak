@@ -159,12 +159,6 @@ prosopa.selidaSetup = () => {
 			prosopaProcess(rsp.prosopa);
 
 			if (imr) {
-				// XXX
-				// Προσωρινό για να δείξουμε τη διασύνδεση
-				// με τη γονική σελίδα σε επίπεδο DOM.
-
-				imr.dom.css('background-color', 'red');
-
 				// Σε περίπτωση που το παρουσιολόγιο έχει
 				// μόλις δημιουργηθεί ως αντίγραφο κάποιου
 				// προηγούμενου παρουσιολογίου, φροντίζουμε
@@ -202,11 +196,10 @@ prosopa.ipografesProcess = (ipografes) => {
 	pnd.arrayWalk(ipografes, (v) => {
 		v = new letrak.ipografi(v);
 		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
+		append(v.domGet());
 	});
 
-	prosopa.ipografiRefreshDOM();
+	prosopa.ipografiRefresh();
 	return prosopa;
 };
 
@@ -324,7 +317,7 @@ prosopa.ipografesSetup = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.ipografiRefreshDOM = () => {
+prosopa.ipografiRefresh = () => {
 	return prosopa.
 	imerisioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
@@ -780,7 +773,7 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	pnd.arrayWalk(rsp.ipografes, (v) => {
 		v = new letrak.ipografi(v);
 		let tax = v.taxinomisiGet();
-		let dom = v.domGet().data('taxinomisi', tax);
+		let dom = v.domGet();
 
 		prosopa.ipografesDOM.
 		append(dom);
@@ -798,7 +791,7 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	if (found)
 	prosopa.ipografiCandiTabsShow();
 
-	prosopa.ipografiRefreshDOM();
+	prosopa.ipografiRefresh();
 	forma.dialogDOM.dialog('close');
 
 	return prosopa;
@@ -816,7 +809,7 @@ prosopa.ipografiDiagrafi = (e) => {
 	if (dom.length !== 1)
 	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς διαγραφή');
 
-	let taxinomisi = dom.data('taxinomisi');
+	let taxinomisi = dom.data('ipografi').taxinomisiGet();
 
 	pnd.fyiMessage('Διαγραφή υπογραφής…');
 	$.post({
@@ -1051,11 +1044,10 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 	pnd.arrayWalk(rsp.ipografes, (v) => {
 		v = new letrak.ipografi(v);
 		prosopa.ipografesDOM.
-		append(v.domGet().
-		data('taxinomisi', v.taxinomisiGet()));
+		append(v.domGet());
 	});
 
-	prosopa.ipografiRefreshDOM();
+	prosopa.ipografiRefresh();
 	return false;
 };
 

@@ -176,6 +176,7 @@ $count = 0;
 $result = pandora::query($query);
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	$count++;
+	pandora::null_purge($row);
 
 	// Αν είναι το πρώτο παρουσιολόγιο που επιλέγουμε, κρατάμε την
 	// ημερομηνία του προκειμένου να επιλέξουμε όλα τα παρουσιολόγια
@@ -198,7 +199,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 
 		$imerominia = $row["i"];
 	}
-		
+
 	print $enotiko . pandora::json_string($row);
 	$enotiko = ",";
 }
