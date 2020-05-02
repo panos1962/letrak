@@ -206,7 +206,7 @@ prosopa.ipografesProcess = (ipografes) => {
 		data('taxinomisi', v.taxinomisiGet()));
 	});
 
-	prosopa.ipografiTabsRefresh();
+	prosopa.ipografiRefreshDOM();
 	return prosopa;
 };
 
@@ -323,10 +323,66 @@ prosopa.ipografesSetup = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.ipografiTabsRefresh = () => {
+prosopa.ipografiRefreshDOM = () => {
 	return prosopa.
+	imerisioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
 	ipografiPraxiTabsRefresh();
+};
+
+prosopa.imerisioKatastasiRefresh = () => {
+	let katastasi = prosopa.imerisioKatastasiGet();
+
+	prosopa.imerisioKatastasiDOM.
+	removeClass('imerisioKatastasiNeo').
+	removeClass('imerisioKatastasiEkremes').
+	removeClass('imerisioKatastasiReady').
+	removeClass('imerisioKatastasiClosed').
+	empty();
+
+	if (!katastasi)
+	return prosopa;
+
+	prosopa.imerisioKatastasiDOM.
+	addClass('imerisioKatastasi' + katastasi).
+	html(prosopa.minima['imerisioKatastasi' + katastasi + 'Symbol']);
+
+	return prosopa;
+};
+
+prosopa.imerisioKatastasiGet = () => {
+	if (prosopa.imerisio.closedGet())
+	return 'Closed';
+
+	let proto = false;
+	let count = 0;
+	let check = 0;
+
+	prosopa.ipografesDOM.
+	children('.ipografi').
+	each(function() {
+		count++;
+		let ipografi = prosopa.dom2ipografi($(this));
+
+		if (!ipografi.checkokGet())
+		return;
+
+		check++;
+
+		if (count === 1)
+		proto = true;
+	});
+
+	if (!count)
+	return 'Neo';
+
+	if (check === count)
+	return 'Ready';
+
+	if (proto)
+	return 'Ekremes';
+
+	return 'Neo';
 };
 
 prosopa.ipografiUpdateTabsRefresh = () => {
@@ -741,7 +797,7 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	if (found)
 	prosopa.ipografiCandiTabsShow();
 
-	prosopa.ipografiTabsRefresh();
+	prosopa.ipografiRefreshDOM();
 	forma.dialogDOM.dialog('close');
 
 	return prosopa;
@@ -852,6 +908,7 @@ letrak.imerisio.prototype.domGet = function() {
 	let ipiresia = this.ipiresiaGet();
 	let ipiresiaDOM;
 	let prosapo = this.prosapoGet();
+
 	let imerominia = this.imerominiaGet().toLocaleDateString('el-GR', {
 		'weekday': 'long',
 		'year': 'numeric',
@@ -862,9 +919,8 @@ letrak.imerisio.prototype.domGet = function() {
 	let dom = $('<div>').
 	addClass('imerisio').
 
-	append($('<div>').
-	addClass('imerisioKatastasi').
-	html(prosopa.minima.imerisioKatastasiClosedSymbol)).
+	append(prosopa.imerisioKatastasiDOM = $('<div>').
+	addClass('imerisioKatastasi')).
 
 	append($('<div>').
 	addClass('imerisioKodikos').
@@ -1005,7 +1061,7 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		data('taxinomisi', v.taxinomisiGet()));
 	});
 
-	prosopa.ipografiTabsRefresh();
+	prosopa.ipografiRefreshDOM();
 	return false;
 };
 
