@@ -296,11 +296,12 @@ class Prosvasi {
 		return $this;
 	}
 
-	// Η μέθοδος "is_prosvasi" είναι σημαντική καθώς δέχεται έναν κωδικό
-	// υπηρεσίας και ελέγχει αν η ανά χείρας πρόσβαση «ταιριάζει» στη
-	// συγκεκριμένη υπηρεσία με βάση τη «μάσκα» κωδικού υπηρεσίας.
+	// Η μέθοδος "is_prosvasi_ipiresia" είναι σημαντική καθώς δέχεται
+	// έναν κωδικό υπηρεσίας και ελέγχει αν η ανά χείρας πρόσβαση
+	// «ταιριάζει» στη συγκεκριμένη υπηρεσία με βάση τη «μάσκα»
+	// κωδικού υπηρεσίας.
 
-	public function is_prosvasi($ipiresia) {
+	public function is_prosvasi_ipiresia($ipiresia) {
 		$maska = $this->ipiresia_get();
 
 		// Αν η μάσκα κωδικού υπηρεσίας δεν έχει καθοριστεί, τότε
@@ -335,12 +336,12 @@ class Prosvasi {
 		return (substr($ipiresia, 0, $l) === $maska);
 	}
 
-	public function oxi_prosvasi($ipiresia) {
-		return !$this->is_prosvasi($ipiresia);
+	public function oxi_prosvasi_ipiresia($ipiresia) {
+		return !$this->is_prosvasi_ipiresia($ipiresia);
 	}
 
 	public function is_update($ipiresia = NULL) {
-		if ($this->oxi_prosvasi($ipiresia))
+		if ($this->oxi_prosvasi_ipiresia($ipiresia))
 		return FALSE;
 
 		switch ($this->epipedo_get()) {
@@ -354,6 +355,54 @@ class Prosvasi {
 
 	public function oxi_update($ipiresia) {
 		return !$this->is_update($ipiresia);
+	}
+
+	// Η μέθοδος "is_prosvasi_imerisio" δέχεται ως παράμετρο ένα
+	// παρουσιολόγιο και ελέγχει αν ο υπάλληλος της ανά χείρας
+	// πρόσβασης έχει δικαιώματα στο περιεχόμενο του παρουσιολογίου.
+
+	public function is_prosvasi_imerisio($imerisio) {
+		// Αν ο υπάλληλος της ανά χείρας πρόσβασης είναι υπογράφων
+		// στο παρουσιολόγιο, τότε αυτεπάγγελτα αποκτά δικαιώματα
+		// στο περιεχόμενο του παρουσιολογίου.
+
+		if ($this->is_ipografon($imerisio["kodikos"]))
+		return TRUE;
+
+		// Αν τα δικαιώματα που απορρέουν από τη μάσκα κωδικού
+		// υπηρεσίας για τον εν λόγω υπάλληλο ταιριάζουν με την
+		// υπηρεσία του παρουσιολογίου, τότε ο υπάλληλος αποκτά
+		// δικαιώματα στο περιεχόμενο του παρουσιολογίου.
+
+		if ($this->is_prosvasi_ipiresia($imerisio["ipiresia"]))
+		return TRUE;
+
+		// Σε κάθε άλλη περίπτωση ο υπάλληλος έχει δικαιώματα
+		// μόνο σε στοιχεία που τον αφορούν προσωπικά.
+
+		return FALSE;
+	}
+
+	public function oxi_prosvasi_imerisio($imerisio) {
+		return !$this->is_prosvasi_imerisio($imerisio);
+	}
+
+	// Η μέθοδος "is_ipografon" δέχεται ως παράμετρο ένα παρουσιολόγιο
+	// και ελέγχει αν ο υπάλληλος της ανά χείρας πρόσβασης συμμετέχει
+	// ως υπογράφων στο συγκεκριμένο παρουσιολόγιο.
+
+	public function is_ipografon($imerisio) {
+		if ($this->oxi_ipalilos())
+		return FALSE;
+
+		if (is_array($imerisio))
+		$imerisio = $imerisio["kodikos"];
+
+		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`armodios` = " . $this->ipalilos_get() . ")";
+
+		return pandora::first_row($query, MYSQLI_NUM);
 	}
 }
 ?>

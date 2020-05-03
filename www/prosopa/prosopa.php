@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-03
 // Updated: 2020-04-26
 // Created: 2020-04-25
 // @HISTORY END
@@ -46,7 +47,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("imerisio");
 
-if ((!$kodikos) || ((int)$kodikos != $kodikos))
+if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $ipalilos_table = letrak::erpota12("ipalilos");
@@ -69,7 +70,7 @@ $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
 " WHERE (`parousia`.`imerisio` = " . $kodikos . ")";
 
-if ($prosvasi->oxi_prosvasi($imerisio["ipiresia"]))
+if ($prosvasi->oxi_prosvasi_imerisio($imerisio))
 $query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
 $query .= " ORDER BY `l`, `f`, `p`, `i`";
@@ -130,6 +131,8 @@ print '],';
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '"error":""}';
+
+///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($s) {
 	print '{"error":' . pandora::json_string($s) . "}";
