@@ -12,11 +12,11 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/diagrafi.php —— Διαγραφή παρουσιολογίου
+// www/imerisio/anigma.php —— Άνοιγμα παρουσιολογίου
 // @FILE END
 //
 // @HISTORY BEGIN
-// Created: 2020-04-22
+// Created: 2020-05-03
 // @HISTORY END
 //
 // @END
@@ -46,18 +46,20 @@ $query = "SELECT `ipiresia` FROM `letrak`.`imerisio`" .
 $imerisio = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$imerisio)
-lathos("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
+lathos("Αδυναμία εντοπισμού παρουσιολογίου");
 
 if ($prosvasi->oxi_update($imerisio["ipiresia"]))
-lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
+lathos("Δεν έχετε δικαίωμα ανοίγματος παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "DELETE FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
+$query = "UPDATE `letrak`.`imerisio`" .
+	" SET `closed` = NULL" .
+	" WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 
-if (pandora::affected_rows() < 1)
-lathos("Αποτυχία διαγραφής παρουσιολογίου");
+if (pandora::affected_rows() != 1)
+lathos("Αποτυχία ανοίγματος παρουσιολογίου");
 
 exit(0);
 

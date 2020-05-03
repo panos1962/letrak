@@ -46,18 +46,31 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $protipo = pandora::parameter_get("kodikos");
 
-if ((!$protipo) || ($protipo != (int)$protipo))
+if (pandora::not_integer($protipo, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Ακαθόριστος κωδικός προτύπου");
+
+$query = "SELECT * FROM `letrak`.`imerisio`" .
+	" WHERE `kodikos` = " . $protipo;
+$protipo = pandora::first_row($query, MYSQLI_ASSOC);
+
+if (!$protipo)
+lathos("Αδυναμία εντοπισμού προτύπου");
+
+if ($prosvasi->oxi_update($protipo["ipiresia"]))
+lathos("Δεν έχετε δικαίωμα δημιουργίας παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
 
 $query = "INSERT INTO `letrak`.`imerisio` " .
-"(`protipo`, `ipalilos`, `imerominia`, `ipiresia`, `prosapo`, `perigrafi`) " .
-"SELECT " . $protipo . ", " . $prosvasi->ipalilos_get() . ", " .
-"NOW(), `ipiresia`, `prosapo`, `perigrafi` " .
-"FROM `letrak`.`imerisio` WHERE `kodikos` = " . $protipo;
+"(`protipo`, `ipalilos`, `imerominia`," .
+" `ipiresia`, `prosapo`, `perigrafi`) VALUES (" .
+$protipo["kodikos"] . ", " .
+$prosvasi->ipalilos_get() . ", NOW(), " .
+pandora::sql_string($protipo["ipiresia"]) . ", " .
+pandora::sql_string($protipo["prosapo"]) . ", " .
+pandora::sql_string($protipo["perigrafi"]) . ")";
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {
@@ -70,7 +83,7 @@ $kodikos = pandora::insert_id();
 $query = "INSERT INTO `letrak`.`parousia` " .
 "(`imerisio`, `ipalilos`, `karta`, `orario`) " .
 "SELECT " . $kodikos . ", `ipalilos`, `karta`, `orario` " .
-"FROM `letrak`.`parousia` WHERE `imerisio` = " . $protipo;
+"FROM `letrak`.`parousia` WHERE `imerisio` = " . $protipo["kodikos"];
 pandora::query($query);
 
 pandora::query("SET @tax := 0");
@@ -78,7 +91,7 @@ pandora::query("SET @tax := 0");
 $query = "INSERT INTO `letrak`.`ipografi`" .
 	" (`imerisio`, `taxinomisi`, `titlos`, `armodios`)" .
 	" SELECT " . $kodikos . ", (@tax := @tax + 1), `titlos`, `armodios`" .
-	" FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo .
+	" FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo["kodikos"] .
 	" ORDER BY `taxinomisi`";
 pandora::query($query);
 
@@ -98,7 +111,7 @@ exit(0);
 ///////////////////////////////////////////////////////////////////////////////@
 
 function lathos($msg) {
-	print '{"error":' . pandora_json_string($msg) . '}';
+	print '{"error":' . pandora::json_string($msg) . '}';
 	exit(0);
 }
 ?>

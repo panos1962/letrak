@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-03
 // Updated: 2020-04-28
 // Updated: 2020-04-27
 // Updated: 2020-04-26
@@ -336,6 +337,23 @@ class Prosvasi {
 
 	public function oxi_prosvasi($ipiresia) {
 		return !$this->is_prosvasi($ipiresia);
+	}
+
+	public function is_update($ipiresia = NULL) {
+		if ($this->oxi_prosvasi($ipiresia))
+		return FALSE;
+
+		switch ($this->epipedo_get()) {
+		case 'ADMIN':
+		case 'UPDATE':
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	public function oxi_update($ipiresia) {
+		return !$this->is_update($ipiresia);
 	}
 }
 ?>

@@ -373,14 +373,6 @@ imerisio.candiTabsSetup = () => {
 
 	pnd.toolbarLeftDOM.
 
-	append(imerisio.diagrafiTabDOM = letrak.tabDOM().
-	addClass('candiTab').
-	addClass('aniktoTab').
-	addClass('updateTab').
-	attr('title', imerisio.minima.diagrafiTitle).
-	text(imerisio.minima.diagrafiTabLabel).
-	on('click', (e) => imerisio.diagrafiConfirm(e))).
-
 	append(imerisio.klisimoTabDOM = letrak.tabDOM().
 	addClass('candiTab').
 	addClass('aniktoTab').
@@ -396,6 +388,14 @@ imerisio.candiTabsSetup = () => {
 	attr('title', imerisio.minima.anigmaTitle).
 	text(imerisio.minima.anigmaTabLabel).
 	on('click', (e) => imerisio.anigma(e))).
+
+	append(imerisio.diagrafiTabDOM = letrak.tabDOM().
+	addClass('candiTab').
+	addClass('aniktoTab').
+	addClass('updateTab').
+	attr('title', imerisio.minima.diagrafiTitle).
+	text(imerisio.minima.diagrafiTabLabel).
+	on('click', (e) => imerisio.diagrafiConfirm(e))).
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
@@ -584,7 +584,7 @@ imerisio.diagrafi = (kodikos, dom) => {
 	$.post({
 		'url': 'diagrafi.php',
 		'data': {
-			"kodikos": kodikos,
+			'kodikos': kodikos,
 		},
 		'success': (rsp) => imerisio.diagrafiProcess(rsp, kodikos, dom),
 		'error': (e) => {
@@ -615,6 +615,110 @@ imerisio.diagrafiProcess = (msg, kodikos, dom) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+imerisio.klisimo = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let dom = $('.imerisioCandi').first();
+
+	if (!dom)
+	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο');
+
+	try {
+		var imr = dom.data('imerisio');
+		var kodikos = imr.kodikosGet();
+	}
+
+	catch (e) {
+		return imerisio.fyiError('Απροσδιόριστο παρουσιολόγιο');
+	}
+
+	pnd.fyiMessage('Κλείσιμο παρουσιολογίου <b>' + kodikos + '</b>…');
+	$.post({
+		'url': 'klisimo.php',
+		'data': {
+			'kodikos': kodikos,
+		},
+		'success': (rsp) => imerisio.klisimoProcess(rsp, imr, dom),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα κλεισίματος παρουσιολογίου');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.klisimoProcess = (msg, imr, dom) => {
+	if (msg) {
+		pnd.fyiError(msg);
+		console.error(msg);
+		return imerisio;
+	}
+
+
+	pnd.fyiClear();
+	imr.closedSet(true);
+	dom.children('.imerisioClosed').
+	html(imerisio.minima.imerisioKatastasiClosedSymbol);
+	imerisio.candiTabsShow();
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+imerisio.anigma = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let dom = $('.imerisioCandi').first();
+
+	if (!dom)
+	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο');
+
+	try {
+		var imr = dom.data('imerisio');
+		var kodikos = imr.kodikosGet();
+	}
+
+	catch (e) {
+		return imerisio.fyiError('Απροσδιόριστο παρουσιολόγιο');
+	}
+
+	pnd.fyiMessage('Άνοιγμα παρουσιολογίου <b>' + kodikos + '</b>…');
+	$.post({
+		'url': 'anigma.php',
+		'data': {
+			'kodikos': kodikos,
+		},
+		'success': (rsp) => imerisio.anigmaProcess(rsp, imr, dom),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα ανοίγματος παρουσιολογίου');
+			console.error(e);
+		},
+	});
+
+	return imerisio;
+};
+
+imerisio.anigmaProcess = (msg, imr, dom) => {
+	if (msg) {
+		pnd.fyiError(msg);
+		console.error(msg);
+		return imerisio;
+	}
+
+	pnd.fyiClear();
+	imr.closedSet();
+	dom.children('.imerisioClosed').text('');
+	imerisio.candiTabsShow();
+
+	return imerisio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 imerisio.klonismos = (e) => {
 	e.stopPropagation();
 
@@ -631,12 +735,11 @@ imerisio.klonismos = (e) => {
 		return imerisio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
 	}
 
-	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos +
-		'</b> σε εξέλιξη…');
+	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos + '</b>…');
 	$.post({
 		'url': 'klonismos.php',
 		'data': {
-			"kodikos": kodikos,
+			'kodikos': kodikos,
 		},
 		'dataType': 'json',
 		'success': (rsp) => imerisio.klonosProcess(rsp, kodikos),
@@ -892,18 +995,14 @@ imerisio.erpotaProcess = (rsp, kodikos) => {
 
 letrak.imerisio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
+	let closedDOM;
 
 	let dom = $('<div>').
 	data('imerisio', this).
-	addClass('imerisio');
+	addClass('imerisio').
 
-	if (this.closedGet())
-	dom.
-	append($('<div>').
-	addClass('imerisioClosed').
-	html(imerisio.minima.imerisioKatastasiClosedSymbol));
-
-	dom.
+	append(closedDOM = $('<div>').
+	addClass('imerisioClosed')).
 
 	append($('<div>').
 	addClass('imerisioKodikos').
@@ -926,6 +1025,12 @@ letrak.imerisio.prototype.domGet = function() {
 	addClass('imerisioPerigrafi').
 	text(this.perigrafiGet()));
 
+	if (this.closedGet())
+	closedDOM.html(imerisio.minima.imerisioKatastasiClosedSymbol);
+
+	else
+	closedDOM.text('');
+	
 	return dom;
 };
 
