@@ -68,10 +68,16 @@ imerisio.minima = {
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
 	'diagrafiTabLabel': 'Διαγραφή',
 	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
+	'klisimoTabLabel': 'Κλείσιμο',
+	'klisimoTitle': 'Κλείσιμο επιλεγμένου παρουσιολογίου',
+	'anigmaTabLabel': 'Άνοιγμα',
+	'anigmaTitle': 'Άνοιγμα επιλεγμένου παρουσιολογίου',
 	'klonosTabLabel': 'Κλώνος',
 	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
-	'prosopaTabLabel': 'Επεξεργασία',
-	'prosopaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
+	'epexergasiaTabLabel': 'Επεξεργασία',
+	'epexergasiaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
+	'leptomeriesTabLabel': 'Λεπτομέρειες',
+	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 	'imerisioKatastasiClosedSymbol': '&#x2714;',
 };
@@ -367,22 +373,52 @@ imerisio.candiTabsSetup = () => {
 
 	pnd.toolbarLeftDOM.
 
-	append(letrak.tabDOM().
+	append(imerisio.diagrafiTabDOM = letrak.tabDOM().
 	addClass('candiTab').
+	addClass('aniktoTab').
+	addClass('updateTab').
 	attr('title', imerisio.minima.diagrafiTitle).
 	text(imerisio.minima.diagrafiTabLabel).
 	on('click', (e) => imerisio.diagrafiConfirm(e))).
 
+	append(imerisio.klisimoTabDOM = letrak.tabDOM().
+	addClass('candiTab').
+	addClass('aniktoTab').
+	addClass('updateTab').
+	attr('title', imerisio.minima.klisimoTitle).
+	text(imerisio.minima.klisimoTabLabel).
+	on('click', (e) => imerisio.klisimo(e))).
+
+	append(imerisio.anigmaTabDOM = letrak.tabDOM().
+	addClass('candiTab').
+	addClass('klistoTab').
+	addClass('updateTab').
+	attr('title', imerisio.minima.anigmaTitle).
+	text(imerisio.minima.anigmaTabLabel).
+	on('click', (e) => imerisio.anigma(e))).
+
 	append(letrak.tabDOM().
 	addClass('candiTab').
+	addClass('updateTab').
 	attr('title', imerisio.minima.klonosTitle).
 	text(imerisio.minima.klonosTabLabel).
 	on('click', (e) => imerisio.klonismos(e))).
 
+	append(imerisio.prosopaTabDOM = letrak.tabDOM().
+	addClass('candiTab').
+	addClass('klistoTab').
+	attr('title', imerisio.minima.leptomeriesTitle).
+	text(imerisio.minima.leptomeriesTabLabel).
+	on('click', (e) => imerisio.prosopa({
+		'clickEvent': e,
+	}))).
+
 	append(letrak.tabDOM().
 	addClass('candiTab').
-	attr('title', imerisio.minima.prosopaTitle).
-	text(imerisio.minima.prosopaTabLabel).
+	addClass('aniktoTab').
+	addClass('updateTab').
+	attr('title', imerisio.minima.epexergasiaTitle).
+	text(imerisio.minima.epexergasiaTabLabel).
 	on('click', (e) => imerisio.prosopa({
 		'clickEvent': e,
 	})));
@@ -392,12 +428,50 @@ imerisio.candiTabsSetup = () => {
 
 imerisio.candiTabsShow = () => {
 	pnd.toolbarDOM.
+	find('.idnacTab').
+	addClass('idnacTabHidden');
+
+	pnd.toolbarDOM.
+	find('.candiTab').
+	removeClass('candiTabVisible');
+
+	// Διασφαλίζουμε το γεγονός ότι υπάρχει πράγματι επιλεγμένο
+	// παρουσιολόγιο.
+
+	let x = $('.imerisioCandi').first();
+
+	if (!x.length)
+	return imerisio;
+
+	x = x.data('imerisio');
+
+	if (!x)
+	return imerisio;
+
+	let klisto = x.closedGet();
+	let update = letrak.prosvasiIsUpdate(x.ipiresiaGet());
+
+	pnd.toolbarDOM.
 	find('.candiTab').
 	addClass('candiTabVisible');
 
 	pnd.toolbarDOM.
-	find('.idnacTab').
-	addClass('idnacTabHidden');
+	find('.' + (klisto ? 'anikto' : 'klisto') + 'Tab').
+	removeClass('candiTabVisible');
+
+	if (update)
+	return imerisio;
+
+	pnd.toolbarDOM.
+	find('.updateTab').
+	removeClass('candiTabVisible');
+
+	// Ειδικά για τα πλήκτρα λεπτομερειών και επεξεργασίας λαμβάνουμε
+	// ειδική μέριμνα, για την περίπτωση «ανοικτού» παρουσιολογίου στο
+	// οποίο ο χρήστης δεν έχει πρόσβαση ενημέρωσης.
+
+	imerisio.prosopaTabDOM.
+	addClass('candiTabVisible');
 
 	return imerisio;
 };
