@@ -49,8 +49,9 @@ lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-print '{"closed":' .
-(letrak::imerisio_is_klisto($imerisio) ? 'true' : 'false') . ',';
+print '{';
+print '"closed":' . (letrak::imerisio_is_klisto($imerisio) ?
+	'true' : 'false') . ',';
 letrak::ipografes_json($imerisio);
 print '}';
 

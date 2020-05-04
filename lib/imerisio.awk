@@ -39,6 +39,9 @@ BEGIN {
 	FS = "\t"
 	spawk_verbose = 0
 
+	if (!creator)
+	pd_fatal("Δεν έχει καθοριστεί κωδικός υπαλλήλου (creator)")
+
 	if (spawk_submit("SET AUTOCOMMIT = 0") != 2)
 	pd_fatal("cannot set autocommit off")
 
@@ -92,8 +95,9 @@ function add_imerisio(kodip, perigrafi, prosapo,		query,
 	pd_fatal("Αδυναμία εκκίνησης νέας transaction")
 
 	query = "INSERT INTO `letrak`.`imerisio` " \
-		"(`imerominia`, `ipiresia`, `prosapo`, `perigrafi`) VALUES (" \
-		simera ", " spawk_escape(kodip) ", " \
+		"(`ipalilos`, `imerominia`, `ipiresia`, " \
+		"`prosapo`, `perigrafi`) VALUES (" \
+		creator ", " simera ", " spawk_escape(kodip) ", " \
 		prosapo ", " perigrafi ")"
 
 	if (spawk_submit(query) != 2)
