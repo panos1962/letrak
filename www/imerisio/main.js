@@ -26,6 +26,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
+// Updated: 2020-05-02
 // Updated: 2020-04-29
 // Updated: 2020-04-26
 // Updated: 2020-04-25
@@ -377,6 +379,7 @@ imerisio.candiTabsSetup = () => {
 	addClass('candiTab').
 	addClass('aniktoTab').
 	addClass('updateTab').
+	addClass('adminTab').
 	attr('title', imerisio.minima.klisimoTitle).
 	text(imerisio.minima.klisimoTabLabel).
 	on('click', (e) => imerisio.klisimo(e))).
@@ -385,6 +388,7 @@ imerisio.candiTabsSetup = () => {
 	addClass('candiTab').
 	addClass('klistoTab').
 	addClass('updateTab').
+	addClass('adminTab').
 	attr('title', imerisio.minima.anigmaTitle).
 	text(imerisio.minima.anigmaTabLabel).
 	on('click', (e) => imerisio.anigma(e))).
@@ -449,7 +453,8 @@ imerisio.candiTabsShow = () => {
 	return imerisio;
 
 	let klisto = x.closedGet();
-	let update = letrak.prosvasiIsUpdate(x.ipiresiaGet());
+	let ipiresia = x.ipiresiaGet();
+	let update = letrak.prosvasiIsUpdate(ipiresia);
 
 	pnd.toolbarDOM.
 	find('.candiTab').
@@ -457,6 +462,11 @@ imerisio.candiTabsShow = () => {
 
 	pnd.toolbarDOM.
 	find('.' + (klisto ? 'anikto' : 'klisto') + 'Tab').
+	removeClass('candiTabVisible');
+
+	if (letrak.prosvasiOxiAdmin(ipiresia))
+	pnd.toolbarDOM.
+	find('.adminTab').
 	removeClass('candiTabVisible');
 
 	if (update)

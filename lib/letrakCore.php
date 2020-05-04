@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
 // Updated: 2020-05-03
 // Updated: 2020-04-28
 // Updated: 2020-04-27
@@ -355,6 +356,22 @@ class Prosvasi {
 
 	public function oxi_update($ipiresia) {
 		return !$this->is_update($ipiresia);
+	}
+
+	public function is_admin($ipiresia = NULL) {
+		if ($this->oxi_prosvasi_ipiresia($ipiresia))
+		return FALSE;
+
+		switch ($this->epipedo_get()) {
+		case 'ADMIN':
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	public function oxi_admin($ipiresia) {
+		return !$this->is_admin($ipiresia);
 	}
 
 	// Η μέθοδος "is_prosvasi_imerisio" δέχεται ως παράμετρο ένα

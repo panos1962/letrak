@@ -16,6 +16,7 @@
 // @FILE END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
 // Created: 2020-05-03
 // @HISTORY END
 //
@@ -48,7 +49,7 @@ $imerisio = pandora::first_row($query, MYSQLI_ASSOC);
 if (!$imerisio)
 lathos("Αδυναμία εντοπισμού παρουσιολογίου");
 
-if ($prosvasi->oxi_update($imerisio["ipiresia"]))
+if ($prosvasi->oxi_admin($imerisio["ipiresia"]))
 lathos("Δεν έχετε δικαίωμα κλεισίματος παρουσιολογίου");
 
 $query = "SELECT `imerisio` FROM `letrak`.`ipografi`" .
