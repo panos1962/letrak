@@ -65,6 +65,7 @@ imerisio.minima = {
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'filtraIpalilosLabel': 'Υπάλληλος',
 	'filtraImerominiaLabel': 'Ημερομηνία',
+	'filtraProsapoLabel': 'Είδος',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
@@ -160,6 +161,18 @@ imerisio.filtraSetup = () => {
 	attr('id', 'imerominiaFiltro').
 	addClass('filtraInput').
 	datepicker())).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(imerisio.filtraProsapoDOM = $('<label>').
+	attr('for', 'prosapoFiltro').
+	text(imerisio.minima.filtraProsapoLabel)).
+	append(imerisio.filtraProsapoDOM = $('<select>').
+	append($('<option>').val('').text('ΟΛΑ').attr('selected', true)).
+	append($('<option>').val('ΠΡΟΣΕΛΕΥΣΗ').text('ΠΡΟΣΕΛΕΥΣΗ')).
+	append($('<option>').val('ΑΠΟΧΩΡΗΣΗ').text('ΑΠΟΧΩΡΗΣΗ')).
+	attr('id', 'prosapoFiltro').
+	addClass('filtraInput'))).
 
 	append($('<div>').
 	addClass('letrak-inputLine').
@@ -286,6 +299,7 @@ imerisio.filtraFormaIpovoli = (e) => {
 	let data = {
 		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
 		'imerominia': imerisio.filtraImerominiaDOM.val(),
+		'prosapo': imerisio.filtraProsapoDOM.val(),
 		'ipalilos': imerisio.filtraIpalilosDOM.val(),
 	};
 
