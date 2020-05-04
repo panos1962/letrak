@@ -82,6 +82,59 @@ class letrakCore {
 
 		throw new Exception("invalid 'erpota' database version");
 	}
+
+	public static function imerisio_valid_kodikos($kodikos) {
+		return pandora::is_integer
+			($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX);
+	}
+
+	public static function imerisio_invalid_kodikos($kodikos) {
+		return !self::imerisio_valid_kodikos($kodikos);
+	}
+
+	public static function ipalilos_valid_kodikos($kodikos) {
+		return pandora::is_integer
+			($kodikos, 1, LETRAK_IPALILOS_KODIKOS_MAX);
+	}
+
+	public static function ipalilos_invalid_kodikos($kodikos) {
+		return !self::ipalilos_valid_kodikos($kodikos);
+	}
+
+	public static function ipografi_valid_taxinomisi($taxinomisi) {
+		return pandora::is_integer
+			($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX);
+	}
+
+	public static function ipografi_invalid_taxinomisi($taxinomisi) {
+		return !self::ipografi_valid_taxinomisi($taxinomisi);
+	}
+
+	// Η μέθοδος "imerisio_is_klisto" δέχεται έναν κωδικό παρουσιολογίου
+	// και επιστρέφει true εφόσον το παρουσιολόγιο είναι κλειστό. Επίσης
+	// επιστρέφει true εφόσον ο κωδικός δεν είναι αποδεκτός ή δεν υπάρχει
+	// το παρουσιολόγιο. Σε κάθε άλλη περίπτωση επιστρέφει false.
+
+	public static function imerisio_is_klisto($kodikos) {
+		if (self::imerisio_invalid_kodikos($kodikos))
+		return TRUE;
+
+		$query = "SELECT `closed` FROM `letrak`.`imerisio`" .
+			" WHERE `kodikos` = " . $kodikos;
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!$row)
+		return TRUE;
+
+		if ($row[0])
+		return TRUE;
+
+		return FALSE;
+	}
+
+	public static function imerisio_is_anikto($kodikos) {
+		return !imerisio_is_klisto($kodikos);
+	}
 }
 
 class Ipografi {
@@ -207,27 +260,28 @@ class Prosvasi {
 	// τίθενται σε null τιμές, ωστόσο μπορούμε να καθορίσουμε τον
 	// αριθμό μητρώου του χρήστη ως εργαζομένου στον Δήμο Θεσσαλονίκης.
 
-	public function __construct($kodikos = NULL) {
-		$this->ipalilos_set($kodikos);
+	public function __construct($ipalilos = NULL) {
+		$this->ipalilos_set($ipalilos);
 		$this->ipiresia_set(NULL);
 		$this->epipedo_set(NULL);
 	}
 
-	public function ipalilos_set($ipalilos) {
+	public function ipalilos_set($ipalilos = NULL) {
 		$this->ipalilos = NULL;
 
-		if (pandora::is_integer($ipalilos, 1, 999999))
+		if (pandora::is_integer($ipalilos, 1,
+			LETRAK_IPALILOS_KODIKOS_MAX))
 		$this->ipalilos = (int)$ipalilos;
 
 		return $this;
 	}
 
-	public function ipiresia_set($ipiresia) {
+	public function ipiresia_set($ipiresia = NULL) {
 		$this->ipiresia = $ipiresia;
 		return $this;
 	}
 
-	public function epipedo_set($level) {
+	public function epipedo_set($level = NULL) {
 		switch ($level) {
 		case 'VIEW':
 		case 'UPDATE':
@@ -277,8 +331,9 @@ class Prosvasi {
 	// εφόσον ο χρήστης είναι συμπληρωμένος.
 
 	public function fromdb() {
-		$this->ipiresia = NULL;
-		$this->epipedo = NULL;
+		$this->
+		ipiresia_set()->
+		epipedo_set();
 
 		if ($this->oxi_ipalilos())
 		return $this;
@@ -291,15 +346,16 @@ class Prosvasi {
 		if (!$row)
 		return $this;
 
-		$this->ipiresia_set($row[0]);
-		$this->epipedo_set($row[1]);
+		$this->
+		ipiresia_set($row[0])->
+		epipedo_set($row[1]);
 
 		return $this;
 	}
 
 	// Η μέθοδος "is_prosvasi_ipiresia" είναι σημαντική καθώς δέχεται
 	// έναν κωδικό υπηρεσίας και ελέγχει αν η ανά χείρας πρόσβαση
-	// «ταιριάζει» στη συγκεκριμένη υπηρεσία με βάση τη «μάσκα»
+	// «ταιριάζει» στη συγκεκριμένη υπηρεσία με βάση τη μάσκα
 	// κωδικού υπηρεσίας.
 
 	public function is_prosvasi_ipiresia($ipiresia) {
@@ -331,7 +387,9 @@ class Prosvasi {
 
 		$l = strlen($maska);
 
-		if ($l === 0)
+		// Έχει ήδη ελεγχθεί αλλά ένας έλεγχος παραπάνω δεν βλάπτει.
+
+		if ($l <= 0)
 		return TRUE;
 
 		return (substr($ipiresia, 0, $l) === $maska);
@@ -341,7 +399,11 @@ class Prosvasi {
 		return !$this->is_prosvasi_ipiresia($ipiresia);
 	}
 
-	public function is_update($ipiresia = NULL) {
+	// Η μέθοδος "ipiresia_is_update" δέχεται έναν κωδικό υπηρεσίας και
+	// επιστρέφει true εφόσον ο χρήστης έχει πρόσβαση ενημέρωσης στη
+	// συγκεκριμένη υπηρεσία, αλλιώς επιστρέφει false.
+
+	public function ipiresia_is_update($ipiresia = NULL) {
 		if ($this->oxi_prosvasi_ipiresia($ipiresia))
 		return FALSE;
 
@@ -354,11 +416,11 @@ class Prosvasi {
 		return FALSE;
 	}
 
-	public function oxi_update($ipiresia) {
-		return !$this->is_update($ipiresia);
+	public function ipiresia_oxi_update($ipiresia) {
+		return !$this->ipiresia_is_update($ipiresia);
 	}
 
-	public function is_admin($ipiresia = NULL) {
+	public function ipiresia_is_admin($ipiresia = NULL) {
 		if ($this->oxi_prosvasi_ipiresia($ipiresia))
 		return FALSE;
 
@@ -370,8 +432,8 @@ class Prosvasi {
 		return FALSE;
 	}
 
-	public function oxi_admin($ipiresia) {
-		return !$this->is_admin($ipiresia);
+	public function ipiresia_oxi_admin($ipiresia) {
+		return !$this->ipiresia_is_admin($ipiresia);
 	}
 
 	// Η μέθοδος "is_prosvasi_imerisio" δέχεται ως παράμετρο ένα

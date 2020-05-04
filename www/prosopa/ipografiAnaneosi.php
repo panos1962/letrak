@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
 // Created: 2020-05-01
 // @HISTORY END
 //
@@ -43,12 +44,13 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (letrak::imerisio_invalid_kodikos($imerisio))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-print '{';
+print '{"closed":' .
+(letrak::imerisio_is_klisto($imerisio) ? 'true' : 'false') . ',';
 letrak::ipografes_json($imerisio);
 print '}';
 

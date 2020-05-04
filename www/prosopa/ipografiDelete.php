@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
 // Updated: 2020-04-30
 // Updated: 2020-04-26
 // Created: 2020-04-25
@@ -47,13 +48,16 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (letrak::imerisio_invalid_kodikos($imerisio))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
-if (pandora::not_integer($taxinomisi, 1, LETRAK_IPOGRAFI_TAXINOMISI_MAX))
+if (letrak::ipografi_invalid_taxinomisi($taxinomisi))
 lathos("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
+
+if (letrak::imerisio_is_klisto($imerisio))
+lathos("Το παρουσιολόγιο έχει κλείσει");
 
 ///////////////////////////////////////////////////////////////////////////////@
 

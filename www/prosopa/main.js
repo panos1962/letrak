@@ -1042,6 +1042,9 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		return true;
 	};
 
+	if (rsp.hasOwnProperty('closed'))
+	prosopa.imerisio.closed = rsp.closed;
+
 	prosopa.
 	fyiClear().
 	ipografiCandiTabsHide().

@@ -48,7 +48,7 @@ $imerisio = pandora::first_row($query, MYSQLI_ASSOC);
 if (!$imerisio)
 lathos("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
 
-if ($prosvasi->oxi_update($imerisio["ipiresia"]))
+if ($prosvasi->ipiresia_oxi_update($imerisio["ipiresia"]))
 lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@

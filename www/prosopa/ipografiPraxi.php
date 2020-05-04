@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-04
 // Created: 2020-04-30
 // @HISTORY END
 //
@@ -44,12 +45,12 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $imerisio = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($imerisio, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (letrak::imerisio_invalid_kodikos($imerisio))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $armodios = pandora::parameter_get("armodios");
 
-if (pandora::not_integer($armodios, 1, LETRAK_IPALILOS_KODIKOS_MAX))
+if (letrak::ipalilos_invalid_kodikos($armodios))
 lathos("Μη αποδεκτός αριθμός μητρώου υπογράφοντος αρμοδίου");
 
 $praxi = pandora::parameter_get("praxi");
@@ -69,6 +70,9 @@ $xristis = $prosvasi->ipalilos_get();
 
 if ($xristis != $armodios)
 lathos("Διαπιστώθηκε αναρμοδιότητα πράξης " . $minima);
+
+if (letrak::imerisio_is_klisto($imerisio))
+lathos("Το παρουσιολόγιο έχει κλείσει");
 
 ///////////////////////////////////////////////////////////////////////////////@
 

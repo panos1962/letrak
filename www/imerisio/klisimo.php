@@ -49,7 +49,7 @@ $imerisio = pandora::first_row($query, MYSQLI_ASSOC);
 if (!$imerisio)
 lathos("Αδυναμία εντοπισμού παρουσιολογίου");
 
-if ($prosvasi->oxi_admin($imerisio["ipiresia"]))
+if ($prosvasi->ipiresia_oxi_admin($imerisio["ipiresia"]))
 lathos("Δεν έχετε δικαίωμα κλεισίματος παρουσιολογίου");
 
 $query = "SELECT `imerisio` FROM `letrak`.`ipografi`" .
