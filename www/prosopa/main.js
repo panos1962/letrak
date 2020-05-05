@@ -20,6 +20,13 @@
 // ως παράμετρο τον κωδικό παρουσιολογίου και αφού παραλάβει τα στοιχεία τού
 // συγκεκριμένου παρουσιολογίου από τον server, το εμφανίζει στη σελίδα και
 // παρέχει τη δυνατότητα επεξεργασίας των στοιχείων του παρουσιολογίου.
+//
+// Η επεξεργασία του παρουσιολογίου αφορά τόσο στα δεδομένα όσο και στα
+// μεταδεδομένα του παρουσιολογίου. Πιο συγκεκριμένα, ως δεδομένα εννοούμε
+// αυτή καθαυτή τη βασική πληροφορία που μεταφέρει ένα παρουσιολόγιο, δηλαδή
+// ποιοι υπάλληλοι προσήλθαν ή απεχώρησαν από την εργασία και πότε. Τα λοιπά
+// στοιχεία του παρουσιολογίου, δηλαδή η ημερομηνία, το είδος, οι υπογραφές
+// κλπ, αποτελούν τα μεταδεδομένα του παρουσιολογίου.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -87,6 +94,8 @@ prosopa.minima = {
 
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
+
+	'prosopoInsertTabLabel': 'Προσθήκη υπαλλήλου',
 };
 
 pnd.domInit(() => {
@@ -102,6 +111,8 @@ pnd.domInit(() => {
 	prosopa.
 	selidaSetup();
 });
+
+///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.selidaSetup = () => {
 	letrak.
@@ -206,6 +217,8 @@ prosopa.ipografesProcess = (ipografes) => {
 };
 
 prosopa.prosopaProcess = (parousia) => {
+	prosopa.prosopaSetup();
+
 	pnd.
 	arrayWalk(parousia, (v, k) => {
 		v = new letrak.parousia(v);
@@ -323,7 +336,8 @@ prosopa.ipografiRefresh = () => {
 	return prosopa.
 	imerisioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
-	ipografiPraxiTabsRefresh();
+	ipografiPraxiTabsRefresh().
+	prosopaUpdateTabsRefresh();
 };
 
 prosopa.imerisioKatastasiRefresh = () => {
@@ -907,6 +921,39 @@ prosopa.ipografiPraxi = (e, praxi) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+prosopa.prosopaSetup = () => {
+	pnd.toolbarLeftDOM.
+
+	append(prosopa.prosopoInsertTabDOM = letrak.tabDOM().
+	addClass('prosopaPliktro').
+	addClass('prosopaPliktroUpdate').
+	text(prosopa.minima.prosopoInsertTabLabel));
+
+	prosopa.prosopaUpdateTabsRefresh();
+
+	prosopa.browserDOM.
+	on('click', '.parousia', function() {
+		console.log($(this).data('parousia'));
+	});
+
+	return prosopa;
+};
+
+prosopa.prosopaUpdateTabsRefresh = () => {
+	let update = true;
+
+	if (prosopa.imerisio.isClosed())
+	update = false;
+
+	pnd.toolbarLeftDOM.
+	children('.prosopaPliktroUpdate').
+	css('display', update ? 'inline-block' : 'none');
+
+	return prosopa;
+}
+
+///////////////////////////////////////////////////////////////////////////////@
+
 letrak.imerisio.prototype.domGet = function() {
 	let ipiresia = this.ipiresiaGet();
 	let ipiresiaDOM;
@@ -962,7 +1009,7 @@ this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
 this.orario = new letrak.orario('830-1430');
 	let dom = $('<div>').
-	data('data', this).
+	data('parousia', this).
 	addClass('parousia').
 
 	append($('<div>').
