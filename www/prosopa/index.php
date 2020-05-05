@@ -45,6 +45,11 @@ document_head([
 		"main",
 	],
 ])::
-document_body()::
+document_body();
+?>
+<div id="parousiaEditor">
+</div>
+<?php
+pandora::
 document_close();
 ?>

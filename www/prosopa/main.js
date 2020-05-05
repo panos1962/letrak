@@ -169,7 +169,8 @@ prosopa.selidaSetup = () => {
 			fyiClear().
 			imerisioProcess(rsp.imerisio).
 			ipografesProcess(rsp.ipografes).
-			prosopaProcess(rsp.prosopa);
+			prosopaProcess(rsp.prosopa).
+			pliktraRefresh();
 
 			if (imr) {
 				// Σε περίπτωση που το παρουσιολόγιο έχει
@@ -212,7 +213,6 @@ prosopa.ipografesProcess = (ipografes) => {
 		append(v.domGet());
 	});
 
-	prosopa.ipografiRefresh();
 	return prosopa;
 };
 
@@ -332,7 +332,7 @@ prosopa.ipografesSetup = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.ipografiRefresh = () => {
+prosopa.pliktraRefresh = () => {
 	return prosopa.
 	imerisioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
@@ -814,7 +814,7 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	if (found)
 	prosopa.ipografiCandiTabsShow();
 
-	prosopa.ipografiRefresh();
+	prosopa.pliktraRefresh();
 	forma.dialogDOM.dialog('close');
 
 	return prosopa;
@@ -927,14 +927,17 @@ prosopa.prosopaSetup = () => {
 	append(prosopa.prosopoInsertTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
 	addClass('prosopaPliktroUpdate').
-	text(prosopa.minima.prosopoInsertTabLabel));
-
-	prosopa.prosopaUpdateTabsRefresh();
+	text(prosopa.minima.prosopoInsertTabLabel).
+	on('click', (e) => prosopa.parousiaEdit(e)));
 
 	prosopa.browserDOM.
-	on('click', '.parousia', function() {
-		console.log($(this).data('parousia'));
+	on('click', '.parousia', function(e) {
+		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
+
+	prosopa.parousiaEditorDOM = $('#parousiaEditor').
+	dialog().
+	dialog('close');
 
 	return prosopa;
 };
@@ -951,6 +954,20 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 
 	return prosopa;
 }
+
+prosopa.parousiaEdit = (e, parousia) => {
+	if (e)
+	e.stopPropagation();
+
+	if (parousia)
+	prosopa.parousiaEditorDOM.
+	empty().
+	append(parousia.onomateponimoGet());
+
+	prosopa.parousiaEditorDOM.dialog('open');
+
+	return prosopa;
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -1106,7 +1123,7 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		append(v.domGet());
 	});
 
-	prosopa.ipografiRefresh();
+	prosopa.pliktraRefresh();
 	return false;
 };
 
