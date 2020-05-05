@@ -53,10 +53,13 @@ require('../lib/letrak.js');
 const imerisio = {};
 
 // Χρησιμοποιούμε το global singleton "LETRAK" ως μέσο κοινοποίησης constant
-// αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows.
+// αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows,
+// όπως είναι η σελίδα "prosopa" κλπ.
 
+/*
 self.LETRAK.pnd = pnd;
 self.LETRAK.letrak = letrak;
+*/
 self.LETRAK.imerisio = imerisio;
 
 imerisio.minima = {
@@ -343,7 +346,7 @@ imerisio.browserSetup = () => {
 		return;
 
 		$(this).
-		addClass('imerisioCandi');
+		addClass('imerisioCandiCandi');
 	}).
 	on('mouseleave', '.imerisio', function(e) {
 		e.stopPropagation();
@@ -352,7 +355,7 @@ imerisio.browserSetup = () => {
 		return;
 
 		$(this).
-		removeClass('imerisioCandi');
+		removeClass('imerisioCandiCandi');
 	}).
 	on('click', '.imerisio', function(e) {
 		e.stopPropagation();
@@ -368,7 +371,8 @@ imerisio.browserSetup = () => {
 
 		$(this).
 		data('candi', true).
-		addClass('imerisioCandi');
+		addClass('imerisioCandi').
+		removeClass('imerisioCandiCandi');
 		imerisio.candiTabsShow();
 	}));
 
