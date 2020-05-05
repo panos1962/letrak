@@ -20,18 +20,18 @@
 // επιλογή και την επιστροφή παρουσιολογίων με βάση τα παρακάτω κριτήρια
 // επιλογής:
 //
+// ipiresia	Πρόκειται για string που χρησιμοποιείται ως mask για τον
+//		κωδικό υπηρεσίας των παρουσιολογίων που θα επιλεγούν. Αν
+//		π.χ. η τιμή παραμέτρου είναι "Β01", τότε θα επιλεγούν
+//		παρουσιολόγια με κωδικό υπηρεσίας "B010001", "Β010002",
+//		"Β010003", "Β01" κλπ.
+//
 // imerominia	Επιλέγονται παρουσιολόγια από την συγκεκριμένη ημερομηνία
 //		και πίσω.
 //
 // prosapo	Επιλέγονται παρουσιολόγια προσέλευσης, αποχώρησης ή όλα,
 //		ανάλογα με το αν η τιμή της παραμέτρου είναι "ΠΡΟΣΕΛΕΥΣΗ",
 //		"ΑΠΟΧΩΡΗΣΗ" ή κενό αντίστοιχα.
-//
-// ipiresia	Πρόκειται για string που χρησιμοποιείται ως mask για τον
-//		κωδικό υπηρεσίας των παρουσιολογίων που θα επιλεγούν. Αν
-//		π.χ. η τιμή παραμέτρου είναι "Β01", τότε θα επιλεγούν
-//		παρουσιολόγια με κωδικό υπηρεσίας "B010001", "Β010002",
-//		"Β010003", "Β01" κλπ.
 //
 // ipalilos	Κωδικός υπαλλήλου. Επιλέγονται μόνο παρουσιολόγια στα οποία
 //		συμμετέχει ο συγκεκριμένος υπάλληλος.
@@ -51,6 +51,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-05
 // Updated: 2020-04-28
 // Updated: 2020-04-27
 // Updated: 2020-04-26
@@ -78,13 +79,10 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-ipalilos_check();
+$ipalilos = pandora::parameter_get("ipalilos");
 
-// Ελέγχουμε αν οι προσβάσεις του υπαλλήλου είναι κατάφωρα αντιφατικές.
-// Τα υπόλοιπα θέματα προσβάσεων θα ελεγχθούν στην πορεία.
-
-if (oxi_prosvasi($prosvasi))
-lathos("Access denied!");
+if ($ipalilos && letrak::ipalilos_invalid_kodikos($ipalilos))
+lathos($ipalilos . ": λανθασμένο κριτήριο αριθμού μητρώου υπαλλήλου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -142,38 +140,6 @@ if ($x) {
 	$enotiko = " AND";
 }
 
-// Αν η πρόσβαση του υπαλλήλου περιορίζεται από συγκεκριμένη μάσκα υπηρεσιών,
-// τότε λαμβάνεται υπόψη και αυτός ο περιορισμός.
-
-$x = $prosvasi->ipiresia_get();
-
-if (isset($x) && ($x != "")) {
-	$query .= $enotiko . " (`ipiresia` LIKE " .
-		pandora::sql_string($x . '%') . ")";
-	$enotiko = " AND";
-}
-
-///////////////////////////////////////////////////////////////////////////////@
-
-// Αν ο χρήστης δεν έχει καθορισμένη μάσκα κωδικού υπηρεσίας, τότε σημαίνει
-// ότι έχει πρόσβαση μόνο σε παρουσιολόγια στα οποία συμμετέχει ο ίδιος.
-
-if ($prosvasi->oxi_ipiresia())
-$x = $prosvasi->ipalilos_get();
-
-// Αλλιώς ελέγχουμε αν έχει δοθεί κριτήριο κωδικού υπαλλήλου. Έχουμε ήδη
-// ελέγξει στην αρχή της διαδικασίας αν αυτά τα δύο κριτήρια είναι
-// αντιφατικά.
-
-else
-$x = pandora::parameter_get("ipalilos");
-
-if ($x) {
-	$query .= $enotiko . " (`kodikos` IN (SELECT `imerisio`" .
-		" FROM `letrak`.`parousia` WHERE `ipalilos` = " . $x . "))";
-	$enotiko = " AND";
-}
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 $query .= " ORDER BY `i` DESC, `r`, `o` DESC, `k`";
@@ -193,6 +159,12 @@ $count = 0;
 
 $result = pandora::query($query);
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	if (oxi_prosvasimo($row, $prosvasi))
+	continue;
+
+	if (oxi_ipalilos($row, $ipalilos))
+	continue;
+
 	$count++;
 	pandora::null_purge($row);
 
@@ -227,45 +199,32 @@ exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-function ipalilos_check() {
-	$ipalilos = pandora::parameter_get("ipalilos");
+function is_prosvasimo($imerisio, $prosvasi) {
+	if ($prosvasi->is_prosvasi_ipiresia($imerisio["r"]))
+	return TRUE;
 
-	if (!$ipalilos)
-	return;
-
-	if (((int)$ipalilos . "") === $ipalilos)
-	return;
-
-	lathos($ipalilos . ": λανθασμένο κριτήριο κωδικού υπαλλήλου");
+	$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+		" WHERE (`imerisio` = " . $imerisio["k"] . ")" .
+		" AND (`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
+	return pandora::first_row($query, MYSQLI_NUM);
 }
 
-// Η function "oxi_prosvasi" δέχεται ως παράμετρο την πρόσβαση του χρήστη και
-// ελέγχει αν η πρόσβαση αυτή αντιβαίνει κατάφωρα με τα κριτήρια επιλογής που
-// ενδεχομένως έχουν δοθεί.
+function oxi_prosvasimo($imerisio, $prosvasi) {
+	return !is_prosvasimo($imerisio, $prosvasi);
+}
 
-function oxi_prosvasi($prosvasi) {
-	// Αν ο χρήστης έχει καθορισμένη μάσκα πρόσβασης υπηρεσίας, τότε
-	// θεωρούμε ότι δεν υπάρχει προφανής παραβίαση.
-
-	if ($prosvasi->is_ipiresia())
-	return FALSE;
-
-	// Ο χρήστης δεν έχει καθορισμένη μάσκα πρόσβασης υπηρεσίας, επομένως
-	// έχει πρόσβαση μόνο σε παρουσιολόγια στα οποία συμμετέχει ο ίδιος.
-	// Ελέγχουμε αν έχει δοθεί κριτήριο κωδικού υπαλλήλου.
-
-	$ipalilos = pandora::parameter_get("ipalilos");
-
-	// Αν δεν έχει δοθεί κριτήριο κωδικού υπαλλήλου, τότε δεν υπάρχει
-	// προφανής παραβίαση δικαιωμάτων πρόσβασης.
-
+function is_ipalilos($imerisio, $ipalilos) {
 	if (!$ipalilos)
-	return FALSE;
+	return TRUE;
 
-	// Έχει καθοριστεί κριτήριο κωδικού υπαλλήλου, επομένως ελέγχουμε
-	// αν αυτός ο κωδικός διαφέρει από τον κωδικό του χρήστη.
+	$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+		" WHERE (`imerisio` = " . $imerisio["k"] . ")" .
+		" AND (`ipalilos` = " . $ipalilos . ")";
+	return pandora::first_row($query, MYSQLI_NUM);
+}
 
-	return ($prosvasi->ipalilos_get() != $ipalilos);
+function oxi_ipalilos($imerisio, $ipalilos) {
+	return !is_ipalilos($imerisio, $ipalilos);
 }
 
 function lathos($s) {
