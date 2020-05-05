@@ -135,6 +135,17 @@ class letrakCore {
 	public static function imerisio_is_anikto($kodikos) {
 		return !imerisio_is_klisto($kodikos);
 	}
+
+	public static function ipalilos_is_simetoxi($imerisio, $ipalilos) {
+		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`ipalilos` = " . $ipalilos . ")";
+		return pandora::first_row($query, MYSQLI_NUM);
+	}
+
+	public static function ipalilos_oxi_simetoxi($imerisio, $ipalilos) {
+		return !self::ipalilos_is_simetoxi($imerisio, $ipalilos);
+	}
 }
 
 class Ipografi {
@@ -362,7 +373,7 @@ class Prosvasi {
 		$maska = $this->ipiresia_get();
 
 		// Αν η μάσκα κωδικού υπηρεσίας δεν έχει καθοριστεί, τότε
-		// ο χρήστης έχει πρόσβαση μόνο στα προσωπικά του σχτοιχεία
+		// ο χρήστης έχει πρόσβαση μόνο στα προσωπικά του στοιχεία
 		// επομένως δεν έχει καμία πρόσβαση σε επίπεδο υπηρεσίας.
 
 		if (!isset($maska))
@@ -391,6 +402,7 @@ class Prosvasi {
 
 		if ($l <= 0)
 		return TRUE;
+
 
 		return (substr($ipiresia, 0, $l) === $maska);
 	}

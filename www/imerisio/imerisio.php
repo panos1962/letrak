@@ -82,7 +82,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 $ipalilos = pandora::parameter_get("ipalilos");
 
 if ($ipalilos && letrak::ipalilos_invalid_kodikos($ipalilos))
-lathos($ipalilos . ": λανθασμένο κριτήριο αριθμού μητρώου υπαλλήλου");
+lathos("Μη αποδεκτό κριτήριο αριθμού μητρώου υπαλλήλου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -159,10 +159,17 @@ $count = 0;
 
 $result = pandora::query($query);
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	// Κατ' αρχάς απορρίπτουμε τα παρουσιολόγια στα οποία ο χρήστης δεν
+	// έχει πρόσβαση.
+
 	if (oxi_prosvasimo($row, $prosvasi))
 	continue;
 
-	if (oxi_ipalilos($row, $ipalilos))
+	// Ελέγχουμε αν έχει δοθεί κριτήριο με βάση τον αριθμό μητρώου
+	// υπαλλήλου και αν ο συγκεκριμένος υπάλληλος συμμετέχει στο
+	// παρουσιολόγιο.
+
+	if ($ipalilos && letrak::ipalilos_oxi_simetoxi($row["k"], $ipalilos))
 	continue;
 
 	$count++;
@@ -199,32 +206,27 @@ exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Η μέθοδος "is_prosvasimo" δέχεται ένα παρουσιολόγιο (με σύντομες ονομασίες
+// πεδίων) και τα στοιχεία πρόσβασης του χρήστη και ελέγχει αν ο χρήστης έχει
+// πρόσβαση στο παρουσιολόγιο.
+
 function is_prosvasimo($imerisio, $prosvasi) {
+	// Αν ο χρήστης έχει πρόσβαση στο παρουσιολόγιο μέσω της μάσκας
+	// κωδικού υπηρεσίας, τότε το παρουσιολόγιο θεωρείται προσβάσιμο.
+
 	if ($prosvasi->is_prosvasi_ipiresia($imerisio["r"]))
 	return TRUE;
 
-	$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
-		" WHERE (`imerisio` = " . $imerisio["k"] . ")" .
-		" AND (`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
-	return pandora::first_row($query, MYSQLI_NUM);
+	// Ο χρήστης δεν έχει πρόσβαση στην υπηρεσία του παρουσιολογίου,
+	// οπότε ελέγχουμε αν ο χρήστης συμμετέχει ως ελεγχόμενος στο
+	// παρουσιολόγιο.
+
+	return letrak::ipalilos_is_simetoxi($imerisio["k"],
+		$prosvasi->ipalilos_get());
 }
 
 function oxi_prosvasimo($imerisio, $prosvasi) {
 	return !is_prosvasimo($imerisio, $prosvasi);
-}
-
-function is_ipalilos($imerisio, $ipalilos) {
-	if (!$ipalilos)
-	return TRUE;
-
-	$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
-		" WHERE (`imerisio` = " . $imerisio["k"] . ")" .
-		" AND (`ipalilos` = " . $ipalilos . ")";
-	return pandora::first_row($query, MYSQLI_NUM);
-}
-
-function oxi_ipalilos($imerisio, $ipalilos) {
-	return !is_ipalilos($imerisio, $ipalilos);
 }
 
 function lathos($s) {
