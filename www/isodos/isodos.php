@@ -56,7 +56,7 @@ $query = "SELECT `ipalilos`, `ipiresia`, `level` " .
 	"FROM `erpota`.`prosvasi` " .
 	"WHERE (`ipalilos` = " . $kodikos . ") " .
 	"AND (`password` = " . pandora::sql_string(sha1($password)) . ")";
-$row = pandora::first_row($query);
+$row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if ((!isset($row)) || ($row["ipalilos"] != $kodikos))
 lathos("Access denied");
@@ -70,7 +70,7 @@ $ipalilos = array(
 $query = "SELECT `kodikos`, `eponimo`, `onoma`, `patronimo`" .
 	" FROM " . letrak::erpota12("ipalilos") .
 	" WHERE `kodikos` = " . $kodikos;
-$row = pandora::first_row($query);
+$row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if ((!isset($row)) || ($row["kodikos"] != $kodikos))
 lathos("Ανύπαρκτος υπάλληλος");

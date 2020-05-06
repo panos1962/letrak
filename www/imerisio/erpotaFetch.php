@@ -45,7 +45,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $query = "SELECT `timi` FROM `kartel`.`parametros` WHERE `kodikos` = " .
 	pandora::sql_string("erpota12");
-$row = pandora::first_row($query);
+$row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$row)
 lathos("Ακαθόριστη έκδοση database προσωπικού");
