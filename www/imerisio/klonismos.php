@@ -56,7 +56,7 @@ $protipo = pandora::first_row($query, MYSQLI_ASSOC);
 if (!$protipo)
 lathos("Αδυναμία εντοπισμού προτύπου");
 
-if ($prosvasi->ipiresia_oxi_update($protipo["ipiresia"]))
+if ($prosvasi->oxi_update_ipiresia($protipo["ipiresia"]))
 lathos("Δεν έχετε δικαίωμα δημιουργίας παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@

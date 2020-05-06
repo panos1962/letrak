@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
 // Created: 2020-04-29
@@ -46,15 +47,28 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$imerisio = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("imerisio");
 
-if (letrak::imerisio_invalid_kodikos($imerisio))
+if (letrak::imerisio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+
+$imerisio = (new Imerisio())->from_database($kodikos);
+
+if ($imerisio->oxi_kodikos())
+lathos($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
+
+if ($imerisio->is_klisto())
+lathos("Το παρουσιολόγιο έχει κλείσει");
+
+$ipiresia = $imerisio->ipiresia_get();
+
+if ($prosvasi->oxi_update_ipiresia($ipiresia))
+lathos("Δεν έχετε δικαίωμα αλλαγής αρμοδίου υπογραφής");
 
 $isimonixat = pandora::parameter_get("isimonixat");
 
 if (letrak::ipografi_invalid_taxinomisi($isimonixat))
-lathos($isimonixat . "Μη αποδεκτός υφιστάμενος ταξινομικός αριθμός");
+lathos("Μη αποδεκτός υφιστάμενος ταξινομικός αριθμός");
 
 $armodios = pandora::parameter_get("armodios");
 
@@ -69,9 +83,6 @@ $taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 elseif (letrak::ipografi_invalid_taxinomisi($taxinomisi))
 lathos("Μη αποδεκτός νέος ταξινομικός αριθμός");
 
-if (letrak::imerisio_is_klisto($imerisio))
-lathos("Το παρουσιολόγιο έχει κλείσει");
-
 $titlos = pandora::parameter_get("titlos");
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -79,13 +90,14 @@ $titlos = pandora::parameter_get("titlos");
 pandora::autocommit(FALSE);
 
 $query = "SELECT COUNT(*) FROM `letrak`.`ipografi`" .
-	" WHERE `imerisio` = " . $imerisio;
+	" WHERE `imerisio` = " . $kodikos;
 $row = pandora::first_row($query, MYSQLI_NUM);
 
 $taxmax = (int)$row[0];
 
-$query = "DELETE FROM `letrak`.`ipografi` WHERE (`imerisio` = " .
-	$imerisio . ") AND (`taxinomisi` = " . $isimonixat . ")";
+$query = "DELETE FROM `letrak`.`ipografi`" .
+	" WHERE (`imerisio` = " . $kodikos . ")" .
+	" AND (`taxinomisi` = " . $isimonixat . ")";
 pandora::query($query);
 
 if (pandora::affected_rows() != 1) {
@@ -96,7 +108,7 @@ if (pandora::affected_rows() != 1) {
 if ($taxinomisi > $isimonixat) {
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `taxinomisi` = `taxinomisi` - 1" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`imerisio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` > " . $isimonixat . ")" .
 		" AND (`taxinomisi` <= " . $taxinomisi . ")";
 	pandora::query($query);
@@ -105,7 +117,7 @@ if ($taxinomisi > $isimonixat) {
 elseif ($taxinomisi < $isimonixat) {
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `taxinomisi` = `taxinomisi` + 1" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`imerisio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` < " . $isimonixat . ")" .
 		" AND (`taxinomisi` >= " . $taxinomisi . ")";
 	pandora::query($query);
@@ -113,18 +125,18 @@ elseif ($taxinomisi < $isimonixat) {
 
 $query = "INSERT INTO `letrak`.`ipografi` " .
 	" (`imerisio`, `taxinomisi`, `armodios`, `titlos`)" .
-	" VALUES (" . $imerisio . ", " . $taxinomisi . ", " .
+	" VALUES (" . $kodikos . ", " . $taxinomisi . ", " .
 	$armodios . ", " . pandora::sql_string($titlos) . ")";
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1)
 lathos("Απέτυχε η προσθήκη υπογραφής");
 
-letrak::ipografes_taxinomisi($imerisio);
+letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
-letrak::ipografes_json($imerisio);
+letrak::ipografes_json($kodikos);
 print '}';
 
 exit(0);

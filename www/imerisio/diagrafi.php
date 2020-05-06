@@ -48,7 +48,7 @@ lathos("Αδυναμία εντοπισμού παρουσιολογίου πρ�
 
 $ipiresia = $imerisio->ipiresia_get();
 
-if ($prosvasi->ipiresia_oxi_update($ipiresia))
+if ($prosvasi->oxi_update_ipiresia($ipiresia))
 lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@

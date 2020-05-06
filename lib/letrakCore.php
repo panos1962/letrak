@@ -726,11 +726,11 @@ class Prosvasi {
 		return !$this->is_prosvasi_ipiresia($ipiresia);
 	}
 
-	// Η μέθοδος "ipiresia_is_update" δέχεται έναν κωδικό υπηρεσίας και
+	// Η μέθοδος "is_update_ipiresia" δέχεται έναν κωδικό υπηρεσίας και
 	// επιστρέφει true εφόσον ο χρήστης έχει πρόσβαση ενημέρωσης στη
 	// συγκεκριμένη υπηρεσία, αλλιώς επιστρέφει false.
 
-	public function ipiresia_is_update($ipiresia = NULL) {
+	public function is_update_ipiresia($ipiresia = NULL) {
 		if ($this->oxi_prosvasi_ipiresia($ipiresia))
 		return FALSE;
 
@@ -743,8 +743,8 @@ class Prosvasi {
 		return FALSE;
 	}
 
-	public function ipiresia_oxi_update($ipiresia = NULL) {
-		return !$this->ipiresia_is_update($ipiresia);
+	public function oxi_update_ipiresia($ipiresia = NULL) {
+		return !$this->is_update_ipiresia($ipiresia);
 	}
 
 	// Η μέθοδος "ipiresia_is_admin" δέχεται έναν κωδικό υπηρεσίας και

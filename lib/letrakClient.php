@@ -20,6 +20,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-06
 // Updated: 2020-04-09
 // Created: 2020-03-05
 // @HISTORY END
@@ -127,10 +128,17 @@ class letrak extends letrakCore {
 	}
 
 	public static function ipografes_json($imerisio, $opts = NULL) {
+		if ($imerisio instanceof Imerisio)
+		$imerisio = $imerisio->kodikos_get();
+
+		if (letrak::imerisio_invalid_kodikos($imerisio))
+		return;
+
 		if (!isset($opts))
 		$opts = array();
 
 		$ipalilos_table = letrak::erpota12("ipalilos");
+
 		$query = "SELECT " .
 			"`ipografi`.`taxinomisi` AS `x`, " .
 			"`ipografi`.`titlos` AS `t`, " .

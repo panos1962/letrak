@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
 // Updated: 2020-04-26
@@ -46,25 +47,35 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$imerisio = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("imerisio");
 
-if (letrak::imerisio_invalid_kodikos($imerisio))
+if (letrak::imerisio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+
+$imerisio = (new Imerisio())->from_database($kodikos);
+
+if ($imerisio->oxi_kodikos())
+lathos($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
+
+if ($imerisio->is_klisto())
+lathos("Το παρουσιολόγιο έχει κλείσει");
+
+$ipiresia = $imerisio->ipiresia_get();
+
+if ($prosvasi->oxi_update_ipiresia($ipiresia))
+lathos("Δεν έχετε δικαίωμα διαγραφής αρμοδίου υπογραφής");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
 if (letrak::ipografi_invalid_taxinomisi($taxinomisi))
 lathos("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
 
-if (letrak::imerisio_is_klisto($imerisio))
-lathos("Το παρουσιολόγιο έχει κλείσει");
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
 
 $query = "DELETE FROM `letrak`.`ipografi` " .
-	" WHERE (`imerisio` = " . $imerisio . ")" .
+	" WHERE (`imerisio` = " . $kodikos . ")" .
 	" AND (`taxinomisi` = " . $taxinomisi . ")";
 pandora::query($query);
 
@@ -73,11 +84,11 @@ if (pandora::affected_rows() !== 1) {
 	lathos("Απέτυχε η διαγραφή υπογραφής");
 }
 
-letrak::ipografes_taxinomisi($imerisio);
+letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
-letrak::ipografes_json($imerisio);
+letrak::ipografes_json($kodikos);
 print '}';
 
 exit(0);
