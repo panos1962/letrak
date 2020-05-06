@@ -16,6 +16,7 @@
 // @FILE END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-06
 // Updated: 2020-05-04
 // Created: 2020-05-03
 // @HISTORY END
@@ -42,20 +43,19 @@ $kodikos = pandora::parameter_get("kodikos");
 if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$query = "SELECT `ipiresia` FROM `letrak`.`imerisio`" .
-	" WHERE `kodikos` = " . $kodikos;
-$imerisio = pandora::first_row($query, MYSQLI_ASSOC);
+$imerisio = (new Imerisio())->from_database($kodikos);
 
-if (!$imerisio)
+if ($imerisio->oxi_kodikos())
 lathos("Αδυναμία εντοπισμού παρουσιολογίου");
 
-if ($prosvasi->ipiresia_oxi_admin($imerisio["ipiresia"]))
+$ipiresia = $imerisio->ipiresia_get();
+
+if ($prosvasi->ipiresia_oxi_admin($ipiresia))
 lathos("Δεν έχετε δικαίωμα ανοίγματος παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`imerisio`" .
-	" SET `closed` = NULL" .
+$query = "UPDATE `letrak`.`imerisio` SET `closed` = NULL" .
 	" WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 

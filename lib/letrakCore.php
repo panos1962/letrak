@@ -69,7 +69,7 @@ class letrakCore {
 		$query = "SELECT `timi` FROM `kartel`.`parametros`" .
 			" WHERE `kodikos` = " .
 			pandora::sql_string("erpota12");
-		$row = pandora::first_row($query, MYSQLI_NUM);
+		$row = pandora::first_row($query);
 
 		if (!$row)
 		throw new Exception("undefined 'erpota' database version");
@@ -123,7 +123,7 @@ class letrakCore {
 
 		$query = "SELECT `closed` FROM `letrak`.`imerisio`" .
 			" WHERE `kodikos` = " . $kodikos;
-		$row = pandora::first_row($query, MYSQLI_NUM);
+		$row = pandora::first_row($query);
 
 		if (!$row)
 		return TRUE;
@@ -142,7 +142,7 @@ class letrakCore {
 		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
 			" WHERE (`imerisio` = " . $imerisio . ")" .
 			" AND (`ipalilos` = " . $ipalilos . ")";
-		return pandora::first_row($query, MYSQLI_NUM);
+		return pandora::first_row($query);
 	}
 
 	public static function ipalilos_oxi_simetoxi($imerisio, $ipalilos) {
@@ -151,16 +151,20 @@ class letrakCore {
 }
 
 class Imerisio {
-	public $kodikos = NULL;
-	public $ipalilos = NULL;
-	public $protipo = NULL;
-	public $imerominia = NULL;
-	public $ipiresia = NULL;
-	public $prosapo = NULL;
-	public $perigrafi = NULL;
-	public $closed = NULL;
+	public $kodikos = NULL;		// κωδικός παρουσιολογίου
+	public $ipalilos = NULL;	// αρ. μητρώου δημιοργού υπαλλήλου
+	public $protipo = NULL;		// κωδικός προτύπου παρουσιολογίου
+	public $imerominia = NULL;	// ημερομηνία στη οποία αφορά
+	public $ipiresia = NULL;	// κωδικός υπηρεσίας
+	public $prosapo = NULL;		// προσέλευση/αποχώρηση
+	public $perigrafi = NULL;	// περιγραφή παρουσιολογίου
+	public $closed = NULL;		// ημερομηνία και ώρα κλεισίματος
 
 	public function __construct($x = NULL) {
+		$this->from_array($x);
+	}
+
+	private function from_array($x) {
 		$this->kodikos = NULL;
 		$this->ipalilos = NULL;
 		$this->protipo = NULL;
@@ -169,6 +173,9 @@ class Imerisio {
 		$this->prosapo = NULL;
 		$this->perigrafi = NULL;
 		$this->closed = NULL;
+
+		if (!isset($x))
+		return $this;
 
 		foreach ($x as $k => $v) {
 			try {
@@ -180,6 +187,8 @@ class Imerisio {
 				continue;
 			}
 		}
+
+		return $this;
 	}
 
 	public function kodikos_set($kodikos = NULL) {
@@ -195,7 +204,7 @@ class Imerisio {
 	public function ipalilos_set($ipalilos = NULL) {
 		$this->ipalilos = NULL;
 
-		if (letrak::imerisio_invalid_ipalilos($ipalilos))
+		if (letrak::ipalilos_invalid_kodikos($ipalilos))
 		return $this;
 
 		$this->ipalilos = $ipalilos;
@@ -310,6 +319,13 @@ class Imerisio {
 		return !$this->is_klisto();
 	}
 
+	public function from_database($kodikos) {
+		$query = "SELECT * FROM `letrak`.`imerisio`" .
+			" WHERE `kodikos` = " . $kodikos;
+		$row = pandora::first_row($query, MYSQLI_ASSOC);
+		return $this->from_array($row);
+	}
+
 	public function is_ipografi($ipalilos = NULL) {
 		$imerisio = $this->kodikos_get();
 
@@ -323,7 +339,7 @@ class Imerisio {
 			" WHERE (`imerisio` = " . $imerisio . ")" .
 			" AND (`armodios` = " . $ipalilos . ")";
 
-		return pandora::first_row($query, MYSQLI_NUM);
+		return pandora::first_row($query);
 	}
 
 	public function oxi_ipografi($ipalilos = NULL) {
@@ -343,7 +359,57 @@ class Imerisio {
 			" WHERE (`imerisio` = " . $imerisio . ")" .
 			" AND (`ipalilos` = " . $ipalilos . ")";
 
-		return pandora::first_row($query, MYSQLI_NUM);
+		return pandora::first_row($query);
+	}
+
+	public function sxetikos_ipalilos($ipalilos = NULL) {
+		$imerisio = $this->kodikos_get();
+
+		if (letrak::imerisio_invalid_kodikos($imerisio))
+		return FALSE;
+
+		if (letrak::ipalilos_invalid_kodikos($ipalilos))
+		return FALSE;
+
+		$query = "SELECT 1 FROM `letrak`.`parousia`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`ipalilos` = " . $ipalilos . ")";
+
+		if (pandora::first_row($query))
+		return TRUE;
+
+		$query = "SELECT 1 FROM `letrak`.`ipografi`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`armodios` = " . $ipalilos . ")";
+
+		if (pandora::first_row($query))
+		return TRUE;
+
+		return FALSE;
+	}
+
+	public function asxetos_ipalilos($ipalilos = NULL) {
+		return !$this->sxetikos_ipalilos($ipalilos);
+	}
+
+	public function is_ipogegrameno() {
+		$kodikos = $this->kodikos_get();
+
+		if (letrak::imerisio_invalid_kodikos($kodikos))
+		return FALSE;
+
+		$query = "SELECT 1 FROM `letrak`.`ipografi`" .
+			" WHERE (`imerisio` = " . $kodikos . ")" .
+			" AND (`checkok` IS NULL)";
+
+		if (pandora::first_row($query, MYSQLI_NUM))
+		return FALSE;
+
+		return TRUE;
+	}
+
+	public function is_anipografo() {
+		return !$this->is_ipogegrameno();
 	}
 
 	public static $economy_map = array(
@@ -359,34 +425,22 @@ class Imerisio {
 		$row = array();
 
 		$x = $this->kodikos_get();
-
-		if ($x)
-		$row["k"] = $x;
+		if ($x) $row["k"] = $x;
 
 		$x = $this->imerominia_get();
-
-		if ($x)
-		$row["i"] = $x->format("Y-m-d");
+		if ($x) $row["i"] = $x->format("Y-m-d");
 
 		$x = $this->ipiresia_get();
-
-		if ($x)
-		$row["r"] = $x;
+		if ($x) $row["r"] = $x;
 
 		$x = $this->prosapo_get();
-
-		if ($x)
-		$row["o"] = $x;
+		if ($x) $row["o"] = $x;
 
 		$x = $this->perigrafi_get();
-
-		if ($x)
-		$row["e"] = $x;
+		if ($x) $row["e"] = $x;
 
 		$x = $this->closed_get();
-
-		if ($x)
-		$row["c"] = $x->format("Y-m-d");
+		if ($x) $row["c"] = $x->format("Y-m-d");
 
 		return pandora::json_string($row);
 	}
@@ -548,17 +602,17 @@ class Prosvasi {
 		return $this;
 	}
 
-	public function epipedo_set($level = NULL) {
+	public function epipedo_set($epipedo = NULL) {
 		$this->epipedo = NULL;
 
 		if (!isset($epipedo))
 		return $this;
 
-		switch ($level) {
+		switch ($epipedo) {
 		case 'VIEW':
 		case 'UPDATE':
 		case 'ADMIN':
-			$this->epipedo = $level;
+			$this->epipedo = $epipedo;
 		}
 
 		return $this;
@@ -689,7 +743,7 @@ class Prosvasi {
 		return FALSE;
 	}
 
-	public function ipiresia_oxi_update($ipiresia) {
+	public function ipiresia_oxi_update($ipiresia = NULL) {
 		return !$this->ipiresia_is_update($ipiresia);
 	}
 

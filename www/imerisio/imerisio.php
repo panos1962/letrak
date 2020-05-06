@@ -159,8 +159,8 @@ print '"imerisio":[';
 // Θα επιλέξουμε παρουσιολόγια με βάση τα κριτήρια που έχουν δοθεί, αλλά θα
 // φροντίσουμε να μην αφήσουμε υπόλοιπα σε κάποια ημερομηνία.
 
-unset($imerominia);
-$enotiko = '';
+unset($imerominia_last);
+$enotiko = "";
 $count = 0;
 
 $result = pandora::query($query);
@@ -170,14 +170,22 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	if ($prosvasi->oxi_prosvasi_imerisio($imerisio))
 	continue;
 
+	if ($ipalilos && $imerisio->asxetos_ipalilos($ipalilos))
+	continue;
+
+	$imerominia = $imerisio->imerominia_get();
+
+	if (!$imerominia)
+	continue;
+
 	$count++;
 
 	// Αν είναι το πρώτο παρουσιολόγιο που επιλέγουμε, κρατάμε την
 	// ημερομηνία του προκειμένου να επιλέξουμε όλα τα παρουσιολόγια
 	// αυτής της ημερομηνίας.
 
-	if (!isset($imerominia))
-	$imerominia = $imerisio->imerominia_get();
+	if (!isset($imerominia_last))
+	$imerominia_last = $imerominia;
 
 	// Αν το ανά χείρας παρουσιολόγιο έχει άλλη ημερομηνία από τα
 	// προηγούμενα που επιλέχθηκαν μέχρι στιγμής, τότε ελέγχουμε
@@ -185,13 +193,13 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	// το πλήθος αυτό είναι μικρό τότε ανανεώνουμε την ημερομηνία
 	// για να επιλέξουμε άλλη μια παρτίδα κοκ.
 
-	elseif ($imerisio->imerominia_get() != $imerominia) {
+	elseif ($imerominia != $imerominia_last) {
 		if ($count > MIN_COUNT) {
 			$result->free();
 			break;
 		}
 
-		$imerominia = $imerisio->imerominia_get();
+		$imerominia_last = $imerominia;
 	}
 
 	print $enotiko . $imerisio->json_economy();

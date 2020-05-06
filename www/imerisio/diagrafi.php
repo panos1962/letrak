@@ -41,14 +41,14 @@ $kodikos = pandora::parameter_get("kodikos");
 if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$query = "SELECT `ipiresia` FROM `letrak`.`imerisio`" .
-	" WHERE `kodikos` = " . $kodikos;
-$imerisio = pandora::first_row($query, MYSQLI_ASSOC);
+$imerisio = (new Imerisio())->from_database($kodikos);
 
-if (!$imerisio)
+if ($imerisio->oxi_kodikos())
 lathos("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
 
-if ($prosvasi->ipiresia_oxi_update($imerisio["ipiresia"]))
+$ipiresia = $imerisio->ipiresia_get();
+
+if ($prosvasi->ipiresia_oxi_update($ipiresia))
 lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@

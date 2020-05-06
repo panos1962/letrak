@@ -46,7 +46,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $protipo = pandora::parameter_get("kodikos");
 
-if (pandora::not_integer($protipo, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (letrak::imerisio_invalid_kodikos($protipo))
 lathos("Ακαθόριστος κωδικός προτύπου");
 
 $query = "SELECT * FROM `letrak`.`imerisio`" .
@@ -97,15 +97,13 @@ pandora::query($query);
 
 pandora::commit();
 
-$query = "SELECT " . LETRAK_IMERISIO_PROJECTION_COLUMNS .
-	" FROM `letrak`.`imerisio`" .
-	" WHERE `kodikos` = " . $kodikos;
-$row = pandora::first_row($query, MYSQLI_ASSOC);
+$imerisio = (new Imerisio())->from_database($kodikos);
 
-if (!$row)
+if ($imerisio->oxi_kodikos())
 lathos("Αποτυχία εντοπισμού αντιγράφου");
 
-print '{"imerisio":' . pandora::json_string($row) . '}';
+
+print '{"imerisio":' . $imerisio->json_economy() . '}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@

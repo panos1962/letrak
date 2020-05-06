@@ -48,7 +48,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("imerisio");
 
-if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (letrak::imerisio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $ipalilos_table = letrak::erpota12("ipalilos");
@@ -57,13 +57,10 @@ print '{';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT * FROM `letrak`.`imerisio` WHERE `kodikos` = " . $kodikos;
-$imerisio = pandora::first_row($query, MYSQLI_ASSOC);
+$imerisio = (new Imerisio())->from_database($kodikos);
 
-if (!$imerisio)
+if ($imerisio->oxi_kodikos())
 lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
-
-$imerisio = new Imerisio($imerisio);
 
 print '"imerisio":' . $imerisio->json_economy() . ",";
 
@@ -73,7 +70,7 @@ $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
 " WHERE (`parousia`.`imerisio` = " . $kodikos . ")";
 
-if ($prosvasi->oxi_prosvasi_imerisio($imerisio))
+if ($prosvasi->oxi_prosvasi_ipiresia($imerisio->ipiresia_get()))
 $query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
 $query .= " ORDER BY `l`, `f`, `p`, `i`";
@@ -85,13 +82,7 @@ $enotiko = "";
 $result = pandora::query($query);
 
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	// Απαλοιφή των πεδίων με null τιμές
-	foreach ($row as $k => $v) {
-		if (!isset($v))
-		unset($row[$k]);
-	}
-
-	print $enotiko . pandora::json_string($row);
+	print $enotiko . pandora::json_string(pandora::null_purge($row));
 	$enotiko = ",";
 }
 
