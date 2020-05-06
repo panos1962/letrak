@@ -238,9 +238,12 @@ class Imerisio {
 	public function prosapo_set($prosapo = NULL) {
 		$this->prosapo = NULL;
 
+		if (!isset($prosapo))
+		return $this;
+
 		switch ($prosapo) {
-		case 'ΠΡΟΣΕΛΕΥΣΗ':
-		case 'ΑΠΟΧΩΡΗΣΗ':
+		case "ΠΡΟΣΕΛΕΥΣΗ":
+		case "ΑΠΟΧΩΡΗΣΗ":
 			$this->prosapo = $prosapo;
 		}
 
@@ -308,13 +311,13 @@ class Imerisio {
 	}
 
 	public function is_ipografi($ipalilos = NULL) {
-		if ($this->oxi_kodikos())
+		$imerisio = $this->kodikos_get();
+
+		if (letrak::imerisio_invalid_kodikos($imerisio))
 		return FALSE;
 
-		if (letrak::ipalilos_invalid_ipalilos($ipalilos))
+		if (letrak::ipalilos_invalid_kodikos($ipalilos))
 		return FALSE;
-
-		$imerisio = $this->imerisio_get();
 
 		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
 			" WHERE (`imerisio` = " . $imerisio . ")" .
@@ -323,18 +326,18 @@ class Imerisio {
 		return pandora::first_row($query, MYSQLI_NUM);
 	}
 
-	public function oxi_ipografon($ipalilos = NULL) {
+	public function oxi_ipografi($ipalilos = NULL) {
 		return !$this->is_ipografi($ipalilos);
 	}
 
 	public function is_simetoxi($ipalilos = NULL) {
-		if ($this->oxi_kodikos())
-		return FALSE;
-
-		if (letrak::ipalilos_invalid_ipalilos($ipalilos))
-		return FALSE;
-
 		$imerisio = $this->kodikos_get();
+
+		if (letrak::imerisio_invalid_kodikos($imerisio))
+		return FALSE;
+
+		if (letrak::ipalilos_invalid_kodikos($ipalilos))
+		return FALSE;
 
 		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
 			" WHERE (`imerisio` = " . $imerisio . ")" .
