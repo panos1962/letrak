@@ -156,7 +156,7 @@ class Imerisio {
 	public $protipo = NULL;
 	public $imerominia = NULL;
 	public $ipiresia = NULL;
-	public $prosoapo = NULL;
+	public $prosapo = NULL;
 	public $perigrafi = NULL;
 	public $closed = NULL;
 
@@ -166,7 +166,7 @@ class Imerisio {
 		$this->protipo = NULL;
 		$this->imerominia = NULL;
 		$this->ipiresia = NULL;
-		$this->prosoapo = NULL;
+		$this->prosapo = NULL;
 		$this->perigrafi = NULL;
 		$this->closed = NULL;
 
@@ -212,13 +212,13 @@ class Imerisio {
 		return $this;
 	}
 
-	public function imerominia_set($imerominia = NULL) {
+	public function imerominia_set($imerominia = NULL, $format = "Y-m-d") {
 		$this->imerominia = NULL;
 
 		if (!isset($imerominia))
 		return $this;
 
-		$this->imerominia = $imerominia;
+		$this->imerominia = pandora::date2date($imerominia, $format);
 		return $this;
 	}
 
@@ -228,7 +228,7 @@ class Imerisio {
 		if (!isset($ipiresia))
 		return $this;
 
-		if (!$piresia)
+		if (!$ipiresia)
 		return $this;
 
 		$this->ipiresia = $ipiresia;
@@ -239,10 +239,9 @@ class Imerisio {
 		$this->prosapo = NULL;
 
 		switch ($prosapo) {
-		case 'VIEW':
-		case 'UPDATE':
-		case 'ADMIN':
-			$this->prosapo = $this;
+		case 'ΠΡΟΣΕΛΕΥΣΗ':
+		case 'ΑΠΟΧΩΡΗΣΗ':
+			$this->prosapo = $prosapo;
 		}
 
 		return $this;
@@ -254,20 +253,17 @@ class Imerisio {
 		if (!isset($perigrafi))
 		return $this;
 
-		if (!$piresia)
-		return $this;
-
 		$this->perigrafi = $perigrafi;
 		return $this;
 	}
 
-	public function closed_set($closed = NULL) {
+	public function closed_set($closed = NULL, $format = "Y-m-d H:i:s") {
 		$this->closed = NULL;
 
 		if (!isset($closed))
 		return $this;
 
-		$this->closed = $closed;
+		$this->closed = pandora::date2date($closed, $format);
 		return $this;
 	}
 
@@ -283,7 +279,35 @@ class Imerisio {
 		return !$this->is_kodikos();
 	}
 
-	public function is_ipografon($ipalilos = NULL) {
+	public function imerominia_get($format = NULL) {
+		return pandora::date2date($this->imerominia, NULL, $format);
+	}
+
+	public function ipiresia_get() {
+		return $this->ipiresia;
+	}
+
+	public function prosapo_get() {
+		return $this->prosapo;
+	}
+
+	public function perigrafi_get() {
+		return $this->perigrafi;
+	}
+
+	public function closed_get($format = NULL) {
+		return pandora::date2date($this->closed, NULL, $format);
+	}
+
+	public function is_klisto() {
+		return $this->closed_get();
+	}
+
+	public function is_anikto() {
+		return !$this->is_klisto();
+	}
+
+	public function is_ipografi($ipalilos = NULL) {
 		if ($this->oxi_kodikos())
 		return FALSE;
 
@@ -300,7 +324,7 @@ class Imerisio {
 	}
 
 	public function oxi_ipografon($ipalilos = NULL) {
-		return !$this->is_ipografon($ipalilos);
+		return !$this->is_ipografi($ipalilos);
 	}
 
 	public function is_simetoxi($ipalilos = NULL) {
@@ -317,6 +341,51 @@ class Imerisio {
 			" AND (`ipalilos` = " . $ipalilos . ")";
 
 		return pandora::first_row($query, MYSQLI_NUM);
+	}
+
+	public static $economy_map = array(
+		"kodikos" => "k",
+		"imerominia" => "i",
+		"ipiresia" => "r",
+		"prosapo" => "o",
+		"perigrafi" => "e",
+		"closed" => "c",
+	);
+
+	public function json_economy() {
+		$row = array();
+
+		$x = $this->kodikos_get();
+
+		if ($x)
+		$row["k"] = $x;
+
+		$x = $this->imerominia_get();
+
+		if ($x)
+		$row["i"] = $x->format("Y-m-d");
+
+		$x = $this->ipiresia_get();
+
+		if ($x)
+		$row["r"] = $x;
+
+		$x = $this->prosapo_get();
+
+		if ($x)
+		$row["o"] = $x;
+
+		$x = $this->perigrafi_get();
+
+		if ($x)
+		$row["e"] = $x;
+
+		$x = $this->closed_get();
+
+		if ($x)
+		$row["c"] = $x->format("Y-m-d");
+
+		return pandora::json_string($row);
 	}
 }
 
@@ -659,10 +728,10 @@ class Prosvasi {
 
 		$ipalilos = $this->ipalilos_get();
 
-		if ($imerisio->is_ipografon($ipalilos))
+		if ($imerisio->is_simetoxi($ipalilos))
 		return TRUE;
 
-		if ($imerisio->is_simetoxi($ipalilos))
+		if ($imerisio->is_ipografi($ipalilos))
 		return TRUE;
 
 		return FALSE;

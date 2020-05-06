@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-06
 // Updated: 2020-05-03
 // Updated: 2020-04-26
 // Created: 2020-04-25
@@ -62,7 +63,9 @@ $imerisio = pandora::first_row($query, MYSQLI_ASSOC);
 if (!$imerisio)
 lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
-print '"imerisio":' . pandora::json_string($imerisio) . ",";
+$imerisio = new Imerisio($imerisio);
+
+print '"imerisio":' . $imerisio->json_economy() . ",";
 
 $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " FROM `letrak`.`parousia` AS `parousia`" .
