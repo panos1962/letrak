@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-05
 // Updated: 2020-05-04
 // Updated: 2020-05-03
 // Updated: 2020-04-28
@@ -148,6 +149,176 @@ class letrakCore {
 	}
 }
 
+class Imerisio {
+	public $kodikos = NULL;
+	public $ipalilos = NULL;
+	public $protipo = NULL;
+	public $imerominia = NULL;
+	public $ipiresia = NULL;
+	public $prosoapo = NULL;
+	public $perigrafi = NULL;
+	public $closed = NULL;
+
+	public function __construct($x = NULL) {
+		$this->kodikos = NULL;
+		$this->ipalilos = NULL;
+		$this->protipo = NULL;
+		$this->imerominia = NULL;
+		$this->ipiresia = NULL;
+		$this->prosoapo = NULL;
+		$this->perigrafi = NULL;
+		$this->closed = NULL;
+
+		foreach ($x as $k => $v) {
+			try {
+				$func = $k . "_set";
+				$this->$func($v);
+			}
+
+			catch (Exception $e) {
+				continue;
+			}
+		}
+	}
+
+	public function kodikos_set($kodikos = NULL) {
+		$this->kodikos = NULL;
+
+		if (letrak::imerisio_invalid_kodikos($kodikos))
+		return $this;
+
+		$this->kodikos = $kodikos;
+		return $this;
+	}
+
+	public function ipalilos_set($ipalilos = NULL) {
+		$this->ipalilos = NULL;
+
+		if (letrak::imerisio_invalid_ipalilos($ipalilos))
+		return $this;
+
+		$this->ipalilos = $ipalilos;
+		return $this;
+	}
+
+	public function protipo_set($protipo = NULL) {
+		$this->protipo = NULL;
+
+		if (letrak::imerisio_invalid_kodikos($protipo))
+		return $this;
+
+		$this->protipo = $protipo;
+		return $this;
+	}
+
+	public function imerominia_set($imerominia = NULL) {
+		$this->imerominia = NULL;
+
+		if (!isset($imerominia))
+		return $this;
+
+		$this->imerominia = $imerominia;
+		return $this;
+	}
+
+	public function ipiresia_set($ipiresia = NULL) {
+		$this->ipiresia = NULL;
+
+		if (!isset($ipiresia))
+		return $this;
+
+		if (!$piresia)
+		return $this;
+
+		$this->ipiresia = $ipiresia;
+		return $this;
+	}
+
+	public function prosapo_set($prosapo = NULL) {
+		$this->prosapo = NULL;
+
+		switch ($prosapo) {
+		case 'VIEW':
+		case 'UPDATE':
+		case 'ADMIN':
+			$this->prosapo = $this;
+		}
+
+		return $this;
+	}
+
+	public function perigrafi_set($perigrafi = NULL) {
+		$this->perigrafi = NULL;
+
+		if (!isset($perigrafi))
+		return $this;
+
+		if (!$piresia)
+		return $this;
+
+		$this->perigrafi = $perigrafi;
+		return $this;
+	}
+
+	public function closed_set($closed = NULL) {
+		$this->closed = NULL;
+
+		if (!isset($closed))
+		return $this;
+
+		$this->closed = $closed;
+		return $this;
+	}
+
+	public function kodikos_get() {
+		return $this->kodikos;
+	}
+
+	public function is_kodikos() {
+		return $this->kodikos_get();
+	}
+
+	public function oxi_kodikos() {
+		return !$this->is_kodikos();
+	}
+
+	public function is_ipografon($ipalilos = NULL) {
+		if ($this->oxi_kodikos())
+		return FALSE;
+
+		if (letrak::ipalilos_invalid_ipalilos($ipalilos))
+		return FALSE;
+
+		$imerisio = $this->imerisio_get();
+
+		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`armodios` = " . $ipalilos . ")";
+
+		return pandora::first_row($query, MYSQLI_NUM);
+	}
+
+	public function oxi_ipografon($ipalilos = NULL) {
+		return !$this->is_ipografon($ipalilos);
+	}
+
+	public function is_simetoxi($ipalilos = NULL) {
+		if ($this->oxi_kodikos())
+		return FALSE;
+
+		if (letrak::ipalilos_invalid_ipalilos($ipalilos))
+		return FALSE;
+
+		$imerisio = $this->kodikos_get();
+
+		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" AND (`ipalilos` = " . $ipalilos . ")";
+
+		return pandora::first_row($query, MYSQLI_NUM);
+	}
+}
+
 class Ipografi {
 	public $imerisio = NULL;
 	public $taxinomisi = NULL;
@@ -156,6 +327,12 @@ class Ipografi {
 	public $checkok = NULL;
 
 	public function __construct($x) {
+		$this->imerisio = NULL;
+		$this->taxinomisi = NULL;
+		$this->armodios = NULL;
+		$this->titlos = NULL;
+		$this->checkok = NULL;
+
 		foreach ($x as $k => $v) {
 			try {
 				$func = $k . "_set";
@@ -272,36 +449,45 @@ class Prosvasi {
 	// αριθμό μητρώου του χρήστη ως εργαζομένου στον Δήμο Θεσσαλονίκης.
 
 	public function __construct($ipalilos = NULL) {
-		$this->ipalilos_set($ipalilos);
-		$this->ipiresia_set(NULL);
-		$this->epipedo_set(NULL);
+		$this->
+		ipalilos_set($ipalilos)->
+		ipiresia_set(NULL)->
+		epipedo_set(NULL);
 	}
 
 	public function ipalilos_set($ipalilos = NULL) {
 		$this->ipalilos = NULL;
 
-		if (pandora::is_integer($ipalilos, 1,
-			LETRAK_IPALILOS_KODIKOS_MAX))
-		$this->ipalilos = (int)$ipalilos;
+		if (letrak::ipalilos_invalid_kodikos($ipalilos))
+		return $this;
 
+		$this->ipalilos = $ipalilos;
 		return $this;
 	}
 
 	public function ipiresia_set($ipiresia = NULL) {
+		$this->ipiresia = NULL;
+
+		if (!isset($ipiresia))
+		return $this;
+
 		$this->ipiresia = $ipiresia;
 		return $this;
 	}
 
 	public function epipedo_set($level = NULL) {
+		$this->epipedo = NULL;
+
+		if (!isset($epipedo))
+		return $this;
+
 		switch ($level) {
 		case 'VIEW':
 		case 'UPDATE':
 		case 'ADMIN':
 			$this->epipedo = $level;
-			return $this;
 		}
 
-		$this->epipedo = NULL;
 		return $this;
 	}
 
@@ -349,9 +535,11 @@ class Prosvasi {
 		if ($this->oxi_ipalilos())
 		return $this;
 
+		$ipalilos = $this->ipalilos_get();
+
 		$query = "SELECT `ipiresia`, `level`" .
 			" FROM `erpota`.`prosvasi`" .
-			" WHERE `ipalilos` = " . $this->ipalilos_get();
+			" WHERE `ipalilos` = " . $ipalilos;
 		$row = pandora::first_row($query, MYSQLI_NUM);
 
 		if (!$row)
@@ -432,6 +620,10 @@ class Prosvasi {
 		return !$this->ipiresia_is_update($ipiresia);
 	}
 
+	// Η μέθοδος "ipiresia_is_admin" δέχεται έναν κωδικό υπηρεσίας και
+	// επιστρέφει true εφόσον ο χρήστης έχει πρόσβαση διαχείρισης στη
+	// συγκεκριμένη υπηρεσία, αλλιώς επιστρέφει false.
+
 	public function ipiresia_is_admin($ipiresia = NULL) {
 		if ($this->oxi_prosvasi_ipiresia($ipiresia))
 		return FALSE;
@@ -453,47 +645,30 @@ class Prosvasi {
 	// πρόσβασης έχει δικαιώματα στο περιεχόμενο του παρουσιολογίου.
 
 	public function is_prosvasi_imerisio($imerisio) {
-		// Αν ο υπάλληλος της ανά χείρας πρόσβασης είναι υπογράφων
-		// στο παρουσιολόγιο, τότε αυτεπάγγελτα αποκτά δικαιώματα
-		// στο περιεχόμενο του παρουσιολογίου.
+		if ($this->oxi_ipalilos())
+		return FALSE;
 
-		if ($this->is_ipografon($imerisio["kodikos"]))
+		if ($imerisio->oxi_kodikos())
+		return FALSE;
+
+		$ipiresia = $imerisio->ipiresia_get();
+
+		if ($this->is_prosvasi_ipiresia($ipiresia))
 		return TRUE;
 
-		// Αν τα δικαιώματα που απορρέουν από τη μάσκα κωδικού
-		// υπηρεσίας για τον εν λόγω υπάλληλο ταιριάζουν με την
-		// υπηρεσία του παρουσιολογίου, τότε ο υπάλληλος αποκτά
-		// δικαιώματα στο περιεχόμενο του παρουσιολογίου.
+		$ipalilos = $this->ipalilos_get();
 
-		if ($this->is_prosvasi_ipiresia($imerisio["ipiresia"]))
+		if ($imerisio->is_ipografon($ipalilos))
 		return TRUE;
 
-		// Σε κάθε άλλη περίπτωση ο υπάλληλος έχει δικαιώματα
-		// μόνο σε στοιχεία που τον αφορούν προσωπικά.
+		if ($imerisio->is_simetoxi($ipalilos))
+		return TRUE;
 
 		return FALSE;
 	}
 
 	public function oxi_prosvasi_imerisio($imerisio) {
 		return !$this->is_prosvasi_imerisio($imerisio);
-	}
-
-	// Η μέθοδος "is_ipografon" δέχεται ως παράμετρο ένα παρουσιολόγιο
-	// και ελέγχει αν ο υπάλληλος της ανά χείρας πρόσβασης συμμετέχει
-	// ως υπογράφων στο συγκεκριμένο παρουσιολόγιο.
-
-	public function is_ipografon($imerisio) {
-		if ($this->oxi_ipalilos())
-		return FALSE;
-
-		if (is_array($imerisio))
-		$imerisio = $imerisio["kodikos"];
-
-		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
-			" AND (`armodios` = " . $this->ipalilos_get() . ")";
-
-		return pandora::first_row($query, MYSQLI_NUM);
 	}
 }
 ?>
