@@ -152,6 +152,11 @@ prosopa.selidaSetup = () => {
 	append(prosopa.browserDOM = $('<div>').
 	addClass('browser'));
 
+	prosopa.
+	ipografesSetup().
+	prosopaSetup().
+	editorSetup();
+
 	///////////////////////////////////////////////////////////////////////@
 
 	pnd.fyiMessage('Αναζήτηση στοιχείων παρουσιολογίου…');
@@ -198,12 +203,52 @@ prosopa.imerisioProcess = (imerisio) => {
 	prosopa.imerisioAreaDOM.
 	append(prosopa.imerisio.domGet());
 
+	$('#peImerisioKodikos').val(prosopa.imerisio.kodikosGet());
+	$('#peImerisioPerigrafi').val(prosopa.imerisio.perigrafiGet());
+	$('#peImerisioImerominia').val(prosopa.imerisio.imerominiaGet().
+	toLocaleDateString('el-GR', {
+		'weekday': 'long',
+		'year': 'numeric',
+		'month': 'long',
+		'day': 'numeric',
+	}));
+
+	let prosapo = prosopa.imerisio.prosapoGet();
+	let prosapoDOM = $('#peImerisioProsapo');
+
+	switch (prosapo) {
+	case 'ΠΡΟΣΕΛΕΥΣΗ':
+		prosapoDOM.addClass('imerisioProsapoProselefsi');
+		break;
+	case 'ΑΠΟΧΩΡΗΣΗ':
+		prosapoDOM.addClass('imerisioProsapoApoxorisi');
+		break;
+	}
+
+	prosapoDOM.val(prosapo);
+
+	let ipiresia = prosopa.imerisio.ipiresiaGet();
+	let ipdesc = '';
+
+	if (ipiresia.length > 3) {
+		let dief = imr.ipiresiaList[ipiresia.substr(0, 3)];
+
+		if (dief) {
+			if (dief.length > 20)
+			ipdesc = dief.substr(0, 64) + '…\n';
+
+			else
+			ipdesc = dief + '\n';
+		}
+	}
+	
+	ipdesc += imr.ipiresiaList[ipiresia];
+	$('#peImerisioIpiresia').text(ipdesc);
+
 	return prosopa;
 };
 
 prosopa.ipografesProcess = (ipografes) => {
-	prosopa.ipografesSetup();
-
 	if (!ipografes)
 	return prosopa;
 
@@ -217,8 +262,6 @@ prosopa.ipografesProcess = (ipografes) => {
 };
 
 prosopa.prosopaProcess = (parousia) => {
-	prosopa.prosopaSetup();
-
 	pnd.
 	arrayWalk(parousia, (v, k) => {
 		v = new letrak.parousia(v);
@@ -328,6 +371,8 @@ prosopa.ipografesSetup = () => {
 			prosopa.browserDOM.addClass('browserEmfanesOrio');
 		}
 	}));
+
+	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -935,14 +980,6 @@ prosopa.prosopaSetup = () => {
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
 
-	prosopa.parousiaEditorDOM = $('#parousiaEditor').
-	dialog({
-		'title': 'Λεπτομερή στοιχεία συμβάντος',
-		'width': 'auto',
-		'height': 'auto',
-	}).
-	dialog('close');
-
 	return prosopa;
 };
 
@@ -959,18 +996,96 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	return prosopa;
 }
 
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.editorSetup = () => {
+	prosopa.parousiaEditorDOM = $('#parousiaEditor').
+	dialog({
+		'title': 'Λεπτομερή στοιχεία συμβάντος',
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left+290 top+30',
+			'at': 'left top',
+		},
+	}).
+	dialog('close');
+
+	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
+	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
+	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
+	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
+	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
+	prosopa.editorExcuseDOM = $('#peExcuse');
+
+	prosopa.editorPanelDOM = $('#pePanel').
+	children('input').
+	addClass('letrak-formaPliktro').
+	addClass('pePanelPliktro');
+
+	prosopa.editorPliktroAkiroDOM = $('#pePliktroAkiro').
+	on('click', (e) => {
+		e.stopPropagation();
+		prosopa.parousiaEditorDOM.dialog('close');
+	});
+
+	$('#pePliktroEpanafora').
+	on('click', (e) => {
+		e.stopPropagation();
+
+		let parousia = prosopa.parousiaEditorDOM.data('parousia');
+		prosopa.parousiaEdit(null, parousia);
+	});
+
+	return prosopa;
+};
+
+prosopa.editorClear = () => {
+	prosopa.parousiaEditorDOM.
+	find('input,textarea').
+	val('');
+
+	return prosopa;
+};
+
+prosopa.editorClose = () => {
+	prosopa.parousiaEditorDOM.dialog('open');
+	return prosopa;
+};
+
 prosopa.parousiaEdit = (e, parousia) => {
 	if (e)
 	e.stopPropagation();
 
-/*
-	if (parousia)
 	prosopa.parousiaEditorDOM.
-	empty().
-	append(parousia.onomateponimoGet());
-*/
+	removeData('parousia');
 
-	prosopa.parousiaEditorDOM.dialog('open');
+	if (!parousia)
+	return prosopa.
+	editorClear().
+	editorClose();
+
+	prosopa.editorIpalilosKodikosDOM.
+	attr('disabled', true).
+	val(parousia.ipalilos);
+
+	prosopa.editorIpalilosOnomateponimoDOM.
+	attr('disabled', true).
+	val(parousia.onomateponimo);
+
+	prosopa.editorIpalilosOrarioDOM.
+	val(parousia.orario.toString());
+
+	prosopa.editorIpalilosKartaDOM.
+	val(parousia.karta);
+
+	prosopa.editorExcuseDOM.
+	val(parousia.excuse);
+
+	prosopa.parousiaEditorDOM.
+	data('parousia', parousia).
+	dialog('open');
+	prosopa.editorPliktroAkiroDOM.focus();
 
 	return prosopa;
 };

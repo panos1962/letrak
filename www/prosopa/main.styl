@@ -98,12 +98,12 @@ $checkSize = 32px
 	border-radius 4px
 
 .imerisioProsapoProselefsi
-	background-color yellow
-	color midnightblue
+	background-color yellow !important
+	color midnightblue !important
 
 .imerisioProsapoApoxorisi
-	background-color midnightblue
-	color yellow
+	background-color midnightblue !important
+	color yellow !important
 
 .browser
 	border-style double none none none
@@ -249,16 +249,22 @@ $checkSize = 32px
 	width 40em
 
 .formaInputLine
-	padding 4px
+	padding 2px
 
 #parousiaEditor
+	display none
 	background-color snow
 	& input
 	& textarea
 		resize none
 		background-color #ffffff
+	& input:disabled
+	& textarea:disabled
+		color black !important
+		background-color #ffffe6 !important
+		cursor not-allowed
 	> .formaEnotita
-		margin 16px 0px
+		margin 6px 0px
 		border-style none none solid solid
 		border-width 1px;
 		border-color #d8d8d8
@@ -268,11 +274,50 @@ $checkSize = 32px
 				width 120px
 
 #peImerisioKodikos
-	width 100px
+	width $imerisioKodikosWidth
 
 #peImerisioPerigrafi
-	width 600px
+	width $imerisioPerigrafiWidth
 
-#peIpalilosIpiresiaPerigrafi
-#peImerisioIpiresiaPerigrafi
-	width 714px
+#peImerisioImerominia
+	width 18em
+
+#peImerisioProsapo
+	width 8em
+
+#peImerisioIpiresia
+	overflow hidden
+	text-overflow ellipsis
+
+#peIpalilosKodikos
+	width $ipalilosKodikosWidth
+
+#peIpalilosOnomateponimo
+	width $ipalilosOnomateponimoWidth
+
+#peIpalilosOrario
+	width $orarioWidth
+
+#peIpalilosKarta
+	width $kartaWidth
+
+#peAdiaIdos
+	width $adiaIdosWidth
+
+#peAdiaApo
+#peAdiaEos
+	width $imerominiaWidth
+
+#peAdiaPerigrafi
+	width $adiaPerigrafiWidth
+
+#peExcuse
+	width $excuseWidth
+
+#peImerisioIpiresia
+#peInfo
+	width 688px
+
+.pePanelPliktro
+	padding 2px 6px
+	background-color beige !important

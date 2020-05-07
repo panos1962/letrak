@@ -853,6 +853,12 @@ imerisio.prosopa = (opts) => {
 		'klonos': opts.klonos,
 	};
 
+	if (imerisio.hasOwnProperty('ipiresiaList')) {
+		self.LETRAK.ipiresiaList = imerisio.ipiresiaList;
+		imerisio.prosopaOpen(kodikos);
+		return prosopa;
+	}
+
 	imerisio.erpotaFetch(kodikos);
 	return imerisio;
 };
@@ -985,9 +991,7 @@ imerisio.imerisioProcess = (rsp, opts) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 imerisio.erpotaFetch = (kodikos) => {
-	return imerisio.prosopaOpen(kodikos);
-
-	if (imerisio.hasOwnProperty('ipiresiaList'))
+	if (imerisio.hasOwnProperty('ipiresiaArray'))
 	return imerisio.prosopaOpen(kodikos);
 
 	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
@@ -1012,9 +1016,15 @@ imerisio.erpotaProcess = (rsp, kodikos) => {
 	return imerisio.fyiError(rsp.error);
 
 	pnd.fyiClear();
-	imerisio.ipiresiaList = rsp.ipiresia;
-	imerisio.ipalilosList = rsp.ipalilos;
+	imerisio.ipiresiaArray = rsp.ipiresia;
+	imerisio.ipalilosArray = rsp.ipalilos;
 
+	imerisio.ipiresiaList = {};
+	pnd.arrayWalk(imerisio.ipiresiaArray, (v) => {
+		imerisio.ipiresiaList[v.k] = v.p;
+	});
+
+	self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
 	imerisio.prosopaOpen(kodikos);
 	return imerisio;
 };
