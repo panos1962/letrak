@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-07
 // Updated: 2020-04-25
 // Created: 2020-04-24
 // @HISTORY END
@@ -47,8 +48,51 @@ document_head([
 ])::
 document_body();
 ?>
-<div id="parousiaEditor">
-</div>
+<form id="parousiaEditor">
+	<div class="formaEnotita">
+		<div class="formaInputLine">
+			<label for="peImerisioKodikos">
+				Παρουσιολόγιο
+			</label>
+			<input id="peImerisioKodikos">
+			<input id="peImerisioPerigrafi">
+		</div>
+		<div class="formaInputLine">
+			<label for="peImerisioIpiresia">
+				Υπηρεσία
+			</label>
+			<textarea id="peIpalilosIpiresiaPerigrafi">
+			</textarea>
+		</div>
+	</div>
+
+	<div class="formaEnotita">
+		<div class="formaInputLine">
+			<label for="peIpalilosKodikos">
+				Υπάλληλος
+			</label>
+			<input id="peIpalilosKodikos">
+			<input id="peIpalilosOnomateponimo">
+		</div>
+		<div class="formaInputLine">
+			<label for="peImerisioIpiresia">
+				Υπηρεσία
+			</label>
+			<textarea id="peIpalilosIpiresiaPerigrafi">
+			</textarea>
+		</div>
+		<div class="formaInputLine">
+			<label for="peIpalilosOrario">
+				Ωράριο
+			</label>
+			<input id="peIpalilosOrario">
+			<label for="peIpalilosKarta">
+				Κάρτα
+			</label>
+			<input id="peIpalilosKarta">
+		</div>
+	</div>
+</form>
 <?php
 pandora::
 document_close();

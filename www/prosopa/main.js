@@ -936,7 +936,11 @@ prosopa.prosopaSetup = () => {
 	});
 
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
-	dialog().
+	dialog({
+		'title': 'Λεπτομερή στοιχεία συμβάντος',
+		'width': 'auto',
+		'height': 'auto',
+	}).
 	dialog('close');
 
 	return prosopa;
@@ -959,10 +963,12 @@ prosopa.parousiaEdit = (e, parousia) => {
 	if (e)
 	e.stopPropagation();
 
+/*
 	if (parousia)
 	prosopa.parousiaEditorDOM.
 	empty().
 	append(parousia.onomateponimoGet());
+*/
 
 	prosopa.parousiaEditorDOM.dialog('open');
 
