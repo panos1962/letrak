@@ -226,6 +226,7 @@ prosopa.imerisioProcess = (imerisio) => {
 	}
 
 	prosapoDOM.val(prosapo);
+	prosopa.editorMeraoraLabelDOM.text(prosapo);
 
 	let ipiresia = prosopa.imerisio.ipiresiaGet();
 	let ipdesc = '';
@@ -1016,6 +1017,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
+	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorExcuseDOM = $('#peExcuse');
 
 	prosopa.editorPanelDOM = $('#pePanel').

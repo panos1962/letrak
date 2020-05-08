@@ -854,9 +854,9 @@ imerisio.prosopa = (opts) => {
 	};
 
 	if (imerisio.hasOwnProperty('ipiresiaList')) {
-		self.LETRAK.ipiresiaList = imerisio.ipiresiaList;
+		self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
 		imerisio.prosopaOpen(kodikos);
-		return prosopa;
+		return imerisio;
 	}
 
 	imerisio.erpotaFetch(kodikos);

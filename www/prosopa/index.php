@@ -49,15 +49,15 @@ document_head([
 document_body();
 ?>
 <form id="parousiaEditor">
-	<div class="formaEnotita">
-		<div class="formaInputLine">
+	<div class="peFormaEnotita">
+		<div class="peFormaInputLine">
 			<label for="peImerisioKodikos">
 				Παρουσιολόγιο
 			</label>
 			<input id="peImerisioKodikos" disabled="true">
 			<input id="peImerisioPerigrafi" disabled="true">
 		</div>
-		<div class="formaInputLine">
+		<div class="peFormaInputLine">
 			<label for="peImerisioImerominia">
 				Ημερομηνία
 			</label>
@@ -67,7 +67,7 @@ document_body();
 			</label>
 			<input id="peImerisioProsapo" disabled="true">
 		</div>
-		<div class="formaInputLine">
+		<div class="peFormaInputLine">
 			<label for="peImerisioIpiresia">
 				Υπηρεσία
 			</label>
@@ -77,15 +77,15 @@ document_body();
 		</div>
 	</div>
 
-	<div class="formaEnotita">
-		<div class="formaInputLine">
+	<div class="peFormaEnotita">
+		<div class="peFormaInputLine">
 			<label for="peIpalilosKodikos">
 				Υπάλληλος
 			</label>
 			<input id="peIpalilosKodikos">
 			<input id="peIpalilosOnomateponimo">
 		</div>
-		<div class="formaInputLine">
+		<div class="peFormaInputLine">
 			<label for="peIpalilosOrario">
 				Ωράριο
 			</label>
@@ -94,18 +94,27 @@ document_body();
 				Κάρτα
 			</label>
 			<input id="peIpalilosKarta">
+			<label for="peKartaMeraora">
+				Καταγραφή
+			</label>
+			<input id="peKartaMeraora">
+		</div>
+		<div class="peFormaInputLine">
+			<label id="peMeraoraLabel" for="peMeraora">
+			</label>
+			<input id="peMeraora">
 		</div>
 	</div>
 
-	<div class="formaEnotita">
-		<div class="formaInputLine">
+	<div class="peFormaEnotita">
+		<div class="peFormaInputLine">
 			<label for="peAdiaIdos">
 				Άδεια
 			</label>
 			<input id="peAdiaIdos">
 			<input id="peAdiaPerigrafi">
 		</div>
-		<div class="formaInputLine">
+		<div class="peFormaInputLine">
 			<label for="peAdiaApo">
 				Από
 			</label>
@@ -117,8 +126,8 @@ document_body();
 		</div>
 	</div>
 
-	<div class="formaEnotita">
-		<div class="formaInputLine">
+	<div class="peFormaEnotita">
+		<div class="peFormaInputLine">
 			<label for="peExcuse">
 				Εξαίρεση
 			</label>
@@ -132,7 +141,7 @@ document_body();
 			<option value="ΕΚΤΑΚΤΩΣ">ΕΚΤΑΚΤΩΣ</option>
 			</select>
 		</div>
-		<div class="formaInputLine">
+		<div class="peFormaInputLine">
 			<label for="peInfo">
 				Παρατηρήσεις
 			</label>
