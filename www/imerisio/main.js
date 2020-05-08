@@ -853,7 +853,8 @@ imerisio.prosopa = (opts) => {
 		'klonos': opts.klonos,
 	};
 
-	if (imerisio.hasOwnProperty('ipiresiaList')) {
+	if (imerisio.hasOwnProperty('adidosList')) {
+		self.LETRAK.imerisio.adidosList = imerisio.adidosList;
 		self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
 		imerisio.prosopaOpen(kodikos);
 		return imerisio;
@@ -1016,16 +1017,24 @@ imerisio.erpotaProcess = (rsp, kodikos) => {
 	return imerisio.fyiError(rsp.error);
 
 	pnd.fyiClear();
+	imerisio.adidosArray = rsp.adidos;
 	imerisio.ipiresiaArray = rsp.ipiresia;
 	imerisio.ipalilosArray = rsp.ipalilos;
+
+	imerisio.adidosList = {};
+	pnd.arrayWalk(imerisio.adidosArray, (v) => {
+		imerisio.adidosList[v.k] = v.p;
+	});
 
 	imerisio.ipiresiaList = {};
 	pnd.arrayWalk(imerisio.ipiresiaArray, (v) => {
 		imerisio.ipiresiaList[v.k] = v.p;
 	});
 
+	self.LETRAK.imerisio.adidosList = imerisio.adidosList;
 	self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
 	imerisio.prosopaOpen(kodikos);
+
 	return imerisio;
 };
 

@@ -73,7 +73,7 @@ $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 if ($prosvasi->oxi_prosvasi_ipiresia($imerisio->ipiresia_get()))
 $query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
-$query .= " ORDER BY `l`, `f`, `p`, `i`";
+$query .= " ORDER BY `l`, `f`, `r`, `i`";
 
 print '"query":' . pandora::json_string($query) . ',';
 

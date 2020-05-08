@@ -48,14 +48,17 @@ define("LETRAK_IMERISIO_PROJECTION_COLUMNS",
 	"`closed` AS `c`");
 define("LETRAK_PROSOPA_PROJECTION_COLUMNS",
 	"`parousia`.`ipalilos` AS `i`, " .
-	"`parousia`.`karta` AS `k`, " .
-	"`parousia`.`orario` AS `o`, " .
-	"`parousia`.`meraora` AS `t`, " .
-	"`parousia`.`excuse` AS `e`, " .
-	"`parousia`.`info` AS `s`, " .
 	"`ipalilos`.`eponimo` AS `l`, " .
 	"`ipalilos`.`onoma` AS `f`, " .
-	"`ipalilos`.`patronimo` AS `p`");
+	"`ipalilos`.`patronimo` AS `r`, " .
+	"`parousia`.`orario` AS `o`, " .
+	"`parousia`.`karta` AS `k`, " .
+	"`parousia`.`meraora` AS `t`, " .
+	"`parousia`.`adidos` AS `a`, " .
+	"`parousia`.`adapo` AS `p`, " .
+	"`parousia`.`adeos` AS `e`, " .
+	"`parousia`.`excuse` AS `x`, " .
+	"`parousia`.`info` AS `s`");
 
 class letrak extends letrakCore {
 	private static $init_ok = FALSE;

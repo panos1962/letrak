@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-08
 // Updated: 2020-04-30
 // Created: 2020-04-22
 // @HISTORY END
@@ -63,11 +64,13 @@ lathos("Δεν έχετε δικαίωμα δημιουργίας παρουσι
 
 pandora::autocommit(FALSE);
 
+$simera = date("Y-m-d");
+
 $query = "INSERT INTO `letrak`.`imerisio` " .
 "(`protipo`, `ipalilos`, `imerominia`," .
 " `ipiresia`, `prosapo`, `perigrafi`) VALUES (" .
 $protipo["kodikos"] . ", " .
-$prosvasi->ipalilos_get() . ", NOW(), " .
+$prosvasi->ipalilos_get() . ", '" . $simera . "', " .
 pandora::sql_string($protipo["ipiresia"]) . ", " .
 pandora::sql_string($protipo["prosapo"]) . ", " .
 pandora::sql_string($protipo["perigrafi"]) . ")";
@@ -78,12 +81,28 @@ if (pandora::affected_rows() !== 1) {
 	lathos("Αποτυχία δημιουργίας αντιγράφου");
 }
 
+// Κρατάμε τον κωδικό του νεοεισαχθέντος παρουσιολογίου
+
 $kodikos = pandora::insert_id();
 
-$query = "INSERT INTO `letrak`.`parousia` " .
-"(`imerisio`, `ipalilos`, `karta`, `orario`) " .
-"SELECT " . $kodikos . ", `ipalilos`, `karta`, `orario` " .
-"FROM `letrak`.`parousia` WHERE `imerisio` = " . $protipo["kodikos"];
+$flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`";
+
+// Εισάγουμε τα πρόσωπα με τα ίδια στοιχεία που είχαν στο πρωτότυπο, χωρίς
+// τις εξαιρέσεις.
+
+$query = "INSERT INTO `letrak`.`parousia` (`imerisio`, " . $flist . ")" .
+	" SELECT " . $kodikos . ", " . $flist .
+	" FROM `letrak`.`parousia`" .
+	" WHERE `imerisio` = " . $protipo["kodikos"];
+pandora::query($query);
+
+// Ενημερώνουμε τα νεοεισαχθέντα πρόσωπα καταργώντας τυχόν άδειες που έχουν
+// λήξει.
+
+$query = "UPDATE `letrak`.`parousia`" .
+	" SET `adidos` = NULL, `adapo` = NULL, `adeos` = NULL" .
+	" WHERE (`imerisio` = " . $kodikos . ")" .
+	" AND (`adeos` < '" . $simera . "')";
 pandora::query($query);
 
 pandora::query("SET @tax := 0");

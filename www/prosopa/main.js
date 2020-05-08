@@ -96,6 +96,7 @@ prosopa.minima = {
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
 	'prosopoInsertTabLabel': 'Προσθήκη υπαλλήλου',
+	'winpakTabLabel': 'WIN-PAK',
 };
 
 pnd.domInit(() => {
@@ -156,6 +157,13 @@ prosopa.selidaSetup = () => {
 	ipografesSetup().
 	prosopaSetup().
 	editorSetup();
+
+	pnd.toolbarLeftDOM.
+	append(prosopa.winpakTabDOM = letrak.tabDOM().
+	addClass('prosopaPliktro').
+	addClass('prosopaPliktroUpdate').
+	text(prosopa.minima.winpakTabLabel).
+	on('click', (e) => prosopa.winpak(e)));
 
 	///////////////////////////////////////////////////////////////////////@
 
@@ -1006,7 +1014,7 @@ prosopa.editorSetup = () => {
 		'width': 'auto',
 		'height': 'auto',
 		'position': {
-			'my': 'left+290 top+30',
+			'my': 'left+290 top+90',
 			'at': 'left top',
 		},
 	}).
@@ -1018,6 +1026,10 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
+	prosopa.editorAdiaIdosDOM = $('#peAdiaIdos');
+	prosopa.editorAdiaPerigrafiDOM = $('#peAdiaPerigrafi');
+	prosopa.editorAdiaApoDOM = $('#peAdiaApo');
+	prosopa.editorAdiaEosDOM = $('#peAdiaEos');
 	prosopa.editorExcuseDOM = $('#peExcuse');
 
 	prosopa.editorPanelDOM = $('#pePanel').
@@ -1058,6 +1070,7 @@ prosopa.editorClose = () => {
 prosopa.parousiaEdit = (e, parousia) => {
 	if (e)
 	e.stopPropagation();
+console.log(parousia);
 
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
@@ -1081,6 +1094,18 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.editorIpalilosKartaDOM.
 	val(parousia.karta);
 
+	prosopa.editorAdiaIdosDOM.
+	val(parousia.adidos);
+
+	prosopa.editorAdiaPerigrafiDOM.
+	val(imr.adidosList[parousia.adidos]);
+
+	prosopa.editorAdiaApoDOM.
+	val(parousia.adapo);
+
+	prosopa.editorAdiaEosDOM.
+	val(parousia.adeos);
+
 	prosopa.editorExcuseDOM.
 	val(parousia.excuse);
 
@@ -1088,6 +1113,74 @@ prosopa.parousiaEdit = (e, parousia) => {
 	data('parousia', parousia).
 	dialog('open');
 	prosopa.editorPliktroAkiroDOM.focus();
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.winpak = () => {
+	let plist = {};
+	let count = 0;
+
+	prosopa.browserDOM.
+	children('.parousia').
+	each(function() {
+		let parousia = $(this).data('parousia');
+
+		if (!parousia)
+		return;
+
+		if (parousia.meraora)
+		return;
+
+		let ipalilos = parousia.ipalilosGet();
+
+		if (!ipalilos)
+		return;
+
+		let orario = parousia.orarioGet().toString();
+
+		if (!orario)
+		return;
+
+		let karta = parousia.kartaGet();
+
+		if (!karta)
+		return;
+
+		count++;
+		plist[ipalilos] = {
+			'o': orario,
+			'k': karta,
+		};
+	});
+
+	if (!count)
+	return prosopa.fyiError('Δεν υπάρχουν ασυμπλήρωτες καταγραφές');
+
+	$.post({
+		'url': 'winpak.php',
+		'data': {
+			'imerisio': prosopa.imerisio.kodikosGet(),
+			'plist': plist,
+		},
+		'dataType': 'json',
+		'success': (rsp) => prosopa.winpakProcess(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα λήψης καταγραφών');
+			pnd.fyiError(err);
+		},
+	});
+
+	return prosopa;
+};
+
+prosopa.winpakProcess = (rsp) => {
+	if (rsp.error)
+	pnd.fyiError(rsp.error);
+
+	console.log(rsp);
 
 	return prosopa;
 };
@@ -1148,6 +1241,12 @@ this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
 this.orario = new letrak.orario('830-1430');
+
+	let meraora = this.meraoraGet();
+
+	if (meraora)
+	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
+
 	let dom = $('<div>').
 	data('parousia', this).
 	addClass('parousia').
@@ -1176,7 +1275,7 @@ this.orario = new letrak.orario('830-1430');
 
 	append($('<div>').
 	addClass('parousiaMeraora').
-	text(pnd.date(this.meraoraGet(), '%D-%M-%Y %h:%m'))).
+	text(meraora)).
 
 	append($('<div>').
 	addClass('parousiaExcuse').

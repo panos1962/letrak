@@ -150,6 +150,117 @@ class letrakCore {
 	}
 }
 
+class Orario {
+	public $apo = NULL;
+	public $eos = NULL;
+
+	function __construct($x = NULL) {
+		$this->from_array($x);
+	}
+
+	private function from_array($x) {
+		$this->apo = NULL;
+		$this->eos = NULL;
+
+		if (!isset($x))
+		return $this;
+
+		foreach ($x as $k => $v) {
+			try {
+				$func = $k . "_set";
+				$this->$func($v);
+			}
+
+			catch (Exception $e) {
+				continue;
+			}
+		}
+
+		return $this;
+	}
+
+	private static function is_ora_lepto($s) {
+		if (!isset($s))
+		return NULL;
+
+		$x = explode(":", $s);
+
+		if (count($x) != 2)
+		return NULL;
+
+		if (pandora::not_integer($x[0], 0, 24))
+		return NULL;
+
+		if (pandora::not_integer($x[1], 0, 59))
+		return NULL;
+
+		$ora = (int)($x[0]);
+		$lepto = (int)($x[1]);
+
+		if (($ora === 24) && ($lepto != 0))
+		return NULL;
+
+		return sprintf("%0d:%02d", $ora, $lepto);
+	}
+
+	public function apo_set($s) {
+		$this->apo = self::is_ora_lepto($s);
+		return $this;
+	}
+
+	public function eos_set($s) {
+		$this->eos = self::is_ora_lepto($s);
+		return $this;
+	}
+
+	public function apo_get() {
+		return $this->apo;
+	}
+
+	public function eos_get() {
+		return $this->eos;
+	}
+
+	public function from_string($s) {
+		$this->apo = NULL;
+		$this->eos = NULL;
+
+		$x = explode("-", $s);
+
+		if (count($x) != 2)
+		return $this;
+
+		$apo = self::is_ora_lepto($x[0]);
+
+		if (!isset($apo))
+		return $this;
+
+		$eos = self::oxi_ora_lepto($x[1]);
+
+		if (!isset($eos))
+		return $this;
+
+		$this->apo = $apo;
+		$this->eos = $eos;
+
+		return $this;
+	}
+
+	public function is_orario() {
+		if (self::oxi_ora_lepto($this->apo))
+		return FALSE;
+
+		if (self::oxi_ora_lepto($this->eos))
+		return FALSE;
+
+		return TRUE;
+	}
+
+	public function oxi_orario() {
+		return !$this->is_orario();
+	}
+}
+
 class Imerisio {
 	public $kodikos = NULL;		// κωδικός παρουσιολογίου
 	public $ipalilos = NULL;	// αρ. μητρώου δημιοργού υπαλλήλου

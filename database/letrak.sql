@@ -131,21 +131,6 @@ CREATE TABLE `adidos` (
 COMMENT = 'Πίνακας ειδών αδείας'
 ;
 
-CREATE TABLE `adia` (
-	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Κωδικός υπαλλήλου',
-	`idos`		SMALLINT UNSIGNED NOT NULL COMMENT 'Είδος αδείας',
-	`apo`		DATE NOT NULL COMMENT 'Ημερομηνία έναρξης αδείας',
-	`eos`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία λήξης αδείας',
-
-	UNIQUE INDEX (
-		`ipalilos`,
-		`apo`
-	) USING BTREE
-)
-
-COMMENT = 'Πίνακας αδειών υπαλλήλων'
-;
-
 -- Ο πίνακας "imerisio" περιέχει τα ημερήσια φύλλα παρουσίας τα οποία για
 -- συντομία θα ονομάζουμε «παρουσιολόγια». Κάθε ένα παρουσιολόγιο αφορά σε
 -- συγκεκριμένη ημερομηνία και σε συγκεκριμένη ομάδα υπαλλήλων. Σε κάθε
@@ -249,6 +234,16 @@ CREATE TABLE `parousia` (
 	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
 	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
 	`meraora`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα προσέλευσης/αποχώρησης',
+
+	-- Ακολουθούν τα στοιχεία άδειας που ίσως έχει ο εργαζόμενος στο
+	-- συγκεκριμένο διάστημα.
+
+	`adidos`	SMALLINT UNSIGNED NULL DEFAULT NULL COMMENT 'Είδος αδείας',
+	`adapo`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία έναρξης αδείας',
+	`adeos`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία λήξης αδείας',
+
+	-- Ακολουθεί λόγος εξαίρεσης μη καταγεγραμμένης ημερομηνίας και ώρας.
+
 	`excuse`	ENUM (
 		'ΕΚΤΟΣ ΕΔΡΑΣ',
 		'ΑΙΜΟΔΟΣΙΑ',
@@ -257,6 +252,10 @@ CREATE TABLE `parousia` (
 		'ΠΕΝΘΟΣ',
 		'ΕΚΤΑΚΤΩΣ'
 	) NULL DEFAULT NULL COMMENT 'Αιτιολόγηση απουσίας',
+
+	-- Ακολουθεί κείμενο με παρατηρήσεις που αφορούν σε επεξεγήσεις
+	-- σχετικές με την ώρα προσέλευσης/αποχώρησης.
+
 	`info`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Σχόλια',
 
 	UNIQUE INDEX (

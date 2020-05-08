@@ -112,7 +112,7 @@ document_body();
 				Άδεια
 			</label>
 			<input id="peAdiaIdos">
-			<input id="peAdiaPerigrafi">
+			<input id="peAdiaPerigrafi" disabled="true">
 		</div>
 		<div class="peFormaInputLine">
 			<label for="peAdiaApo">
