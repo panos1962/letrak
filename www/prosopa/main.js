@@ -1026,6 +1026,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
+	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdiaIdosDOM = $('#peAdiaIdos');
 	prosopa.editorAdiaPerigrafiDOM = $('#peAdiaPerigrafi');
 	prosopa.editorAdiaApoDOM = $('#peAdiaApo');
@@ -1070,7 +1071,6 @@ prosopa.editorClose = () => {
 prosopa.parousiaEdit = (e, parousia) => {
 	if (e)
 	e.stopPropagation();
-console.log(parousia);
 
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
@@ -1079,6 +1079,13 @@ console.log(parousia);
 	return prosopa.
 	editorClear().
 	editorClose();
+
+	let meraora = parousia.meraoraGet();
+console.log('>>>>', meraora);
+
+	if (meraora)
+	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
+console.log('>>>>', meraora);
 
 	prosopa.editorIpalilosKodikosDOM.
 	attr('disabled', true).
@@ -1093,6 +1100,9 @@ console.log(parousia);
 
 	prosopa.editorIpalilosKartaDOM.
 	val(parousia.karta);
+
+	prosopa.editorMeraoraDOM.
+	val(meraora);
 
 	prosopa.editorAdiaIdosDOM.
 	val(parousia.adidos);
@@ -1207,7 +1217,7 @@ prosopa.winpakProcess = (rsp) => {
 		if (!data.hasOwnProperty(ipalilos))
 		return;
 
-		parousia.meraora = data[ipalilos];
+		parousia.meraora = new Date(data[ipalilos] + ':00');
 
 		$(this).
 		children('.parousiaMeraora').
@@ -1273,6 +1283,7 @@ this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
 this.orario = new letrak.orario('830-1530');
+console.log(this);
 
 	let meraora = this.meraoraGet();
 
