@@ -65,7 +65,8 @@ document_body();
 			<label for="peDeltioProsapo">
 				Είδος
 			</label>
-			<input id="peDeltioProsapo" disabled="true">
+			<div id="peDeltioProsapo" class="deltioProsapo">
+			</div>
 		</div>
 		<div class="peFormaInputLine">
 			<label for="peDeltioIpiresia">

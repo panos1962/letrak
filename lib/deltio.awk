@@ -42,12 +42,14 @@ BEGIN {
 	if (!creator)
 	pd_fatal("Δεν έχει καθοριστεί κωδικός υπαλλήλου (creator)")
 
-	if (spawk_submit("SET AUTOCOMMIT = 0") != 2)
-	pd_fatal("cannot set autocommit off")
+	if (!imerominia)
+	imerominia = strftime("%Y-%m-%d")
 
-	simera = spawk_escape(strftime("%Y-%m-%d"))
 	prosapo_valid["ΠΡΟΣΕΛΕΥΣΗ"]
 	prosapo_valid["ΑΠΟΧΩΡΗΣΗ"]
+
+	if (spawk_submit("SET AUTOCOMMIT = 0") != 2)
+	pd_fatal("cannot set autocommit off")
 
 	select_ipiresia()
 	select_ipalilos()
@@ -97,7 +99,7 @@ function add_deltio(kodip, perigrafi, prosapo,		query,
 	query = "INSERT INTO `letrak`.`deltio` " \
 		"(`ipalilos`, `imerominia`, `ipiresia`, " \
 		"`prosapo`, `perigrafi`) VALUES (" \
-		creator ", " simera ", " spawk_escape(kodip) ", " \
+		creator ", '" imerominia "', " spawk_escape(kodip) ", " \
 		prosapo ", " perigrafi ")"
 
 	if (spawk_submit(query) != 2)

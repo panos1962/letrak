@@ -197,6 +197,10 @@ CREATE TABLE `deltio` (
 		`kodikos`
 	) USING HASH,
 
+	UNIQUE INDEX (
+		`protipo`
+	) USING HASH,
+
 	INDEX (
 		`imerominia`,
 		`ipiresia`

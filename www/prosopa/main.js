@@ -233,7 +233,7 @@ prosopa.deltioProcess = (deltio) => {
 		break;
 	}
 
-	prosapoDOM.val(prosapo);
+	prosapoDOM.text(prosapo);
 	prosopa.editorMeraoraLabelDOM.text(prosapo);
 
 	let ipiresia = prosopa.deltio.ipiresiaGet();
