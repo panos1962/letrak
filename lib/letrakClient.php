@@ -39,7 +39,7 @@ if (!class_exists("letrakCore"))
 require_once(LETRAK_BASEDIR . "/www/lib/letrakCore.php");
 
 define("LETRAK_SESSION_IPALILOS", "letrak_session_ipalilos");
-define("LETRAK_IMERISIO_PROJECTION_COLUMNS",
+define("LETRAK_DELTIO_PROJECTION_COLUMNS",
 	"`kodikos` AS `k`," .
 	"`imerominia` AS `i`," .
 	"`ipiresia` AS `r`," .

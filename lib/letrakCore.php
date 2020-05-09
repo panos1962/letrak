@@ -36,7 +36,7 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 define("LETRAK_IPALILOS_KODIKOS_MAX", 999999);
-define("LETRAK_IMERISIO_KODIKOS_MAX", 999999);
+define("LETRAK_DELTIO_KODIKOS_MAX", 999999);
 define("LETRAK_IPOGRAFI_TAXINOMISI_MAX", 255);
 
 class letrakCore {
@@ -87,7 +87,7 @@ class letrakCore {
 
 	public static function deltio_valid_kodikos($kodikos) {
 		return pandora::is_integer
-			($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX);
+			($kodikos, 1, LETRAK_DELTIO_KODIKOS_MAX);
 	}
 
 	public static function deltio_invalid_kodikos($kodikos) {

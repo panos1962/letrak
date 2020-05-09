@@ -38,7 +38,7 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("kodikos");
 
-if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
+if (pandora::not_integer($kodikos, 1, LETRAK_DELTIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
