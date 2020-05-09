@@ -55,44 +55,99 @@ if ($deltio->oxi_kodikos())
 lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 $imerominia = $deltio->imerominia_get()->format("Y-m-d");
-$imerominia = "2019-10-10";
-$imerominia = "2019-07-02";
 $prosapo = $deltio->prosapo_get();
 
-$query = "SELECT" .
-	" DATE_SUB('" . $imerominia . "', INTERVAL 1 DAY)," .
-	" DATE_ADD('" . $imerominia . "', INTERVAL 1 DAY)";
-$row = pandora::first_row($query, MYSQLI_NUM);
-
-print '"diastima": "' . $row[0] . " - " . $row[1] . '"}",';
 print '"data":{';
 $s = "";
 foreach ($plist as $ipalilos => $data)
-katagrafi($imerominia, $prosapo, $ipalilos, $data["o"], $data["k"], $s);
+katagrafi($ipalilos, $data["o"], $data["k"], $s);
 print '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
 print '}';
 exit(0);
 
-function katagrafi($imerominia, $prosapo, $ipalilos, $orario, $karta, &$s) {
+function katagrafi($ipalilos, $orario, $karta, &$s) {
+	global $kodikos;
+	global $imerominia;
+	global $prosapo;
+
 	$orario = (new Orario())->from_string($orario);
 
 	if ($orario->oxi_orario())
 	return;
 
-	$query = "SELECT `meraora` FROM `kartel`.`event` " .
-		" WHERE (`karta` = " . $karta . ")".
-		" AND (`meraora` > DATE_SUB('" . $imerominia . "',".
-		" INTERVAL 1 DAY))" .
-		" AND (`meraora` <= DATE_ADD('" . $imerominia . "',".
-		" INTERVAL 1 DAY))" .
-		" ORDER BY `meraora` DESC";
-	$row = pandora::first_row($query, MYSQLI_NUM);
+	switch ($prosapo) {
+	case "ΠΡΟΣΕΛΕΥΣΗ":
+		$exact = $orario->proselefsi_diastima($imerominia, $apo, $eos);
+		$proselefsi = TRUE;
+		$ord = "ASC";
+		break;
+	case "ΑΠΟΧΩΡΗΣΗ":
+		$exact = $orario->apoxorisi_diastima($imerominia, $apo, $eos);
+		$proselefsi = FALSE;
+		$ord = "DESC";
+		break;
+	default:
+		return;
+	}
 
-	if (!$row)
+	if (!$exact)
 	return;
 
-	print $s . $ipalilos . ':{"t":"' . $row[0] . '"}';
+	$sapo = $apo->format("Y-m-d H:i:s");
+	$seos = $eos->format("Y-m-d H:i:s");
+
+	$query = "SELECT `meraora` FROM `kartel`.`event` " .
+		" WHERE (`karta` = " . $karta . ")".
+		" AND (`meraora` > '" . $sapo . "')".
+		" AND (`meraora` < '" . $seos . "')".
+		" ORDER BY `meraora` " . $ord;
+	$result = pandora::query($query);
+
+	$meraora = NULL;
+
+	while ($row = $result->fetch_array(MYSQLI_NUM)) {
+		$t = DateTime::createFromFormat("Y-m-d H:i:s", $row[0]);
+
+		if ($t === FALSE)
+		continue;
+
+		if (!isset($meraora)) {
+			$meraora = $t;
+			continue;
+		}
+
+		if ($proselefsi) {
+			if ($t > $exact)
+			break;
+
+			$meraora = $t;
+			continue;
+		}
+
+		if ($t < $exact)
+		break;
+
+		$meraora = $t;
+	}
+
+	if (!isset($meraora))
+	return;
+
+	$meraora = $meraora->format("Y-m-d H:i");
+
+	if ($meraora === FALSE)
+	return;
+
+	$query = "UPDATE `letrak`.`parousia` SET `meraora` = '" .
+		$meraora . ":00' WHERE (`deltio` = " . $kodikos . ")" .
+		" AND (`ipalilos` = " . $ipalilos . ")";
+	pandora::query($query);
+
+	if (pandora::affected_rows() != 1)
+	return;
+
+	print $s . '"' . $ipalilos . '":"' . $meraora . '"';
 	$s = ",";
 }

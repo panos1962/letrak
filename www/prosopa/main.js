@@ -1159,6 +1159,7 @@ prosopa.winpak = () => {
 	if (!count)
 	return prosopa.fyiError('Δεν υπάρχουν ασυμπλήρωτες καταγραφές');
 
+	pnd.fyiMessage('Αναζήτηση καταγραφών…');
 	$.post({
 		'url': 'winpak.php',
 		'data': {
@@ -1169,7 +1170,7 @@ prosopa.winpak = () => {
 		'success': (rsp) => prosopa.winpakProcess(rsp),
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα λήψης καταγραφών');
-			pnd.fyiError(err);
+			console.error(err);
 		},
 	});
 
@@ -1180,7 +1181,38 @@ prosopa.winpakProcess = (rsp) => {
 	if (rsp.error)
 	pnd.fyiError(rsp.error);
 
-	console.log(rsp);
+	pnd.fyiClear();
+
+	if (!rsp.hasOwnProperty('data'))
+	return prosopa;
+
+	let data = rsp.data;
+
+	prosopa.browserDOM.
+	children('.parousia').
+	each(function() {
+		let parousia = $(this).data('parousia');
+
+		if (!parousia)
+		return;
+
+		if (parousia.meraora)
+		return;
+
+		let ipalilos = parousia.ipalilosGet();
+
+		if (!ipalilos)
+		return;
+
+		if (!data.hasOwnProperty(ipalilos))
+		return;
+
+		parousia.meraora = data[ipalilos];
+
+		$(this).
+		children('.parousiaMeraora').
+		text(data[ipalilos]);
+	});
 
 	return prosopa;
 };
@@ -1240,7 +1272,7 @@ this.karta = 1234567;
 this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
-this.orario = new letrak.orario('830-1430');
+this.orario = new letrak.orario('830-1530');
 
 	let meraora = this.meraoraGet();
 

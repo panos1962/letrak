@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-09
 // Updated: 2020-05-06
 // Updated: 2020-05-05
 // Updated: 2020-05-04
@@ -38,6 +39,23 @@
 define("LETRAK_IPALILOS_KODIKOS_MAX", 999999);
 define("LETRAK_DELTIO_KODIKOS_MAX", 999999);
 define("LETRAK_IPOGRAFI_TAXINOMISI_MAX", 255);
+
+// Η συμβολική σταθερά "LETRAK_ORARIO_ANOXI_MIN" δείχνει το μέγιστο όριο
+// συμπλήρωσης ωραρίου σε λεπτά. Αν, π.χ. το εν λόγω όριο είναι 15 λεπτά
+// και κάποιος εργαζόμενος προσέλθει στην υπηρεσία του 28 λεπτά αργότερα
+// από το ωράριό του, τότε ακόμη και αν αποχωρήσει 40 λεπτά αργότερα από
+// το ωράριό του η καθυστέρηση λογίζεται στα 28 - 15 = 13 λεπτά.
+
+define("LETRAK_ORARIO_ANOXI_MIN", 15);
+
+// Η συμβολική σταθερά "LETRAK_ORARIO_ANOXI_MAX" καθορίζει το «παράθυρο»
+// ελέγχου καταγραφής ώρας προσέλευσης/αποχώρησης σε λεπτά. Αν π.χ. η εν
+// λόγω σταθερά έχει τιμή 90 λεπτά και κάποιος υπάλληλος έχει ώρα
+// προσέλευσης 08:30 (με βάση το ωράριό του), τότε ο έλεγχος για καταγραφή
+// ώρας προσέλευσης θα γίνει στο διάστημα 07:00 έως 10:00.
+
+//define("LETRAK_ORARIO_ANOXI_MAX", 90);
+define("LETRAK_ORARIO_ANOXI_MAX", 120);
 
 class letrakCore {
 	// Η property "erpota_version" παίρνει τιμές 1 ή 2 ανάλογα με την
@@ -217,12 +235,55 @@ class Orario {
 		return $this;
 	}
 
-	public function apo_get() {
+	public function apo_get($imerominia = NULL) {
+		if ($this->oxi_orario())
+		return NULL;
+
+		if (!isset($imerominia))
 		return $this->apo;
+
+		$apo = $this->apo;
+
+		if ($apo === "24:00")
+		$apo = "00:00";
+
+		$apo = $imerominia . " " . $this->apo . ":00";
+		$apo = DateTime::createFromFormat("Y-m-d H:i:s", $apo);
+
+		if ($apo === FALSE)
+		return NULL;
+
+		return $apo;
 	}
 
-	public function eos_get() {
+	public function eos_get($imerominia = NULL) {
+		if ($this->oxi_orario())
+		return NULL;
+
+		if (!isset($imerominia))
 		return $this->eos;
+
+		$eos = $this->eos;
+
+		if ($eos === "24:00")
+		$eos = "00:00";
+
+		$eos = $imerominia . " " . $this->eos . ":00";
+		$eos = DateTime::createFromFormat("Y-m-d H:i:s", $eos);
+
+		if ($eos === FALSE)
+		return NULL;
+
+		$apo = $imerominia . " " . $this->apo . ":00";
+		$apo = DateTime::createFromFormat("Y-m-d H:i:s", $apo);
+
+		if ($apo === FALSE)
+		return NULL;
+
+		if ($apo < $eos)
+		return $eos;
+
+		return $eos->modify('+1 day');
 	}
 
 	public function from_string($s) {
@@ -262,6 +323,58 @@ class Orario {
 
 	public function oxi_orario() {
 		return !$this->is_orario();
+	}
+
+	public function proselefsi_diastima($imerominia = NULL, &$min, &$max) {
+		$min = NULL;
+		$max = NULL;
+
+		if ($this->oxi_orario())
+		return FALSE;
+
+		if (!isset($imerominia))
+		return FALSE;
+
+		$apo = $this->apo_get($imerominia);
+
+		if (!isset($apo))
+		return FALSE;
+
+		$d = new DateInterval("PT" . LETRAK_ORARIO_ANOXI_MAX . "M");
+
+		$min = clone $apo;
+		$min->sub($d);
+
+		$max = clone $apo;
+		$max->add($d);
+
+		return $apo;
+	}
+
+	public function apoxorisi_diastima($imerominia = NULL, &$min, &$max) {
+		$min = NULL;
+		$max = NULL;
+
+		if ($this->oxi_orario())
+		return FALSE;
+
+		if (!isset($imerominia))
+		return FALSE;
+
+		$eos = $this->eos_get($imerominia);
+
+		if (!isset($eos))
+		return FALSE;
+
+		$d = new DateInterval("PT" . LETRAK_ORARIO_ANOXI_MAX . "M");
+
+		$min = clone $eos;
+		$min->sub($d);
+
+		$max = clone $eos;
+		$max->add($d);
+
+		return $eos;
 	}
 }
 
