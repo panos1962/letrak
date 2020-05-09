@@ -72,7 +72,7 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 	global $imerominia;
 	global $prosapo;
 
-	$orario = (new Orario())->from_string($orario);
+	$orario = new Orario($orario);
 
 	if ($orario->oxi_orario())
 	return;
