@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/anigma.php —— Άνοιγμα παρουσιολογίου
+// www/deltio/anigma.php —— Άνοιγμα παρουσιολογίου
 // @FILE END
 //
 // @HISTORY BEGIN
@@ -43,19 +43,19 @@ $kodikos = pandora::parameter_get("kodikos");
 if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
+if ($deltio->oxi_kodikos())
 lathos("Αδυναμία εντοπισμού παρουσιολογίου");
 
-$ipiresia = $imerisio->ipiresia_get();
+$ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->ipiresia_oxi_admin($ipiresia))
 lathos("Δεν έχετε δικαίωμα ανοίγματος παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`imerisio` SET `closed` = NULL" .
+$query = "UPDATE `letrak`.`deltio` SET `closed` = NULL" .
 	" WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 

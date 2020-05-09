@@ -13,13 +13,13 @@ BEGIN {
 	ipografi[nipo++] = 3642
 	ipografi[nipo++] = 5837
 
-	for (imerisio = 1; imerisio < 10; imerisio++)
-	add_ipografes(imerisio)
+	for (deltio = 1; deltio < 10; deltio++)
+	add_ipografes(deltio)
 }
 
-function add_ipografes(imerisio,		i) {
+function add_ipografes(deltio,		i) {
 	for (i = 1; i <= nipo; i++)
 	spawk_submit("INSERT INTO `letrak`.`ipografi` " \
-		"(`imerisio`, `taxinomisi`, `armodios`) VALUES " \
-		"(" imerisio ", " i ", " ipografi[i] ")")
+		"(`deltio`, `taxinomisi`, `armodios`) VALUES " \
+		"(" deltio ", " i ", " ipografi[i] ")")
 }

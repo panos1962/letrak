@@ -44,9 +44,9 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$imerisio = pandora::parameter_get("imerisio");
+$deltio = pandora::parameter_get("deltio");
 
-if (letrak::imerisio_invalid_kodikos($imerisio))
+if (letrak::deltio_invalid_kodikos($deltio))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $armodios = pandora::parameter_get("armodios");
@@ -72,24 +72,24 @@ $xristis = $prosvasi->ipalilos_get();
 if ($xristis != $armodios)
 lathos("Διαπιστώθηκε αναρμοδιότητα πράξης " . $minima);
 
-if (letrak::imerisio_is_klisto($imerisio))
+if (letrak::deltio_is_klisto($deltio))
 lathos("Το παρουσιολόγιο έχει κλείσει");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$praxi($imerisio, $xristis);
+$praxi($deltio, $xristis);
 
 print '{';
-letrak::ipografes_json($imerisio);
+letrak::ipografes_json($deltio);
 print '}';
 
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-function epikirosi($imerisio, $xristis) {
+function epikirosi($deltio, $xristis) {
 	$query = "SELECT `taxinomisi` FROM `letrak`.`ipografi`" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`checkok` IS NULL)";
 	$result = pandora::query($query);
 
@@ -104,7 +104,7 @@ function epikirosi($imerisio, $xristis) {
 	lathos("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
 
 	$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`taxinomisi` = " . $tax . ")";
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
@@ -115,13 +115,13 @@ function epikirosi($imerisio, $xristis) {
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`taxinomisi` >= " . $tax . ")";
 	pandora::query($query);
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NOW()" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`taxinomisi` = " . $tax . ")";
 	pandora::query($query);
 
@@ -133,9 +133,9 @@ function epikirosi($imerisio, $xristis) {
 	pandora::commit();
 }
 
-function akirosi($imerisio, $xristis) {
+function akirosi($deltio, $xristis) {
 	$query = "SELECT MIN(`taxinomisi`) FROM `letrak`.`ipografi`" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`armodios` = " . $xristis . ")";
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
@@ -144,7 +144,7 @@ function akirosi($imerisio, $xristis) {
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
-		" WHERE (`imerisio` = " . $imerisio . ")" .
+		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`taxinomisi` >= " . $row[0] . ")";
 	pandora::query($query);
 

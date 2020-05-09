@@ -104,18 +104,18 @@ class letrak extends letrakCore {
 	// ταξινομικούς αριθμούς και επαναριθμεί εκκινώντας από τον
 	// αριθμό 1.
 
-	public static function ipografes_taxinomisi($imerisio, $tax = "tax") {
+	public static function ipografes_taxinomisi($deltio, $tax = "tax") {
 		pandora::query("SET @" . $tax . " := 0");
 
 		$query = "UPDATE `letrak`.`ipografi` SET `taxinomisi` =" .
 			" (@" . $tax . " := @" . $tax . " + 1)" .
-			" WHERE `imerisio` = " . $imerisio .
+			" WHERE `deltio` = " . $deltio .
 			" ORDER BY `taxinomisi`";
 		pandora::query($query);
 
 		$query = "SELECT MIN(`taxinomisi`)" .
 			" FROM `letrak`.`ipografi`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`checkok` IS NULL)";
 		$row = pandora::first_row($query, MYSQLI_NUM);
 
@@ -124,17 +124,17 @@ class letrak extends letrakCore {
 
 		$query = "UPDATE `letrak`.`ipografi`" .
 			" SET `checkok` = NULL" .
-			" WHERE (`imerisio` = " . $imerisio . ")".
+			" WHERE (`deltio` = " . $deltio . ")".
 			" AND (`taxinomisi` > " . $row[0] . ")";
 		pandora::query($query);
 		return __CLASS__;
 	}
 
-	public static function ipografes_json($imerisio, $opts = NULL) {
-		if ($imerisio instanceof Imerisio)
-		$imerisio = $imerisio->kodikos_get();
+	public static function ipografes_json($deltio, $opts = NULL) {
+		if ($deltio instanceof Deltio)
+		$deltio = $deltio->kodikos_get();
 
-		if (letrak::imerisio_invalid_kodikos($imerisio))
+		if (letrak::deltio_invalid_kodikos($deltio))
 		return;
 
 		if (!isset($opts))
@@ -152,7 +152,7 @@ class letrak extends letrakCore {
 			" FROM `letrak`.`ipografi` AS `ipografi` " .
 			" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 			" ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-			" WHERE (`ipografi`.`imerisio` = " . $imerisio . ")" .
+			" WHERE (`ipografi`.`deltio` = " . $deltio . ")" .
 			" ORDER BY `x`";
 		$result = pandora::query($query);
 

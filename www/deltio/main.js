@@ -11,7 +11,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/main.js —— Πρόγραμμα οδήγησης σελίδας ελέγχου και διαχείρισης
+// www/deltio/main.js —— Πρόγραμμα οδήγησης σελίδας ελέγχου και διαχείρισης
 // παρουσιολογίων.
 // @FILE END
 //
@@ -50,7 +50,7 @@ require('../mnt/pandora/lib/pandora.js');
 require('../mnt/pandora/lib/pandoraJQueryUI.js')(pnd);
 const letrak =
 require('../lib/letrak.js');
-const imerisio = {};
+const deltio = {};
 
 // Χρησιμοποιούμε το global singleton "LETRAK" ως μέσο κοινοποίησης constant
 // αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows,
@@ -60,9 +60,9 @@ const imerisio = {};
 self.LETRAK.pnd = pnd;
 self.LETRAK.letrak = letrak;
 */
-self.LETRAK.imerisio = imerisio;
+self.LETRAK.deltio = deltio;
 
-imerisio.minima = {
+deltio.minima = {
 	'filtraTabLabel': 'Φίλτρα',
 	'filtraHideTitle': 'Απόκρυψη φίλτρων',
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
@@ -85,7 +85,7 @@ imerisio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
-	'imerisioKatastasiClosedSymbol': '&#x2714;',
+	'deltioKatastasiClosedSymbol': '&#x2714;',
 };
 
 pnd.domInit(() => {
@@ -97,18 +97,18 @@ pnd.domInit(() => {
 	domSetup().
 	domFixup();
 
-	imerisio.
+	deltio.
 	selidaSetup();
 });
 
-imerisio.selidaSetup = () => {
+deltio.selidaSetup = () => {
 	letrak.
 	toolbarTitlosSetup().
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
 	if (letrak.noXristis())
-	return letrak.arxikiSelida(imerisio);
+	return letrak.arxikiSelida(deltio);
 
 	pnd.
 	keepAlive('../mnt/pandora');
@@ -116,42 +116,42 @@ imerisio.selidaSetup = () => {
 	letrak.
 	toolbarArxikiSetup();
 
-	imerisio.
+	deltio.
 	browserSetup().
 	filtraSetup().
 	autoFind().
 	candiTabsSetup();
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.filtraSetup = () => {
+deltio.filtraSetup = () => {
 	pnd.toolbarLeftDOM.
 
-	append(imerisio.filtraTabDOM = letrak.tabDOM().
-	attr('title', imerisio.minima.filtraShowTitle).
+	append(deltio.filtraTabDOM = letrak.tabDOM().
+	attr('title', deltio.minima.filtraShowTitle).
 	data('status', 'hidden').
-	append(imerisio.minima.filtraTabLabel).
-	on('click', (e) => imerisio.filtraToggle(e))).
+	append(deltio.minima.filtraTabLabel).
+	on('click', (e) => deltio.filtraToggle(e))).
 
-	append(imerisio.paleoteraTabDOM = letrak.tabDOM().
-	attr('title', imerisio.minima.paleoteraTitle).
-	append(imerisio.minima.paleoteraTabLabel).
-	on('click', (e) => imerisio.paleotera(e)));
+	append(deltio.paleoteraTabDOM = letrak.tabDOM().
+	attr('title', deltio.minima.paleoteraTitle).
+	append(deltio.minima.paleoteraTabLabel).
+	on('click', (e) => deltio.paleotera(e)));
 
 	pnd.bodyDOM.
-	append(imerisio.filtraDOM = $('<div>').
+	append(deltio.filtraDOM = $('<div>').
 	append($('<form>').
 	attr('id', 'filtraForma').
 
 	append($('<div>').
 	addClass('letrak-inputLine').
-	append(imerisio.filtraIpiresiaDOM = $('<label>').
+	append(deltio.filtraIpiresiaDOM = $('<label>').
 	attr('for', 'ipiresiaFiltro').
-	text(imerisio.minima.filtraIpiresiaLabel)).
-	append(imerisio.filtraIpiresiaDOM = $('<input>').
+	text(deltio.minima.filtraIpiresiaLabel)).
+	append(deltio.filtraIpiresiaDOM = $('<input>').
 	attr('id', 'ipiresiaFiltro').
 	addClass('filtraInput'))).
 
@@ -159,18 +159,18 @@ imerisio.filtraSetup = () => {
 	addClass('letrak-inputLine').
 	append($('<label>').
 	attr('for', 'imerominiaFiltro').
-	text(imerisio.minima.filtraImerominiaLabel)).
-	append(imerisio.filtraImerominiaDOM = $('<input>').
+	text(deltio.minima.filtraImerominiaLabel)).
+	append(deltio.filtraImerominiaDOM = $('<input>').
 	attr('id', 'imerominiaFiltro').
 	addClass('filtraInput').
 	datepicker())).
 
 	append($('<div>').
 	addClass('letrak-inputLine').
-	append(imerisio.filtraProsapoDOM = $('<label>').
+	append(deltio.filtraProsapoDOM = $('<label>').
 	attr('for', 'prosapoFiltro').
-	text(imerisio.minima.filtraProsapoLabel)).
-	append(imerisio.filtraProsapoDOM = $('<select>').
+	text(deltio.minima.filtraProsapoLabel)).
+	append(deltio.filtraProsapoDOM = $('<select>').
 	append($('<option>').val('').text('ΟΛΑ').attr('selected', true)).
 	append($('<option>').val('ΠΡΟΣΕΛΕΥΣΗ').text('ΠΡΟΣΕΛΕΥΣΗ')).
 	append($('<option>').val('ΑΠΟΧΩΡΗΣΗ').text('ΑΠΟΧΩΡΗΣΗ')).
@@ -179,10 +179,10 @@ imerisio.filtraSetup = () => {
 
 	append($('<div>').
 	addClass('letrak-inputLine').
-	append(imerisio.filtraIpalilosDOM = $('<label>').
+	append(deltio.filtraIpalilosDOM = $('<label>').
 	attr('for', 'ipalilosFiltro').
-	text(imerisio.minima.filtraIpalilosLabel)).
-	append(imerisio.filtraIpalilosDOM = $('<input>').
+	text(deltio.minima.filtraIpalilosLabel)).
+	append(deltio.filtraIpalilosDOM = $('<input>').
 	attr('id', 'ipalilosFiltro').
 	addClass('filtraInput'))).
 
@@ -195,7 +195,7 @@ imerisio.filtraSetup = () => {
 		'type': 'submit',
 		'value': letrak.minima.ipovoliPliktroLabel,
 	}).
-	on('click', (e) => imerisio.filtraFormaIpovoli(e))).
+	on('click', (e) => deltio.filtraFormaIpovoli(e))).
 
 	append($('<input>').
 	addClass('letrak-formaPliktro').
@@ -203,7 +203,7 @@ imerisio.filtraSetup = () => {
 		'type': 'button',
 		'value': letrak.minima.clearPliktroLabel,
 	}).
-	on('click', (e) => imerisio.filtraFormaClear(e))).
+	on('click', (e) => deltio.filtraFormaClear(e))).
 
 	append($('<input>').
 	addClass('letrak-formaPliktro').
@@ -211,9 +211,9 @@ imerisio.filtraSetup = () => {
 		'type': 'button',
 		'value': letrak.minima.cancelPliktroLabel,
 	}).
-	on('click', (e) => imerisio.filtraFormaCancel(e))))));
+	on('click', (e) => deltio.filtraFormaCancel(e))))));
 
-	imerisio.filtraDOM.dialog({
+	deltio.filtraDOM.dialog({
 		'title': 'Κριτήρια επιλογής',
 		'autoOpen': false,
 
@@ -224,14 +224,14 @@ imerisio.filtraSetup = () => {
 			'at': 'left top',
 		},
 
-		'open': () => imerisio.filtraEnable(),
+		'open': () => deltio.filtraEnable(),
 		'show': {
 			'effect': 'drop',
 			'direction': 'up',
 			'duration': 100,
 		},
 
-		'close': () => imerisio.filtraDisable(),
+		'close': () => deltio.filtraDisable(),
 		'hide': {
 			'effect': 'drop',
 			'direction': 'up',
@@ -242,196 +242,196 @@ imerisio.filtraSetup = () => {
 	let ipiresia = letrak.xristisIpiresiaGet();
 
 	if (ipiresia === undefined)
-	imerisio.filtraIpalilosDOM.
+	deltio.filtraIpalilosDOM.
 	attr('disabled', true).
 	val(letrak.xristisIpalilosGet());
 
 	else
-	imerisio.filtraIpiresiaDOM.val(ipiresia);
+	deltio.filtraIpiresiaDOM.val(ipiresia);
 
-	imerisio.filtraImerominiaDOM.val(pnd.dateTime(undefined, '%D-%M-%Y'));
+	deltio.filtraImerominiaDOM.val(pnd.dateTime(undefined, '%D-%M-%Y'));
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.filtraToggle = function(e) {
+deltio.filtraToggle = function(e) {
 	if (e)
 	e.stopPropagation();
 
-	if (imerisio.filtraDisabled())
-	imerisio.filtraDOM.dialog('open');
+	if (deltio.filtraDisabled())
+	deltio.filtraDOM.dialog('open');
 
 	else
-	imerisio.filtraDOM.dialog('close');
+	deltio.filtraDOM.dialog('close');
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.filtraEnable = function() {
-	imerisio.filtraTabDOM.
+deltio.filtraEnable = function() {
+	deltio.filtraTabDOM.
 	data('status', 'visible').
 	addClass('filtraTabEnabled').
-	attr('title', imerisio.minima.filtraHideTitle);
+	attr('title', deltio.minima.filtraHideTitle);
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.filtraDisable = function(act) {
-	imerisio.filtraTabDOM.
+deltio.filtraDisable = function(act) {
+	deltio.filtraTabDOM.
 	data('status', 'hidden').
 	removeClass('filtraTabEnabled').
-	attr('title', imerisio.minima.filtraShowTitle);
+	attr('title', deltio.minima.filtraShowTitle);
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.filtraEnabled = function() {
-	return (imerisio.filtraTabDOM.data('status') === 'visible');
+deltio.filtraEnabled = function() {
+	return (deltio.filtraTabDOM.data('status') === 'visible');
 };
 
-imerisio.filtraDisabled = function() {
-	return !imerisio.filtraEnabled();
+deltio.filtraDisabled = function() {
+	return !deltio.filtraEnabled();
 };
 
 // Η function "filtraFormaIpovoli" καλείται με το πάτημα του φερώνυμου
 // πλήκτρου στη φόρμα καταχώρησης κριτηρίων επιλογής παρουσιολογίων.
 
-imerisio.filtraFormaIpovoli = (e) => {
+deltio.filtraFormaIpovoli = (e) => {
 	e.stopPropagation();
 
 	let data = {
-		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
-		'imerominia': imerisio.filtraImerominiaDOM.val(),
-		'prosapo': imerisio.filtraProsapoDOM.val(),
-		'ipalilos': imerisio.filtraIpalilosDOM.val(),
+		'ipiresia': deltio.filtraIpiresiaDOM.val(),
+		'imerominia': deltio.filtraImerominiaDOM.val(),
+		'prosapo': deltio.filtraProsapoDOM.val(),
+		'ipalilos': deltio.filtraIpalilosDOM.val(),
 	};
 
-	imerisio.imerisioEpilogi(data, {
+	deltio.deltioEpilogi(data, {
 		'clean': true,
-		'onFound': () => imerisio.filtraDOM.dialog('close'),
+		'onFound': () => deltio.filtraDOM.dialog('close'),
 	});
 
 	return false;
 };
 
-imerisio.filtraFormaClear = (e) => {
+deltio.filtraFormaClear = (e) => {
 	e.stopPropagation();
-	imerisio.filtraIpiresiaDOM.val('').focus();
-	imerisio.filtraImerominiaDOM.val('');
+	deltio.filtraIpiresiaDOM.val('').focus();
+	deltio.filtraImerominiaDOM.val('');
 
-	if (!imerisio.filtraIpalilosDOM.attr('disabled'))
-	imerisio.filtraIpalilosDOM.val('');
+	if (!deltio.filtraIpalilosDOM.attr('disabled'))
+	deltio.filtraIpalilosDOM.val('');
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.filtraFormaCancel = (e) => {
+deltio.filtraFormaCancel = (e) => {
 	e.stopPropagation();
-	imerisio.filtraDOM.dialog('close');
+	deltio.filtraDOM.dialog('close');
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.browserSetup = () => {
+deltio.browserSetup = () => {
 	pnd.ofelimoDOM.
 	empty().
-	append(imerisio.browserDOM = $('<div>').
+	append(deltio.browserDOM = $('<div>').
 	attr('id', 'browser').
-	on('mouseenter', '.imerisio', function(e) {
+	on('mouseenter', '.deltio', function(e) {
 		e.stopPropagation();
 
 		if ($(this).data('candi'))
 		return;
 
 		$(this).
-		addClass('imerisioCandiCandi');
+		addClass('deltioCandiCandi');
 	}).
-	on('mouseleave', '.imerisio', function(e) {
+	on('mouseleave', '.deltio', function(e) {
 		e.stopPropagation();
 
 		if ($(this).data('candi'))
 		return;
 
 		$(this).
-		removeClass('imerisioCandiCandi');
+		removeClass('deltioCandiCandi');
 	}).
-	on('click', '.imerisio', function(e) {
+	on('click', '.deltio', function(e) {
 		e.stopPropagation();
 
 		let wasCandi = $(this).data('candi');
 
-		$('.imerisioCandi').
+		$('.deltioCandi').
 		removeData('candi').
-		removeClass('imerisioCandi');
+		removeClass('deltioCandi');
 
 		if (wasCandi)
-		return imerisio.candiTabsHide();
+		return deltio.candiTabsHide();
 
 		$(this).
 		data('candi', true).
-		addClass('imerisioCandi').
-		removeClass('imerisioCandiCandi');
-		imerisio.candiTabsShow();
+		addClass('deltioCandi').
+		removeClass('deltioCandiCandi');
+		deltio.candiTabsShow();
 	}));
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.candiTabsSetup = () => {
+deltio.candiTabsSetup = () => {
 	letrak.arxikiTabDOM.
 	addClass('idnacTab');
 
-	imerisio.filtraTabDOM.
+	deltio.filtraTabDOM.
 	addClass('idnacTab');
 
-	imerisio.paleoteraTabDOM.
+	deltio.paleoteraTabDOM.
 	addClass('idnacTab');
 
 	pnd.toolbarLeftDOM.
 
-	append(imerisio.klisimoTabDOM = letrak.tabDOM().
+	append(deltio.klisimoTabDOM = letrak.tabDOM().
 	addClass('candiTab').
 	addClass('aniktoTab').
 	addClass('updateTab').
 	addClass('adminTab').
-	attr('title', imerisio.minima.klisimoTitle).
-	text(imerisio.minima.klisimoTabLabel).
-	on('click', (e) => imerisio.klisimo(e))).
+	attr('title', deltio.minima.klisimoTitle).
+	text(deltio.minima.klisimoTabLabel).
+	on('click', (e) => deltio.klisimo(e))).
 
-	append(imerisio.anigmaTabDOM = letrak.tabDOM().
+	append(deltio.anigmaTabDOM = letrak.tabDOM().
 	addClass('candiTab').
 	addClass('klistoTab').
 	addClass('updateTab').
 	addClass('adminTab').
-	attr('title', imerisio.minima.anigmaTitle).
-	text(imerisio.minima.anigmaTabLabel).
-	on('click', (e) => imerisio.anigma(e))).
+	attr('title', deltio.minima.anigmaTitle).
+	text(deltio.minima.anigmaTabLabel).
+	on('click', (e) => deltio.anigma(e))).
 
-	append(imerisio.diagrafiTabDOM = letrak.tabDOM().
+	append(deltio.diagrafiTabDOM = letrak.tabDOM().
 	addClass('candiTab').
 	addClass('aniktoTab').
 	addClass('updateTab').
-	attr('title', imerisio.minima.diagrafiTitle).
-	text(imerisio.minima.diagrafiTabLabel).
-	on('click', (e) => imerisio.diagrafiConfirm(e))).
+	attr('title', deltio.minima.diagrafiTitle).
+	text(deltio.minima.diagrafiTabLabel).
+	on('click', (e) => deltio.diagrafiConfirm(e))).
 
 	append(letrak.tabDOM().
 	addClass('candiTab').
 	addClass('updateTab').
-	attr('title', imerisio.minima.klonosTitle).
-	text(imerisio.minima.klonosTabLabel).
-	on('click', (e) => imerisio.klonismos(e))).
+	attr('title', deltio.minima.klonosTitle).
+	text(deltio.minima.klonosTabLabel).
+	on('click', (e) => deltio.klonismos(e))).
 
-	append(imerisio.prosopaTabDOM = letrak.tabDOM().
+	append(deltio.prosopaTabDOM = letrak.tabDOM().
 	addClass('candiTab').
 	addClass('klistoTab').
-	attr('title', imerisio.minima.leptomeriesTitle).
-	text(imerisio.minima.leptomeriesTabLabel).
-	on('click', (e) => imerisio.prosopa({
+	attr('title', deltio.minima.leptomeriesTitle).
+	text(deltio.minima.leptomeriesTabLabel).
+	on('click', (e) => deltio.prosopa({
 		'clickEvent': e,
 	}))).
 
@@ -439,16 +439,16 @@ imerisio.candiTabsSetup = () => {
 	addClass('candiTab').
 	addClass('aniktoTab').
 	addClass('updateTab').
-	attr('title', imerisio.minima.epexergasiaTitle).
-	text(imerisio.minima.epexergasiaTabLabel).
-	on('click', (e) => imerisio.prosopa({
+	attr('title', deltio.minima.epexergasiaTitle).
+	text(deltio.minima.epexergasiaTabLabel).
+	on('click', (e) => deltio.prosopa({
 		'clickEvent': e,
 	})));
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.candiTabsShow = () => {
+deltio.candiTabsShow = () => {
 	pnd.toolbarDOM.
 	find('.idnacTab').
 	addClass('idnacTabHidden');
@@ -460,15 +460,15 @@ imerisio.candiTabsShow = () => {
 	// Διασφαλίζουμε το γεγονός ότι υπάρχει πράγματι επιλεγμένο
 	// παρουσιολόγιο.
 
-	let x = $('.imerisioCandi').first();
+	let x = $('.deltioCandi').first();
 
 	if (!x.length)
-	return imerisio;
+	return deltio;
 
-	x = x.data('imerisio');
+	x = x.data('deltio');
 
 	if (!x)
-	return imerisio;
+	return deltio;
 
 	let klisto = x.closedGet();
 	let ipiresia = x.ipiresiaGet();
@@ -488,7 +488,7 @@ imerisio.candiTabsShow = () => {
 	removeClass('candiTabVisible');
 
 	if (update)
-	return imerisio;
+	return deltio;
 
 	pnd.toolbarDOM.
 	find('.updateTab').
@@ -498,13 +498,13 @@ imerisio.candiTabsShow = () => {
 	// ειδική μέριμνα, για την περίπτωση «ανοικτού» παρουσιολογίου στο
 	// οποίο ο χρήστης δεν έχει πρόσβαση ενημέρωσης.
 
-	imerisio.prosopaTabDOM.
+	deltio.prosopaTabDOM.
 	addClass('candiTabVisible');
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.candiTabsHide = () => {
+deltio.candiTabsHide = () => {
 	pnd.toolbarDOM.
 	find('.candiTab').
 	removeClass('candiTabVisible');
@@ -513,28 +513,28 @@ imerisio.candiTabsHide = () => {
 	find('.idnacTab').
 	removeClass('idnacTabHidden');
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.clearCandi = () => {
-	$('.imerisio').
+deltio.clearCandi = () => {
+	$('.deltio').
 	removeData('candi').
-	removeClass('imerisioCandi');
+	removeClass('deltioCandi');
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.paleotera = (e) => {
+deltio.paleotera = (e) => {
 	e.stopPropagation();
 
 	// Αρχικά θέτουμε το κριτήριο ημερομηνίας με βάση την ημερομηνία
 	// από την τελευταία παρτίδα που έχουμε ήδη παραλάβει.
 
 	let data = {
-		'ipiresia': imerisio.filtraIpiresiaDOM.val(),
-		'imerominia': imerisio.imerominiaLast,
+		'ipiresia': deltio.filtraIpiresiaDOM.val(),
+		'imerominia': deltio.imerominiaLast,
 	};
 
 	// Αν δεν έχουμε παραλάβει παρουσιολόγια μέχρι στιγμής, τότε
@@ -542,32 +542,32 @@ imerisio.paleotera = (e) => {
 	// από τη φόρμα καταχώρησης κριτηρίων επιλογής.
 
 	if (!data.imerominia)
-	data.imerominia = imerisio.filtraImerominiaDOM.val();
+	data.imerominia = deltio.filtraImerominiaDOM.val();
 
-	imerisio.imerisioEpilogi(data, {
+	deltio.deltioEpilogi(data, {
 		'onFound': () => {
-			imerisio.filtraDOM.dialog('close');
+			deltio.filtraDOM.dialog('close');
 			pnd.ofelimoDOM.
 			scrollTop(pnd.ofelimoDOM.prop('scrollHeight'));
 		},
 		'onEmpty': () => pnd.fyiMessage
 			('Δεν βρέθηκαν παλαιότερα παρουσιολόγια'),
 	});
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.diagrafiConfirm = (e) => {
+deltio.diagrafiConfirm = (e) => {
 	e.stopPropagation();
 
-	let dom = $('.imerisioCandi').first();
+	let dom = $('.deltioCandi').first();
 
 	if (!dom.length)
-	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς διαγραφή');
 
 	try {
-		var kodikos = dom.data('imerisio').kodikosGet();
+		var kodikos = dom.data('deltio').kodikosGet();
 	}
 
 	catch (e) {
@@ -591,7 +591,7 @@ imerisio.diagrafiConfirm = (e) => {
 
 		'buttons': {
 			'Διαγραφή': function() {
-				imerisio.diagrafi(kodikos, dom);
+				deltio.diagrafi(kodikos, dom);
 				$(this).dialog('close');
 			},
 			'Άκυρο': function() {
@@ -603,10 +603,10 @@ imerisio.diagrafiConfirm = (e) => {
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.diagrafi = (kodikos, dom) => {
+deltio.diagrafi = (kodikos, dom) => {
 	pnd.fyiMessage('Διαγραφή παρουσιολογίου <b>' + kodikos +
 		'</b> σε εξέλιξη…');
 	$.post({
@@ -614,51 +614,51 @@ imerisio.diagrafi = (kodikos, dom) => {
 		'data': {
 			'kodikos': kodikos,
 		},
-		'success': (rsp) => imerisio.diagrafiProcess(rsp, kodikos, dom),
+		'success': (rsp) => deltio.diagrafiProcess(rsp, kodikos, dom),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα διαγραφής');
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.diagrafiProcess = (msg, kodikos, dom) => {
+deltio.diagrafiProcess = (msg, kodikos, dom) => {
 	if (msg) {
 		pnd.fyiError(msg);
 		console.error(msg);
-		return imerisio;
+		return deltio;
 	}
 
 	dom.remove();
-	pnd.zebraFix(imerisio.browserDOM);
-	imerisio.clearCandi().candiTabsHide();
+	pnd.zebraFix(deltio.browserDOM);
+	deltio.clearCandi().candiTabsHide();
 
 	pnd.fyiMessage('Το παρουσιολόγιο <b>' + kodikos +
 	'</b> διεγράφη επιτυχώς');
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.klisimo = (e) => {
+deltio.klisimo = (e) => {
 	if (e)
 	e.stopPropagation();
 
-	let dom = $('.imerisioCandi').first();
+	let dom = $('.deltioCandi').first();
 
 	if (!dom)
-	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο');
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο');
 
 	try {
-		var imr = dom.data('imerisio');
+		var imr = dom.data('deltio');
 		var kodikos = imr.kodikosGet();
 	}
 
 	catch (e) {
-		return imerisio.fyiError('Απροσδιόριστο παρουσιολόγιο');
+		return deltio.fyiError('Απροσδιόριστο παρουσιολόγιο');
 	}
 
 	pnd.fyiMessage('Κλείσιμο παρουσιολογίου <b>' + kodikos + '</b>…');
@@ -667,51 +667,51 @@ imerisio.klisimo = (e) => {
 		'data': {
 			'kodikos': kodikos,
 		},
-		'success': (rsp) => imerisio.klisimoProcess(rsp, imr, dom),
+		'success': (rsp) => deltio.klisimoProcess(rsp, imr, dom),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα κλεισίματος παρουσιολογίου');
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.klisimoProcess = (msg, imr, dom) => {
+deltio.klisimoProcess = (msg, imr, dom) => {
 	if (msg) {
 		pnd.fyiError(msg);
 		console.error(msg);
-		return imerisio;
+		return deltio;
 	}
 
 
 	pnd.fyiClear();
 	imr.closedSet(true);
-	dom.children('.imerisioClosed').
-	html(imerisio.minima.imerisioKatastasiClosedSymbol);
-	imerisio.candiTabsShow();
+	dom.children('.deltioClosed').
+	html(deltio.minima.deltioKatastasiClosedSymbol);
+	deltio.candiTabsShow();
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.anigma = (e) => {
+deltio.anigma = (e) => {
 	if (e)
 	e.stopPropagation();
 
-	let dom = $('.imerisioCandi').first();
+	let dom = $('.deltioCandi').first();
 
 	if (!dom)
-	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο');
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο');
 
 	try {
-		var imr = dom.data('imerisio');
+		var imr = dom.data('deltio');
 		var kodikos = imr.kodikosGet();
 	}
 
 	catch (e) {
-		return imerisio.fyiError('Απροσδιόριστο παρουσιολόγιο');
+		return deltio.fyiError('Απροσδιόριστο παρουσιολόγιο');
 	}
 
 	pnd.fyiMessage('Άνοιγμα παρουσιολογίου <b>' + kodikos + '</b>…');
@@ -720,47 +720,47 @@ imerisio.anigma = (e) => {
 		'data': {
 			'kodikos': kodikos,
 		},
-		'success': (rsp) => imerisio.anigmaProcess(rsp, imr, dom),
+		'success': (rsp) => deltio.anigmaProcess(rsp, imr, dom),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα ανοίγματος παρουσιολογίου');
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.anigmaProcess = (msg, imr, dom) => {
+deltio.anigmaProcess = (msg, imr, dom) => {
 	if (msg) {
 		pnd.fyiError(msg);
 		console.error(msg);
-		return imerisio;
+		return deltio;
 	}
 
 	pnd.fyiClear();
 	imr.closedSet();
-	dom.children('.imerisioClosed').text('');
-	imerisio.candiTabsShow();
+	dom.children('.deltioClosed').text('');
+	deltio.candiTabsShow();
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.klonismos = (e) => {
+deltio.klonismos = (e) => {
 	e.stopPropagation();
 
-	let x = $('.imerisioCandi').first().data('imerisio');
+	let x = $('.deltioCandi').first().data('deltio');
 
 	if (!x)
-	return imerisio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
+	return deltio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
 
 	try {
 		var kodikos = x.kodikosGet();
 	}
 
 	catch (e) {
-		return imerisio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
+		return deltio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
 	}
 
 	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos + '</b>…');
@@ -770,76 +770,76 @@ imerisio.klonismos = (e) => {
 			'kodikos': kodikos,
 		},
 		'dataType': 'json',
-		'success': (rsp) => imerisio.klonosProcess(rsp, kodikos),
+		'success': (rsp) => deltio.klonosProcess(rsp, kodikos),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα κλωνισμού');
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.klonosProcess = (x, protipo) => {
+deltio.klonosProcess = (x, protipo) => {
 	if (x.error) {
 		pnd.fyiError(x.error);
 		console.error(x.error);
-		return imerisio;
+		return deltio;
 	}
 
-	if (!x.hasOwnProperty('imerisio')) {
+	if (!x.hasOwnProperty('deltio')) {
 		pnd.fyiError('Δεν επστράφησαν στοιχεία αντιγράφου');
 		console.error(x);
-		return imerisio;
+		return deltio;
 	}
 
 	pnd.fyiMessage('Δημιουργήθηκε παρουσιολόγιο <b>' +
-	x.imerisio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
+	x.deltio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
 	protipo + '</b>');
 
-	imerisio.clearCandi();
+	deltio.clearCandi();
 
-	imerisio.browserDOM.
-	prepend((new letrak.imerisio(x.imerisio)).
+	deltio.browserDOM.
+	prepend((new letrak.deltio(x.deltio)).
 	domGet().
 	data('candi', true).
-	addClass('imerisioCandi'));
+	addClass('deltioCandi'));
 
 	pnd.
-	zebraFix(imerisio.browserDOM).
+	zebraFix(deltio.browserDOM).
 	ofelimoDOM.scrollTop(0);
 
-	imerisio.
+	deltio.
 	candiTabsShow().
 	prosopa({
 		'klonos': true,
 	});
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.prosopa = (opts) => {
+deltio.prosopa = (opts) => {
 	if (opts.hasOwnProperty('clickEvent'))
 	opts.clickEvent.stopPropagation();
 
-	let dom = $('.imerisioCandi').first();
+	let dom = $('.deltioCandi').first();
 
 	if (dom.length !== 1)
 	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
 
-	let x = dom.data('imerisio');
+	let x = dom.data('deltio');
 
 	if (!x)
-	return imerisio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
 
 	try {
 		var kodikos = x.kodikosGet();
 	}
 
 	catch (e) {
-		return imerisio.fyiError
+		return deltio.fyiError
 			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
 	}
 
@@ -847,26 +847,26 @@ imerisio.prosopa = (opts) => {
 	// ως DOM element, προκειμένου να μπορούμε να τα προσπελάσουμε από
 	// τη σελίδα επεξεργασίας παρουσιολογίου.
 
-	self.LETRAK.imerisio = {
+	self.LETRAK.deltio = {
 		'row': x,
 		'dom': dom,
 		'klonos': opts.klonos,
 	};
 
-	if (imerisio.hasOwnProperty('adidosList')) {
-		self.LETRAK.imerisio.adidosList = imerisio.adidosList;
-		self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
-		imerisio.prosopaOpen(kodikos);
-		return imerisio;
+	if (deltio.hasOwnProperty('adidosList')) {
+		self.LETRAK.deltio.adidosList = deltio.adidosList;
+		self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
+		deltio.prosopaOpen(kodikos);
+		return deltio;
 	}
 
-	imerisio.erpotaFetch(kodikos);
-	return imerisio;
+	deltio.erpotaFetch(kodikos);
+	return deltio;
 };
 
-imerisio.prosopaOpen = (kodikos) => {
-	window.open('../prosopa?imerisio=' + kodikos, '_blank');
-	return imerisio;
+deltio.prosopaOpen = (kodikos) => {
+	window.open('../prosopa?deltio=' + kodikos, '_blank');
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -884,7 +884,7 @@ imerisio.prosopaOpen = (kodikos) => {
 // όλες τις υπηρεσίες· σ' αυτήν την περίπτωση δεν επιλέγονται αυτοματα
 // παρουσιολόγια, αλλά εμφανίζεται η φόρμα καταχώρησης κριτηρίων επιλογής.
 
-imerisio.autoFind = () => {
+deltio.autoFind = () => {
 	let ipiresia = letrak.xristisIpiresiaGet();
 
 	// Η περίπτωση null κωδικού υπηρεσίας θεωρείται ταυτόσημη με την
@@ -897,7 +897,7 @@ imerisio.autoFind = () => {
 	// μόνο σε παρουσιολόγια που τον αφορούν ως συμμετέχοντα σε αυτά.
 
 	if (ipiresia === undefined)
-	imerisio.imerisioEpilogi({
+	deltio.deltioEpilogi({
 		'ipalilos': letrak.xristisIpalilosGet(),
 	});
 
@@ -908,7 +908,7 @@ imerisio.autoFind = () => {
 	// σε όποια υπηρεσία της οποίας ο κωδικός εκκινεί με το γράμμα "Β".
 
 	else if (ipiresia)
-	imerisio.imerisioEpilogi({
+	deltio.deltioEpilogi({
 		'ipiresia': ipiresia,
 	});
 
@@ -918,12 +918,12 @@ imerisio.autoFind = () => {
 	// καταχώρησης κριτηρίων επιλογής.
 
 	else
-	imerisio.filtraToggle();
+	deltio.filtraToggle();
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.imerisioEpilogi = (data, opts) => {
+deltio.deltioEpilogi = (data, opts) => {
 	if (!opts)
 	opts = {};
 
@@ -932,52 +932,52 @@ imerisio.imerisioEpilogi = (data, opts) => {
 
 	pnd.fyiMessage('Επιλογή παρουσιολογίων…');
 	$.post({
-		'url': 'imerisio.php',
+		'url': 'deltio.php',
 		'data': data,
 		'dataType': 'json',
-		'success': (rsp) => imerisio.imerisioProcess(rsp, opts),
+		'success': (rsp) => deltio.deltioProcess(rsp, opts),
 		'error': (e) => {
 			pnd.fyiError('Αδυναμία επιλογής παρουσιολογίων');
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.imerisioProcess = (rsp, opts) => {
+deltio.deltioProcess = (rsp, opts) => {
 	if (!opts)
 	opts = {};
 
 	if (rsp.hasOwnProperty('error'))
-	return imerisio.fyiError(rsp.error);
+	return deltio.fyiError(rsp.error);
 
 	pnd.fyiClear();
 
 	if (opts.clean) {
-		imerisio.browserDOM.empty();
-		delete imerisio.imerominiaLast;
+		deltio.browserDOM.empty();
+		delete deltio.imerominiaLast;
 	}
 
 	let count = 0;
 	let ilast = undefined;
 
-	pnd.arrayWalk(rsp.imerisio, function(v) {
+	pnd.arrayWalk(rsp.deltio, function(v) {
 		count++;
-		(new letrak.imerisio(v)).
+		(new letrak.deltio(v)).
 		domGet().
-		appendTo(imerisio.browserDOM);
+		appendTo(deltio.browserDOM);
 		ilast = v.i;
 	});
 
 	if (ilast) {
 		ilast = new Date(ilast);
 		ilast.setDate(ilast.getDate() - 1);
-		imerisio.imerominiaLast = pnd.date(ilast, '%D-%M-%Y');
+		deltio.imerominiaLast = pnd.date(ilast, '%D-%M-%Y');
 	}
 
 	if (count) {
-		pnd.zebraFix(imerisio.browserDOM);
+		pnd.zebraFix(deltio.browserDOM);
 
 		if (opts.onFound)
 		opts.onFound();
@@ -986,94 +986,94 @@ imerisio.imerisioProcess = (rsp, opts) => {
 	else if (opts.onEmpty)
 	opts.onEmpty();
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.erpotaFetch = (kodikos) => {
-	if (imerisio.hasOwnProperty('ipiresiaArray'))
-	return imerisio.prosopaOpen(kodikos);
+deltio.erpotaFetch = (kodikos) => {
+	if (deltio.hasOwnProperty('ipiresiaArray'))
+	return deltio.prosopaOpen(kodikos);
 
 	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
 	$.post({
 		'url': 'erpotaFetch.php',
 		'dataType': 'json',
-		'success': (rsp) => imerisio.erpotaProcess(rsp, kodikos),
+		'success': (rsp) => deltio.erpotaProcess(rsp, kodikos),
 		'error': (e) => {
-			pnd.fyiError(imerisio.minima.erpotaFetchError);
+			pnd.fyiError(deltio.minima.erpotaFetchError);
 			console.error(e);
 		},
 	});
 
-	return imerisio;
+	return deltio;
 };
 
-imerisio.erpotaProcess = (rsp, kodikos) => {
+deltio.erpotaProcess = (rsp, kodikos) => {
 	if (!rsp.hasOwnProperty('error'))
-	return imerisio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
+	return deltio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
 
 	if (rsp.error)
-	return imerisio.fyiError(rsp.error);
+	return deltio.fyiError(rsp.error);
 
 	pnd.fyiClear();
-	imerisio.adidosArray = rsp.adidos;
-	imerisio.ipiresiaArray = rsp.ipiresia;
-	imerisio.ipalilosArray = rsp.ipalilos;
+	deltio.adidosArray = rsp.adidos;
+	deltio.ipiresiaArray = rsp.ipiresia;
+	deltio.ipalilosArray = rsp.ipalilos;
 
-	imerisio.adidosList = {};
-	pnd.arrayWalk(imerisio.adidosArray, (v) => {
-		imerisio.adidosList[v.k] = v.p;
+	deltio.adidosList = {};
+	pnd.arrayWalk(deltio.adidosArray, (v) => {
+		deltio.adidosList[v.k] = v.p;
 	});
 
-	imerisio.ipiresiaList = {};
-	pnd.arrayWalk(imerisio.ipiresiaArray, (v) => {
-		imerisio.ipiresiaList[v.k] = v.p;
+	deltio.ipiresiaList = {};
+	pnd.arrayWalk(deltio.ipiresiaArray, (v) => {
+		deltio.ipiresiaList[v.k] = v.p;
 	});
 
-	self.LETRAK.imerisio.adidosList = imerisio.adidosList;
-	self.LETRAK.imerisio.ipiresiaList = imerisio.ipiresiaList;
-	imerisio.prosopaOpen(kodikos);
+	self.LETRAK.deltio.adidosList = deltio.adidosList;
+	self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
+	deltio.prosopaOpen(kodikos);
 
-	return imerisio;
+	return deltio;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-letrak.imerisio.prototype.domGet = function() {
+letrak.deltio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
 	let closedDOM;
 
 	let dom = $('<div>').
-	data('imerisio', this).
-	addClass('imerisio').
+	data('deltio', this).
+	addClass('deltio').
 
 	append(closedDOM = $('<div>').
-	addClass('imerisioClosed')).
+	addClass('deltioClosed')).
 
 	append($('<div>').
-	addClass('imerisioKodikos').
+	addClass('deltioKodikos').
 	attr('title', 'Κωδικός παρουσιολογίου').
 	text(kodikos)).
 
 	append($('<div>').
-	addClass('imerisioImerominia').
+	addClass('deltioImerominia').
 	text(pnd.date(this.imerominiaGet(), '%D-%M-%Y'))).
 
 	append($('<div>').
-	addClass('imerisioIpiresia').
+	addClass('deltioIpiresia').
 	text(this.ipiresiaGet())).
 
 	append($('<div>').
-	addClass('imerisioTipos').
+	addClass('deltioTipos').
 	text(this.prosapoGet())).
 
 	append($('<div>').
-	addClass('imerisioPerigrafi').
+	addClass('deltioPerigrafi').
 	text(this.perigrafiGet()));
 
 	if (this.closedGet())
-	closedDOM.html(imerisio.minima.imerisioKatastasiClosedSymbol);
+	closedDOM.html(deltio.minima.deltioKatastasiClosedSymbol);
 
 	else
 	closedDOM.text('');
@@ -1083,12 +1083,12 @@ letrak.imerisio.prototype.domGet = function() {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-imerisio.fyiMessage = (s) => {
+deltio.fyiMessage = (s) => {
 	pnd.fyiMessage(s);
-	return imerisio;
+	return deltio;
 };
 
-imerisio.fyiError = (s) => {
+deltio.fyiError = (s) => {
 	pnd.fyiError(s);
-	return imerisio;
+	return deltio;
 };

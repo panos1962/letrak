@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/index.php —— Εφαρμογή διαχείρισης παρουσιολογίων
+// www/deltio/index.php —— Εφαρμογή διαχείρισης παρουσιολογίων
 // @FILE END
 //
 // @DESCRIPTION BEGIN

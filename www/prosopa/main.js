@@ -60,21 +60,21 @@ require('../lib/letrak.js');
 // σε αυτή τη σελίδα ως γονική.
 
 const imr = (self.opener && self.opener.hasOwnProperty('LETRAK') &&
-	self.opener.LETRAK.hasOwnProperty('imerisio') &&
-	self.opener.LETRAK.imerisio.row) ?
-	self.opener.LETRAK.imerisio : undefined;
+	self.opener.LETRAK.hasOwnProperty('deltio') &&
+	self.opener.LETRAK.deltio.row) ?
+	self.opener.LETRAK.deltio : undefined;
 
 const prosopa = {};
 
 prosopa.minima = {
 	'ipografiCheckSymbol': '&#x2714;',
 
-	'imerisioKatastasiNeoSymbol': '&#x25D4;',
-	'imerisioKatastasiEkremesSymbol': '&#x25D1;',
-	'imerisioKatastasiReadySymbol': '&#x25D5;',
-	'imerisioKatastasiClosedSymbol': '&#x2714;',
+	'deltioKatastasiNeoSymbol': '&#x25D4;',
+	'deltioKatastasiEkremesSymbol': '&#x25D1;',
+	'deltioKatastasiReadySymbol': '&#x25D5;',
+	'deltioKatastasiClosedSymbol': '&#x2714;',
 
-	'imerisioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
+	'deltioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 	'ipografesTabLabel': 'Υπογραφές',
 
 	'ipografiAnaneosiTabLabel': 'Ανανέωση',
@@ -122,22 +122,22 @@ prosopa.selidaSetup = () => {
 	ribbonCopyrightSetup();
 
 	// Ο κωδικός του προς επεξεργασία παρουσιολογίου δίνεται ως POST
-	// ή GET παράμετρος με το όνομα "imerisio".
+	// ή GET παράμετρος με το όνομα "deltio".
 
-	prosopa.imerisio = php.requestGet('imerisio');
+	prosopa.deltio = php.requestGet('deltio');
 
-	if (!prosopa.imerisio)
-	return prosopa.fyiError(prosopa.minima.imerisioAkathoristo);
+	if (!prosopa.deltio)
+	return prosopa.fyiError(prosopa.minima.deltioAkathoristo);
 
 	letrak.
-	toolbarTitlosSet('Παρουσιολόγιο <b>' + prosopa.imerisio + '</b>');
+	toolbarTitlosSet('Παρουσιολόγιο <b>' + prosopa.deltio + '</b>');
 
-	document.title = prosopa.imerisio;
+	document.title = prosopa.deltio;
 
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	if (imr && (imr.row.kodikosGet() != prosopa.imerisio))
+	if (imr && (imr.row.kodikosGet() != prosopa.deltio))
 	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
 
 	pnd.
@@ -147,8 +147,8 @@ prosopa.selidaSetup = () => {
 
 	pnd.ofelimoDOM.
 
-	append(prosopa.imerisioAreaDOM = $('<div>').
-	addClass('imerisioArea')).
+	append(prosopa.deltioAreaDOM = $('<div>').
+	addClass('deltioArea')).
 
 	append(prosopa.browserDOM = $('<div>').
 	addClass('browser'));
@@ -172,7 +172,7 @@ prosopa.selidaSetup = () => {
 		'url': 'prosopa.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio,
+			'deltio': prosopa.deltio,
 		},
 		'success': (rsp) => {
 			if (rsp.error)
@@ -180,7 +180,7 @@ prosopa.selidaSetup = () => {
 
 			prosopa.
 			fyiClear().
-			imerisioProcess(rsp.imerisio).
+			deltioProcess(rsp.deltio).
 			ipografesProcess(rsp.ipografes).
 			prosopaProcess(rsp.prosopa).
 			pliktraRefresh();
@@ -205,15 +205,15 @@ prosopa.selidaSetup = () => {
 	return prosopa;
 };
 
-prosopa.imerisioProcess = (imerisio) => {
-	prosopa.imerisio = new letrak.imerisio(imerisio);
+prosopa.deltioProcess = (deltio) => {
+	prosopa.deltio = new letrak.deltio(deltio);
 
-	prosopa.imerisioAreaDOM.
-	append(prosopa.imerisio.domGet());
+	prosopa.deltioAreaDOM.
+	append(prosopa.deltio.domGet());
 
-	$('#peImerisioKodikos').val(prosopa.imerisio.kodikosGet());
-	$('#peImerisioPerigrafi').val(prosopa.imerisio.perigrafiGet());
-	$('#peImerisioImerominia').val(prosopa.imerisio.imerominiaGet().
+	$('#peDeltioKodikos').val(prosopa.deltio.kodikosGet());
+	$('#peDeltioPerigrafi').val(prosopa.deltio.perigrafiGet());
+	$('#peDeltioImerominia').val(prosopa.deltio.imerominiaGet().
 	toLocaleDateString('el-GR', {
 		'weekday': 'long',
 		'year': 'numeric',
@@ -221,22 +221,22 @@ prosopa.imerisioProcess = (imerisio) => {
 		'day': 'numeric',
 	}));
 
-	let prosapo = prosopa.imerisio.prosapoGet();
-	let prosapoDOM = $('#peImerisioProsapo');
+	let prosapo = prosopa.deltio.prosapoGet();
+	let prosapoDOM = $('#peDeltioProsapo');
 
 	switch (prosapo) {
 	case 'ΠΡΟΣΕΛΕΥΣΗ':
-		prosapoDOM.addClass('imerisioProsapoProselefsi');
+		prosapoDOM.addClass('deltioProsapoProselefsi');
 		break;
 	case 'ΑΠΟΧΩΡΗΣΗ':
-		prosapoDOM.addClass('imerisioProsapoApoxorisi');
+		prosapoDOM.addClass('deltioProsapoApoxorisi');
 		break;
 	}
 
 	prosapoDOM.val(prosapo);
 	prosopa.editorMeraoraLabelDOM.text(prosapo);
 
-	let ipiresia = prosopa.imerisio.ipiresiaGet();
+	let ipiresia = prosopa.deltio.ipiresiaGet();
 	let ipdesc = '';
 
 	if (ipiresia.length > 3) {
@@ -252,7 +252,7 @@ prosopa.imerisioProcess = (imerisio) => {
 	}
 	
 	ipdesc += imr.ipiresiaList[ipiresia];
-	$('#peImerisioIpiresia').text(ipdesc);
+	$('#peDeltioIpiresia').text(ipdesc);
 
 	return prosopa;
 };
@@ -287,7 +287,7 @@ prosopa.prosopaProcess = (parousia) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.ipografesSetup = () => {
-	prosopa.imerisioAreaDOM.
+	prosopa.deltioAreaDOM.
 	append(prosopa.ipografesAreaDOM = $('<div>').
 	addClass('ipografesArea').
 	addClass('ipografesAreaHidden').
@@ -388,34 +388,34 @@ prosopa.ipografesSetup = () => {
 
 prosopa.pliktraRefresh = () => {
 	return prosopa.
-	imerisioKatastasiRefresh().
+	deltioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
 	ipografiPraxiTabsRefresh().
 	prosopaUpdateTabsRefresh();
 };
 
-prosopa.imerisioKatastasiRefresh = () => {
-	let katastasi = prosopa.imerisioKatastasiGet();
+prosopa.deltioKatastasiRefresh = () => {
+	let katastasi = prosopa.deltioKatastasiGet();
 
-	prosopa.imerisioKatastasiDOM.
-	removeClass('imerisioKatastasiNeo').
-	removeClass('imerisioKatastasiEkremes').
-	removeClass('imerisioKatastasiReady').
-	removeClass('imerisioKatastasiClosed').
+	prosopa.deltioKatastasiDOM.
+	removeClass('deltioKatastasiNeo').
+	removeClass('deltioKatastasiEkremes').
+	removeClass('deltioKatastasiReady').
+	removeClass('deltioKatastasiClosed').
 	empty();
 
 	if (!katastasi)
 	return prosopa;
 
-	prosopa.imerisioKatastasiDOM.
-	addClass('imerisioKatastasi' + katastasi).
-	html(prosopa.minima['imerisioKatastasi' + katastasi + 'Symbol']);
+	prosopa.deltioKatastasiDOM.
+	addClass('deltioKatastasi' + katastasi).
+	html(prosopa.minima['deltioKatastasi' + katastasi + 'Symbol']);
 
 	return prosopa;
 };
 
-prosopa.imerisioKatastasiGet = () => {
-	if (prosopa.imerisio.closedGet())
+prosopa.deltioKatastasiGet = () => {
+	if (prosopa.deltio.closedGet())
 	return 'Closed';
 
 	let proto = false;
@@ -452,8 +452,8 @@ prosopa.imerisioKatastasiGet = () => {
 prosopa.ipografiUpdateTabsRefresh = () => {
 	let prosvasi = false;
 
-	if (!prosopa.imerisio.closedGet()) {
-		let ipiresia = prosopa.imerisio.ipiresiaGet();
+	if (!prosopa.deltio.closedGet()) {
+		let ipiresia = prosopa.deltio.ipiresiaGet();
 		prosvasi = letrak.prosvasiIsUpdate(ipiresia);
 	}
 
@@ -469,7 +469,7 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 	children('.praxiPliktro').
 	css('display', 'none');
 
-	if (prosopa.imerisio.closedGet())
+	if (prosopa.deltio.closedGet())
 	return prosopa;
 
 	let xristis = letrak.xristisIpalilosGet();
@@ -693,7 +693,7 @@ prosopa.ipografiInsertExec = function(forma) {
 		'url': 'ipografiInsert.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
 			'titlos': forma.titlosDOM.val(),
@@ -813,7 +813,7 @@ prosopa.ipografiEditExec = function(forma) {
 		'url': 'ipografiEdit.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 			'isimonixat': forma.isimonixat,
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
@@ -893,7 +893,7 @@ prosopa.ipografiDiagrafi = (e) => {
 		'url': 'ipografiDelete.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 			'taxinomisi': taxinomisi,
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
@@ -917,7 +917,7 @@ prosopa.ipografiAnaneosi = (e) => {
 		'url': 'ipografiAnaneosi.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {
@@ -959,7 +959,7 @@ prosopa.ipografiPraxi = (e, praxi) => {
 		'url': 'ipografiPraxi.php',
 		'dataType': 'json',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 			'armodios': ipografi.armodiosGet(),
 			'praxi': praxi,
 		},
@@ -995,7 +995,7 @@ prosopa.prosopaSetup = () => {
 prosopa.prosopaUpdateTabsRefresh = () => {
 	let update = true;
 
-	if (prosopa.imerisio.isClosed())
+	if (prosopa.deltio.isClosed())
 	update = false;
 
 	pnd.toolbarLeftDOM.
@@ -1162,7 +1162,7 @@ prosopa.winpak = () => {
 	$.post({
 		'url': 'winpak.php',
 		'data': {
-			'imerisio': prosopa.imerisio.kodikosGet(),
+			'deltio': prosopa.deltio.kodikosGet(),
 			'plist': plist,
 		},
 		'dataType': 'json',
@@ -1187,7 +1187,7 @@ prosopa.winpakProcess = (rsp) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-letrak.imerisio.prototype.domGet = function() {
+letrak.deltio.prototype.domGet = function() {
 	let ipiresia = this.ipiresiaGet();
 	let ipiresiaDOM;
 	let prosapo = this.prosapoGet();
@@ -1200,35 +1200,35 @@ letrak.imerisio.prototype.domGet = function() {
 	});
 
 	let dom = $('<div>').
-	addClass('imerisio').
+	addClass('deltio').
 
-	append(prosopa.imerisioKatastasiDOM = $('<div>').
-	addClass('imerisioKatastasi')).
+	append(prosopa.deltioKatastasiDOM = $('<div>').
+	addClass('deltioKatastasi')).
 
 	append($('<div>').
-	addClass('imerisioKodikos').
+	addClass('deltioKodikos').
 	text(this.kodikosGet())).
 
 	append($('<div>').
-	addClass('imerisioPerigrafi').
+	addClass('deltioPerigrafi').
 	text(this.perigrafiGet())).
 
 	append(ipiresiaDOM = $('<div>').
-	addClass('imerisioIpiresia').
+	addClass('deltioIpiresia').
 	text(ipiresia)).
 
 	append($('<div>').
-	addClass('imerisioProsapo').
-	addClass('imerisioProsapo' +
+	addClass('deltioProsapo').
+	addClass('deltioProsapo' +
 	(prosapo === 'ΠΡΟΣΕΛΕΥΣΗ' ? 'Proselefsi' : 'Apoxorisi')).
 	text(prosapo)).
 
 	append($('<div>').
-	addClass('imerisioImerominia').
+	addClass('deltioImerominia').
 	text(imerominia));
 
 	if (letrak.prosvasiIsUpdate(ipiresia))
-	ipiresiaDOM.addClass('imerisioIpiresiaUpdate');
+	ipiresiaDOM.addClass('deltioIpiresiaUpdate');
 
 	return dom;
 };
@@ -1331,7 +1331,7 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 	};
 
 	if (rsp.hasOwnProperty('closed'))
-	prosopa.imerisio.closed = rsp.closed;
+	prosopa.deltio.closed = rsp.closed;
 
 	prosopa.
 	fyiClear().

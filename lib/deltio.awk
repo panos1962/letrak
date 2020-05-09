@@ -13,7 +13,7 @@
 # @FILETYPE END
 #
 # @FILE BEGIN
-# lib/imerisio.awk —— Δημιουργία παρουσιολογίων με βάση τον κωδικό υπηρεσίας
+# lib/deltio.awk —— Δημιουργία παρουσιολογίων με βάση τον κωδικό υπηρεσίας
 # @FILE END
 #
 # @DESCRIPTION BEGIN
@@ -69,11 +69,11 @@ $1 !~ /^[ΑΒΓΔΕ][0-9][0-9]/ {
 }
 
 {
-	add_imerisio($1, $2, $3)
+	add_deltio($1, $2, $3)
 }
 
-function add_imerisio(kodip, perigrafi, prosapo,		query,
-	imerisio, l, i, count) {
+function add_deltio(kodip, perigrafi, prosapo,		query,
+	deltio, l, i, count) {
 
 	if (!prosapo)
 	prosapo = "NULL"
@@ -94,7 +94,7 @@ function add_imerisio(kodip, perigrafi, prosapo,		query,
 	if (spawk_submit(query) != 2)
 	pd_fatal("Αδυναμία εκκίνησης νέας transaction")
 
-	query = "INSERT INTO `letrak`.`imerisio` " \
+	query = "INSERT INTO `letrak`.`deltio` " \
 		"(`ipalilos`, `imerominia`, `ipiresia`, " \
 		"`prosapo`, `perigrafi`) VALUES (" \
 		creator ", " simera ", " spawk_escape(kodip) ", " \
@@ -103,14 +103,14 @@ function add_imerisio(kodip, perigrafi, prosapo,		query,
 	if (spawk_submit(query) != 2)
 	return pd_errmsg($0 ": αποτυχία δημιουργίας νέου παρουσιολογίου")
 
-	imerisio = spawk_insertid
+	deltio = spawk_insertid
 	l = length(kodip)
 
 	for (i in ipalilos) {
 		if ((substr(ipalilos[i]["die"], 0, l) == kodip) ||
 		(substr(ipalilos[i]["tmi"], 0, l) == kodip) ||
 		(substr(ipalilos[i]["gra"], 0, l) == kodip))
-		count += add_ipalilos(imerisio, i)
+		count += add_ipalilos(deltio, i)
 	}
 
 	if (!count) {
@@ -125,18 +125,18 @@ function add_imerisio(kodip, perigrafi, prosapo,		query,
 	if (spawk_submit("COMMIT WORK") != 2)
 	pd_fatal("commit transaction failed")
 
-	print kodip, imerisio, count
+	print kodip, deltio, count
 }
 
-function add_ipalilos(imerisio, kodikos,		karta, query) {
+function add_ipalilos(deltio, kodikos,		karta, query) {
 	karta = ipalilos[kodikos]["karta"] + 0
 
 	if (!karta)
 	karta = "NULL"
 
 	query = "INSERT INTO `letrak`.`parousia` " \
-		"(`imerisio`, `ipalilos`, `karta`) " \
-		"VALUES (" imerisio ", " kodikos ", " karta ")"
+		"(`deltio`, `ipalilos`, `karta`) " \
+		"VALUES (" deltio ", " kodikos ", " karta ")"
 
 	if (spawk_submit(query) != 2)
 	pd_fatal("αποτυχία ένταξης υπαλλήλου")

@@ -59,8 +59,8 @@ welcome.selidaSetup = () => {
 
 	pnd.toolbarLeftDOM.
 	append(letrak.tabDOM().
-	text(letrak.minima.imerisioSelidaLabel).
-	on('click', (e) => self.location = 'imerisio'));
+	text(letrak.minima.deltioSelidaLabel).
+	on('click', (e) => self.location = 'deltio'));
 
 	$('#eponimiXrisi').css('display', 'inline');
 	return welcome;

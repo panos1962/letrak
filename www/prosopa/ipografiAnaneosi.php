@@ -43,17 +43,17 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$kodikos = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("deltio");
 
-if (letrak::imerisio_invalid_kodikos($kodikos))
+if (letrak::deltio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '{';
-print '"closed":' . ($imerisio->is_klisto() ? 'true' : 'false') . ',';
+print '"closed":' . ($deltio->is_klisto() ? 'true' : 'false') . ',';
 letrak::ipografes_json($kodikos);
 print '}';
 

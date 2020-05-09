@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/imerisio.php —— Πρόγραμμα επιλογής παρουσιολογίων
+// www/deltio/deltio.php —— Πρόγραμμα επιλογής παρουσιολογίων
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -87,7 +87,7 @@ lathos("Μη αποδεκτό κριτήριο αριθμού μητρώου υ�
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT * FROM `letrak`.`imerisio`";
+$query = "SELECT * FROM `letrak`.`deltio`";
 $enotiko = " WHERE";
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -153,8 +153,8 @@ $query .= " ORDER BY `imerominia` DESC, `ipiresia`, `prosapo` DESC, `kodikos`";
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '{';
-print '"imerisioQuery":' . pandora::json_string($query) . ',';
-print '"imerisio":[';
+print '"deltioQuery":' . pandora::json_string($query) . ',';
+print '"deltio":[';
 
 // Θα επιλέξουμε παρουσιολόγια με βάση τα κριτήρια που έχουν δοθεί, αλλά θα
 // φροντίσουμε να μην αφήσουμε υπόλοιπα σε κάποια ημερομηνία.
@@ -165,15 +165,15 @@ $count = 0;
 
 $result = pandora::query($query);
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	$imerisio = new Imerisio($row);
+	$deltio = new Deltio($row);
 
-	if ($prosvasi->oxi_prosvasi_imerisio($imerisio))
+	if ($prosvasi->oxi_prosvasi_deltio($deltio))
 	continue;
 
-	if ($ipalilos && $imerisio->asxetos_ipalilos($ipalilos))
+	if ($ipalilos && $deltio->asxetos_ipalilos($ipalilos))
 	continue;
 
-	$imerominia = $imerisio->imerominia_get();
+	$imerominia = $deltio->imerominia_get();
 
 	if (!$imerominia)
 	continue;
@@ -202,7 +202,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		$imerominia_last = $imerominia;
 	}
 
-	print $enotiko . $imerisio->json_economy();
+	print $enotiko . $deltio->json_economy();
 	$enotiko = ",";
 }
 

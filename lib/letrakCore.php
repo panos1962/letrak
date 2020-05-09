@@ -85,13 +85,13 @@ class letrakCore {
 		throw new Exception("invalid 'erpota' database version");
 	}
 
-	public static function imerisio_valid_kodikos($kodikos) {
+	public static function deltio_valid_kodikos($kodikos) {
 		return pandora::is_integer
 			($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX);
 	}
 
-	public static function imerisio_invalid_kodikos($kodikos) {
-		return !self::imerisio_valid_kodikos($kodikos);
+	public static function deltio_invalid_kodikos($kodikos) {
+		return !self::deltio_valid_kodikos($kodikos);
 	}
 
 	public static function ipalilos_valid_kodikos($kodikos) {
@@ -112,16 +112,16 @@ class letrakCore {
 		return !self::ipografi_valid_taxinomisi($taxinomisi);
 	}
 
-	// Η μέθοδος "imerisio_is_klisto" δέχεται έναν κωδικό παρουσιολογίου
+	// Η μέθοδος "deltio_is_klisto" δέχεται έναν κωδικό παρουσιολογίου
 	// και επιστρέφει true εφόσον το παρουσιολόγιο είναι κλειστό. Επίσης
 	// επιστρέφει true εφόσον ο κωδικός δεν είναι αποδεκτός ή δεν υπάρχει
 	// το παρουσιολόγιο. Σε κάθε άλλη περίπτωση επιστρέφει false.
 
-	public static function imerisio_is_klisto($kodikos) {
-		if (self::imerisio_invalid_kodikos($kodikos))
+	public static function deltio_is_klisto($kodikos) {
+		if (self::deltio_invalid_kodikos($kodikos))
 		return TRUE;
 
-		$query = "SELECT `closed` FROM `letrak`.`imerisio`" .
+		$query = "SELECT `closed` FROM `letrak`.`deltio`" .
 			" WHERE `kodikos` = " . $kodikos;
 		$row = pandora::first_row($query);
 
@@ -134,19 +134,19 @@ class letrakCore {
 		return FALSE;
 	}
 
-	public static function imerisio_is_anikto($kodikos) {
-		return !imerisio_is_klisto($kodikos);
+	public static function deltio_is_anikto($kodikos) {
+		return !deltio_is_klisto($kodikos);
 	}
 
-	public static function ipalilos_is_simetoxi($imerisio, $ipalilos) {
+	public static function ipalilos_is_simetoxi($deltio, $ipalilos) {
 		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`ipalilos` = " . $ipalilos . ")";
 		return pandora::first_row($query);
 	}
 
-	public static function ipalilos_oxi_simetoxi($imerisio, $ipalilos) {
-		return !self::ipalilos_is_simetoxi($imerisio, $ipalilos);
+	public static function ipalilos_oxi_simetoxi($deltio, $ipalilos) {
+		return !self::ipalilos_is_simetoxi($deltio, $ipalilos);
 	}
 }
 
@@ -265,7 +265,7 @@ class Orario {
 	}
 }
 
-class Imerisio {
+class Deltio {
 	public $kodikos = NULL;		// κωδικός παρουσιολογίου
 	public $ipalilos = NULL;	// αρ. μητρώου δημιοργού υπαλλήλου
 	public $protipo = NULL;		// κωδικός προτύπου παρουσιολογίου
@@ -309,7 +309,7 @@ class Imerisio {
 	public function kodikos_set($kodikos = NULL) {
 		$this->kodikos = NULL;
 
-		if (letrak::imerisio_invalid_kodikos($kodikos))
+		if (letrak::deltio_invalid_kodikos($kodikos))
 		return $this;
 
 		$this->kodikos = $kodikos;
@@ -329,7 +329,7 @@ class Imerisio {
 	public function protipo_set($protipo = NULL) {
 		$this->protipo = NULL;
 
-		if (letrak::imerisio_invalid_kodikos($protipo))
+		if (letrak::deltio_invalid_kodikos($protipo))
 		return $this;
 
 		$this->protipo = $protipo;
@@ -435,23 +435,23 @@ class Imerisio {
 	}
 
 	public function from_database($kodikos) {
-		$query = "SELECT * FROM `letrak`.`imerisio`" .
+		$query = "SELECT * FROM `letrak`.`deltio`" .
 			" WHERE `kodikos` = " . $kodikos;
 		$row = pandora::first_row($query, MYSQLI_ASSOC);
 		return $this->from_array($row);
 	}
 
 	public function is_ipografi($ipalilos = NULL) {
-		$imerisio = $this->kodikos_get();
+		$deltio = $this->kodikos_get();
 
-		if (letrak::imerisio_invalid_kodikos($imerisio))
+		if (letrak::deltio_invalid_kodikos($deltio))
 		return FALSE;
 
 		if (letrak::ipalilos_invalid_kodikos($ipalilos))
 		return FALSE;
 
 		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`armodios` = " . $ipalilos . ")";
 
 		return pandora::first_row($query);
@@ -462,39 +462,39 @@ class Imerisio {
 	}
 
 	public function is_simetoxi($ipalilos = NULL) {
-		$imerisio = $this->kodikos_get();
+		$deltio = $this->kodikos_get();
 
-		if (letrak::imerisio_invalid_kodikos($imerisio))
+		if (letrak::deltio_invalid_kodikos($deltio))
 		return FALSE;
 
 		if (letrak::ipalilos_invalid_kodikos($ipalilos))
 		return FALSE;
 
 		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`ipalilos` = " . $ipalilos . ")";
 
 		return pandora::first_row($query);
 	}
 
 	public function sxetikos_ipalilos($ipalilos = NULL) {
-		$imerisio = $this->kodikos_get();
+		$deltio = $this->kodikos_get();
 
-		if (letrak::imerisio_invalid_kodikos($imerisio))
+		if (letrak::deltio_invalid_kodikos($deltio))
 		return FALSE;
 
 		if (letrak::ipalilos_invalid_kodikos($ipalilos))
 		return FALSE;
 
 		$query = "SELECT 1 FROM `letrak`.`parousia`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`ipalilos` = " . $ipalilos . ")";
 
 		if (pandora::first_row($query))
 		return TRUE;
 
 		$query = "SELECT 1 FROM `letrak`.`ipografi`" .
-			" WHERE (`imerisio` = " . $imerisio . ")" .
+			" WHERE (`deltio` = " . $deltio . ")" .
 			" AND (`armodios` = " . $ipalilos . ")";
 
 		if (pandora::first_row($query))
@@ -510,11 +510,11 @@ class Imerisio {
 	public function is_ipogegrameno() {
 		$kodikos = $this->kodikos_get();
 
-		if (letrak::imerisio_invalid_kodikos($kodikos))
+		if (letrak::deltio_invalid_kodikos($kodikos))
 		return FALSE;
 
 		$query = "SELECT 1 FROM `letrak`.`ipografi`" .
-			" WHERE (`imerisio` = " . $kodikos . ")" .
+			" WHERE (`deltio` = " . $kodikos . ")" .
 			" AND (`checkok` IS NULL)";
 
 		if (pandora::first_row($query, MYSQLI_NUM))
@@ -562,14 +562,14 @@ class Imerisio {
 }
 
 class Ipografi {
-	public $imerisio = NULL;
+	public $deltio = NULL;
 	public $taxinomisi = NULL;
 	public $armodios = NULL;
 	public $titlos = NULL;
 	public $checkok = NULL;
 
 	public function __construct($x) {
-		$this->imerisio = NULL;
+		$this->deltio = NULL;
 		$this->taxinomisi = NULL;
 		$this->armodios = NULL;
 		$this->titlos = NULL;
@@ -587,8 +587,8 @@ class Ipografi {
 		}
 	}
 
-	public function imerisio_set($x) {
-		$this->imerisio = $x;
+	public function deltio_set($x) {
+		$this->deltio = $x;
 		return $this;
 	}
 
@@ -607,8 +607,8 @@ class Ipografi {
 		return $this;
 	}
 
-	public function imerisio_get($x) {
-		return $this->imerisio;
+	public function deltio_get($x) {
+		return $this->deltio;
 	}
 
 	public function taxinomisi_get($x) {
@@ -882,35 +882,35 @@ class Prosvasi {
 		return !$this->ipiresia_is_admin($ipiresia);
 	}
 
-	// Η μέθοδος "is_prosvasi_imerisio" δέχεται ως παράμετρο ένα
+	// Η μέθοδος "is_prosvasi_deltio" δέχεται ως παράμετρο ένα
 	// παρουσιολόγιο και ελέγχει αν ο υπάλληλος της ανά χείρας
 	// πρόσβασης έχει δικαιώματα στο περιεχόμενο του παρουσιολογίου.
 
-	public function is_prosvasi_imerisio($imerisio) {
+	public function is_prosvasi_deltio($deltio) {
 		if ($this->oxi_ipalilos())
 		return FALSE;
 
-		if ($imerisio->oxi_kodikos())
+		if ($deltio->oxi_kodikos())
 		return FALSE;
 
-		$ipiresia = $imerisio->ipiresia_get();
+		$ipiresia = $deltio->ipiresia_get();
 
 		if ($this->is_prosvasi_ipiresia($ipiresia))
 		return TRUE;
 
 		$ipalilos = $this->ipalilos_get();
 
-		if ($imerisio->is_simetoxi($ipalilos))
+		if ($deltio->is_simetoxi($ipalilos))
 		return TRUE;
 
-		if ($imerisio->is_ipografi($ipalilos))
+		if ($deltio->is_ipografi($ipalilos))
 		return TRUE;
 
 		return FALSE;
 	}
 
-	public function oxi_prosvasi_imerisio($imerisio) {
-		return !$this->is_prosvasi_imerisio($imerisio);
+	public function oxi_prosvasi_deltio($deltio) {
+		return !$this->is_prosvasi_deltio($deltio);
 	}
 }
 ?>

@@ -139,7 +139,7 @@ isodos.ofelimoSetup = () => {
 		'type': 'button',
 		'value': letrak.minima.cancelPliktroLabel,
 	}).
-	on('click', () => self.location = '/letrak/imerisio'))).
+	on('click', () => self.location = '/letrak/deltio'))).
 
 	appendTo(pnd.ofelimoDOM);
 
@@ -160,7 +160,7 @@ isodos.isodos = (e) => {
 		},
 		'success': (rsp) => {
 			if (!rsp)
-			return self.location = '/letrak/imerisio';
+			return self.location = '/letrak/deltio';
 
 			pnd.fyiError(rsp);
 			console.error(rsp);

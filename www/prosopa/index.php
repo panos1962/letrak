@@ -51,27 +51,27 @@ document_body();
 <form id="parousiaEditor">
 	<div class="peFormaEnotita">
 		<div class="peFormaInputLine">
-			<label for="peImerisioKodikos">
+			<label for="peDeltioKodikos">
 				Παρουσιολόγιο
 			</label>
-			<input id="peImerisioKodikos" disabled="true">
-			<input id="peImerisioPerigrafi" disabled="true">
+			<input id="peDeltioKodikos" disabled="true">
+			<input id="peDeltioPerigrafi" disabled="true">
 		</div>
 		<div class="peFormaInputLine">
-			<label for="peImerisioImerominia">
+			<label for="peDeltioImerominia">
 				Ημερομηνία
 			</label>
-			<input id="peImerisioImerominia" disabled="true">
-			<label for="peImerisioProsapo">
+			<input id="peDeltioImerominia" disabled="true">
+			<label for="peDeltioProsapo">
 				Είδος
 			</label>
-			<input id="peImerisioProsapo" disabled="true">
+			<input id="peDeltioProsapo" disabled="true">
 		</div>
 		<div class="peFormaInputLine">
-			<label for="peImerisioIpiresia">
+			<label for="peDeltioIpiresia">
 				Υπηρεσία
 			</label>
-			<textarea id="peImerisioIpiresia"
+			<textarea id="peDeltioIpiresia"
 				disabled="true">
 			</textarea>
 		</div>

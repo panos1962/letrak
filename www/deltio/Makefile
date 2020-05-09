@@ -13,7 +13,7 @@
 # @FILETYPE END
 #
 # @FILE BEGIN
-# www/imerisio/Makefile —— Makefile
+# www/deltio/Makefile —— Makefile
 # @FILE END
 #
 # @HISTORY BEGIN

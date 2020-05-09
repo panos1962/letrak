@@ -131,7 +131,7 @@ CREATE TABLE `adidos` (
 COMMENT = 'Πίνακας ειδών αδείας'
 ;
 
--- Ο πίνακας "imerisio" περιέχει τα ημερήσια φύλλα παρουσίας τα οποία για
+-- Ο πίνακας "deltio" περιέχει τα ημερήσια φύλλα παρουσίας τα οποία για
 -- συντομία θα ονομάζουμε «παρουσιολόγια». Κάθε ένα παρουσιολόγιο αφορά σε
 -- συγκεκριμένη ημερομηνία και σε συγκεκριμένη ομάδα υπαλλήλων. Σε κάθε
 -- ημερομηνία μπορούν να υπάρχουν περισσότερα από ένα παρουσιολόγια για την
@@ -164,7 +164,7 @@ COMMENT = 'Πίνακας ειδών αδείας'
 -- διαρθρωτικές αλλαγές, π.χ. αλλαγή οργανισμού, προσλήψεις με ιδιαίτερο
 -- καθεστώς όπως ήταν τα προγράμματα STAGE, η κοινωφελής εργασία, κλπ.
 
-CREATE TABLE `imerisio` (
+CREATE TABLE `deltio` (
 	`kodikos`	MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Κωδικός παρουσιολογίου',
 	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Αρμόδιος υπάλληλος',
 
@@ -207,7 +207,7 @@ COMMENT = 'Πίνακας παρουσιολογίων'
 ;
 
 CREATE TABLE `ipografi` (
-	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
+	`deltio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`taxinomisi`	TINYINT UNSIGNED NOT NULL COMMENT 'Τάξη υπογραφής',
 	`titlos`	VARCHAR(128) NULL DEFAULT NULL COMMENT 'Τίτλος αρμοδίου',
 	`armodios`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Αρμόδιος υπάλληλος',
@@ -220,7 +220,7 @@ CREATE TABLE `ipografi` (
 	`checkok`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα ελέγχου',
 
 	INDEX (
-		`imerisio`,
+		`deltio`,
 		`taxinomisi`
 	) USING BTREE
 )
@@ -229,7 +229,7 @@ COMMENT = 'Πίνακας υπογραφών παρουσιολογίου'
 ;
 
 CREATE TABLE `parousia` (
-	`imerisio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
+	`deltio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Παρουσιολόγιο',
 	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
 	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
 	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
@@ -259,7 +259,7 @@ CREATE TABLE `parousia` (
 	`info`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Σχόλια',
 
 	UNIQUE INDEX (
-		`imerisio`,
+		`deltio`,
 		`ipalilos`
 	) USING BTREE
 )
@@ -275,15 +275,15 @@ COMMIT WORK
 \! [ -w /dev/tty ] && echo "Creating relations…" >/dev/tty
 
 ALTER TABLE `ipografi` ADD FOREIGN KEY (
-	`imerisio`
-) REFERENCES `imerisio` (
+	`deltio`
+) REFERENCES `deltio` (
 	`kodikos`
 ) ON UPDATE CASCADE ON DELETE CASCADE
 ;
 
 ALTER TABLE `parousia` ADD FOREIGN KEY (
-	`imerisio`
-) REFERENCES `imerisio` (
+	`deltio`
+) REFERENCES `deltio` (
 	`kodikos`
 ) ON UPDATE CASCADE ON DELETE CASCADE
 ;

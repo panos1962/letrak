@@ -32,7 +32,7 @@ all:
 	(cd www/lib && make)
 	(cd www && make)
 	(cd www/isodos && make)
-	(cd www/imerisio && make)
+	(cd www/deltio && make)
 	(cd www/prosopa && make)
 
 test:
@@ -80,7 +80,7 @@ pull:
 
 .PHONY: cleanup
 cleanup:
-	@(cd www/imerisio && make cleanup)
+	@(cd www/deltio && make cleanup)
 	@(cd www/isodos && make cleanup)
 	@(cd www && make cleanup)
 	@(cd www/lib && make cleanup)

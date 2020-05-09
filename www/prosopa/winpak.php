@@ -39,9 +39,9 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$kodikos = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("deltio");
 
-if (letrak::imerisio_invalid_kodikos($kodikos))
+if (letrak::deltio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $plist = pandora::parameter_get("plist");
@@ -49,15 +49,15 @@ $plist = pandora::parameter_get("plist");
 print '{';
 ///////////////////////////////////////////////////////////////////////////////@
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
+if ($deltio->oxi_kodikos())
 lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
-$imerominia = $imerisio->imerominia_get()->format("Y-m-d");
+$imerominia = $deltio->imerominia_get()->format("Y-m-d");
 $imerominia = "2019-10-10";
 $imerominia = "2019-07-02";
-$prosapo = $imerisio->prosapo_get();
+$prosapo = $deltio->prosapo_get();
 
 $query = "SELECT" .
 	" DATE_SUB('" . $imerominia . "', INTERVAL 1 DAY)," .

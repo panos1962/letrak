@@ -12,13 +12,11 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/klisimo.php —— Κλείσιμο παρουσιολογίου
+// www/deltio/diagrafi.php —— Διαγραφή παρουσιολογίου
 // @FILE END
 //
 // @HISTORY BEGIN
-// Updated: 2020-05-06
-// Updated: 2020-05-04
-// Created: 2020-05-03
+// Created: 2020-04-22
 // @HISTORY END
 //
 // @END
@@ -43,28 +41,23 @@ $kodikos = pandora::parameter_get("kodikos");
 if (pandora::not_integer($kodikos, 1, LETRAK_IMERISIO_KODIKOS_MAX))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
-lathos("Αδυναμία εντοπισμού παρουσιολογίου");
+if ($deltio->oxi_kodikos())
+lathos("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
 
-$ipiresia = $imerisio->ipiresia_get();
+$ipiresia = $deltio->ipiresia_get();
 
-if ($prosvasi->ipiresia_oxi_admin($ipiresia))
-lathos("Δεν έχετε δικαίωμα κλεισίματος παρουσιολογίου");
-
-if ($imerisio->is_anipografo())
-lathos("Δεν υπάρχουν οι απαραίτητες υπογραφές");
+if ($prosvasi->oxi_update_ipiresia($ipiresia))
+lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`imerisio`" .
-	" SET `closed` = NOW()" .
-	" WHERE `kodikos` = " . $kodikos;
+$query = "DELETE FROM `letrak`.`deltio` WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 
-if (pandora::affected_rows() != 1)
-lathos("Αποτυχία κλεισίματος παρουσιολογίου");
+if (pandora::affected_rows() < 1)
+lathos("Αποτυχία διαγραφής παρουσιολογίου");
 
 exit(0);
 

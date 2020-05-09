@@ -46,20 +46,20 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$kodikos = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("deltio");
 
-if (letrak::imerisio_invalid_kodikos($kodikos))
+if (letrak::deltio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
+if ($deltio->oxi_kodikos())
 lathos($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
 
-if ($imerisio->is_klisto())
+if ($deltio->is_klisto())
 lathos("Το παρουσιολόγιο έχει κλείσει");
 
-$ipiresia = $imerisio->ipiresia_get();
+$ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->oxi_update_ipiresia($ipiresia))
 lathos("Δεν έχετε δικαίωμα προσθήκης αρμοδίου υπογραφής");
@@ -83,7 +83,7 @@ pandora::autocommit(FALSE);
 if ($taxinomisi) {
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `taxinomisi` = `taxinomisi` + 1" .
-		" WHERE (`imerisio` = " . $kodikos . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` >= " . $taxinomisi . ")";
 	pandora::query($query);
 }
@@ -92,7 +92,7 @@ else
 $taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 
 $query = "INSERT INTO `letrak`.`ipografi` " .
-	" (`imerisio`, `taxinomisi`, `armodios`, `titlos`)" .
+	" (`deltio`, `taxinomisi`, `armodios`, `titlos`)" .
 	" VALUES (" . $kodikos . ", " . $taxinomisi . ", " .
 	$armodios . ", " . pandora::sql_string($titlos) . ")";
 pandora::query($query);

@@ -46,9 +46,9 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$kodikos = pandora::parameter_get("imerisio");
+$kodikos = pandora::parameter_get("deltio");
 
-if (letrak::imerisio_invalid_kodikos($kodikos))
+if (letrak::deltio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $ipalilos_table = letrak::erpota12("ipalilos");
@@ -57,20 +57,20 @@ print '{';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
+if ($deltio->oxi_kodikos())
 lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
-print '"imerisio":' . $imerisio->json_economy() . ",";
+print '"deltio":' . $deltio->json_economy() . ",";
 
 $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " FROM `letrak`.`parousia` AS `parousia`" .
 " LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 " ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
-" WHERE (`parousia`.`imerisio` = " . $kodikos . ")";
+" WHERE (`parousia`.`deltio` = " . $kodikos . ")";
 
-if ($prosvasi->oxi_prosvasi_ipiresia($imerisio->ipiresia_get()))
+if ($prosvasi->oxi_prosvasi_ipiresia($deltio->ipiresia_get()))
 $query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
 $query .= " ORDER BY `l`, `f`, `r`, `i`";
@@ -100,7 +100,7 @@ $query = "SELECT " .
 " FROM `letrak`.`ipografi` AS `ipografi` " .
 " LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
 " ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-" WHERE (`ipografi`.`imerisio` = " . $kodikos . ")" .
+" WHERE (`ipografi`.`deltio` = " . $kodikos . ")" .
 " ORDER BY `x`";
 
 print '"queryIpografi":' . pandora::json_string($query) . ',';

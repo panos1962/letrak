@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/erpotaFetch.php —— Επιλογή και αποστολή δεδομένων προσωπικού
+// www/deltio/erpotaFetch.php —— Επιλογή και αποστολή δεδομένων προσωπικού
 // @FILE END
 //
 // @DESCRIPTION BEGIN

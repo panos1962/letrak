@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/imerisio/klonismos.php —— Δημιουργία αντιγράφου παρουσιολογίου
+// www/deltio/klonismos.php —— Δημιουργία αντιγράφου παρουσιολογίου
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -47,10 +47,10 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
 $protipo = pandora::parameter_get("kodikos");
 
-if (letrak::imerisio_invalid_kodikos($protipo))
+if (letrak::deltio_invalid_kodikos($protipo))
 lathos("Ακαθόριστος κωδικός προτύπου");
 
-$query = "SELECT * FROM `letrak`.`imerisio`" .
+$query = "SELECT * FROM `letrak`.`deltio`" .
 	" WHERE `kodikos` = " . $protipo;
 $protipo = pandora::first_row($query, MYSQLI_ASSOC);
 
@@ -66,7 +66,7 @@ pandora::autocommit(FALSE);
 
 $simera = date("Y-m-d");
 
-$query = "INSERT INTO `letrak`.`imerisio` " .
+$query = "INSERT INTO `letrak`.`deltio` " .
 "(`protipo`, `ipalilos`, `imerominia`," .
 " `ipiresia`, `prosapo`, `perigrafi`) VALUES (" .
 $protipo["kodikos"] . ", " .
@@ -90,10 +90,10 @@ $flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`";
 // Εισάγουμε τα πρόσωπα με τα ίδια στοιχεία που είχαν στο πρωτότυπο, χωρίς
 // τις εξαιρέσεις.
 
-$query = "INSERT INTO `letrak`.`parousia` (`imerisio`, " . $flist . ")" .
+$query = "INSERT INTO `letrak`.`parousia` (`deltio`, " . $flist . ")" .
 	" SELECT " . $kodikos . ", " . $flist .
 	" FROM `letrak`.`parousia`" .
-	" WHERE `imerisio` = " . $protipo["kodikos"];
+	" WHERE `deltio` = " . $protipo["kodikos"];
 pandora::query($query);
 
 // Ενημερώνουμε τα νεοεισαχθέντα πρόσωπα καταργώντας τυχόν άδειες που έχουν
@@ -101,28 +101,28 @@ pandora::query($query);
 
 $query = "UPDATE `letrak`.`parousia`" .
 	" SET `adidos` = NULL, `adapo` = NULL, `adeos` = NULL" .
-	" WHERE (`imerisio` = " . $kodikos . ")" .
+	" WHERE (`deltio` = " . $kodikos . ")" .
 	" AND (`adeos` < '" . $simera . "')";
 pandora::query($query);
 
 pandora::query("SET @tax := 0");
 
 $query = "INSERT INTO `letrak`.`ipografi`" .
-	" (`imerisio`, `taxinomisi`, `titlos`, `armodios`)" .
+	" (`deltio`, `taxinomisi`, `titlos`, `armodios`)" .
 	" SELECT " . $kodikos . ", (@tax := @tax + 1), `titlos`, `armodios`" .
-	" FROM `letrak`.`ipografi` WHERE `imerisio` = " . $protipo["kodikos"] .
+	" FROM `letrak`.`ipografi` WHERE `deltio` = " . $protipo["kodikos"] .
 	" ORDER BY `taxinomisi`";
 pandora::query($query);
 
 pandora::commit();
 
-$imerisio = (new Imerisio())->from_database($kodikos);
+$deltio = (new Deltio())->from_database($kodikos);
 
-if ($imerisio->oxi_kodikos())
+if ($deltio->oxi_kodikos())
 lathos("Αποτυχία εντοπισμού αντιγράφου");
 
 
-print '{"imerisio":' . $imerisio->json_economy() . '}';
+print '{"deltio":' . $deltio->json_economy() . '}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
