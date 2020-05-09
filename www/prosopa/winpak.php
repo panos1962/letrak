@@ -56,8 +56,15 @@ lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 $imerominia = $imerisio->imerominia_get()->format("Y-m-d");
 $imerominia = "2019-10-10";
+$imerominia = "2019-07-02";
 $prosapo = $imerisio->prosapo_get();
 
+$query = "SELECT" .
+	" DATE_SUB('" . $imerominia . "', INTERVAL 1 DAY)," .
+	" DATE_ADD('" . $imerominia . "', INTERVAL 1 DAY)";
+$row = pandora::first_row($query, MYSQLI_NUM);
+
+print '"diastima": "' . $row[0] . " - " . $row[1] . '"}",';
 print '"data":{';
 $s = "";
 foreach ($plist as $ipalilos => $data)
@@ -70,9 +77,6 @@ exit(0);
 
 function katagrafi($imerominia, $prosapo, $ipalilos, $orario, $karta, &$s) {
 	$orario = (new Orario())->from_string($orario);
-print $s . $ipalilos . ':"' . $orario->apo_get() . '"';
-$s = ",";
-return;
 
 	if ($orario->oxi_orario())
 	return;

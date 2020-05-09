@@ -200,7 +200,11 @@ class Orario {
 		if (($ora === 24) && ($lepto != 0))
 		return NULL;
 
-		return sprintf("%0d:%02d", $ora, $lepto);
+		return sprintf("%02d:%02d", $ora, $lepto);
+	}
+
+	private static function oxi_ora_lepto($s) {
+		return !self::is_ora_lepto($s);
 	}
 
 	public function apo_set($s) {
@@ -235,7 +239,7 @@ class Orario {
 		if (!isset($apo))
 		return $this;
 
-		$eos = self::oxi_ora_lepto($x[1]);
+		$eos = self::is_ora_lepto($x[1]);
 
 		if (!isset($eos))
 		return $this;
