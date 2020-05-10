@@ -254,7 +254,7 @@ prosopa.deltioProcess = (deltio) => {
 	}
 	
 	ipdesc += imr.ipiresiaList[ipiresia];
-	$('#peDeltioIpiresia').text(ipdesc);
+	$('#peDeltioIpiresia').val(ipdesc);
 
 	return prosopa;
 };
@@ -1029,10 +1029,9 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
-	prosopa.editorAdiaIdosDOM = $('#peAdiaIdos');
-	prosopa.editorAdiaPerigrafiDOM = $('#peAdiaPerigrafi');
-	prosopa.editorAdiaApoDOM = $('#peAdiaApo');
-	prosopa.editorAdiaEosDOM = $('#peAdiaEos');
+	prosopa.editorAdidosDOM = $('#peAdidos');
+	prosopa.editorAdapoDOM = $('#peAdapo');
+	prosopa.editorAdeosDOM = $('#peAdeos');
 	prosopa.editorExcuseDOM = $('#peExcuse');
 	prosopa.editorInfoDOM = $('#peInfo');
 
@@ -1042,10 +1041,7 @@ prosopa.editorSetup = () => {
 	addClass('pePanelPliktro');
 
 	prosopa.editorPliktroAkiroDOM = $('#pePliktroAkiro').
-	on('click', (e) => {
-		e.stopPropagation();
-		prosopa.parousiaEditorDOM.dialog('close');
-	});
+	on('click', (e) => prosopa.editorClose(e));
 
 	$('#pePliktroEpanafora').
 	on('click', (e) => {
@@ -1058,16 +1054,11 @@ prosopa.editorSetup = () => {
 	return prosopa;
 };
 
-prosopa.editorClear = () => {
-	prosopa.parousiaEditorDOM.
-	find('input,textarea').
-	val('');
+prosopa.editorClose = (e) => {
+	if (e)
+	e.stopPropagation();
 
-	return prosopa;
-};
-
-prosopa.editorClose = () => {
-	prosopa.parousiaEditorDOM.dialog('open');
+	prosopa.parousiaEditorDOM.dialog('close');
 	return prosopa;
 };
 
@@ -1079,9 +1070,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 	removeData('parousia');
 
 	if (!parousia)
-	return prosopa.
-	editorClear().
-	editorClose();
+	parousia = new letrak.parousia();
 
 	let meraora = parousia.meraoraGet();
 
@@ -1096,8 +1085,13 @@ prosopa.parousiaEdit = (e, parousia) => {
 	attr('disabled', true).
 	val(parousia.onomateponimo);
 
+	let orario = parousia.orario;
+
+	if (orario)
+	orario = orario.toString();
+
 	prosopa.editorIpalilosOrarioDOM.
-	val(parousia.orario.toString());
+	val(orario);
 
 	prosopa.editorIpalilosKartaDOM.
 	val(parousia.karta);
@@ -1105,23 +1099,20 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.editorMeraoraDOM.
 	val(meraora);
 
-	prosopa.editorAdiaIdosDOM.
+	prosopa.editorAdidosDOM.
 	val(parousia.adidos);
 
-	prosopa.editorAdiaPerigrafiDOM.
-	val(imr.adidosList[parousia.adidos]);
-
-	prosopa.editorAdiaApoDOM.
+	prosopa.editorAdapoDOM.
 	val(parousia.adapo);
 
-	prosopa.editorAdiaEosDOM.
+	prosopa.editorAdeosDOM.
 	val(parousia.adeos);
 
 	prosopa.editorExcuseDOM.
 	val(parousia.excuse);
 
 	prosopa.editorInfoDOM.
-	text(parousia.infoGet());
+	val(parousia.infoGet());
 
 	prosopa.parousiaEditorDOM.
 	data('parousia', parousia).
@@ -1287,7 +1278,6 @@ this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
 */
 this.orario = new letrak.orario('830-1530');
-console.log(this);
 
 	let meraora = this.meraoraGet();
 

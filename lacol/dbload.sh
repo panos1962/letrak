@@ -1,4 +1,4 @@
-#!/usr/bin/env awk -f
+#!/usr/local/bin/awk -f
 
 @include "/var/opt/pandora/lib/pandora.awk"
 @include "/var/opt/kartel/lib/karteldb.awk"
@@ -8,6 +8,7 @@ BEGIN {
 	OFS = "\t"
 
 	deltio_create = "awk -v creator=3307 " \
+		"-v imerominia=2020-02-26 " \
 		"-f /var/opt/letrak/lib/deltio.awk"
 	select_ipiresia()
 	create_deltio("ΠΡΟΣΕΛΕΥΣΗ")

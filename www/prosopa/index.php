@@ -73,8 +73,7 @@ document_body();
 			<label for="peDeltioIpiresia">
 				Υπηρεσία
 			</label>
-			<textarea id="peDeltioIpiresia"
-				disabled="true">
+			<textarea id="peDeltioIpiresia" disabled="true">
 			</textarea>
 		</div>
 	</div>
@@ -110,21 +109,47 @@ document_body();
 
 	<div class="peFormaEnotita">
 		<div class="peFormaInputLine">
-			<label for="peAdiaIdos">
+			<label for="peAdidos">
 				Άδεια
 			</label>
-			<input id="peAdiaIdos">
-			<input id="peAdiaPerigrafi" disabled="true">
-		</div>
-		<div class="peFormaInputLine">
-			<label for="peAdiaApo">
+			<select id="peAdidos">
+			<option value="" selected="true"></option>
+			<option value="ΚΑΝΟΝΙΚΗ">ΚΑΝΟΝΙΚΗ</option>
+			<option value="ΚΑΝΟΝΙΚΗ (ΜΤΦ)">ΚΑΝΟΝΙΚΗ (ΜΤΦ)</option>
+			<option value="ΑΝΑΡΡΩΤΙΚΗ Υ/Δ">ΑΝΑΡΡΩΤΙΚΗ Υ/Δ</option>
+			<option value="ΑΝΑΡΡΩΤΙΚΗ">ΑΝΑΡΡΩΤΙΚΗ</option>
+			<option value="ΑΣΘΕΝΕΙΑΣ Ε/Μ">ΑΣΘΕΝΕΙΑΣ Ε/Μ</option>
+			<option value="ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ">ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ</option>
+			<option value="ΓΟΝΙΚΗ ΕΠΙΔΟΣΗΣ">ΓΟΝΙΚΗ ΕΠΙΔΟΣΗΣ</option>
+			<option value="ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ">ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ</option>
+			<option value="ΣΕΜΙΝΑΡΙΟ">ΣΕΜΙΝΑΡΙΟ</option>
+			<option value="ΕΚΠΑΙΔΕΥΤΙΚΗ">ΕΚΠΑΙΔΕΥΤΙΚΗ</option>
+			<option value="ΣΠΟΥΔΑΣΤΙΚΗ">ΣΠΟΥΔΑΣΤΙΚΗ</option>
+			<option value="ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ">ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ</option>
+			<option value="ΚΥΗΣΕΩΣ & ΛΟΧΕΙΑΣ">ΚΥΗΣΕΩΣ &amp; ΛΟΧΕΙΑΣ</option>
+			<option value="ΓΑΜΟΥ">ΓΑΜΟΥ</option>
+			<option value="ΠΕΝΘΟΥΣ">ΠΕΝΘΟΥΣ</option>
+			<option value="ΕΚΛΟΓΙΚΗ">ΕΚΛΟΓΙΚΗ</option>
+			<option value="ΑΘΛΗΤΙΚΗ">ΑΘΛΗΤΙΚΗ</option>
+			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
+			<option value="ΕΠΙΤΡΟΠΗ ΥΓΕΙΑΣ">ΕΠΙΤΡΟΠΗ ΥΓΕΙΑΣ</option>
+			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
+			<option value="ΑΝΑΠΗΡΙΚΗ">ΑΝΑΠΗΡΙΚΗ</option>
+			<option value="ΑΤΥΧΗΜΑΤΟΣ">ΑΤΥΧΗΜΑΤΟΣ</option>
+			<option value="ΣΤΡΑΤΙΩΤΙΚΗ">ΣΤΡΑΤΙΩΤΙΚΗ</option>
+			<option value="ΑΠΕΡΓΙΑ">ΑΠΕΡΓΙΑ</option>
+			<option value="ΔΙΑΘΕΣΙΜΟΤΗΤΑ">ΔΙΑΘΕΣΙΜΟΤΗΤΑ</option>
+			<option value="ΑΡΓΙΑ">ΑΡΓΙΑ</option>
+			<option value="ΠΑΥΣΗ">ΠΑΥΣΗ</option>
+			</select>
+			<label for="peAdapo">
 				Από
 			</label>
-			<input id="peAdiaApo">
-			<label for="peAdiaEos">
+			<input id="peAdapo">
+			<label for="peAdeos">
 				Έως
 			</label>
-			<input id="peAdiaEos">
+			<input id="peAdeos">
 		</div>
 	</div>
 
@@ -153,9 +178,9 @@ document_body();
 	</div>
 
 	<div id="pePanel">
-		<input id="pePliktroAkiro" type="button" value="Άκυρο">
-		<input id="pePliktroEpanafora" type="button" value="Επαναφορά">
 		<input id="pePliktroIpovoli" type="button" value="Υποβολή">
+		<input id="pePliktroEpanafora" type="button" value="Επαναφορά">
+		<input id="pePliktroAkiro" type="button" value="Άκυρο">
 	</div>
 </form>
 <?php

@@ -853,8 +853,7 @@ deltio.prosopa = (opts) => {
 		'klonos': opts.klonos,
 	};
 
-	if (deltio.hasOwnProperty('adidosList')) {
-		self.LETRAK.deltio.adidosList = deltio.adidosList;
+	if (deltio.hasOwnProperty('ipiresiaList')) {
 		self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
 		deltio.prosopaOpen(kodikos);
 		return deltio;
@@ -1017,21 +1016,14 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 	return deltio.fyiError(rsp.error);
 
 	pnd.fyiClear();
-	deltio.adidosArray = rsp.adidos;
 	deltio.ipiresiaArray = rsp.ipiresia;
 	deltio.ipalilosArray = rsp.ipalilos;
-
-	deltio.adidosList = {};
-	pnd.arrayWalk(deltio.adidosArray, (v) => {
-		deltio.adidosList[v.k] = v.p;
-	});
 
 	deltio.ipiresiaList = {};
 	pnd.arrayWalk(deltio.ipiresiaArray, (v) => {
 		deltio.ipiresiaList[v.k] = v.p;
 	});
 
-	self.LETRAK.deltio.adidosList = deltio.adidosList;
 	self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
 	deltio.prosopaOpen(kodikos);
 

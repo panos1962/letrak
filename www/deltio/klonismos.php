@@ -87,14 +87,14 @@ if (pandora::affected_rows() !== 1) {
 	lathos("Αποτυχία δημιουργίας αντιγράφου");
 }
 
-// Κρατάμε τον κωδικό του νεοεισαχθέντος παρουσιολογίου
+// Κρατάμε τον κωδικό του νεοεισαχθέντος παρουσιολογίου.
 
 $kodikos = pandora::insert_id();
 
-$flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`";
-
 // Εισάγουμε τα πρόσωπα με τα ίδια στοιχεία που είχαν στο πρωτότυπο, χωρίς
 // τις εξαιρέσεις.
+
+$flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`";
 
 $query = "INSERT INTO `letrak`.`parousia` (`deltio`, " . $flist . ")" .
 	" SELECT " . $kodikos . ", " . $flist .

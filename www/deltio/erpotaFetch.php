@@ -63,22 +63,6 @@ print '{';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT `kodikos` AS `k`, `perigrafi` AS `p`" .
-	" FROM `letrak`.`adidos` ORDER BY `taxinomisi`, `kodikos`";
-$result = pandora::query($query);
-
-print '"adidos":[';
-
-$enotiko = "";
-while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	print $enotiko . pandora::json_string($row);
-	$enotiko = ",";
-}
-
-print '],';
-
-///////////////////////////////////////////////////////////////////////////////@
-
 $query = "SELECT " .
 	"`kodikos` AS `k`, " .
 	"`perigrafi` AS `p` " .

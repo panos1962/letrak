@@ -80,6 +80,7 @@ pull:
 
 .PHONY: cleanup
 cleanup:
+	@(cd www/prosopa && make cleanup)
 	@(cd www/deltio && make cleanup)
 	@(cd www/isodos && make cleanup)
 	@(cd www && make cleanup)
