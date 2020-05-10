@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-09
 // Updated: 2020-05-07
 // Updated: 2020-04-25
 // Created: 2020-04-24
@@ -146,7 +147,7 @@ document_body();
 			<label for="peInfo">
 				Παρατηρήσεις
 			</label>
-			<textarea id="peInfo">
+			<textarea id="peInfo" maxlength="140">
 			</textarea>
 		</div>
 	</div>

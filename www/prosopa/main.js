@@ -30,6 +30,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-09
+// Updated: 2020-05-08
 // Updated: 2020-05-05
 // Updated: 2020-05-04
 // Updated: 2020-05-02
@@ -1032,6 +1034,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorAdiaApoDOM = $('#peAdiaApo');
 	prosopa.editorAdiaEosDOM = $('#peAdiaEos');
 	prosopa.editorExcuseDOM = $('#peExcuse');
+	prosopa.editorInfoDOM = $('#peInfo');
 
 	prosopa.editorPanelDOM = $('#pePanel').
 	children('input').
@@ -1081,11 +1084,9 @@ prosopa.parousiaEdit = (e, parousia) => {
 	editorClose();
 
 	let meraora = parousia.meraoraGet();
-console.log('>>>>', meraora);
 
 	if (meraora)
 	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
-console.log('>>>>', meraora);
 
 	prosopa.editorIpalilosKodikosDOM.
 	attr('disabled', true).
@@ -1118,6 +1119,9 @@ console.log('>>>>', meraora);
 
 	prosopa.editorExcuseDOM.
 	val(parousia.excuse);
+
+	prosopa.editorInfoDOM.
+	text(parousia.infoGet());
 
 	prosopa.parousiaEditorDOM.
 	data('parousia', parousia).
@@ -1322,12 +1326,12 @@ console.log(this);
 
 	append($('<div>').
 	addClass('parousiaExcuse').
-	text(this.excuseGet())).
+	text(this.excuseAdiaGet())).
 
 	append($('<div>').
 	attr('title', 'Παρατηρήσεις').
 	addClass('parousiaInfo').
-	text(this.infoGet()));
+	text(this.infoAdiaGet()));
 
 	return dom;
 };
