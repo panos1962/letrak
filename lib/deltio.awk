@@ -40,6 +40,9 @@ BEGIN {
 	FS = "\t"
 	spawk_verbose = 0
 
+	if (verbose == "")
+	verbose = 1
+
 	if (!creator)
 	pd_fatal("Δεν έχει καθοριστεί κωδικός υπαλλήλου (creator)")
 
@@ -117,6 +120,7 @@ function add_deltio(kodip, perigrafi, prosapo,		query,
 	}
 
 	if (!count) {
+		if (verbose)
 		pd_errmsg(kodip ": δεν βρέθηκαν υπάλληλοι στην υπηρεσία")
 
 		if (spawk_submit("ROLLBACK WORK") != 2)
@@ -128,6 +132,7 @@ function add_deltio(kodip, perigrafi, prosapo,		query,
 	if (spawk_submit("COMMIT WORK") != 2)
 	pd_fatal("commit transaction failed")
 
+	if (verbose)
 	print kodip, deltio, count
 }
 

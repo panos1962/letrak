@@ -269,6 +269,7 @@ prosopa.ipografesProcess = (ipografes) => {
 		append(v.domGet());
 	});
 
+	prosopa.pliktraRefresh();
 	return prosopa;
 };
 
@@ -514,13 +515,20 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.ipografiIpografon = () => {
+// Η function "trexonIpografonGet" επιστρέφει τον τρέχοντα υπογράφοντα,
+// δηλαδή την πρώτη εγγραφή υπογραφής που δεν έχει συμπληρωμένο το check
+// υπογραφής.
+
+prosopa.trexonIpografonGet = () => {
 	let ipografi;
 
 	prosopa.ipografesDOM.
 	children('.ipografi').
 	each(function() {
 		let x = $(this).data('ipografi');
+
+		if (!x)
+		return;
 
 		if (!x.checkokGet())
 		return;
@@ -532,19 +540,25 @@ prosopa.ipografiIpografon = () => {
 	return ipografi;
 };
 
-prosopa.ipografiProtos = () => {
+// Η function "protosIpografonGet" επιστρέφει τον πρώτο υπογράφοντα, είτε
+// αυτός έχει υπογράψει ήδη, είτε όχι.
+
+prosopa.protosIpografonGet = () => {
 	let dom = prosopa.ipografesDOM.
 	children('.ipografi').
 	first();
 
-	if (!dom.length)
+	if (dom.length !== 1)
 	return undefined;
 
-	return new letrak.ipografi().
-	armodiosSet(dom.children('.ipografArmodios').text()).
-	titlosSet(dom.children('.ipografTitlos').text()).
-	checkokSet(dom.children('.ipografCheckok').text());
+	return dom.data('ipografi');
 };
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "xristisIsIpografon" επιστρέφει την εγγραφή υπογραφής που αφορά
+// τον ίδιο τον χρήστη, εφόσον αυτός συμπεριλαμβάνεται στους υπογράφοντες,
+// αλλιώς επιστρέφει undefined.
 
 prosopa.xristisIsIpografon = () => {
 	if (letrak.noXristis())
@@ -558,6 +572,9 @@ prosopa.xristisIsIpografon = () => {
 	each(function() {
 		let x = $(this).data('ipografi');
 
+		if (!x)
+		return;
+
 		if (x.armodiosGet() !== xristis)
 		return;
 
@@ -568,9 +585,47 @@ prosopa.xristisIsIpografon = () => {
 	return ipografi;
 };
 
-prosopa.xristisNotIpografon = () => {
+prosopa.xristisOxiIpografon = () => {
 	return !prosopa.xristisIsIpografon();
 };
+
+prosopa.xristisIsProtosIpografon = () => {
+	let xristisIpografi = prosopa.xristisIsIpografon();
+
+	if (!xristisIpografi)
+	return false;
+
+	let protosIpografon = prosopa.protosIpografonGet();
+
+	if (!protosIpografon)
+	return false;
+
+	if (xristisIpografi != protosIpografon)
+	return false;
+
+	return true;
+};
+
+prosopa.xristisOxiProtosIpografon = () => !prosopa.xristisIsProtosIpografon();
+
+prosopa.xristisIsTrexonIpografon = () => {
+	let xristisIpografi = prosopa.xristisIsIpografon();
+
+	if (!xristisIpografi)
+	return false;
+
+	let trexonIpografon = prosopa.trexonIpografonGet();
+
+	if (!trexonIpografon)
+	return false;
+
+	if (xristisIpografi != trexonIpografon)
+	return false;
+
+	return true;
+};
+
+prosopa.xristisOxiTrexonIpografon = () => !prosopa.xristisIsTrexonIpografon();
 
 prosopa.ipografiCandiToggle = function(e, ipografiDOM) {
 	if (e)
@@ -995,10 +1050,7 @@ prosopa.prosopaSetup = () => {
 };
 
 prosopa.prosopaUpdateTabsRefresh = () => {
-	let update = true;
-
-	if (prosopa.deltio.isClosed())
-	update = false;
+	let update = prosopa.prosopaUpdateAllow();
 
 	pnd.toolbarLeftDOM.
 	children('.prosopaPliktroUpdate').
@@ -1006,6 +1058,24 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 
 	return prosopa;
 }
+
+prosopa.prosopaUpdateAllow = () => {
+	if (prosopa.deltio.isClosed())
+	return false;
+
+	let ipografi = prosopa.protosIpografonGet();
+
+	if (!ipografi)
+	return true;
+
+	if (ipografi.checkokGet())
+	return false;
+
+	if (prosopa.xristisOxiProtosIpografon())
+	return false;
+
+	return true;
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 

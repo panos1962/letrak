@@ -70,7 +70,11 @@ $query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
 " ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
 " WHERE (`parousia`.`deltio` = " . $kodikos . ")";
 
-if ($prosvasi->oxi_prosvasi_ipiresia($deltio->ipiresia_get()))
+$ipalilos = $prosvasi->ipalilos_get();
+$ipiresia = $deltio->ipiresia_get();
+
+if ($deltio->oxi_ipografon($ipalilos) &&
+	$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
 $query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
 
 $query .= " ORDER BY `l`, `f`, `r`, `i`";

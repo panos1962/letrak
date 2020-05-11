@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-11
 // Updated: 2020-05-09
 // Updated: 2020-05-06
 // Updated: 2020-05-05
@@ -154,17 +155,6 @@ class letrakCore {
 
 	public static function deltio_is_anikto($kodikos) {
 		return !deltio_is_klisto($kodikos);
-	}
-
-	public static function ipalilos_is_simetoxi($deltio, $ipalilos) {
-		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
-			" WHERE (`deltio` = " . $deltio . ")" .
-			" AND (`ipalilos` = " . $ipalilos . ")";
-		return pandora::first_row($query);
-	}
-
-	public static function ipalilos_oxi_simetoxi($deltio, $ipalilos) {
-		return !self::ipalilos_is_simetoxi($deltio, $ipalilos);
 	}
 }
 
@@ -624,7 +614,13 @@ class Deltio {
 		return $this->from_array($row);
 	}
 
-	public function is_ipografi($ipalilos = NULL) {
+	///////////////////////////////////////////////////////////////////////@
+
+	// Η μέθοδος "is_ipografon" δέχεται έναν αριθμό μητρώου εργαζομένου
+	// και ελέγχει αν ο συγκεκριμένος εργαζόμενος συμπεριλαμβάνεται στους
+	// υπογράφοντες του παρουσιολογίου.
+
+	public function is_ipografon($ipalilos = NULL) {
 		$deltio = $this->kodikos_get();
 
 		if (letrak::deltio_invalid_kodikos($deltio))
@@ -640,11 +636,15 @@ class Deltio {
 		return pandora::first_row($query);
 	}
 
-	public function oxi_ipografi($ipalilos = NULL) {
-		return !$this->is_ipografi($ipalilos);
+	public function oxi_ipografon($ipalilos = NULL) {
+		return !$this->is_ipografon($ipalilos);
 	}
 
-	public function is_simetoxi($ipalilos = NULL) {
+	// Η μέθοδος "is_simetexon" δέχεται έναν αριθμό μητρώου εργαζομένου
+	// και ελέγχει αν ο συγκεκριμένος εργαζόμενος συμπεριλαμβάνεται στους
+	// ελεγχόμενους εργαζόμενους του παρουσιολογίου.
+
+	public function is_simetexon($ipalilos = NULL) {
 		$deltio = $this->kodikos_get();
 
 		if (letrak::deltio_invalid_kodikos($deltio))
@@ -1083,10 +1083,10 @@ class Prosvasi {
 
 		$ipalilos = $this->ipalilos_get();
 
-		if ($deltio->is_simetoxi($ipalilos))
+		if ($deltio->is_ipografon($ipalilos))
 		return TRUE;
 
-		if ($deltio->is_ipografi($ipalilos))
+		if ($deltio->is_simetexon($ipalilos))
 		return TRUE;
 
 		return FALSE;
