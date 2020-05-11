@@ -696,14 +696,27 @@ class Deltio {
 		if (letrak::deltio_invalid_kodikos($kodikos))
 		return FALSE;
 
-		$query = "SELECT 1 FROM `letrak`.`ipografi`" .
-			" WHERE (`deltio` = " . $kodikos . ")" .
-			" AND (`checkok` IS NULL)";
+		$query = "SELECT `checkok` FROM `letrak`.`ipografi`" .
+			" WHERE (`deltio` = " . $kodikos . ")";
+		$result = pandora::query($query);
 
-		if (pandora::first_row($query, MYSQLI_NUM))
-		return FALSE;
+		$anipografo = FALSE;
+		$count = 0;
 
+		while ($row = $result->fetch_array(MYSQLI_NUM)) {
+			$count++;
+
+			if ($row[0])
+			continue;
+
+			$result->free();
+			return FALSE;
+		}
+
+		if ($count)
 		return TRUE;
+
+		return FALSE;
 	}
 
 	public function is_anipografo() {
