@@ -125,12 +125,11 @@ function epikirosi($deltio, $xristis) {
 		" AND (`taxinomisi` = " . $tax . ")";
 	pandora::query($query);
 
-	if (pandora::affected_rows() != 1) {
-		pandora::rollback();
-		lathos("Αδυναμία επικύρωσης παρουσιολογίου");
-	}
+	if (pandora::affected_rows())
+	return pandora::commit();
 
-	pandora::commit();
+	pandora::rollback();
+	lathos("Αδυναμία επικύρωσης παρουσιολογίου");
 }
 
 function akirosi($deltio, $xristis) {
@@ -148,7 +147,10 @@ function akirosi($deltio, $xristis) {
 		" AND (`taxinomisi` >= " . $row[0] . ")";
 	pandora::query($query);
 
-	if (!pandora::affected_rows())
+	if (pandora::affected_rows())
+	return pandora::commit();
+
+	pandora::rollback();
 	lathos("Δεν αναιρέθηκαν υπογραφές");
 }
 

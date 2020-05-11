@@ -89,11 +89,31 @@
 	width 4.5em
 	font-family $fontSteno
 
-.deltioTipos
-	width 5em
+.deltioProsapo
+	position relative
+	width 6.8em
+	text-align center
 	font-family $fontSteno
 	letter-spacing -1px
 	background-color #ffe999
+	&:before
+	&:after
+		position absolute
+		bottom 2px
+	&:before
+		left 4px
+		content '\25b6'
+	&:after
+		right 4px
+		content '\25c0'
+
+.deltioProsapoProselefsi:before
+.deltioProsapoProselefsi:after
+	color #50a735
+
+.deltioProsapoApoxorisi:before
+.deltioProsapoApoxorisi:after
+	color #325a7b
 
 .deltioPerigrafi
 	width 30em

@@ -738,7 +738,7 @@ class Deltio {
 		if ($x) $row["e"] = $x;
 
 		$x = $this->closed_get();
-		if ($x) $row["c"] = $x->format("Y-m-d");
+		if ($x) $row["c"] = $x->format("Y-m-d H:i");
 
 		return pandora::json_string($row);
 	}

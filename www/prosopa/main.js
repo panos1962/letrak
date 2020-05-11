@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-11
 // Updated: 2020-05-09
 // Updated: 2020-05-08
 // Updated: 2020-05-05
@@ -1060,7 +1061,18 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 }
 
 prosopa.prosopaUpdateAllow = () => {
-	if (prosopa.deltio.isClosed())
+	if (!prosopa.hasOwnProperty('deltio'))
+	return false;
+
+	let deltio = prosopa.deltio;
+
+	if (!deltio)
+	return false;
+
+	if (!(deltio instanceof letrak.deltio))
+	return false;
+
+	if (deltio.isClosed())
 	return false;
 
 	let ipografi = prosopa.protosIpografonGet();
@@ -1080,17 +1092,7 @@ prosopa.prosopaUpdateAllow = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorSetup = () => {
-	prosopa.parousiaEditorDOM = $('#parousiaEditor').
-	dialog({
-		'title': 'Λεπτομερή στοιχεία συμβάντος',
-		'width': 'auto',
-		'height': 'auto',
-		'position': {
-			'my': 'left+290 top+90',
-			'at': 'left top',
-		},
-	}).
-	dialog('close');
+	prosopa.parousiaEditorDOM = $('#parousiaEditor');
 
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
@@ -1105,7 +1107,9 @@ prosopa.editorSetup = () => {
 	prosopa.editorExcuseDOM = $('#peExcuse');
 	prosopa.editorInfoDOM = $('#peInfo');
 
-	prosopa.editorPanelDOM = $('#pePanel').
+	prosopa.editorPanelDOM = $('#pePanel');
+
+	prosopa.editorPanelDOM.
 	children('input').
 	addClass('letrak-formaPliktro').
 	addClass('pePanelPliktro');
@@ -1120,6 +1124,25 @@ prosopa.editorSetup = () => {
 		let parousia = prosopa.parousiaEditorDOM.data('parousia');
 		prosopa.parousiaEdit(null, parousia);
 	});
+
+	prosopa.parousiaEditorDOM.
+	dialog({
+		'title': 'Λεπτομερή στοιχεία συμβάντος',
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left+290 top+90',
+			'at': 'left top',
+		},
+		'open': () => {
+			let update = prosopa.prosopaUpdateAllow();
+
+			prosopa.editorPanelDOM.
+			children('.prosopaPliktroUpdate').
+			css('display', update ? 'inline-block' : 'none');
+		}
+	}).
+	dialog('close');
 
 	return prosopa;
 };

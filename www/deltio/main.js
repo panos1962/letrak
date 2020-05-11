@@ -1035,6 +1035,17 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 letrak.deltio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
 	let closedDOM;
+	let prosapoClass = 'deltioProsapo';
+console.log(this);
+
+	switch (this.prosapoGet()) {
+	case 'ΠΡΟΣΕΛΕΥΣΗ':
+		prosapoClass += ' deltioProsapoProselefsi';
+		break;
+	case 'ΑΠΟΧΩΡΗΣΗ':
+		prosapoClass += ' deltioProsapoApoxorisi';
+		break;
+	}
 
 	let dom = $('<div>').
 	data('deltio', this).
@@ -1057,13 +1068,14 @@ letrak.deltio.prototype.domGet = function() {
 	text(this.ipiresiaGet())).
 
 	append($('<div>').
-	addClass('deltioTipos').
+	addClass(prosapoClass).
 	text(this.prosapoGet())).
 
 	append($('<div>').
 	addClass('deltioPerigrafi').
 	text(this.perigrafiGet()));
 
+console.log(this.closedGet());
 	if (this.closedGet())
 	closedDOM.html(deltio.minima.deltioKatastasiClosedSymbol);
 
