@@ -26,6 +26,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-12
+// Updated: 2020-05-11
 // Updated: 2020-05-04
 // Updated: 2020-05-02
 // Updated: 2020-04-29
@@ -69,6 +71,7 @@ deltio.minima = {
 	'filtraIpalilosLabel': 'Υπάλληλος',
 	'filtraImerominiaLabel': 'Ημερομηνία',
 	'filtraProsapoLabel': 'Είδος',
+	'filtraKatastasiLabel': 'Κατάσταση',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
@@ -171,10 +174,22 @@ deltio.filtraSetup = () => {
 	attr('for', 'prosapoFiltro').
 	text(deltio.minima.filtraProsapoLabel)).
 	append(deltio.filtraProsapoDOM = $('<select>').
-	append($('<option>').val('').text('ΟΛΑ').attr('selected', true)).
+	append($('<option>').val('').text('').attr('selected', true)).
 	append($('<option>').val('ΠΡΟΣΕΛΕΥΣΗ').text('ΠΡΟΣΕΛΕΥΣΗ')).
 	append($('<option>').val('ΑΠΟΧΩΡΗΣΗ').text('ΑΠΟΧΩΡΗΣΗ')).
 	attr('id', 'prosapoFiltro').
+	addClass('filtraInput'))).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(deltio.filtraKatastasiDOMDOM = $('<label>').
+	attr('for', 'katastasiFiltro').
+	text(deltio.minima.filtraKatastasiLabel)).
+	append(deltio.filtraKatastasiDOM = $('<select>').
+	append($('<option>').val('').text('').attr('selected', true)).
+	append($('<option>').val('ΚΛΕΙΣΤΑ').text('ΚΛΕΙΣΤΑ')).
+	append($('<option>').val('ΕΚΚΡΕΜΗ').text('ΕΚΚΡΕΜΗ')).
+	attr('id', 'katastasiFiltro').
 	addClass('filtraInput'))).
 
 	append($('<div>').
@@ -303,6 +318,7 @@ deltio.filtraFormaIpovoli = (e) => {
 		'ipiresia': deltio.filtraIpiresiaDOM.val(),
 		'imerominia': deltio.filtraImerominiaDOM.val(),
 		'prosapo': deltio.filtraProsapoDOM.val(),
+		'katastasi': deltio.filtraKatastasiDOM.val(),
 		'ipalilos': deltio.filtraIpalilosDOM.val(),
 	};
 
@@ -1075,7 +1091,6 @@ console.log(this);
 	addClass('deltioPerigrafi').
 	text(this.perigrafiGet()));
 
-console.log(this.closedGet());
 	if (this.closedGet())
 	closedDOM.html(deltio.minima.deltioKatastasiClosedSymbol);
 
