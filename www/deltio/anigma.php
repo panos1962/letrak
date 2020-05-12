@@ -63,8 +63,9 @@ lathos("Δεν έχετε δικαίωμα ανοίγματος παρουσιο
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`deltio` SET `closed` = NULL" .
-	" WHERE `kodikos` = " . $kodikos;
+$query = "UPDATE `letrak`.`deltio` SET `katastasi` = " .
+	pandora::sql_string(LETRAK_DELTIO_KATASTASI_KIROMENO) . "," .
+	" `alagi` = NOW() WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 
 if (pandora::affected_rows() != 1)

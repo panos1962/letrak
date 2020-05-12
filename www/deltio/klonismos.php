@@ -72,14 +72,15 @@ $ipiresia = $protipo["ipiresia"];
 $prosapo = $protipo["prosapo"];
 $perigrafi = $protipo["perigrafi"];
 
-$query = "INSERT INTO `letrak`.`deltio` " .
+$query = "INSERT IGNORE INTO `letrak`.`deltio` " .
 "(`protipo`, `ipalilos`, `imerominia`," .
-" `ipiresia`, `prosapo`, `perigrafi`) VALUES (" .
+" `ipiresia`, `prosapo`, `perigrafi`, `alagi`) VALUES (" .
 $protipo["kodikos"] . ", " .
 $prosvasi->ipalilos_get() . ", '" . $simera . "', " .
 pandora::sql_string($ipiresia) . ", " .
 pandora::sql_string($prosapo) . ", " .
-pandora::sql_string($perigrafi) . ")";
+pandora::sql_string($perigrafi) . "," .
+"NOW())";
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {

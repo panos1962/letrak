@@ -72,10 +72,10 @@ const prosopa = {};
 prosopa.minima = {
 	'ipografiCheckSymbol': '&#x2714;',
 
-	'deltioKatastasiNeoSymbol': '&#x25D4;',
-	'deltioKatastasiEkremesSymbol': '&#x25D1;',
-	'deltioKatastasiReadySymbol': '&#x25D5;',
-	'deltioKatastasiClosedSymbol': '&#x2714;',
+	'deltioKatastasiΕΚΚΡΕΜΕΣSymbol': '&#x25D4;',
+	'deltioKatastasiΑΝΥΠΟΓΡΑΦΟSymbol': '&#x25D1;',
+	'deltioKatastasiΚΥΡΩΜΕΝΟSymbol': '&#x25D5;',
+	'deltioKatastasiΕΠΙΚΥΡΩΜΕΝΟSymbol': '&#x2714;',
 
 	'deltioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 	'ipografesTabLabel': 'Υπογραφές',
@@ -92,8 +92,8 @@ prosopa.minima = {
 	'ipografiDeleteTabLabel': 'Απαλοιφή',
 	'ipografiDeleteTabTitle': 'Απαλοιφή υπογράφοντος υπαλλήλου',
 
-	'ipografiEpikirosiTabLabel': 'Επικύρωση',
-	'ipografiEpikirosiTabTitle': 'Επικύρωση στοιχείων παρουσιολογίου',
+	'ipografiKirosiTabLabel': 'Κύρωση',
+	'ipografiKirosiTabTitle': 'Κύρωση στοιχείων παρουσιολογίου',
 
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
@@ -308,15 +308,15 @@ prosopa.ipografesSetup = () => {
 	val(prosopa.minima.ipografiAnaneosiTabLabel).
 	on('click', (e) => prosopa.ipografiAnaneosi(e))).
 
-	append(prosopa.ipografiEpikirosiTabDOM = $('<input>').
+	append(prosopa.ipografiKirosiTabDOM = $('<input>').
 	attr({
 		'type': 'button',
-		'title': prosopa.minima.ipografiEpikirosiTabTitle,
+		'title': prosopa.minima.ipografiKirosiTabTitle,
 	}).
 	addClass('letrak-formaPliktro').
 	addClass('praxiPliktro').
-	val(prosopa.minima.ipografiEpikirosiTabLabel).
-	on('click', (e) => prosopa.ipografiPraxi(e, 'epikirosi'))).
+	val(prosopa.minima.ipografiKirosiTabLabel).
+	on('click', (e) => prosopa.ipografiPraxi(e, 'kirosi'))).
 
 	append(prosopa.ipografiAkirosiTabDOM = $('<input>').
 	attr({
@@ -399,68 +399,38 @@ prosopa.pliktraRefresh = () => {
 };
 
 prosopa.deltioKatastasiRefresh = () => {
-	let katastasi = prosopa.deltioKatastasiGet();
+	let katastasi = prosopa.deltio.katastasiGet();
 
 	prosopa.deltioKatastasiDOM.
-	removeClass('deltioKatastasiNeo').
-	removeClass('deltioKatastasiEkremes').
-	removeClass('deltioKatastasiReady').
-	removeClass('deltioKatastasiClosed').
+	removeClass('letrak-deltioKatastasiEkremes').
+	removeClass('letrak-deltioKatastasiAnipografo').
+	removeClass('letrak-deltioKatastasiKiromeno').
+	removeClass('letrak-deltioKatastasiEpikiromeno').
 	empty();
 
 	if (!katastasi)
 	return prosopa;
 
+	let katastasiEnglish = letrak.deltio.katastasiEnglishMap[katastasi];
 	prosopa.deltioKatastasiDOM.
-	addClass('deltioKatastasi' + katastasi).
+	addClass('letrak-deltioKatastasi' + katastasiEnglish).
 	html(prosopa.minima['deltioKatastasi' + katastasi + 'Symbol']);
 
 	return prosopa;
 };
 
-prosopa.deltioKatastasiGet = () => {
-	if (prosopa.deltio.closedGet())
-	return 'Closed';
-
-	let proto = false;
-	let count = 0;
-	let check = 0;
-
-	prosopa.ipografesDOM.
-	children('.ipografi').
-	each(function() {
-		count++;
-		let ipografi = $(this).data('ipografi')
-
-		if (!ipografi.checkokGet())
-		return;
-
-		check++;
-
-		if (count === 1)
-		proto = true;
-	});
-
-	if (!count)
-	return 'Neo';
-
-	if (check === count)
-	return 'Ready';
-
-	if (proto)
-	return 'Ekremes';
-
-	return 'Neo';
-};
-
 prosopa.ipografiUpdateTabsRefresh = () => {
 	let prosvasi = false;
+console.log('/////', prosopa.deltio);
+console.log('?????', prosopa.deltio.isAnikto());
 
-	if (!prosopa.deltio.closedGet()) {
+	if (prosopa.deltio.isAnikto()) {
 		let ipiresia = prosopa.deltio.ipiresiaGet();
+console.log(ipiresia);
 		prosvasi = letrak.prosvasiIsUpdate(ipiresia);
 	}
 
+console.log('$$$$$', prosvasi);
 	prosopa.ipografesPanelDOM.
 	children('.ipografiUpdatePliktro').
 	css('display', prosvasi ? '' : 'none');
@@ -473,12 +443,12 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 	children('.praxiPliktro').
 	css('display', 'none');
 
-	if (prosopa.deltio.closedGet())
+	if (prosopa.deltio.isKlisto())
 	return prosopa;
 
 	let xristis = letrak.xristisIpalilosGet();
 	let alosprin = false;
-	let epikirosi = false;
+	let kirosi = false;
 	let akirosi = false;
 
 	prosopa.ipografesDOM.
@@ -500,11 +470,11 @@ prosopa.ipografiPraxiTabsRefresh = () => {
 		}
 
 		if (!alosprin)
-		epikirosi = true;
+		kirosi = true;
 	});
 
-	if (epikirosi)
-	prosopa.ipografiEpikirosiTabDOM.
+	if (kirosi)
+	prosopa.ipografiKirosiTabDOM.
 	css('display', '');
 
 	if (akirosi)
@@ -1072,7 +1042,7 @@ prosopa.prosopaUpdateAllow = () => {
 	if (!(deltio instanceof letrak.deltio))
 	return false;
 
-	if (deltio.isClosed())
+	if (deltio.isKlisto())
 	return false;
 
 	let ipografi = prosopa.protosIpografonGet();
@@ -1460,8 +1430,8 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		return true;
 	};
 
-	if (rsp.hasOwnProperty('closed'))
-	prosopa.deltio.closed = rsp.closed;
+	if (rsp.hasOwnProperty('kastasi'))
+	prosopa.deltio.katastasi = rsp.katastasi;
 
 	prosopa.
 	fyiClear().

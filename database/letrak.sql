@@ -163,7 +163,13 @@ CREATE TABLE `deltio` (
 		'ΑΠΟΧΩΡΗΣΗ'
 	) NULL DEFAULT NULL COMMENT 'Είδος παρουσιολογίου',
 	`perigrafi`	VARCHAR(128) NULL DEFAULT NULL COMMENT 'Περιγραφή',
-	`closed`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα κλεισίματος',
+	`katastasi`	ENUM (
+		'ΕΚΚΡΕΜΕΣ',
+		'ΑΝΥΠΟΓΡΑΦΟ',
+		'ΚΥΡΩΜΕΝΟ',
+		'ΕΠΙΚΥΡΩΜΕΝΟ'
+	) NOT NULL DEFAULT 'ΕΚΚΡΕΜΕΣ' COMMENT 'Κατάσταση παρουσιολογίου',
+	`alagi`		DATETIME NOT NULL COMMENT 'Ημερομηνία και ώρα αλλαγής κατάστασης',
 
 	PRIMARY KEY (
 		`kodikos`

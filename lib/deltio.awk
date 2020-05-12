@@ -102,9 +102,9 @@ function add_deltio(kodip, perigrafi, prosapo,		query,
 
 	query = "INSERT INTO `letrak`.`deltio` " \
 		"(`ipalilos`, `imerominia`, `ipiresia`, " \
-		"`prosapo`, `perigrafi`) VALUES (" \
+		"`prosapo`, `perigrafi`, `alagi`) VALUES (" \
 		creator ", '" imerominia "', " spawk_escape(kodip) ", " \
-		prosapo ", " perigrafi ")"
+		prosapo ", " perigrafi ", NOW())"
 
 	if (spawk_submit(query) != 2)
 	return pd_errmsg($0 ": αποτυχία δημιουργίας νέου παρουσιολογίου")

@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-12
 // Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
@@ -84,10 +85,18 @@ if (pandora::affected_rows() !== 1) {
 	lathos("Απέτυχε η διαγραφή υπογραφής");
 }
 
+$katastasi = $deltio::katastasi_update();
+
+if (!isset($katastasi)) {
+	pandora::rollback();
+	lathos("Αστοχία ενημέρωσης κατάστασης δελτίου");
+}
+
 letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
+print '"katastasi":' . letrak::katastasi_json($katastasi) . ",";
 letrak::ipografes_json($kodikos);
 print '}';
 

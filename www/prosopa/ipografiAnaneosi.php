@@ -53,7 +53,7 @@ $deltio = (new Deltio())->from_database($kodikos);
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '{';
-print '"closed":' . ($deltio->is_klisto() ? 'true' : 'false') . ',';
+print '"katastasi":' . pandora::json_string($deltio->katastasi_get()) . ",";
 letrak::ipografes_json($kodikos);
 print '}';
 

@@ -66,8 +66,9 @@ lathos("Δεν υπάρχουν οι απαραίτητες υπογραφές")
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`deltio`" .
-	" SET `closed` = NOW()" .
+$query = "UPDATE `letrak`.`deltio` SET" .
+	" `katastasi` = 'ΕΠΙΚΥΡΩΜΕΝΟ'," .
+	" `alagi` = NOW()" .
 	" WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 

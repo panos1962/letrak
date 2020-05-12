@@ -18,7 +18,7 @@
 //
 // @DESCRIPTION BEGIN
 // Το παρόν πρόγραμμα καλείται από τη σελίδα επεξεργασίας παρουσιολογίου και
-// σκοπό έχει την επικύρωση του παρουσιολογίου ή την αναίρεση της υπογραφής.
+// σκοπό έχει την κύρωση του παρουσιολογίου ή την αναίρεση της υπογραφής.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -44,10 +44,18 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 lathos("Διαπιστώθηκε ανώνυμη χρήση");
 
-$deltio = pandora::parameter_get("deltio");
+$kodikos = pandora::parameter_get("deltio");
 
-if (letrak::deltio_invalid_kodikos($deltio))
+if (letrak::deltio_invalid_kodikos($kodikos))
 lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+
+$deltio = (new Deltio())->from_database($kodikos);
+
+if ($deltio->oxi_kodikos())
+lathos("Αδυναμία εντοπισμού παρουσιολογίου");
+
+if ($deltio->is_klisto())
+lathos("Το παρουσιολόγιο έχει κλείσει");
 
 $armodios = pandora::parameter_get("armodios");
 
@@ -60,8 +68,8 @@ switch ($praxi) {
 case 'akirosi':
 	$minima = "αναίρεσης υπογραφής";
 	break;
-case 'epikirosi':
-	$minima = "επικύρωσης αποτελεσμάτων";
+case 'kirosi':
+	$minima = "κύρωσης παρουσιολογίου";
 	break;
 default:
 	lathos("Ακαθόριστη πράξη");
@@ -72,14 +80,19 @@ $xristis = $prosvasi->ipalilos_get();
 if ($xristis != $armodios)
 lathos("Διαπιστώθηκε αναρμοδιότητα πράξης " . $minima);
 
-if (letrak::deltio_is_klisto($deltio))
-lathos("Το παρουσιολόγιο έχει κλείσει");
-
 ///////////////////////////////////////////////////////////////////////////////@
 
-$praxi($deltio, $xristis);
+$katastasi = $praxi();
+
+if (!$katastasi) {
+	pandora::rollback();
+	lathos("Αδυναμία " . $minima);
+}
+
+pandora::commit();
 
 print '{';
+print '"katastasi":' . pandora::json_string($katastasi) . ',';
 letrak::ipografes_json($deltio);
 print '}';
 
@@ -87,9 +100,13 @@ exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-function epikirosi($deltio, $xristis) {
+function kirosi() {
+	global $kodikos;
+	global $deltio;
+	global $xristis;
+
 	$query = "SELECT `taxinomisi` FROM `letrak`.`ipografi`" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`checkok` IS NULL)";
 	$result = pandora::query($query);
 
@@ -104,37 +121,45 @@ function epikirosi($deltio, $xristis) {
 	lathos("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
 
 	$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` = " . $tax . ")";
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
 	if ($row[0] != $xristis)
-	lathos("Δεν έχετε δικαίωμα επικύρωσης");
+	lathos("Δεν έχετε δικαίωμα κύρωσης");
 
 	pandora::autocommit(FALSE);
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` >= " . $tax . ")";
 	pandora::query($query);
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NOW()" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` = " . $tax . ")";
 	pandora::query($query);
 
-	if (pandora::affected_rows())
-	return pandora::commit();
+	if (!pandora::affected_rows())
+	return FALSE;
 
-	pandora::rollback();
-	lathos("Αδυναμία επικύρωσης παρουσιολογίου");
+	$katastasi = $deltio->katastasi_update();
+
+	if (!$katastasi)
+	return FALSE;
+
+	return $katastasi;
 }
 
-function akirosi($deltio, $xristis) {
+function akirosi() {
+	global $kodikos;
+	global $deltio;
+	global $xristis;
+
 	$query = "SELECT MIN(`taxinomisi`) FROM `letrak`.`ipografi`" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`armodios` = " . $xristis . ")";
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
@@ -143,15 +168,19 @@ function akirosi($deltio, $xristis) {
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
-		" WHERE (`deltio` = " . $deltio . ")" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`taxinomisi` >= " . $row[0] . ")";
 	pandora::query($query);
 
-	if (pandora::affected_rows())
-	return pandora::commit();
+	if (!pandora::affected_rows())
+	return FALSE;
 
-	pandora::rollback();
-	lathos("Δεν αναιρέθηκαν υπογραφές");
+	$katastasi = $deltio->katastasi_update();
+
+	if (!$katastasi)
+	return FALSE;
+
+	return $katastasi;
 }
 
 function lathos($s) {

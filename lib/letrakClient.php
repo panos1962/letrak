@@ -45,7 +45,7 @@ define("LETRAK_DELTIO_PROJECTION_COLUMNS",
 	"`ipiresia` AS `r`," .
 	"`prosapo` AS `o`," .
 	"`perigrafi` AS `e`," .
-	"`closed` AS `c`");
+	"`katastasi` AS `s`");
 define("LETRAK_PROSOPA_PROJECTION_COLUMNS",
 	"`parousia`.`ipalilos` AS `i`, " .
 	"`ipalilos`.`eponimo` AS `l`, " .

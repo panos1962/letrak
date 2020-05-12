@@ -41,6 +41,11 @@ define("LETRAK_IPALILOS_KODIKOS_MAX", 999999);
 define("LETRAK_DELTIO_KODIKOS_MAX", 999999);
 define("LETRAK_IPOGRAFI_TAXINOMISI_MAX", 255);
 
+define("LETRAK_DELTIO_KATASTASI_EKREMES", "ΕΚΚΡΕΜΕΣ");
+define("LETRAK_DELTIO_KATASTASI_ANIPOGRAFO", "ΑΝΥΠΟΓΡΑΦΟ");
+define("LETRAK_DELTIO_KATASTASI_KIROMENO", "ΚΥΡΩΜΕΝΟ");
+define("LETRAK_DELTIO_KATASTASI_EPIKIROMENO", "ΕΠΙΚΥΡΩΜΕΝΟ");
+
 // Η συμβολική σταθερά "LETRAK_ORARIO_ANOXI_MIN" δείχνει το μέγιστο όριο
 // συμπλήρωσης ωραρίου σε λεπτά. Αν, π.χ. το εν λόγω όριο είναι 15 λεπτά
 // και κάποιος εργαζόμενος προσέλθει στην υπηρεσία του 28 λεπτά αργότερα
@@ -140,14 +145,14 @@ class letrakCore {
 		if (self::deltio_invalid_kodikos($kodikos))
 		return TRUE;
 
-		$query = "SELECT `closed` FROM `letrak`.`deltio`" .
+		$query = "SELECT `katastasi` FROM `letrak`.`deltio`" .
 			" WHERE `kodikos` = " . $kodikos;
 		$row = pandora::first_row($query);
 
 		if (!$row)
 		return TRUE;
 
-		if ($row[0])
+		if ($row[0] === LETRAK_DELTIO_KATASTASI_EPIKIROMENO)
 		return TRUE;
 
 		return FALSE;
@@ -446,7 +451,8 @@ class Deltio {
 	public $ipiresia = NULL;	// κωδικός υπηρεσίας
 	public $prosapo = NULL;		// προσέλευση/αποχώρηση
 	public $perigrafi = NULL;	// περιγραφή παρουσιολογίου
-	public $closed = NULL;		// ημερομηνία και ώρα κλεισίματος
+	public $katastasi = NULL;	// κατάσταση παρουσιολογίου
+	public $alagi = NULL;		// ημερομηνία και ώρα κλεισίματος
 
 	public function __construct($x = NULL) {
 		$this->from_array($x);
@@ -460,7 +466,8 @@ class Deltio {
 		$this->ipiresia = NULL;
 		$this->prosapo = NULL;
 		$this->perigrafi = NULL;
-		$this->closed = NULL;
+		$this->katastasi = NULL;
+		$this->alagi = NULL;
 
 		if (!isset($x))
 		return $this;
@@ -557,13 +564,30 @@ class Deltio {
 		return $this;
 	}
 
-	public function closed_set($closed = NULL, $format = "Y-m-d H:i:s") {
-		$this->closed = NULL;
+	public function katastasi_set($katastasi = NULL) {
+		$this->katastasi = LETRAK_DELTIO_KATASTASI_EKREMES;
 
-		if (!isset($closed))
+		if (!isset($katastasi))
 		return $this;
 
-		$this->closed = pandora::date2date($closed, $format);
+		switch ($katastasi) {
+		case LETRAK_DELTIO_KATASTASI_EKREMES:
+		case LETRAK_DELTIO_KATASTASI_ANIPOGRAFO:
+		case LETRAK_DELTIO_KATASTASI_KIROMENO:
+		case LETRAK_DELTIO_KATASTASI_EPIKIROMENO:
+			$this->katastasi = $katastasi;
+		}
+
+		return $this;
+	}
+
+	public function alagi_set($alagi = NULL, $format = "Y-m-d H:i:s") {
+		$this->alagi = NULL;
+
+		if (!isset($alagi))
+		return $this;
+
+		$this->alagi = pandora::date2date($alagi, $format);
 		return $this;
 	}
 
@@ -595,12 +619,34 @@ class Deltio {
 		return $this->perigrafi;
 	}
 
-	public function closed_get($format = NULL) {
-		return pandora::date2date($this->closed, NULL, $format);
+	public function katastasi_get() {
+		$katastasi = $this->katastasi;
+
+		if (!isset($katastasi))
+		return LETRAK_DELTIO_KATASTASI_EKREMES;
+
+		switch ($katastasi) {
+		case LETRAK_DELTIO_KATASTASI_EKREMES:
+		case LETRAK_DELTIO_KATASTASI_ANIPOGRAFO:
+		case LETRAK_DELTIO_KATASTASI_KIROMENO:
+		case LETRAK_DELTIO_KATASTASI_EPIKIROMENO:
+			return $katastasi;
+		}
+
+		return LETRAK_DELTIO_KATASTASI_EKREMES;
+	}
+
+	public function alagi_get($format = NULL) {
+		return pandora::date2date($this->alagi, NULL, $format);
 	}
 
 	public function is_klisto() {
-		return $this->closed_get();
+		$katastasi = $this->katastasi_get();
+
+		if ($katastasi === LETRAK_DELTIO_KATASTASI_EPIKIROMENO)
+		return TRUE;
+
+		return FALSE;
 	}
 
 	public function is_anikto() {
@@ -723,13 +769,96 @@ class Deltio {
 		return !$this->is_ipogegrameno();
 	}
 
+	public function katastasi_scan() {
+		if ($this->oxi_kodikos())
+		return LETRAK_DELTIO_KATASTASI_EKREMES;
+
+		$kodikos = $this->kodikos_get();
+
+		$query = "SELECT `checkok` FROM `letrak`.`ipografi`" .
+			" WHERE `deltio` = " . $kodikos .
+			" ORDER BY `taxinomisi`";
+		$result = pandora::query($query);
+
+		$count = 0;
+		$checkok = 0;
+
+		while ($row = $result->fetch_array(MYSQLI_NUM)) {
+			$count++;
+
+			if (!$row[0])
+			break;
+
+			$checkok++;
+		}
+
+		// Αν δεν υπάρχουν καθόλου υπογραφές το δελτίο θεωρείται
+		// εκκρεμές.
+
+		if (!$count)
+		return LETRAK_DELTIO_KATASTASI_EKREMES;
+
+		// Το ίδιο ισχύει και στην περίπτωση που το δελτίο δεν έχει
+		// υπογραφεί από τον πρώτο υπογράφοντα.
+
+		if (!$checkok)
+		return LETRAK_DELTIO_KATASTASI_EKREMES;
+
+		// Αν ο πρώτος υπογράφων έχει υπογράψει αλλά υπάρχει έστω και
+		// ένας υπογράφων που δεν έχει υπογράψει ακόμη, τότε το δελτίο
+		// θεωρείται ανυπόγραφο.
+
+		if ($checkok < $count)
+		return LETRAK_DELTIO_KATASTASI_ANIPOGRAFO;
+
+		// Στο σημείο αυτό έχουμε διασφαλίσει ότι το δελτίο έχει
+		// υπογράφοντες και όλοι οι υπογράφοντες έχουν υπογράψει.
+		// Σ' αυτήν την περίπτωση ελέγχουμε και την κατάσταση του
+		// δελτίου προκειμένου να αποφανθούμε αν το δελτίο είναι
+		// απλώς κυρωμένο ή επικυρωμένο.
+
+		$query = "SELECT `katastasi` FROM `letrak`.`deltio`" .
+			" WHERE `kodikos` = " . $kodikos;
+		$row = pandora::first_row($query);
+
+		if (!$row)
+		return LETRAK_DELTIO_KATASTASI_KIROMENO;
+
+		if ($row[0] !== LETRAK_DELTIO_KATASTASI_EPIKIROMENO)
+		return LETRAK_DELTIO_KATASTASI_KIROMENO;
+
+		return LETRAK_DELTIO_KATASTASI_EPIKIROMENO;
+	}
+
+	public function katastasi_update() {
+		if ($this->oxi_kodikos())
+		return NULL;
+
+		$kodikos = $this->kodikos_get();
+		$katastasi_deltio = $this->katastasi_get();
+		$katastasi_pragma = $this->katastasi_scan();
+
+		if ($katastasi_deltio === $katastasi_pragma)
+		return $katastasi_deltio;
+
+		$query = "UPDATE `letrak`.`deltio` SET  `katastasi` = " .
+			pandora::json_string($katastasi_pragma) . "," .
+			" `alagi` = NOW() WHERE `kodikos` = " . $kodikos;
+		pandora::query($query);
+
+		if (pandora::affected_rows() != 1)
+		return NULL;
+
+		return $katastasi_pragma;
+	}
+
 	public static $economy_map = array(
 		"kodikos" => "k",
 		"imerominia" => "i",
 		"ipiresia" => "r",
 		"prosapo" => "o",
 		"perigrafi" => "e",
-		"closed" => "c",
+		"katastasi" => "s",
 	);
 
 	public function json_economy() {
@@ -750,8 +879,10 @@ class Deltio {
 		$x = $this->perigrafi_get();
 		if ($x) $row["e"] = $x;
 
-		$x = $this->closed_get();
-		if ($x) $row["c"] = $x->format("Y-m-d H:i");
+		$x = $this->katastasi_get();
+
+		if ($x && ($x !== LETRAK_DELTIO_KATASTASI_EKREMES))
+		$row["s"] = $x;
 
 		return pandora::json_string($row);
 	}

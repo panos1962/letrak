@@ -1,6 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////@
-//
-// @BEGIN
 //
 // @COPYRIGHT BEGIN
 // Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
@@ -88,7 +85,11 @@ deltio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
-	'deltioKatastasiClosedSymbol': '&#x2714;',
+
+	'deltioKatastasiΕΚΚΡΕΜΕΣSymbol': '&#x25D4;',
+	'deltioKatastasiΑΝΥΠΟΓΡΑΦΟSymbol': '&#x25D1;',
+	'deltioKatastasiΚΥΡΩΜΕΝΟSymbol': '&#x25D5;',
+	'deltioKatastasiΕΠΙΚΥΡΩΜΕΝΟSymbol': '&#x2714;',
 };
 
 pnd.domInit(() => {
@@ -486,7 +487,7 @@ deltio.candiTabsShow = () => {
 	if (!x)
 	return deltio;
 
-	let klisto = x.closedGet();
+	let klisto = x.isKlisto();
 	let ipiresia = x.ipiresiaGet();
 	let update = letrak.prosvasiIsUpdate(ipiresia);
 
@@ -669,8 +670,8 @@ deltio.klisimo = (e) => {
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο');
 
 	try {
-		var imr = dom.data('deltio');
-		var kodikos = imr.kodikosGet();
+		var dlt = dom.data('deltio');
+		var kodikos = dlt.kodikosGet();
 	}
 
 	catch (e) {
@@ -683,7 +684,7 @@ deltio.klisimo = (e) => {
 		'data': {
 			'kodikos': kodikos,
 		},
-		'success': (rsp) => deltio.klisimoProcess(rsp, imr, dom),
+		'success': (rsp) => deltio.klisimoProcess(rsp, dlt, dom),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα κλεισίματος παρουσιολογίου');
 			console.error(e);
@@ -693,7 +694,7 @@ deltio.klisimo = (e) => {
 	return deltio;
 };
 
-deltio.klisimoProcess = (msg, imr, dom) => {
+deltio.klisimoProcess = (msg, dlt, dom) => {
 	if (msg) {
 		pnd.fyiError(msg);
 		console.error(msg);
@@ -702,9 +703,9 @@ deltio.klisimoProcess = (msg, imr, dom) => {
 
 
 	pnd.fyiClear();
-	imr.closedSet(true);
-	dom.children('.deltioClosed').
-	html(deltio.minima.deltioKatastasiClosedSymbol);
+	dlt.katastasiSet('ΕΠΙΚΥΡΩΜΕΝΟ');
+	dom.children('.deltioEpikiromeno').
+	html(deltio.minima.deltioKatastasiEpikiromenoSymbol);
 	deltio.candiTabsShow();
 
 	return deltio;
@@ -722,8 +723,8 @@ deltio.anigma = (e) => {
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο');
 
 	try {
-		var imr = dom.data('deltio');
-		var kodikos = imr.kodikosGet();
+		var dlt = dom.data('deltio');
+		var kodikos = dlt.kodikosGet();
 	}
 
 	catch (e) {
@@ -736,7 +737,7 @@ deltio.anigma = (e) => {
 		'data': {
 			'kodikos': kodikos,
 		},
-		'success': (rsp) => deltio.anigmaProcess(rsp, imr, dom),
+		'success': (rsp) => deltio.anigmaProcess(rsp, dlt, dom),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα ανοίγματος παρουσιολογίου');
 			console.error(e);
@@ -746,7 +747,7 @@ deltio.anigma = (e) => {
 	return deltio;
 };
 
-deltio.anigmaProcess = (msg, imr, dom) => {
+deltio.anigmaProcess = (msg, dlt, dom) => {
 	if (msg) {
 		pnd.fyiError(msg);
 		console.error(msg);
@@ -754,8 +755,8 @@ deltio.anigmaProcess = (msg, imr, dom) => {
 	}
 
 	pnd.fyiClear();
-	imr.closedSet();
-	dom.children('.deltioClosed').text('');
+	dlt.katasiSet('ΚΥΡΩΜΕΝΟ');
+	dom.children('.deltioEpikiromeno').text('');
 	deltio.candiTabsShow();
 
 	return deltio;
@@ -799,7 +800,6 @@ deltio.klonismos = (e) => {
 deltio.klonosProcess = (x, protipo) => {
 	if (x.error) {
 		pnd.fyiError(x.error);
-		console.error(x.error);
 		return deltio;
 	}
 
@@ -1050,9 +1050,9 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 
 letrak.deltio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
-	let closedDOM;
+	let katastasiDOM;
 	let prosapoClass = 'deltioProsapo';
-console.log(this);
+console.log('>>>>>', this);
 
 	switch (this.prosapoGet()) {
 	case 'ΠΡΟΣΕΛΕΥΣΗ':
@@ -1067,8 +1067,8 @@ console.log(this);
 	data('deltio', this).
 	addClass('deltio').
 
-	append(closedDOM = $('<div>').
-	addClass('deltioClosed')).
+	append(katastasiDOM = $('<div>').
+	addClass('deltioKatastasi')).
 
 	append($('<div>').
 	addClass('deltioKodikos').
@@ -1091,12 +1091,13 @@ console.log(this);
 	addClass('deltioPerigrafi').
 	text(this.perigrafiGet()));
 
-	if (this.closedGet())
-	closedDOM.html(deltio.minima.deltioKatastasiClosedSymbol);
+	let katastasi = this.katastasiGet();
+	let katastasiEnglish = letrak.deltio.katastasi2english(katastasi);
 
-	else
-	closedDOM.text('');
-	
+	katastasiDOM.
+	addClass('letrak-deltioKatastasi' + katastasiEnglish).
+	html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
+
 	return dom;
 };
 
