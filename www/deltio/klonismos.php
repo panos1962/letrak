@@ -67,16 +67,27 @@ lathos("Δεν έχετε δικαίωμα δημιουργίας παρουσι
 pandora::autocommit(FALSE);
 
 $simera = date("Y-m-d");
-
 $ipiresia = $protipo["ipiresia"];
 $prosapo = $protipo["prosapo"];
 $perigrafi = $protipo["perigrafi"];
+
+switch ($prosapo) {
+case "ΠΡΟΣΕΛΕΥΣΗ":
+	$prosapo = "ΑΠΟΧΩΡΗΣΗ";
+	break;
+case "ΑΠΟΧΩΡΗΣΗ":
+	$prosapo = "ΠΡΟΣΕΛΕΥΣΗ";
+	break;
+default:
+	lathos("Ακαθόριστος τύπος παρουσιολογίου");
+}
 
 $query = "INSERT IGNORE INTO `letrak`.`deltio` " .
 "(`protipo`, `ipalilos`, `imerominia`," .
 " `ipiresia`, `prosapo`, `perigrafi`, `alagi`) VALUES (" .
 $protipo["kodikos"] . ", " .
-$prosvasi->ipalilos_get() . ", '" . $simera . "', " .
+$prosvasi->ipalilos_get() . ", " .
+pandora::sql_string($simera) . ", " .
 pandora::sql_string($ipiresia) . ", " .
 pandora::sql_string($prosapo) . ", " .
 pandora::sql_string($perigrafi) . "," .

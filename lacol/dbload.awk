@@ -10,7 +10,6 @@ BEGIN {
 		"-v imerominia=2020-02-26 " \
 		"-f /var/opt/letrak/lib/deltio.awk"
 	select_ipiresia()
-	create_deltio("ΠΡΟΣΕΛΕΥΣΗ")
 	create_deltio("ΑΠΟΧΩΡΗΣΗ")
 	update_prosvasi()
 	close(deltio_create)

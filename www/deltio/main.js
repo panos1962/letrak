@@ -922,7 +922,7 @@ deltio.klonosProcess = (x, protipo) => {
 	addClass('deltioCandi'));
 
 	deltio.zebraFix();
-	ofelimoDOM.scrollTop(0);
+	pnd.ofelimoDOM.scrollTop(0);
 
 	deltio.
 	candiTabsShow().
