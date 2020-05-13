@@ -1046,6 +1046,13 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	return prosopa;
 }
 
+// Η function "prosopaUpdateAllow" ελέγχει αν ο χρήστης έχει πρόσβαση να
+// αλλοιώσει καθ' οιονδήποτε τρόπο το περιεχόμενο του παρουσιολογίου.
+// Όμως, ο μόνος υπάλληλος που έχει δικαίωμα αλλοίωσης του περιεχομένου
+// ενός παρουσιολογίου είναι ο πρώτος υπογράφων. Συνεπώς η function ελέγχει
+// αν ο χρήστης είναι ο πρώτος υπογράφων, ωστόσο βασική προϋπόθεση είναι το
+// παρουσιολόγιο να μην έχει κυρωθεί.
+
 prosopa.prosopaUpdateAllow = () => {
 	if (!prosopa.hasOwnProperty('deltio'))
 	return false;
@@ -1064,7 +1071,7 @@ prosopa.prosopaUpdateAllow = () => {
 	let ipografi = prosopa.protosIpografonGet();
 
 	if (!ipografi)
-	return true;
+	return false;
 
 	if (ipografi.checkokGet())
 	return false;

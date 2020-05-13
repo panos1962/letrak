@@ -142,11 +142,11 @@ deltio.filtraSetup = () => {
 
 	append(deltio.filtraTabDOM = letrak.tabDOM().
 	attr('title', deltio.minima.filtraShowTitle).
-	data('status', 'hidden').
 	append(deltio.minima.filtraTabLabel).
 	on('click', (e) => deltio.filtraToggle(e))).
 
 	append(deltio.paleoteraTabDOM = letrak.tabDOM().
+	addClass('deltioTab').
 	attr('title', deltio.minima.paleoteraTitle).
 	append(deltio.minima.paleoteraTabLabel).
 	on('click', (e) => deltio.paleotera(e)));
