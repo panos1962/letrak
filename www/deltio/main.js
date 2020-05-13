@@ -72,12 +72,14 @@ deltio.minima = {
 	'filtraIpiresiaLabel': 'Υπηρεσία',
 	'paleoteraTabLabel': 'Παλαιότερα',
 	'paleoteraTitle': 'Επιλογή παλαιότερων παρουσιολογίων',
-	'diagrafiTabLabel': 'Διαγραφή',
-	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
-	'klisimoTabLabel': 'Κύρωση',
-	'klisimoTitle': 'Κύρωση επιλεγμένου παρουσιολογίου',
+	'ananeosiTabLabel': 'Ανανέωση',
+	'ananeosiTitle': 'Ανανέωση κατάστασης παρουσιολογίων',
+	'klisimoTabLabel': 'Επικύρωση',
+	'klisimoTitle': 'Επικύρωση επιλεγμένου παρουσιολογίου',
 	'anigmaTabLabel': 'Άνοιγμα',
 	'anigmaTitle': 'Άνοιγμα επιλεγμένου παρουσιολογίου',
+	'diagrafiTabLabel': 'Διαγραφή',
+	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
 	'klonosTabLabel': 'Κλώνος',
 	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
 	'epexergasiaTabLabel': 'Επεξεργασία',
@@ -133,6 +135,13 @@ deltio.selidaSetup = () => {
 
 deltio.filtraSetup = () => {
 	pnd.toolbarLeftDOM.
+
+	append(letrak.tabDOM().
+	addClass('adminTab').
+	addClass('deltioTab').
+	attr('title', deltio.minima.ananeosiTitle).
+	text(deltio.minima.ananeosiTabLabel).
+	on('click', (e) => deltio.ananeosi(e))).
 
 	append(deltio.filtraTabDOM = letrak.tabDOM().
 	attr('title', deltio.minima.filtraShowTitle).
@@ -232,6 +241,7 @@ deltio.filtraSetup = () => {
 	deltio.filtraDOM.dialog({
 		'title': 'Κριτήρια επιλογής',
 		'autoOpen': false,
+		'resizable': false,
 
 		'width': 'auto',
 		'height': 'auto',
@@ -543,6 +553,92 @@ deltio.clearCandi = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+deltio.ananeosi = (e) => {
+	e.stopPropagation();
+
+	let domList = deltio.browserDOM.children('.deltio');
+	let dltList = [];
+
+	domList.
+	each(function() {
+		let deltio = $(this).data('deltio');
+
+		if (!deltio)
+		return;
+
+		deltio = deltio.kodikosGet();
+
+		if (!deltio)
+		return;
+
+		dltList.push(deltio);
+	});
+
+	$.post({
+		'url': 'ananeosi.php',
+		'data': {
+			'dlist': dltList,
+		},
+		'dataType': 'json',
+		'success': (rsp) => deltio.ananeosiProcess(rsp, domList),
+		'error': (err) => {
+			pnd.fyiMessage('Σφάλμα ανανέωσης');
+			console.error(err);
+		},
+	});
+
+	return deltio;
+};
+
+deltio.ananeosiProcess = (rsp, domList) => {
+	if (rsp.error)
+	return deltio.fyiError(rsp.error);
+
+	if (!rsp.hasOwnProperty('dlist'))
+	return deltio;
+
+	domList.
+	each(function() {
+		let dlt = $(this).data('deltio');
+
+		if (!dlt)
+		return;
+
+		let kodikos = dlt.kodikosGet();
+
+		if (!kodikos)
+		return;
+
+		if (!rsp.dlist.hasOwnProperty(kodikos))
+		return;
+
+		let katastasi = rsp.dlist[kodikos];
+
+		if (!letrak.deltio.katastasiEnglishMap.
+			hasOwnProperty(katastasi))
+		return;
+
+		dlt.katastasiSet(katastasi);
+		let katastasiEnglish = letrak.deltio.
+			katastasi2english(katastasi);
+console.log(katastasiEnglish);
+
+		$(this).
+		children('.deltioKatastasi').
+		removeClass('letrak-deltioKatastasiEKREMES').
+		removeClass('letrak-deltioKatastasiANIPOGRAFO').
+		removeClass('letrak-deltioKatastasiKIROMENO').
+		removeClass('letrak-deltioKatastasiEPIKIROMENO').
+		addClass('letrak-deltioKatastasi' + katastasiEnglish).
+		html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
+	});
+		
+
+	return deltio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 deltio.paleotera = (e) => {
 	e.stopPropagation();
 
@@ -649,8 +745,10 @@ deltio.diagrafiProcess = (msg, kodikos, dom) => {
 	}
 
 	dom.remove();
-	pnd.zebraFix(deltio.browserDOM);
-	deltio.clearCandi().candiTabsHide();
+	deltio.
+	zebraFix().
+	clearCandi().
+	candiTabsHide();
 
 	pnd.fyiMessage('Το παρουσιολόγιο <b>' + kodikos +
 	'</b> διεγράφη επιτυχώς');
@@ -704,8 +802,12 @@ deltio.klisimoProcess = (msg, dlt, dom) => {
 
 	pnd.fyiClear();
 	dlt.katastasiSet('ΕΠΙΚΥΡΩΜΕΝΟ');
-	dom.children('.deltioEpikiromeno').
-	html(deltio.minima.deltioKatastasiEpikiromenoSymbol);
+	dom.children('.deltioKatastasi').
+	removeClass('letrak-deltioKatastasiEKREMES').
+	removeClass('letrak-deltioKatastasiANIPOGRAFO').
+	removeClass('letrak-deltioKatastasiKIROMENO').
+	addClass('letrak-deltioKatastasiEPIKIROMENO').
+	html(deltio.minima['deltioKatastasiΕΠΙΚΥΡΩΜΕΝΟSymbol']);
 	deltio.candiTabsShow();
 
 	return deltio;
@@ -755,8 +857,13 @@ deltio.anigmaProcess = (msg, dlt, dom) => {
 	}
 
 	pnd.fyiClear();
-	dlt.katasiSet('ΚΥΡΩΜΕΝΟ');
-	dom.children('.deltioEpikiromeno').text('');
+	dlt.katastasiSet('ΚΥΡΩΜΕΝΟ');
+	dom.children('.deltioKatastasi').
+	removeClass('letrak-deltioKatastasiEKREMES').
+	removeClass('letrak-deltioKatastasiANIPOGRAFO').
+	addClass('letrak-deltioKatastasiKIROMENO').
+	removeClass('letrak-deltioKatastasiEPIKIROMENO').
+	html(deltio.minima['deltioKatastasiΚΥΡΩΜΕΝΟSymbol']);
 	deltio.candiTabsShow();
 
 	return deltio;
@@ -821,8 +928,7 @@ deltio.klonosProcess = (x, protipo) => {
 	data('candi', true).
 	addClass('deltioCandi'));
 
-	pnd.
-	zebraFix(deltio.browserDOM).
+	deltio.zebraFix();
 	ofelimoDOM.scrollTop(0);
 
 	deltio.
@@ -991,9 +1097,9 @@ deltio.deltioProcess = (rsp, opts) => {
 		deltio.imerominiaLast = pnd.date(ilast, '%D-%M-%Y');
 	}
 
-	if (count) {
-		pnd.zebraFix(deltio.browserDOM);
+	deltio.zebraFix();
 
+	if (count) {
 		if (opts.onFound)
 		opts.onFound();
 	}
@@ -1052,7 +1158,6 @@ letrak.deltio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
 	let katastasiDOM;
 	let prosapoClass = 'deltioProsapo';
-console.log('>>>>>', this);
 
 	switch (this.prosapoGet()) {
 	case 'ΠΡΟΣΕΛΕΥΣΗ':
@@ -1102,6 +1207,24 @@ console.log('>>>>>', this);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+deltio.zebraFix = () => {
+	pnd.zebraFix(deltio.browserDOM);
+
+	let count = deltio.browserDOM.children('.deltio').length;
+
+	if (count)
+	pnd.toolbarLeftDOM.
+	children('.deltioTab').
+	addClass('deltioTabVisible');
+
+	else
+	pnd.toolbarLeftDOM.
+	children('.deltioTab').
+	removeClass('deltioTabVisible');
+
+	return deltio;
+};
 
 deltio.fyiMessage = (s) => {
 	pnd.fyiMessage(s);

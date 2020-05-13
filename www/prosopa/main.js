@@ -402,10 +402,10 @@ prosopa.deltioKatastasiRefresh = () => {
 	let katastasi = prosopa.deltio.katastasiGet();
 
 	prosopa.deltioKatastasiDOM.
-	removeClass('letrak-deltioKatastasiEkremes').
-	removeClass('letrak-deltioKatastasiAnipografo').
-	removeClass('letrak-deltioKatastasiKiromeno').
-	removeClass('letrak-deltioKatastasiEpikiromeno').
+	removeClass('letrak-deltioKatastasiEKREMES').
+	removeClass('letrak-deltioKatastasiANIPOGRAFO').
+	removeClass('letrak-deltioKatastasiKIROMENO').
+	removeClass('letrak-deltioKatastasiEPIKIROMENO').
 	empty();
 
 	if (!katastasi)
@@ -421,16 +421,12 @@ prosopa.deltioKatastasiRefresh = () => {
 
 prosopa.ipografiUpdateTabsRefresh = () => {
 	let prosvasi = false;
-console.log('/////', prosopa.deltio);
-console.log('?????', prosopa.deltio.isAnikto());
 
 	if (prosopa.deltio.isAnikto()) {
 		let ipiresia = prosopa.deltio.ipiresiaGet();
-console.log(ipiresia);
 		prosvasi = letrak.prosvasiIsUpdate(ipiresia);
 	}
 
-console.log('$$$$$', prosvasi);
 	prosopa.ipografesPanelDOM.
 	children('.ipografiUpdatePliktro').
 	css('display', prosvasi ? '' : 'none');
@@ -1430,7 +1426,7 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		return true;
 	};
 
-	if (rsp.hasOwnProperty('kastasi'))
+	if (rsp.hasOwnProperty('katastasi'))
 	prosopa.deltio.katastasi = rsp.katastasi;
 
 	prosopa.
