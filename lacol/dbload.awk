@@ -1,5 +1,3 @@
-#!/usr/local/bin/awk -f
-
 @include "/var/opt/pandora/lib/pandora.awk"
 @include "/var/opt/kartel/lib/karteldb.awk"
 
@@ -15,7 +13,17 @@ BEGIN {
 	create_deltio("ΠΡΟΣΕΛΕΥΣΗ")
 	create_deltio("ΑΠΟΧΩΡΗΣΗ")
 	update_prosvasi()
-	exit(0)
+	close(deltio_create)
+}
+
+NF == 2 {
+	update_orario($1, $2)
+}
+
+function update_orario(ipalilos, orario,		query) {
+	query = "UPDATE `letrak`.`parousia` SET `orario` = " \
+		spawk_escape(orario) " WHERE `ipalilos` = " ipalilos
+	spawk_submit(query)
 }
 
 function select_ipiresia(		query, row) {

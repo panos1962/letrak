@@ -57,16 +57,6 @@ require('../mnt/pandora/lib/pandoraJQueryUI.js')(pnd);
 const letrak =
 require('../lib/letrak.js');
 
-// Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
-// θέτω το "imr" να δείχνει σε μεταβλητές που έχουν οριστεί στην εν λόγω
-// σελίδα προκειμένου να μπορούμε να επιτελέσουμε διάφορες ενέργειες και
-// σε αυτή τη σελίδα ως γονική.
-
-const imr = (self.opener && self.opener.hasOwnProperty('LETRAK') &&
-	self.opener.LETRAK.hasOwnProperty('deltio') &&
-	self.opener.LETRAK.deltio.row) ?
-	self.opener.LETRAK.deltio : undefined;
-
 const prosopa = {};
 
 prosopa.minima = {
@@ -101,6 +91,37 @@ prosopa.minima = {
 	'prosopoInsertTabLabel': 'Προσθήκη υπαλλήλου',
 	'winpakTabLabel': 'WIN-PAK',
 };
+
+// Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
+// θέτω το "goniki" να δείχνει σε μεταβλητές που έχουν οριστεί στην εν λόγω
+// σελίδα προκειμένου να μπορούμε να επιτελέσουμε διάφορες ενέργειες και
+// σε αυτή τη σελίδα ως γονική.
+
+prosopa.goniki = {
+	'deltio': undefined,
+	'deltioDOM': undefined,
+	'klonos': false,
+	'ipiresiaList': {},
+};
+
+(() => {
+	if (!self.opener)
+	return prosopa;
+
+	if (!self.opener.hasOwnProperty('LETRAK'))
+	return prosopa;
+
+	if (!self.opener.LETRAK.deltio)
+	return prosopa;
+
+	if (!self.opener.LETRAK.deltioDOM)
+	return prosopa;
+
+	prosopa.goniki = self.opener.LETRAK;
+console.log('>>>>', prosopa.goniki);
+
+	return prosopa;
+})();
 
 pnd.domInit(() => {
 	prosopa.opener
@@ -140,7 +161,7 @@ prosopa.selidaSetup = () => {
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	if (imr && (imr.row.kodikosGet() != prosopa.deltio))
+	if (prosopa.goniki.deltio.kodikosGet() != prosopa.deltio)
 	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
 
 	pnd.
@@ -188,16 +209,15 @@ prosopa.selidaSetup = () => {
 			prosopaProcess(rsp.prosopa).
 			pliktraRefresh();
 
-			if (imr) {
-				// Σε περίπτωση που το παρουσιολόγιο έχει
-				// μόλις δημιουργηθεί ως αντίγραφο κάποιου
-				// προηγούμενου παρουσιολογίου, φροντίζουμε
-				// να παρουσιαστεί το νεότευκτο σε ανοιγμένη
-				// μορφή.
+			// Σε περίπτωση που το παρουσιολόγιο έχει μόλις
+			// δημιουργηθεί ως αντίγραφο κάποιου προηγούμενου
+			// παρουσιολογίου, φροντίζουμε να παρουσιαστεί το
+			// νεότευκτο σε ανοιγμένη μορφή.
 
-				if (imr.klonos)
-				prosopa.ipografesTabDOM.trigger('click');
-			}
+			if (prosopa.goniki.klonos)
+			prosopa.ipografesTabDOM.trigger('click');
+
+			delete prosopa.goniki.klonos;
 		},
 		'error': (err) => {
 			pnd.fyiError('Αδυναμία λήψης στοιχείων παρουσιολογίου');
@@ -243,7 +263,7 @@ prosopa.deltioProcess = (deltio) => {
 	let ipdesc = '';
 
 	if (ipiresia.length > 3) {
-		let dief = imr.ipiresiaList[ipiresia.substr(0, 3)];
+		let dief = prosopa.goniki.ipiresiaList[ipiresia.substr(0, 3)];
 
 		if (dief) {
 			if (dief.length > 20)
@@ -254,7 +274,7 @@ prosopa.deltioProcess = (deltio) => {
 		}
 	}
 	
-	ipdesc += imr.ipiresiaList[ipiresia];
+	ipdesc += prosopa.goniki.ipiresiaList[ipiresia];
 	$('#peDeltioIpiresia').val(ipdesc);
 
 	return prosopa;
@@ -1203,7 +1223,12 @@ prosopa.winpak = () => {
 		if (!ipalilos)
 		return;
 
-		let orario = parousia.orarioGet().toString();
+		let orario = parousia.orarioGet();
+
+		if (!orario)
+		return;
+
+		orario = orario.toString();
 
 		if (!orario)
 		return;
@@ -1335,13 +1360,21 @@ this.ipalilos = 1234567;
 this.karta = 1234567;
 this.orario = '09:00-17:00';
 this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
-*/
 this.orario = new letrak.orario('830-1530');
+*/
 
 	let meraora = this.meraoraGet();
 
 	if (meraora)
 	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
+
+	let orario = this.orarioGet();
+
+	if (orario)
+	orario = orario.toString();
+
+	else
+	orario = '';
 
 	let dom = $('<div>').
 	data('parousia', this).
@@ -1367,7 +1400,7 @@ this.orario = new letrak.orario('830-1530');
 	append($('<div>').
 	attr('title', 'Ωράριο υπαλλήλου').
 	addClass('parousiaOrario').
-	text(this.orarioGet().toString())).
+	text(orario)).
 
 	append($('<div>').
 	addClass('parousiaMeraora').

@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-13
 // Updated: 2020-05-12
 // Updated: 2020-05-11
 // Updated: 2020-05-04
@@ -55,11 +56,7 @@ const deltio = {};
 // αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows,
 // όπως είναι η σελίδα "prosopa" κλπ.
 
-/*
-self.LETRAK.pnd = pnd;
-self.LETRAK.letrak = letrak;
-*/
-self.LETRAK.deltio = deltio;
+self.LETRAK = {};
 
 deltio.minima = {
 	'filtraTabLabel': 'Φίλτρα',
@@ -197,8 +194,10 @@ deltio.filtraSetup = () => {
 	text(deltio.minima.filtraKatastasiLabel)).
 	append(deltio.filtraKatastasiDOM = $('<select>').
 	append($('<option>').val('').text('').attr('selected', true)).
-	append($('<option>').val('ΚΛΕΙΣΤΑ').text('ΚΛΕΙΣΤΑ')).
-	append($('<option>').val('ΕΚΚΡΕΜΗ').text('ΕΚΚΡΕΜΗ')).
+	append($('<option>').val('ΕΚΚΡΕΜΕΣ').text('ΕΚΚΡΕΜΕΣ')).
+	append($('<option>').val('ΑΝΥΠΟΓΡΑΦΟ').text('ΑΝΥΠΟΓΡΑΦΟ')).
+	append($('<option>').val('ΚΥΡΩΜΕΝΟ').text('ΚΥΡΩΜΕΝΟ')).
+	append($('<option>').val('ΕΠΙΚΥΡΩΜΕΝΟ').text('ΕΠΙΚΥΡΩΜΕΝΟ')).
 	attr('id', 'katastasiFiltro').
 	addClass('filtraInput'))).
 
@@ -295,7 +294,6 @@ deltio.filtraToggle = function(e) {
 
 deltio.filtraEnable = function() {
 	deltio.filtraTabDOM.
-	data('status', 'visible').
 	addClass('filtraTabEnabled').
 	attr('title', deltio.minima.filtraHideTitle);
 
@@ -304,7 +302,6 @@ deltio.filtraEnable = function() {
 
 deltio.filtraDisable = function(act) {
 	deltio.filtraTabDOM.
-	data('status', 'hidden').
 	removeClass('filtraTabEnabled').
 	attr('title', deltio.minima.filtraShowTitle);
 
@@ -312,7 +309,7 @@ deltio.filtraDisable = function(act) {
 };
 
 deltio.filtraEnabled = function() {
-	return (deltio.filtraTabDOM.data('status') === 'visible');
+	return (deltio.filtraTabDOM.hasClass('filtraTabEnabled'));
 };
 
 deltio.filtraDisabled = function() {
@@ -412,8 +409,10 @@ deltio.candiTabsSetup = () => {
 	letrak.arxikiTabDOM.
 	addClass('idnacTab');
 
+/*
 	deltio.filtraTabDOM.
 	addClass('idnacTab');
+*/
 
 	deltio.paleoteraTabDOM.
 	addClass('idnacTab');
@@ -793,11 +792,8 @@ deltio.klisimo = (e) => {
 };
 
 deltio.klisimoProcess = (msg, dlt, dom) => {
-	if (msg) {
-		pnd.fyiError(msg);
-		console.error(msg);
-		return deltio;
-	}
+	if (msg)
+	return deltio.fyiError(msg);
 
 
 	pnd.fyiClear();
@@ -850,11 +846,8 @@ deltio.anigma = (e) => {
 };
 
 deltio.anigmaProcess = (msg, dlt, dom) => {
-	if (msg) {
-		pnd.fyiError(msg);
-		console.error(msg);
-		return deltio;
-	}
+	if (msg)
+	return deltio.fyiError(msg);
 
 	pnd.fyiClear();
 	dlt.katastasiSet('ΚΥΡΩΜΕΝΟ');
@@ -969,14 +962,13 @@ deltio.prosopa = (opts) => {
 	// ως DOM element, προκειμένου να μπορούμε να τα προσπελάσουμε από
 	// τη σελίδα επεξεργασίας παρουσιολογίου.
 
-	self.LETRAK.deltio = {
-		'row': x,
-		'dom': dom,
-		'klonos': opts.klonos,
-	};
+	self.LETRAK.deltio = x;
+console.log(self.LETRAK);
+	self.LETRAK.deltioDOM = dom;
+	self.LETRAK.klonos = opts.klonos;
 
 	if (deltio.hasOwnProperty('ipiresiaList')) {
-		self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
+		self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 		deltio.prosopaOpen(kodikos);
 		return deltio;
 	}
@@ -1146,7 +1138,7 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 		deltio.ipiresiaList[v.k] = v.p;
 	});
 
-	self.LETRAK.deltio.ipiresiaList = deltio.ipiresiaList;
+	self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 	deltio.prosopaOpen(kodikos);
 
 	return deltio;
