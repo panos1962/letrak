@@ -54,12 +54,12 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error_json("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $plist = pandora::parameter_get("plist");
 
@@ -69,7 +69,7 @@ print '{';
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
+letrak::fatal_error_json($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 $imerominia = $deltio->imerominia_get()->format("Y-m-d");
 $prosapo = $deltio->prosapo_get();

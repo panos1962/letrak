@@ -42,25 +42,25 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error_json("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos("Αδυναμία εντοπισμού παρουσιολογίου");
+letrak::fatal_error_json("Αδυναμία εντοπισμού παρουσιολογίου");
 
 if ($deltio->is_klisto())
-lathos("Το παρουσιολόγιο έχει κλείσει");
+letrak::fatal_error_json("Το παρουσιολόγιο έχει κλείσει");
 
 $armodios = pandora::parameter_get("armodios");
 
 if (letrak::ipalilos_invalid_kodikos($armodios))
-lathos("Μη αποδεκτός αριθμός μητρώου υπογράφοντος αρμοδίου");
+letrak::fatal_error_json("Μη αποδεκτός αριθμός μητρώου υπογράφοντος αρμοδίου");
 
 $praxi = pandora::parameter_get("praxi");
 
@@ -72,13 +72,13 @@ case 'kirosi':
 	$minima = "κύρωσης παρουσιολογίου";
 	break;
 default:
-	lathos("Ακαθόριστη πράξη");
+	letrak::fatal_error_json("Ακαθόριστη πράξη");
 }
 
 $xristis = $prosvasi->ipalilos_get();
 
 if ($xristis != $armodios)
-lathos("Διαπιστώθηκε αναρμοδιότητα πράξης " . $minima);
+letrak::fatal_error_json("Διαπιστώθηκε αναρμοδιότητα πράξης " . $minima);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -86,7 +86,7 @@ $katastasi = $praxi();
 
 if (!$katastasi) {
 	pandora::rollback();
-	lathos("Αδυναμία " . $minima);
+	letrak::fatal_error_json("Αδυναμία " . $minima);
 }
 
 pandora::commit();
@@ -118,7 +118,7 @@ function kirosi() {
 	}
 
 	if ($tax > LETRAK_IPOGRAFI_TAXINOMISI_MAX)
-	lathos("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
+	letrak::fatal_error_json("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
 
 	$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
 		" WHERE (`deltio` = " . $kodikos . ")" .
@@ -126,7 +126,7 @@ function kirosi() {
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
 	if ($row[0] != $xristis)
-	lathos("Δεν έχετε δικαίωμα κύρωσης");
+	letrak::fatal_error_json("Δεν έχετε δικαίωμα κύρωσης");
 
 	pandora::autocommit(FALSE);
 
@@ -164,7 +164,7 @@ function akirosi() {
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
 	if (!$row)
-	lathos("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
+	letrak::fatal_error_json("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
 
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
@@ -181,10 +181,5 @@ function akirosi() {
 	return FALSE;
 
 	return $katastasi;
-}
-
-function lathos($s) {
-	print '{"error":' . pandora::json_string($s) . "}";
-	exit(0);
 }
 ?>

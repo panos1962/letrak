@@ -174,6 +174,11 @@ class letrak extends letrakCore {
 
 		print ']';
 	}
+
+	public function fatal_error_json($msg, $tag = "error") {
+		print '{"' . $tag . '":' . pandora::json_string($msg) . '}';
+		exit(0);
+	}
 }
 
 letrak::init();

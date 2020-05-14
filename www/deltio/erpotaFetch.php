@@ -39,7 +39,7 @@ session_init()::
 database();
 
 if (letrak::oxi_xristis())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -48,7 +48,7 @@ $query = "SELECT `timi` FROM `kartel`.`parametros` WHERE `kodikos` = " .
 $row = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$row)
-lathos("Ακαθόριστη έκδοση database προσωπικού");
+letrak::fatal_error_json("Ακαθόριστη έκδοση database προσωπικού");
 
 switch ($row["timi"]) {
 case 1:
@@ -56,7 +56,7 @@ case 2:
 	$erpota12 = "erpota" . $row["timi"];
 	break;
 default:
-	lathos("Μη αποδεκτή έκδοση database προσωπικού");
+	letrak::fatal_error_json("Μη αποδεκτή έκδοση database προσωπικού");
 }
 
 print '{';

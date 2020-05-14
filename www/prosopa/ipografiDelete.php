@@ -46,30 +46,30 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error_json("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
+letrak::fatal_error_json($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
 
 if ($deltio->is_klisto())
-lathos("Το παρουσιολόγιο έχει κλείσει");
+letrak::fatal_error_json("Το παρουσιολόγιο έχει κλείσει");
 
 $ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->oxi_update_ipiresia($ipiresia))
-lathos("Δεν έχετε δικαίωμα διαγραφής αρμοδίου υπογραφής");
+letrak::fatal_error_json("Δεν έχετε δικαίωμα διαγραφής αρμοδίου υπογραφής");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
 if (letrak::ipografi_invalid_taxinomisi($taxinomisi))
-lathos("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
+letrak::fatal_error_json("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -82,14 +82,14 @@ pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {
 	pandora::rollback();
-	lathos("Απέτυχε η διαγραφή υπογραφής");
+	letrak::fatal_error_json("Απέτυχε η διαγραφή υπογραφής");
 }
 
 $katastasi = $deltio::katastasi_update();
 
 if (!isset($katastasi)) {
 	pandora::rollback();
-	lathos("Αστοχία ενημέρωσης κατάστασης δελτίου");
+	letrak::fatal_error_json("Αστοχία ενημέρωσης κατάστασης δελτίου");
 }
 
 letrak::ipografes_taxinomisi($kodikos);
@@ -101,11 +101,4 @@ letrak::ipografes_json($kodikos);
 print '}';
 
 exit(0);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($s) {
-	print '{"error":' . pandora::json_string($s) . "}";
-	exit(0);
-}
 ?>

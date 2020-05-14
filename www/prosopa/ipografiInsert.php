@@ -44,35 +44,35 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error_json("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
+letrak::fatal_error_json($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
 
 if ($deltio->is_klisto())
-lathos("Το παρουσιολόγιο έχει κλείσει");
+letrak::fatal_error_json("Το παρουσιολόγιο έχει κλείσει");
 
 $ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->oxi_update_ipiresia($ipiresia))
-lathos("Δεν έχετε δικαίωμα προσθήκης αρμοδίου υπογραφής");
+letrak::fatal_error_json("Δεν έχετε δικαίωμα προσθήκης αρμοδίου υπογραφής");
 
 $armodios = pandora::parameter_get("armodios");
 
 if (letrak::ipalilos_invalid_kodikos($armodios))
-lathos("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
+letrak::fatal_error_json("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
 if ($taxinomisi && letrak::ipografi_invalid_taxinomisi($taxinomisi))
-lathos("Μη αποδεκτός ταξινομικός αριθμός");
+letrak::fatal_error_json("Μη αποδεκτός ταξινομικός αριθμός");
 
 $titlos = pandora::parameter_get("titlos");
 
@@ -98,7 +98,7 @@ $query = "INSERT INTO `letrak`.`ipografi` " .
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1)
-lathos("Απέτυχε η προσθήκη υπογραφής");
+letrak::fatal_error_json("Απέτυχε η προσθήκη υπογραφής");
 
 letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
@@ -106,13 +106,5 @@ pandora::commit();
 print '{';
 letrak::ipografes_json($kodikos);
 print '}';
-
 exit(0);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($s) {
-	print '{"error":' . pandora::json_string($s) . "}";
-	exit(0);
-}
 ?>

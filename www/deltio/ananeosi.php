@@ -37,12 +37,12 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $dlist = pandora::parameter_get("dlist");
 
 if (!is_array($dlist))
-lathos("Μη αποδεκτή λίστα δελτίων");
+letrak::fatal_error_json("Μη αποδεκτή λίστα δελτίων");
 
 $tsild = array();
 
@@ -55,11 +55,4 @@ print '{';
 print '"dlist":' . pandora::json_string($tsild);
 print '}';
 exit(0);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($msg) {
-	print '{"error":' . pandora::json_string($msg) . '}';
-	exit(0);
-}
 ?>

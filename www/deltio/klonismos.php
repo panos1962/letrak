@@ -45,22 +45,22 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $protipo = pandora::parameter_get("kodikos");
 
 if (letrak::deltio_invalid_kodikos($protipo))
-lathos("Ακαθόριστος κωδικός προτύπου");
+letrak::fatal_error_json("Ακαθόριστος κωδικός προτύπου");
 
 $query = "SELECT * FROM `letrak`.`deltio`" .
 	" WHERE `kodikos` = " . $protipo;
 $protipo = pandora::first_row($query, MYSQLI_ASSOC);
 
 if (!$protipo)
-lathos("Αδυναμία εντοπισμού προτύπου");
+letrak::fatal_error_json("Αδυναμία εντοπισμού προτύπου");
 
 if ($prosvasi->oxi_update_ipiresia($protipo["ipiresia"]))
-lathos("Δεν έχετε δικαίωμα δημιουργίας παρουσιολογίου");
+letrak::fatal_error_json("Δεν έχετε δικαίωμα δημιουργίας παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -79,7 +79,7 @@ case "ΑΠΟΧΩΡΗΣΗ":
 	$prosapo = "ΠΡΟΣΕΛΕΥΣΗ";
 	break;
 default:
-	lathos("Ακαθόριστος τύπος παρουσιολογίου");
+	letrak::fatal_error_json("Ακαθόριστος τύπος παρουσιολογίου");
 }
 
 $query = "INSERT IGNORE INTO `letrak`.`deltio` " .
@@ -96,7 +96,7 @@ pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {
 	pandora::rollback();
-	lathos("Αποτυχία δημιουργίας αντιγράφου");
+	letrak::fatal_error_json("Αποτυχία δημιουργίας αντιγράφου");
 }
 
 // Κρατάμε τον κωδικό του νεοεισαχθέντος παρουσιολογίου.
@@ -144,7 +144,7 @@ pandora::commit();
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos("Αποτυχία εντοπισμού αντιγράφου");
+letrak::fatal_error_json("Αποτυχία εντοπισμού αντιγράφου");
 
 
 print '{"deltio":' . $deltio->json_economy() . '}';
@@ -186,10 +186,5 @@ function antigrafi_adias($deltio, $adia) {
 		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`ipalilos` = " . $adia["ipalilos"] .")";
 	pandora::query($query);
-}
-
-function lathos($msg) {
-	print '{"error":' . pandora::json_string($msg) . '}';
-	exit(0);
 }
 ?>

@@ -82,12 +82,12 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $ipalilos = pandora::parameter_get("ipalilos");
 
 if ($ipalilos && letrak::ipalilos_invalid_kodikos($ipalilos))
-lathos("Μη αποδεκτό κριτήριο αριθμού μητρώου υπαλλήλου");
+letrak::fatal_error_json("Μη αποδεκτό κριτήριο αριθμού μητρώου υπαλλήλου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -234,11 +234,6 @@ print ']}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($s) {
-	print '{"error":' . pandora::json_string($s) . "}";
-	exit(0);
-}
 
 function lathos_imerominia($s) {
 	lathos($s . ": λανθασμένη ημερομηνία");

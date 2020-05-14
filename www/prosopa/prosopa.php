@@ -44,12 +44,12 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error_json("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $ipalilos_table = letrak::erpota12("ipalilos");
 
@@ -60,7 +60,7 @@ print '{';
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
+letrak::fatal_error_json($kodikos . ": δεν βρέθηκε το παρουσιολόγιο");
 
 print '"deltio":' . $deltio->json_economy() . ",";
 
@@ -127,14 +127,6 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 print '],';
 
 ///////////////////////////////////////////////////////////////////////////////@
-
 print '"error":""}';
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($s) {
-	print '{"error":' . pandora::json_string($s) . "}";
-	exit(0);
-}
-
+exit(0);
 ?>
