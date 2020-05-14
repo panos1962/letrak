@@ -9,10 +9,12 @@ BEGIN {
 		"-v creator=3307 " \
 		"-v imerominia=2020-02-26 " \
 		"-f /var/opt/letrak/lib/deltio.awk"
+
 	select_ipiresia()
 	create_deltio("ΑΠΟΧΩΡΗΣΗ")
 	update_prosvasi()
 	close(deltio_create)
+	pd_ttymsg("Ενημέρωση ωραρίων…")
 }
 
 NF == 2 {
@@ -26,6 +28,8 @@ function update_orario(ipalilos, orario,		query) {
 }
 
 function select_ipiresia(		query, row) {
+	pd_ttymsg("Σάρωση υπηρεσιών…")
+
 	query = "SELECT `kodikos`, `perigrafi`" \
 		" FROM " kartel_erpotadb("ipiresia")
 
@@ -39,6 +43,8 @@ function select_ipiresia(		query, row) {
 }
 
 function create_deltio(prosapo,		i) {
+	pd_ttymsg("Δημιουργία δελτίων…")
+
 	for (i in ipiresia)
 	print i, ipiresia[i], prosapo | deltio_create
 }
@@ -46,6 +52,8 @@ function create_deltio(prosapo,		i) {
 # Μετατρέπουμε το password πρόσβασης σε "xxx" για όλους.
 
 function update_prosvasi(		query) {
+	pd_ttymsg("Ελάφρυνση προσβάσεων…")
+
 	query = "REPLACE INTO `erpota`.`prosvasi` (`ipalilos`, `efarmogi`, " \
 		"`ipiresia`, `level`, `info`, `pubkey`, `password`) VALUES (" \
 		"5837, '2020-01-01', 'Β09', 'VIEW', '', 'abc', '')"

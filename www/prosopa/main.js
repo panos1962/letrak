@@ -70,8 +70,8 @@ prosopa.minima = {
 	'deltioAkathoristo': 'Ακαθόριστο παρουσιολόγιο',
 	'ipografesTabLabel': 'Υπογραφές',
 
-	'ipografiAnaneosiTabLabel': 'Ανανέωση',
-	'ipografiAnaneosiTabTitle': 'Ανανέωση εικόνας υπογραφών',
+	'deltioAnaneosiTabLabel': 'Ανανέωση περιεχομένου',
+	'ipografiAnaneosiTabLabel': 'Ανανέωση υπογραφών',
 
 	'ipografiInsertTabLabel': 'Προσθήκη',
 	'ipografiInsertTabTitle': 'Προσθήκη υπογράφοντος υπαλλήλου',
@@ -118,7 +118,6 @@ prosopa.goniki = {
 	return prosopa;
 
 	prosopa.goniki = self.opener.LETRAK;
-console.log('>>>>', prosopa.goniki);
 
 	return prosopa;
 })();
@@ -148,20 +147,20 @@ prosopa.selidaSetup = () => {
 	// Ο κωδικός του προς επεξεργασία παρουσιολογίου δίνεται ως POST
 	// ή GET παράμετρος με το όνομα "deltio".
 
-	prosopa.deltio = php.requestGet('deltio');
+	prosopa.deltioKodikos = php.requestGet('deltio');
 
-	if (!prosopa.deltio)
+	if (!prosopa.deltioKodikos)
 	return prosopa.fyiError(prosopa.minima.deltioAkathoristo);
 
 	letrak.
-	toolbarTitlosSet('Παρουσιολόγιο <b>' + prosopa.deltio + '</b>');
+	toolbarTitlosSet('Παρουσιολόγιο <b>' + prosopa.deltioKodikos + '</b>');
 
-	document.title = prosopa.deltio;
+	document.title = prosopa.deltioKodikos;
 
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	if (prosopa.goniki.deltio.kodikosGet() != prosopa.deltio)
+	if (prosopa.goniki.deltio.kodikosGet() != prosopa.deltioKodikos)
 	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
 
 	pnd.
@@ -170,6 +169,9 @@ prosopa.selidaSetup = () => {
 	///////////////////////////////////////////////////////////////////////@
 
 	pnd.ofelimoDOM.
+
+	append(prosopa.ipografesAreaDOM = $('<div>').
+	addClass('ipografesArea')).
 
 	append(prosopa.deltioAreaDOM = $('<div>').
 	addClass('deltioArea')).
@@ -189,14 +191,20 @@ prosopa.selidaSetup = () => {
 	text(prosopa.minima.winpakTabLabel).
 	on('click', (e) => prosopa.winpak(e)));
 
-	///////////////////////////////////////////////////////////////////////@
+	prosopa.ananeosi();
+	return prosopa;
+};
+
+prosopa.ananeosi = (e) => {
+	if (e)
+	e.stopPropagation();
 
 	pnd.fyiMessage('Αναζήτηση στοιχείων παρουσιολογίου…');
 	$.post({
 		'url': 'prosopa.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio,
+			'deltio': prosopa.deltioKodikos,
 		},
 		'success': (rsp) => {
 			if (rsp.error)
@@ -232,6 +240,7 @@ prosopa.deltioProcess = (deltio) => {
 	prosopa.deltio = new letrak.deltio(deltio);
 
 	prosopa.deltioAreaDOM.
+	empty().
 	append(prosopa.deltio.domGet());
 
 	$('#peDeltioKodikos').val(prosopa.deltio.kodikosGet());
@@ -284,6 +293,7 @@ prosopa.ipografesProcess = (ipografes) => {
 	if (!ipografes)
 	return prosopa;
 
+	prosopa.ipografesDOM.empty();
 	pnd.arrayWalk(ipografes, (v) => {
 		v = new letrak.ipografi(v);
 		prosopa.ipografesDOM.
@@ -295,8 +305,9 @@ prosopa.ipografesProcess = (ipografes) => {
 };
 
 prosopa.prosopaProcess = (parousia) => {
-	pnd.
-	arrayWalk(parousia, (v, k) => {
+	prosopa.browserDOM.empty();
+
+	pnd.arrayWalk(parousia, (v, k) => {
 		v = new letrak.parousia(v);
 		prosopa.browserDOM.
 		append(v.domGet());
@@ -311,9 +322,7 @@ prosopa.prosopaProcess = (parousia) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.ipografesSetup = () => {
-	prosopa.deltioAreaDOM.
-	append(prosopa.ipografesAreaDOM = $('<div>').
-	addClass('ipografesArea').
+	prosopa.ipografesAreaDOM.
 	addClass('ipografesAreaHidden').
 
 	append(prosopa.ipografesPanelDOM = $('<div>').
@@ -322,7 +331,6 @@ prosopa.ipografesSetup = () => {
 	append($('<input>').
 	attr({
 		'type': 'button',
-		'title': prosopa.minima.ipografiAnaneosiTabTitle,
 	}).
 	addClass('letrak-formaPliktro').
 	val(prosopa.minima.ipografiAnaneosiTabLabel).
@@ -384,9 +392,10 @@ prosopa.ipografesSetup = () => {
 	addClass('ipografes').
 	on('click', '.ipografi', function(e) {
 		prosopa.ipografiCandiToggle(e, $(this));
-	})));
+	}));
 
 	pnd.toolbarLeftDOM.
+
 	append(prosopa.ipografesTabDOM = letrak.tabDOM().
 	text(prosopa.minima.ipografesTabLabel).
 	on('click', function(e) {
@@ -403,7 +412,11 @@ prosopa.ipografesSetup = () => {
 			prosopa.ipografesAreaDOM.removeClass('ipografesAreaHidden');
 			prosopa.browserDOM.addClass('browserEmfanesOrio');
 		}
-	}));
+	})).
+
+	append(letrak.tabDOM().
+	text(prosopa.minima.deltioAnaneosiTabLabel).
+	on('click', (e) => prosopa.ananeosi(e)));
 
 	return prosopa;
 };
