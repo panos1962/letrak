@@ -367,7 +367,7 @@ deltio.browserSetup = () => {
 	on('mouseenter', '.deltio', function(e) {
 		e.stopPropagation();
 
-		if ($(this).data('candi'))
+		if ($(this).hasClass('deltioCandi'))
 		return;
 
 		$(this).
@@ -376,7 +376,7 @@ deltio.browserSetup = () => {
 	on('mouseleave', '.deltio', function(e) {
 		e.stopPropagation();
 
-		if ($(this).data('candi'))
+		if ($(this).hasClass('deltioCandi'))
 		return;
 
 		$(this).
@@ -385,17 +385,15 @@ deltio.browserSetup = () => {
 	on('click', '.deltio', function(e) {
 		e.stopPropagation();
 
-		let wasCandi = $(this).data('candi');
+		let wasCandi = $(this).hasClass('deltioCandi');
 
 		$('.deltioCandi').
-		removeData('candi').
 		removeClass('deltioCandi');
 
 		if (wasCandi)
 		return deltio.candiTabsHide();
 
 		$(this).
-		data('candi', true).
 		addClass('deltioCandi').
 		removeClass('deltioCandiCandi');
 		deltio.candiTabsShow();
@@ -409,11 +407,6 @@ deltio.browserSetup = () => {
 deltio.candiTabsSetup = () => {
 	letrak.arxikiTabDOM.
 	addClass('idnacTab');
-
-/*
-	deltio.filtraTabDOM.
-	addClass('idnacTab');
-*/
 
 	deltio.paleoteraTabDOM.
 	addClass('idnacTab');
@@ -497,6 +490,7 @@ deltio.candiTabsShow = () => {
 	if (!x)
 	return deltio;
 
+	let katastasi = x.katastasiGet();
 	let klisto = x.isKlisto();
 	let ipiresia = x.ipiresiaGet();
 	let update = letrak.prosvasiIsUpdate(ipiresia);
@@ -513,6 +507,22 @@ deltio.candiTabsShow = () => {
 	pnd.toolbarDOM.
 	find('.adminTab').
 	removeClass('candiTabVisible');
+
+	// Τα πλήκτρα επικύρωσης και άρσης επικύρωσης έχουν ήδη τεθεί σε
+	// κατάσταση ανάλογη με το αν το επιλεγμένο παρουσιολόγιο είναι
+	// επικυρωμένο ή όχι, ωστόσο μπορούμε να προβούμε σε περαιτέρω
+	// ενέργειες απόκρυψης των σχετικών πλήκτρων.
+
+console.log(katastasi);
+	switch (katastasi) {
+	case 'ΚΥΡΩΜΕΝΟ':
+	case 'ΕΠΙΚΥΡΩΜΕΝΟ':
+		break;
+	default:
+		deltio.klisimoTabDOM.removeClass('candiTabVisible');
+		deltio.anigmaTabDOM.removeClass('candiTabVisible');
+		break;
+	}
 
 	if (update)
 	return deltio;
@@ -545,9 +555,9 @@ deltio.candiTabsHide = () => {
 
 deltio.clearCandi = () => {
 	$('.deltio').
-	removeData('candi').
 	removeClass('deltioCandi');
 
+	deltio.candiTabsHide();
 	return deltio;
 };
 
@@ -595,10 +605,18 @@ deltio.ananeosiProcess = (rsp, domList) => {
 	return deltio.fyiError(rsp.error);
 
 	if (!rsp.hasOwnProperty('dlist'))
-	return deltio;
+	return deltio.clearCandi();
+
+	let candi = false;
 
 	domList.
 	each(function() {
+		if (candi)
+		$(this).removeClass('deltioCandi');
+
+		else if ($(this).hasClass('deltioCandi'))
+		candi = true;
+
 		let dlt = $(this).data('deltio');
 
 		if (!dlt)
@@ -621,7 +639,6 @@ deltio.ananeosiProcess = (rsp, domList) => {
 		dlt.katastasiSet(katastasi);
 		let katastasiEnglish = letrak.deltio.
 			katastasi2english(katastasi);
-console.log(katastasiEnglish);
 
 		$(this).
 		children('.deltioKatastasi').
@@ -632,7 +649,9 @@ console.log(katastasiEnglish);
 		addClass('letrak-deltioKatastasi' + katastasiEnglish).
 		html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
 	});
-		
+
+	if (candi)
+	deltio.candiTabsShow();
 
 	return deltio;
 };
@@ -747,8 +766,7 @@ deltio.diagrafiProcess = (msg, kodikos, dom) => {
 	dom.remove();
 	deltio.
 	zebraFix().
-	clearCandi().
-	candiTabsHide();
+	clearCandi();
 
 	pnd.fyiMessage('Το παρουσιολόγιο <b>' + kodikos +
 	'</b> διεγράφη επιτυχώς');
@@ -919,7 +937,6 @@ deltio.klonosProcess = (x, protipo) => {
 	deltio.browserDOM.
 	prepend((new letrak.deltio(x.deltio)).
 	domGet().
-	data('candi', true).
 	addClass('deltioCandi'));
 
 	deltio.zebraFix();
