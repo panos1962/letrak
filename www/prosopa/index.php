@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-13
 // Updated: 2020-05-09
 // Updated: 2020-05-07
 // Updated: 2020-04-25
@@ -118,7 +119,7 @@ document_body();
 			<option value="" selected="true"></option>
 
 			<option value="ΚΑΝΟΝΙΚΗ" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ</option>
-			<option value="ΚΑΝΟΝΙΚΗ (ΜΤΦ)" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ (ΜΤΦ)</option>
+			<option value="ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)</option>
 
 			<option value="ΑΝΑΡΡΩΤΙΚΗ Υ/Δ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ Υ/Δ</option>
 			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
@@ -188,7 +189,10 @@ document_body();
 	<div id="pePanel">
 		<input id="pePliktroIpovoli" class="prosopaPliktroUpdate"
 			type="button" value="Υποβολή">
-		<input id="pePliktroEpanafora" type="button" value="Επαναφορά">
+		<input id="pePliktroDiagrafi" class="prosopaPliktroUpdate"
+			type="button" value="Διαγραφή">
+		<input id="pePliktroEpanafora" class="prosopaPliktroUpdate"
+			type="button" value="Επαναφορά">
 		<input id="pePliktroAkiro" type="button" value="Άκυρο">
 	</div>
 </form>

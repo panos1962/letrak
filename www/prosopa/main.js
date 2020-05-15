@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-13
 // Updated: 2020-05-11
 // Updated: 2020-05-09
 // Updated: 2020-05-08
@@ -1056,6 +1057,10 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	children('.prosopaPliktroUpdate').
 	css('display', update ? 'inline-block' : 'none');
 
+	// XXX
+	prosopa.parousiaEditorDOM.
+	children('.peFormaEnotita');
+
 	return prosopa;
 }
 
@@ -1112,6 +1117,8 @@ prosopa.editorSetup = () => {
 	prosopa.editorAdeosDOM = $('#peAdeos');
 	prosopa.editorExcuseDOM = $('#peExcuse');
 	prosopa.editorInfoDOM = $('#peInfo');
+	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli');
+	prosopa.editorDiagrafiDOM = $('#pePliktroDiagrafi');
 
 	prosopa.editorPanelDOM = $('#pePanel');
 
@@ -1168,8 +1175,23 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
 
-	if (!parousia)
-	parousia = new letrak.parousia();
+	// Η φόρμα επεξεργασίας παρουσίας (editor) λειτουργεί διαφορετικά
+	// για υπάρχουσες παρουσίες και διαφορετικά κατά την προσθήκη νέας
+	// παρουσίας. Ειδικά για το πλήκτρο διαγραφής μεριμνούμε ιδιαίτερα
+	// ώστε να μην εμφανίζεται όταν πρόκειται για προσθήκη νέας
+	// παρουσίας.
+
+	if (parousia) {
+		let display = prosopa.editorIpovoliDOM.css('display');
+		prosopa.editorDiagrafiDOM.css('display', display);
+		prosopa.editorIpovoliDOM.val('Υποβολή')
+	}
+
+	else {
+		parousia = new letrak.parousia();
+		prosopa.editorDiagrafiDOM.css('display', 'none');
+		prosopa.editorIpovoliDOM.val('Προσθήκη')
+	}
 
 	let meraora = parousia.meraoraGet();
 
