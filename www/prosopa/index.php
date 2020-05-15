@@ -98,7 +98,9 @@ document_body();
 			<label for="peKartaMeraora">
 				Καταγραφή
 			</label>
-			<input id="peKartaMeraora">
+			<input id="peKartaMeraora" disabled="true">
+			<input id="peKartaMeraoraClear" value="Καθαρισμός"
+				type="button" class="letrak-formaPliktro">
 		</div>
 		<div class="peFormaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora">
@@ -114,33 +116,39 @@ document_body();
 			</label>
 			<select id="peAdidos">
 			<option value="" selected="true"></option>
-			<option value="ΚΑΝΟΝΙΚΗ">ΚΑΝΟΝΙΚΗ</option>
-			<option value="ΚΑΝΟΝΙΚΗ (ΜΤΦ)">ΚΑΝΟΝΙΚΗ (ΜΤΦ)</option>
-			<option value="ΑΝΑΡΡΩΤΙΚΗ Υ/Δ">ΑΝΑΡΡΩΤΙΚΗ Υ/Δ</option>
-			<option value="ΑΝΑΡΡΩΤΙΚΗ">ΑΝΑΡΡΩΤΙΚΗ</option>
-			<option value="ΑΣΘΕΝΕΙΑΣ Ε/Μ">ΑΣΘΕΝΕΙΑΣ Ε/Μ</option>
-			<option value="ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ">ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ</option>
-			<option value="ΓΟΝΙΚΗ ΕΠΙΔΟΣΗΣ">ΓΟΝΙΚΗ ΕΠΙΔΟΣΗΣ</option>
-			<option value="ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ">ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ</option>
-			<option value="ΣΕΜΙΝΑΡΙΟ">ΣΕΜΙΝΑΡΙΟ</option>
-			<option value="ΕΚΠΑΙΔΕΥΤΙΚΗ">ΕΚΠΑΙΔΕΥΤΙΚΗ</option>
-			<option value="ΣΠΟΥΔΑΣΤΙΚΗ">ΣΠΟΥΔΑΣΤΙΚΗ</option>
-			<option value="ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ">ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ</option>
-			<option value="ΚΥΗΣΕΩΣ & ΛΟΧΕΙΑΣ">ΚΥΗΣΕΩΣ &amp; ΛΟΧΕΙΑΣ</option>
-			<option value="ΓΑΜΟΥ">ΓΑΜΟΥ</option>
-			<option value="ΠΕΝΘΟΥΣ">ΠΕΝΘΟΥΣ</option>
-			<option value="ΕΚΛΟΓΙΚΗ">ΕΚΛΟΓΙΚΗ</option>
-			<option value="ΑΘΛΗΤΙΚΗ">ΑΘΛΗΤΙΚΗ</option>
-			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
-			<option value="ΕΠΙΤΡΟΠΗ ΥΓΕΙΑΣ">ΕΠΙΤΡΟΠΗ ΥΓΕΙΑΣ</option>
-			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
-			<option value="ΑΝΑΠΗΡΙΚΗ">ΑΝΑΠΗΡΙΚΗ</option>
-			<option value="ΑΤΥΧΗΜΑΤΟΣ">ΑΤΥΧΗΜΑΤΟΣ</option>
-			<option value="ΣΤΡΑΤΙΩΤΙΚΗ">ΣΤΡΑΤΙΩΤΙΚΗ</option>
-			<option value="ΑΠΕΡΓΙΑ">ΑΠΕΡΓΙΑ</option>
-			<option value="ΔΙΑΘΕΣΙΜΟΤΗΤΑ">ΔΙΑΘΕΣΙΜΟΤΗΤΑ</option>
-			<option value="ΑΡΓΙΑ">ΑΡΓΙΑ</option>
-			<option value="ΠΑΥΣΗ">ΠΑΥΣΗ</option>
+
+			<option value="ΚΑΝΟΝΙΚΗ" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ</option>
+			<option value="ΚΑΝΟΝΙΚΗ (ΜΤΦ)" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ (ΜΤΦ)</option>
+
+			<option value="ΑΝΑΡΡΩΤΙΚΗ Υ/Δ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ Υ/Δ</option>
+			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
+			<option value="ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ</option>
+
+			<option value="ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ." class="peAdidosOmadaGoniki">ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ.</option>
+			<option value="ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ" class="peAdidosOmadaGoniki">ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ</option>
+			<option value="ΚΥΗΣΕΩΣ & ΛΟΧΕΙΑΣ" class="peAdidosOmadaGoniki">ΚΥΗΣΕΩΣ &amp; ΛΟΧΕΙΑΣ</option>
+
+			<option value="ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ</option>
+			<option value="ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ</option>
+			<option value="ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ</option>
+
+			<option value="ΣΕΜΙΝΑΡΙΟ" class="peAdidosOmadaIdiki">ΣΕΜΙΝΑΡΙΟ</option>
+			<option value="ΣΠΟΥΔΑΣΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΠΟΥΔΑΣΤΙΚΗ</option>
+			<option value="ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ</option>
+			<option value="ΓΑΜΟΥ" class="peAdidosOmadaIdiki">ΓΑΜΟΥ</option>
+			<option value="ΠΕΝΘΟΥΣ" class="peAdidosOmadaIdiki">ΠΕΝΘΟΥΣ</option>
+			<option value="ΕΚΛΟΓΙΚΗ" class="peAdidosOmadaIdiki">ΕΚΛΟΓΙΚΗ</option>
+			<option value="ΑΘΛΗΤΙΚΗ" class="peAdidosOmadaIdiki">ΑΘΛΗΤΙΚΗ</option>
+			<option value="ΔΙΚΑΣΤΗΡΙΟ" class="peAdidosOmadaIdiki">ΔΙΚΑΣΤΗΡΙΟ</option>
+			<option value="ΣΤΡΑΤΙΩΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΤΡΑΤΙΩΤΙΚΗ</option>
+			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ" class="peAdidosOmadaIdiki">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
+
+			<option value="ΑΠΕΡΓΙΑ" class="peAdidosOmadaAtono">ΑΠΕΡΓΙΑ</option>
+			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ" class="peAdidosOmadaAtono">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
+			<option value="ΔΙΑΘΕΣΙΜΟΤΗΤΑ" class="peAdidosOmadaAtono">ΔΙΑΘΕΣΙΜΟΤΗΤΑ</option>
+			<option value="ΑΡΓΙΑ" class="peAdidosOmadaAtono">ΑΡΓΙΑ</option>
+			<option value="ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ" class="peAdidosOmadaAtono">ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ</option>
+			<option value="ΜΕΤΑΚΙΝΗΣΗ" class="peAdidosOmadaAtono">ΜΕΤΑΚΙΝΗΣΗ</option>
 			</select>
 			<label for="peAdapo">
 				Από

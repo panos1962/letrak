@@ -1115,10 +1115,10 @@ prosopa.editorSetup = () => {
 
 	prosopa.editorPanelDOM = $('#pePanel');
 
-	prosopa.editorPanelDOM.
-	children('input').
+	prosopa.parousiaEditorDOM.
+	find('input').
 	addClass('letrak-formaPliktro').
-	addClass('pePanelPliktro');
+	addClass('pePliktro');
 
 	prosopa.editorPliktroAkiroDOM = $('#pePliktroAkiro').
 	on('click', (e) => prosopa.editorClose(e));
