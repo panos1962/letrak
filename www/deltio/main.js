@@ -121,6 +121,7 @@ deltio.selidaSetup = () => {
 	toolbarArxikiSetup();
 
 	deltio.
+	klonismosSetup().
 	browserSetup().
 	filtraSetup().
 	autoFind().
@@ -444,7 +445,7 @@ deltio.candiTabsSetup = () => {
 	addClass('updateTab').
 	attr('title', deltio.minima.klonosTitle).
 	text(deltio.minima.klonosTabLabel).
-	on('click', (e) => deltio.klonismos(e))).
+	on('click', (e) => deltio.klonismosAnte(e))).
 
 	append(deltio.prosopaTabDOM = letrak.tabDOM().
 	addClass('candiTab').
@@ -883,30 +884,91 @@ deltio.anigmaProcess = (msg, dlt, dom) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-deltio.klonismos = (e) => {
+deltio.klonismosSetup = () => {
+	deltio.klonismosFormaDOM = $('#klonismosForma');
+	deltio.klonismosFormaImerominiaDOM = deltio.klonismosFormaDOM.
+	children('#klonismosFormaImerominia').
+	datepicker({
+		'autoOpen': false,
+	});
+
+	deltio.klonismosFormaDOM.
+	dialog({
+		'title': 'Δημιουργία παρουσιολογίου',
+		'autoOpen': false,
+		'resizable': false,
+		'height': 'auto',
+		'width': '24em',
+		'modal': true,
+		'position': {
+			'my': 'left+150 top+56',
+			'at': 'left top',
+		},
+		'buttons': {
+			'Δημιουργία': function() {
+				deltio.klonismos();
+			},
+			'Άκυρο': function() {
+				$(this).dialog('close');
+			},
+		},
+	});
+
+	return deltio;
+};
+
+deltio.klonismosAnte = (e) => {
 	e.stopPropagation();
 
-	let x = $('.deltioCandi').first().data('deltio');
+	let protipo = $('.deltioCandi').first().data('deltio');
 
-	if (!x)
+	if (!protipo)
 	return deltio.fyiError('Ακαθόριστο πρότυπο παρουσιολόγιο');
 
 	try {
-		var kodikos = x.kodikosGet();
+		deltio.klonismosFormaDOM.
+		data('protipo', protipo.kodikosGet());
 	}
 
 	catch (e) {
 		return deltio.fyiError('Απροσδιόριστο πρότυπο παρουσιολόγιο');
 	}
 
-	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + kodikos + '</b>…');
+	let imerominia;
+
+	switch (protipo.prosapoGet()) {
+	case 'ΠΡΟΣΕΛΕΥΣΗ':
+		imerominia = protipo.imerominiaGet();
+		break;
+	case 'ΑΠΟΧΩΡΗΣΗ':
+		imerominia = new Date();
+		break;
+	default:
+		return deltio.fyiError('Απροσδιόριστο είδος παρουσιολογίου');
+	}
+
+	imerominia = pnd.date(imerominia, '%D-%M-%Y');
+
+	deltio.klonismosFormaImerominiaDOM.
+	val(imerominia);
+	deltio.klonismosFormaDOM.dialog('open');
+
+	return deltio;
+};
+
+deltio.klonismos = () => {
+	let protipo = deltio.klonismosFormaDOM.data('protipo');
+	let imerominia = deltio.klonismosFormaImerominiaDOM.val();
+
+	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + protipo + '</b>…');
 	$.post({
 		'url': 'klonismos.php',
 		'data': {
-			'kodikos': kodikos,
+			'protipo': protipo,
+			'imerominia': imerominia,
 		},
 		'dataType': 'json',
-		'success': (rsp) => deltio.klonosProcess(rsp, kodikos),
+		'success': (rsp) => deltio.klonosProcess(rsp, protipo),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα κλωνισμού');
 			console.error(e);
@@ -928,6 +990,7 @@ deltio.klonosProcess = (x, protipo) => {
 		return deltio;
 	}
 
+	deltio.klonismosFormaDOM.dialog('close');
 	pnd.fyiMessage('Δημιουργήθηκε παρουσιολόγιο <b>' +
 	x.deltio.k + '</b> ως αντίγραφο του παρουσιολογίου <b>' +
 	protipo + '</b>');

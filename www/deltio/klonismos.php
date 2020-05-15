@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-15
 // Updated: 2020-05-10
 // Updated: 2020-05-09
 // Updated: 2020-05-08
@@ -47,10 +48,22 @@ $prosvasi = letrak::prosvasi_get();
 if ($prosvasi->oxi_ipalilos())
 letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
-$protipo = pandora::parameter_get("kodikos");
+$protipo = pandora::parameter_get("protipo");
 
 if (letrak::deltio_invalid_kodikos($protipo))
 letrak::fatal_error_json("Ακαθόριστος κωδικός προτύπου");
+
+$imerominia = pandora::parameter_get("imerominia");
+
+if (!isset($imerominia))
+letrak::fatal_error_json("Ακαθόριστη ημερομηνία");
+
+$imerominia = DateTime::createFromFormat("d-m-Y", $imerominia);
+
+if ($imerominia === FALSE)
+letrak::fatal_error_json("Λανθασμένη ημερομηνία");
+
+$imerominia = $imerominia->format("Y-m-d");
 
 $query = "SELECT * FROM `letrak`.`deltio`" .
 	" WHERE `kodikos` = " . $protipo;
@@ -66,7 +79,6 @@ letrak::fatal_error_json("Δεν έχετε δικαίωμα δημιουργί�
 
 pandora::autocommit(FALSE);
 
-$simera = date("Y-m-d");
 $ipiresia = $protipo["ipiresia"];
 $prosapo = $protipo["prosapo"];
 $perigrafi = $protipo["perigrafi"];
@@ -87,7 +99,7 @@ $query = "INSERT IGNORE INTO `letrak`.`deltio` " .
 " `ipiresia`, `prosapo`, `perigrafi`, `alagi`) VALUES (" .
 $protipo["kodikos"] . ", " .
 $prosvasi->ipalilos_get() . ", " .
-pandora::sql_string($simera) . ", " .
+pandora::sql_string($imerominia) . ", " .
 pandora::sql_string($ipiresia) . ", " .
 pandora::sql_string($prosapo) . ", " .
 pandora::sql_string($perigrafi) . "," .
@@ -119,7 +131,7 @@ pandora::query($query);
 // σήμερα.
 
 if ($prosapo === "ΑΠΟΧΩΡΗΣΗ")
-simerines_adies($kodikos, $simera, $ipiresia);
+simerines_adies($kodikos, $imerominia, $ipiresia);
 
 // Ενημερώνουμε τα νεοεισαχθέντα πρόσωπα καταργώντας τυχόν άδειες που έχουν
 // λήξει.
@@ -127,7 +139,7 @@ simerines_adies($kodikos, $simera, $ipiresia);
 $query = "UPDATE `letrak`.`parousia`" .
 	" SET `adidos` = NULL, `adapo` = NULL, `adeos` = NULL" .
 	" WHERE (`deltio` = " . $kodikos . ")" .
-	" AND (`adeos` < '" . $simera . "')";
+	" AND (`adeos` < '" . $imerominia . "')";
 pandora::query($query);
 
 pandora::query("SET @tax := 0");
