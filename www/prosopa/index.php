@@ -56,14 +56,14 @@ document_body();
 			<label for="peDeltioKodikos">
 				Παρουσιολόγιο
 			</label>
-			<input id="peDeltioKodikos" disabled="true">
-			<input id="peDeltioPerigrafi" disabled="true">
+			<input id="peDeltioKodikos" class="peDeltioPedio">
+			<input id="peDeltioPerigrafi" class="peDeltioPedio">
 		</div>
 		<div class="peFormaInputLine">
 			<label for="peDeltioImerominia">
 				Ημερομηνία
 			</label>
-			<input id="peDeltioImerominia" disabled="true">
+			<input id="peDeltioImerominia" class="peDeltioPedio">
 			<label for="peDeltioProsapo">
 				Είδος
 			</label>
@@ -74,7 +74,7 @@ document_body();
 			<label for="peDeltioIpiresia">
 				Υπηρεσία
 			</label>
-			<textarea id="peDeltioIpiresia" disabled="true">
+			<textarea id="peDeltioIpiresia" class="peDeltioPedio">
 			</textarea>
 		</div>
 	</div>
@@ -84,29 +84,26 @@ document_body();
 			<label for="peIpalilosKodikos">
 				Υπάλληλος
 			</label>
-			<input id="peIpalilosKodikos">
-			<input id="peIpalilosOnomateponimo">
+			<input id="peIpalilosKodikos" class="peIpalilosPedio pePedioUpdate">
+			<input id="peIpalilosOnomateponimo" class="peIpalilosPedio" disabled="true">
 		</div>
 		<div class="peFormaInputLine">
 			<label for="peIpalilosOrario">
 				Ωράριο
 			</label>
-			<input id="peIpalilosOrario">
+			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate">
 			<label for="peIpalilosKarta">
 				Κάρτα
 			</label>
-			<input id="peIpalilosKarta">
+			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
 			<label for="peKartaMeraora">
 				Καταγραφή
 			</label>
-			<input id="peKartaMeraora" disabled="true">
-			<input id="peKartaMeraoraClear" value="Καθαρισμός"
-				type="button" class="letrak-formaPliktro">
+			<input id="peKartaMeraora" class="peParousiaPedio pePedioUpdate">
 		</div>
 		<div class="peFormaInputLine">
-			<label id="peMeraoraLabel" for="peMeraora">
-			</label>
-			<input id="peMeraora">
+			<label id="peMeraoraLabel" for="peMeraora"></label>
+			<input id="peMeraora" class="peParousiaPedio pePedioUpdate">
 		</div>
 	</div>
 
@@ -115,7 +112,7 @@ document_body();
 			<label for="peAdidos">
 				Άδεια
 			</label>
-			<select id="peAdidos">
+			<select id="peAdidos" class="peParousiaPedio pePedioUpdate">
 			<option value="" selected="true"></option>
 
 			<option value="ΚΑΝΟΝΙΚΗ" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ</option>
@@ -154,11 +151,11 @@ document_body();
 			<label for="peAdapo">
 				Από
 			</label>
-			<input id="peAdapo">
+			<input id="peAdapo" class="peParousiaPedio pePedioUpdate">
 			<label for="peAdeos">
 				Έως
 			</label>
-			<input id="peAdeos">
+			<input id="peAdeos" class="peParousiaPedio pePedioUpdate">
 		</div>
 	</div>
 
@@ -167,7 +164,7 @@ document_body();
 			<label for="peExcuse">
 				Εξαίρεση
 			</label>
-			<select id="peExcuse">
+			<select id="peExcuse" class="peParousiaPedio pePedioUpdate">
 			<option value="" selected="true"></option>
 			<option value="ΕΚΤΟΣ ΕΔΡΑΣ">ΕΚΤΟΣ ΕΔΡΑΣ</option>
 			<option value="ΑΙΜΟΔΟΣΙΑ">ΑΙΜΟΔΟΣΙΑ</option>
@@ -181,7 +178,7 @@ document_body();
 			<label for="peInfo">
 				Παρατηρήσεις
 			</label>
-			<textarea id="peInfo" maxlength="140">
+			<textarea id="peInfo" maxlength="140" class="peParousiaPedio pePedioUpdate">
 			</textarea>
 		</div>
 	</div>

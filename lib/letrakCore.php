@@ -443,6 +443,63 @@ class Orario {
 	}
 }
 
+class Ipalilos {
+	public $kodikos = NULL;
+
+	public function __construct($x = NULL) {
+		$this->from_array($x);
+	}
+
+	private function from_array($x) {
+		$this->kodikos = NULL;
+
+		if (!isset($x))
+		return $this;
+
+		foreach ($x as $k => $v) {
+			try {
+				$func = $k . "_set";
+				$this->$func($v);
+			}
+
+			catch (Exception $e) {
+				continue;
+			}
+		}
+
+		return $this;
+	}
+
+	public function kodikos_set($kodikos = NULL) {
+		$this->kodikos = NULL;
+
+		if (letrak::ipalilos_invalid_kodikos($kodikos))
+		return $this;
+
+		$this->kodikos = $kodikos;
+		return $this;
+	}
+
+	public function kodikos_get() {
+		return $this->kodikos;
+	}
+
+	public function is_kodikos() {
+		return $this->kodikos_get();
+	}
+
+	public function oxi_kodikos() {
+		return !$this->is_kodikos();
+	}
+
+	public function from_database($kodikos) {
+		$query = "SELECT `kodikos` FROM " . letrak::erpota12("ipalilos") .
+			" WHERE `kodikos` = " . $kodikos;
+		$row = pandora::first_row($query, MYSQLI_ASSOC);
+		return $this->from_array($row);
+	}
+}
+
 class Deltio {
 	public $kodikos = NULL;		// κωδικός παρουσιολογίου
 	public $ipalilos = NULL;	// αρ. μητρώου δημιοργού υπαλλήλου
@@ -1238,6 +1295,44 @@ class Prosvasi {
 
 	public function oxi_prosvasi_deltio($deltio) {
 		return !$this->is_prosvasi_deltio($deltio);
+	}
+
+	// Ελέγχει αν ο υπάλληλος της πρόσβασης έχει δικαίωμα διόρθωσης του
+	// παρουσιολογίου, τουτέστιν αν είναι ο πρώτος υπογράφων και δεν έχει
+	// υπογράψει ακόμη.
+
+	public function is_deltio_edit($deltio) {
+		if (!isset($deltio))
+		return FALSE;
+
+		if ($deltio instanceof Deltio)
+		$deltio = $deltio->kodikos_get();
+
+		if (letrak::deltio_invalid_kodikos($deltio))
+		return FALSE;
+
+		$query = "SELECT `armodios`, `checkok`" .
+			" FROM `letrak`.`ipografi`" .
+			" WHERE `deltio` = " . $deltio .
+			" ORDER BY `taxinomisi`" .
+			" LIMIT 1";
+
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!$row)
+		return FALSE;
+
+		if ($row[0] != $this->ipalilos_get())
+		return FALSE;
+
+		if ($row[1])
+		return FALSE;
+
+		return TRUE;
+	}
+
+	public function oxi_deltio_edit($deltio) {
+		return !$this->is_deltio_edit($deltio);
 	}
 }
 ?>

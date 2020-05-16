@@ -269,7 +269,7 @@ CREATE TABLE `parousia` (
 
 	`info`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Σχόλια',
 
-	UNIQUE INDEX (
+	PRIMARY KEY (
 		`deltio`,
 		`ipalilos`
 	) USING BTREE

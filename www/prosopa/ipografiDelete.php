@@ -85,7 +85,7 @@ if (pandora::affected_rows() !== 1) {
 	letrak::fatal_error_json("Απέτυχε η διαγραφή υπογραφής");
 }
 
-$katastasi = $deltio::katastasi_update();
+$katastasi = $deltio->katastasi_update();
 
 if (!isset($katastasi)) {
 	pandora::rollback();
@@ -96,7 +96,7 @@ letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
-print '"katastasi":' . letrak::katastasi_json($katastasi) . ",";
+print '"katastasi":' . pandora::json_string($katastasi) . ",";
 letrak::ipografes_json($kodikos);
 print '}';
 

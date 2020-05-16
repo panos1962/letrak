@@ -216,7 +216,7 @@ prosopa.ananeosi = (e) => {
 			deltioProcess(rsp.deltio).
 			ipografesProcess(rsp.ipografes).
 			prosopaProcess(rsp.prosopa).
-			pliktraRefresh();
+			prosvasiRefresh();
 
 			// Σε περίπτωση που το παρουσιολόγιο έχει μόλις
 			// δημιουργηθεί ως αντίγραφο κάποιου προηγούμενου
@@ -301,7 +301,7 @@ prosopa.ipografesProcess = (ipografes) => {
 		append(v.domGet());
 	});
 
-	prosopa.pliktraRefresh();
+	prosopa.prosvasiRefresh();
 	return prosopa;
 };
 
@@ -424,12 +424,13 @@ prosopa.ipografesSetup = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.pliktraRefresh = () => {
+prosopa.prosvasiRefresh = () => {
 	return prosopa.
 	deltioKatastasiRefresh().
 	ipografiUpdateTabsRefresh().
 	ipografiPraxiTabsRefresh().
-	prosopaUpdateTabsRefresh();
+	prosopaUpdateTabsRefresh().
+	editorProsvasiRefresh();
 };
 
 prosopa.deltioKatastasiRefresh = () => {
@@ -926,7 +927,7 @@ prosopa.ipografiEditPost = (rsp, forma) => {
 	if (found)
 	prosopa.ipografiCandiTabsShow();
 
-	prosopa.pliktraRefresh();
+	prosopa.prosvasiRefresh();
 	forma.dialogDOM.dialog('close');
 
 	return prosopa;
@@ -1053,13 +1054,17 @@ prosopa.prosopaSetup = () => {
 prosopa.prosopaUpdateTabsRefresh = () => {
 	let update = prosopa.prosopaUpdateAllow();
 
-	pnd.toolbarLeftDOM.
-	children('.prosopaPliktroUpdate').
-	css('display', update ? 'inline-block' : 'none');
+	if (update) {
+		pnd.toolbarLeftDOM.
+		children('.prosopaPliktroUpdate').
+		css('display', 'inline-block');
+	}
 
-	// XXX
-	prosopa.parousiaEditorDOM.
-	children('.peFormaEnotita');
+	else {
+		pnd.toolbarLeftDOM.
+		children('.prosopaPliktroUpdate').
+		css('display', update ? 'inline-block' : 'none');
+	}
 
 	return prosopa;
 }
@@ -1105,6 +1110,10 @@ prosopa.prosopaUpdateAllow = () => {
 prosopa.editorSetup = () => {
 	prosopa.parousiaEditorDOM = $('#parousiaEditor');
 
+	prosopa.parousiaEditorDOM.find('.peDeltioPedio').
+	attr('disabled', true);
+
+	prosopa.editorDeltioKodikosDOM = $('#peDeltioKodikos');
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
@@ -1117,8 +1126,12 @@ prosopa.editorSetup = () => {
 	prosopa.editorAdeosDOM = $('#peAdeos');
 	prosopa.editorExcuseDOM = $('#peExcuse');
 	prosopa.editorInfoDOM = $('#peInfo');
-	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli');
-	prosopa.editorDiagrafiDOM = $('#pePliktroDiagrafi');
+
+	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli').
+	on('click', (e) => prosopa.editorIpovoli(e));
+
+	prosopa.editorDiagrafiDOM = $('#pePliktroDiagrafi').
+	on('click', (e) => prosopa.editorDiagrafi(e));
 
 	prosopa.editorPanelDOM = $('#pePanel');
 
@@ -1175,6 +1188,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
 
+	let update = prosopa.prosopaUpdateAllow();
+
 	// Η φόρμα επεξεργασίας παρουσίας (editor) λειτουργεί διαφορετικά
 	// για υπάρχουσες παρουσίες και διαφορετικά κατά την προσθήκη νέας
 	// παρουσίας. Ειδικά για το πλήκτρο διαγραφής μεριμνούμε ιδιαίτερα
@@ -1182,43 +1197,67 @@ prosopa.parousiaEdit = (e, parousia) => {
 	// παρουσίας.
 
 	if (parousia) {
+		var prosthiki = false;
 		let display = prosopa.editorIpovoliDOM.css('display');
 		prosopa.editorDiagrafiDOM.css('display', display);
 		prosopa.editorIpovoliDOM.val('Υποβολή')
+		prosopa.parousiaEditorDOM.removeData('prosthiki');
 	}
 
-	else {
+	else if (update) {
+		prosthiki = true;
 		parousia = new letrak.parousia();
 		prosopa.editorDiagrafiDOM.css('display', 'none');
 		prosopa.editorIpovoliDOM.val('Προσθήκη')
+		prosopa.parousiaEditorDOM.data('prosthiki', true);
 	}
+
+	else {
+		prosopa.parousiaEditorDOM.dialog('close');
+		return prosopa;
+	}
+
+	let enimerosi = !prosthiki;
+
+	if (enimerosi) {
+		prosopa.editorIpalilosKodikosDOM.
+		attr('disabled', true).
+		val(parousia.ipalilos);
+
+		prosopa.editorIpalilosOnomateponimoDOM.
+		val(parousia.onomateponimo);
+	}
+
+	else {
+		prosopa.editorIpalilosKodikosDOM.
+		attr('disabled', false).
+		val('');
+
+		prosopa.editorIpalilosOnomateponimoDOM.
+		val('');
+	}
+
+	// Ωράριο
+
+	prosopa.editorIpalilosOrarioDOM.
+	val(parousia.orario ? parousia.orario.toString() : '');
+
+	// Κάρτα
+
+	prosopa.editorIpalilosKartaDOM.
+	val(parousia.karta);
+
+	// Ημερομηνία και ώρα παρουσίας
 
 	let meraora = parousia.meraoraGet();
 
 	if (meraora)
 	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
 
-	prosopa.editorIpalilosKodikosDOM.
-	attr('disabled', true).
-	val(parousia.ipalilos);
-
-	prosopa.editorIpalilosOnomateponimoDOM.
-	attr('disabled', true).
-	val(parousia.onomateponimo);
-
-	let orario = parousia.orario;
-
-	if (orario)
-	orario = orario.toString();
-
-	prosopa.editorIpalilosOrarioDOM.
-	val(orario);
-
-	prosopa.editorIpalilosKartaDOM.
-	val(parousia.karta);
-
 	prosopa.editorMeraoraDOM.
 	val(meraora);
+
+	// Άδεια
 
 	prosopa.editorAdidosDOM.
 	val(parousia.adidos);
@@ -1229,16 +1268,124 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.editorAdeosDOM.
 	val(parousia.adeos);
 
+	// Excuse
+
 	prosopa.editorExcuseDOM.
 	val(parousia.excuse);
 
+	// Παρατηρήσεις
+
 	prosopa.editorInfoDOM.
 	val(parousia.infoGet());
+
+	// Άνοιγμα φόρμας καταχώρησης λεπτομερειών συμβάντος (editor)
 
 	prosopa.parousiaEditorDOM.
 	data('parousia', parousia).
 	dialog('open');
 	prosopa.editorPliktroAkiroDOM.focus();
+
+	return prosopa;
+};
+
+prosopa.editorProsvasiRefresh = () => {
+	let update = prosopa.prosopaUpdateAllow();
+
+	if (update) {
+		prosopa.editorIpovoliDOM.css('display', 'inline-block');
+
+		if (prosopa.parousiaEditorDOM.data('prosthiki'))
+		prosopa.editorDiagrafiDOM.css('display', 'none');
+
+		else
+		prosopa.editorDiagrafiDOM.css('display', 'inline-block');
+
+		prosopa.parousiaEditorDOM.
+		find('.pePedioUpdate').
+		attr('disabled', false);
+	}
+
+	else {
+		prosopa.editorIpovoliDOM.css('display', 'none');
+		prosopa.editorDiagrafiDOM.css('display', 'none');
+		prosopa.parousiaEditorDOM.
+		find('.pePedioUpdate').
+		attr('disabled', true);
+	}
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.editorIpovoli = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let deltio = prosopa.editorDeltioKodikosDOM.val();
+
+	if (!deltio)
+	return porosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
+
+	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
+
+	if (!ipalilos)
+	return porosopa.fyiError('Απροσδιόριστος υπάλληλος');
+
+	$.post({
+		'url': 'parousiaIpovoli.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': deltio,
+			'ipalilos': ipalilos,
+		},
+		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα υποβολής στοιχείων παρουσίας');
+			console.error(err);
+		},
+	});
+
+	return prosopa;
+};
+
+prosopa.editorDiagrafi = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let deltio = prosopa.editorDeltioKodikosDOM.val();
+
+	if (!deltio)
+	return porosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
+
+	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
+
+	if (!ipalilos)
+	return porosopa.fyiError('Απροσδιόριστος υπάλληλος');
+
+	$.post({
+		'url': 'parousiaDiagrafi.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': deltio,
+			'ipalilos': ipalilos,
+		},
+		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα διαγραφής παρουσίας');
+			console.error(err);
+		},
+	});
+
+	return prosopa;
+};
+
+prosopa.editorAlagiPost = (rsp) => {
+	if (rsp)
+	return prosopa.fyiError(rsp);
+
+	prosopa.ananeosi();
+	prosopa.parousiaEditorDOM.dialog('close');
 
 	return prosopa;
 };
@@ -1516,7 +1663,7 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 		append(v.domGet());
 	});
 
-	prosopa.pliktraRefresh();
+	prosopa.prosvasiRefresh();
 	return false;
 };
 
