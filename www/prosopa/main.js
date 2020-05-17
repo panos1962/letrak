@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-17
 // Updated: 2020-05-16
 // Updated: 2020-05-13
 // Updated: 2020-05-11
@@ -104,6 +105,7 @@ prosopa.goniki = {
 	'deltioDOM': undefined,
 	'klonos': false,
 	'ipiresiaList': {},
+	'ipalilosArray': [],
 };
 
 (() => {
@@ -1056,12 +1058,14 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	let update = prosopa.prosopaUpdateAllow();
 
 	if (update) {
+console.log('PROSOPAUPDATE')
 		pnd.toolbarLeftDOM.
 		children('.prosopaPliktroUpdate').
 		css('display', 'inline-block');
 	}
 
 	else {
+console.log('OXI PROSOPAUPDATE')
 		pnd.toolbarLeftDOM.
 		children('.prosopaPliktroUpdate').
 		css('display', update ? 'inline-block' : 'none');
@@ -1109,6 +1113,8 @@ prosopa.prosopaUpdateAllow = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorSetup = () => {
+	prosopa.ipalilosZoomDOM = $('#peIpalilosZoom');
+
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
 	on('submit', (e) => prosopa.editorIpovoli(e));
 
@@ -1123,7 +1129,14 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
-	prosopa.editorAdidosDOM = $('#peAdidos');
+	prosopa.editorAdidosDOM = $('#peAdidos').
+	on('change', () => {
+		if (prosopa.editorAdidosDOM.val())
+		return;
+
+		prosopa.editorAdapoDOM.val('');
+		prosopa.editorAdeosDOM.val('');
+	});
 	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
 	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();
 	prosopa.editorExcuseDOM = $('#peExcuse');
@@ -1145,7 +1158,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorPliktroAkiroDOM = $('#pePliktroAkiro').
 	on('click', (e) => prosopa.editorClose(e));
 
-	$('#pePliktroEpanafora').
+	prosopa.editorEpanaforaDOM = $('#pePliktroEpanafora').
 	on('click', (e) => {
 		e.stopPropagation();
 
@@ -1162,13 +1175,7 @@ prosopa.editorSetup = () => {
 			'my': 'left+290 top+90',
 			'at': 'left top',
 		},
-		'open': () => {
-			let update = prosopa.prosopaUpdateAllow();
-
-			prosopa.editorPanelDOM.
-			children('.prosopaPliktroUpdate').
-			css('display', update ? 'inline-block' : 'none');
-		}
+		'close': () => prosopa.ipalilosZoomClose(),
 	}).
 	dialog('close');
 
@@ -1192,6 +1199,9 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 	let update = prosopa.prosopaUpdateAllow();
 
+	if (update)
+	prosopa.editorIpovoliDOM.css('display', 'inline-block');
+
 	// Η φόρμα επεξεργασίας παρουσίας (editor) λειτουργεί διαφορετικά
 	// για υπάρχουσες παρουσίες και διαφορετικά κατά την προσθήκη νέας
 	// παρουσίας. Ειδικά για το πλήκτρο διαγραφής μεριμνούμε ιδιαίτερα
@@ -1200,17 +1210,19 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 	if (parousia) {
 		var prosthiki = false;
+		prosopa.editorIpovoliDOM.val('Υποβολή')
 		let display = prosopa.editorIpovoliDOM.css('display');
 		prosopa.editorDiagrafiDOM.css('display', display);
-		prosopa.editorIpovoliDOM.val('Υποβολή')
+		prosopa.editorEpanaforaDOM.css('display', display);
 		prosopa.parousiaEditorDOM.removeData('prosthiki');
 	}
 
 	else if (update) {
 		prosthiki = true;
+		prosopa.editorIpovoliDOM.val('Προσθήκη')
 		parousia = new letrak.parousia();
 		prosopa.editorDiagrafiDOM.css('display', 'none');
-		prosopa.editorIpovoliDOM.val('Προσθήκη')
+		prosopa.editorEpanaforaDOM.css('display', 'none');
 		prosopa.parousiaEditorDOM.data('prosthiki', true);
 	}
 
@@ -1233,7 +1245,9 @@ prosopa.parousiaEdit = (e, parousia) => {
 	else {
 		prosopa.editorIpalilosKodikosDOM.
 		attr('disabled', false).
-		val('');
+		val('').
+		on('keyup', (e) => prosopa.ipalilosZoom(e)).
+		on('blur', (e) => prosopa.ipalilosZoomClose(e));
 
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val('');
@@ -1307,11 +1321,15 @@ prosopa.editorProsvasiRefresh = () => {
 	if (update) {
 		prosopa.editorIpovoliDOM.css('display', 'inline-block');
 
-		if (prosopa.parousiaEditorDOM.data('prosthiki'))
-		prosopa.editorDiagrafiDOM.css('display', 'none');
+		if (prosopa.parousiaEditorDOM.data('prosthiki')) {
+			prosopa.editorDiagrafiDOM.css('display', 'none');
+			prosopa.editorEpanaforaDOM.css('display', 'none');
+		}
 
-		else
-		prosopa.editorDiagrafiDOM.css('display', 'inline-block');
+		else {
+			prosopa.editorDiagrafiDOM.css('display', 'inline-block');
+			prosopa.editorEpanaforaDOM.css('display', 'inline-block');
+		}
 
 		prosopa.parousiaEditorDOM.
 		find('.pePedioUpdate').
@@ -1321,6 +1339,7 @@ prosopa.editorProsvasiRefresh = () => {
 	else {
 		prosopa.editorIpovoliDOM.css('display', 'none');
 		prosopa.editorDiagrafiDOM.css('display', 'none');
+		prosopa.editorEpanaforaDOM.css('display', 'none');
 		prosopa.parousiaEditorDOM.
 		find('.pePedioUpdate').
 		attr('disabled', true);
@@ -1375,11 +1394,108 @@ prosopa.editorMeraoraFix = (e) => {
 	prosopa.editorMeraoraDOM.val(meraora);
 };
 
+prosopa.ipalilosZoom = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let zoom = prosopa.ipalilosZoomDOM;
+	let fld = prosopa.editorIpalilosKodikosDOM;
+
+	let ipl = prosopa.goniki.ipalilosArray;
+	let val = fld.val();
+
+	zoom.css('display', 'none');
+
+	if (!val)
+	return;
+
+	if (val.length < 3)
+	return;
+
+	if (val == parseInt(val))
+	return;
+
+	let a = val.split('');
+	let s = '^' + a[0];
+
+	for (let i = 1; i < a.length; i++)
+	s += '.*' + a[i];
+
+	s = new RegExp(s, 'i');
+
+	let lpi = [];
+
+	pnd.arrayWalkCond(ipl, (x) => {
+		let t = x.e + ' ' + x.o;
+
+		if (t.match(s))
+		lpi.push(x);
+
+		if (lpi.length < 30)
+		return true;
+
+		lpi.push(undefined);
+		return false;
+	});
+
+	if (!lpi.length)
+	return;
+
+	zoom.css('display', 'block').empty();
+
+	pnd.arrayWalk(lpi, (x, i) => {
+		zoom.append(prosopa.ipalilosZoomDomGet(x, i));
+	});
+};
+
+prosopa.ipalilosZoomDomGet = (x, n) => {
+	if (!x)
+	return $('<div>').
+	text('More…');
+
+	return $('<div>').
+	data('ipalilos', x).
+	addClass('ipalilosZoom').
+	addClass('ipalilosZoomZebra' + (n % 2)).
+
+	append($('<div>').
+	addClass('ipalilosZoomKodikos').
+	text(x.k)).
+
+	append($('<div>').
+	addClass('ipalilosZoomOnomateponimo').
+	text(x.e + ' ' + x.o + ' ' + x.p));
+};
+
+prosopa.ipalilosZoomClose = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	prosopa.ipalilosZoomDOM.
+	css('display', '').
+	empty();
+
+	return prosopa;
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorIpovoli = (e) => {
 	if (e)
 	e.stopPropagation();
+
+	let x = prosopa.ipalilosZoomDOM.children('.ipalilosZoom')
+
+	if (x.length === 1) {
+		x = x.data('ipalilos');
+
+		prosopa.editorIpalilosKodikosDOM.val(x.k);
+		prosopa.editorIpalilosOnomateponimoDOM.
+		val(x.e + ' ' + x.o + ' ' + x.p.substr(0,3));
+		prosopa.ipalilosZoomClose();
+		prosopa.editorIpalilosOrarioDOM.focus();
+		return false;
+	}
 
 	let deltio = prosopa.editorDeltioKodikosDOM.val();
 
@@ -1395,6 +1511,7 @@ prosopa.editorIpovoli = (e) => {
 		return false;
 	}
 
+try {
 	$.post({
 		'url': 'parousiaIpovoli.php',
 		'dataType': 'text',
@@ -1416,23 +1533,61 @@ prosopa.editorIpovoli = (e) => {
 			console.error(err);
 		},
 	});
+}
+
+catch (e) {
+	console.error(e);
+	return false;
+}
 
 	return false;
 };
 
-prosopa.editorDiagrafi = (e) => {
+prosopa.editorDiagrafi = (e, sure) => {
 	if (e)
 	e.stopPropagation();
+
+	if (!sure) {
+		let dialogDOM = $('<div>').
+		attr('title', 'Διαγραφή υπαλλήλου').
+		append($('<div>').
+		html('Να διαγραφεί ο υπάλληλος;')).
+		dialog({
+			'resizable': false,
+			'height': 'auto',
+			'width': '350px',
+			'modal': true,
+			'position': {
+				'my': 'left+50 top+50',
+				'at': 'left top',
+			},
+
+			'buttons': {
+				'Διαγραφή': function() {
+					prosopa.editorDiagrafi(false, true);
+					$(this).dialog('close');
+				},
+				'Άκυρο': function() {
+					$(this).dialog('close');
+				},
+			},
+			'close': function() {
+				dialogDOM.remove();
+			},
+		});
+
+		return prosopa;
+	}
 
 	let deltio = prosopa.editorDeltioKodikosDOM.val();
 
 	if (!deltio)
-	return porosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
+	return prosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
 
 	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
 
 	if (!ipalilos)
-	return porosopa.fyiError('Απροσδιόριστος υπάλληλος');
+	return prosopa.fyiError('Απροσδιόριστος υπάλληλος');
 
 	$.post({
 		'url': 'parousiaDiagrafi.php',

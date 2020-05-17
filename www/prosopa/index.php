@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-17
 // Updated: 2020-05-13
 // Updated: 2020-05-09
 // Updated: 2020-05-07
@@ -85,6 +86,8 @@ document_body();
 				Υπάλληλος
 			</label>
 			<input id="peIpalilosKodikos" class="peIpalilosPedio pePedioUpdate">
+			<div id="peIpalilosZoom">
+			</div>
 			<input id="peIpalilosOnomateponimo" class="peIpalilosPedio" disabled="true">
 		</div>
 		<div class="peFormaInputLine">

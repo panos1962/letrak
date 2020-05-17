@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2020-05-17
 * Updated: 2020-05-16
 * Updated: 2020-05-09
 * Updated: 2020-04-26
@@ -248,6 +249,7 @@ $ordinalWidth = 2.2em
 	padding 2px
 
 #parousiaEditor
+	position relative
 	display none
 	background-color #fff7df
 	& input
@@ -346,3 +348,41 @@ $ordinalWidth = 2.2em
 .pePliktro
 	padding 2px 6px
 	background-color beige !important
+
+#peIpalilosZoom
+	display none
+	position absolute
+	top 140px
+	left 250px
+
+	width 644px
+	overflow-x hidden
+	height 220px
+	overflow-y scroll
+	white-space nowrap
+
+	background-color #ffe19e
+
+	border-style solid
+	border-width 1px
+	border-color grey
+	box-shadow 2px 2px 4px #888888
+
+.ipalilosZoom
+	padding 2px
+	border-style none none solid none
+	border-width 1px
+	border-color #a7892d
+	cursor pointer
+	> div
+		display inline-block
+
+.ipalilosZoomZebra0
+	background-color #f5d286
+
+.ipalilosZoomZebra1
+	background-color #eccf8a
+
+
+.ipalilosZoomKodikos
+	width 4em

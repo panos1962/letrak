@@ -1051,6 +1051,7 @@ console.log(self.LETRAK);
 
 	if (deltio.hasOwnProperty('ipiresiaList')) {
 		self.LETRAK.ipiresiaList = deltio.ipiresiaList;
+		self.LETRAK.ipalilosArray = deltio.ipalilosArray;
 		deltio.prosopaOpen(kodikos);
 		return deltio;
 	}
@@ -1221,6 +1222,7 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 	});
 
 	self.LETRAK.ipiresiaList = deltio.ipiresiaList;
+	self.LETRAK.ipalilosArray = deltio.ipalilosArray;
 	deltio.prosopaOpen(kodikos);
 
 	return deltio;
