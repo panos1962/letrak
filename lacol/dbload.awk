@@ -12,7 +12,10 @@ BEGIN {
 
 	select_ipiresia()
 	create_deltio("ΑΠΟΧΩΡΗΣΗ")
+
+	if (prosvasi)
 	update_prosvasi()
+
 	close(deltio_create)
 	pd_ttymsg("Ενημέρωση ωραρίων…")
 }
