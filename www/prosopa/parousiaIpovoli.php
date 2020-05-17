@@ -72,21 +72,24 @@ lathos($ipalilos_kodikos . ": δεν εντοπίστηκε ο εργαζόμε�
 
 $orario = orario_get();
 $karta = karta_get();
-
-$adidos = NULL;
-$adapo = NULL;
-$adeos = NULL;
-$excuse = NULL;
-$info = NULL;
+$meraora = meraora_get();
+$adidos = adia_get($adapo, $adeos);
+$excuse = excuse_get();
+$info = info_get();
 
 $query = "REPLACE INTO `letrak`.`parousia` " .
 	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`," .
 	" `adidos`, `adapo`, `adeos`, `excuse`, `info`) VALUES (" .
 	$deltio_kodikos . ", " .
 	$ipalilos_kodikos . ", " .
-	pandora::sql_string($orario) . "," .
-	$karta . "," .
-	"NULL, NULL, NULL, NULL, NULL, NULL)";
+	$orario . ", " .
+	$karta . ", " .
+	$meraora . ", " .
+	$adidos . ", " .
+	$adapo . ", " .
+	$adeos . ", " .
+	$excuse . ", " .
+	$info . ")";
 pandora::query($query);
 
 if (pandora::affected_rows() < 1)
@@ -98,17 +101,17 @@ function orario_get() {
 	$s = pandora::parameter_get("orario");
 
 	if (!isset($s))
-	return "";
+	return "NULL";
 
 	if (!$s)
-	return "";
+	return "NULL";
 
 	$orario = new Orario($s);
 
 	if ($orario->oxi_orario())
 	lathos($s . ": μη αποδεκτό ωράριο");
 
-	return $orario->to_string();
+	return pandora::sql_string($orario->to_string());
 }
 
 function karta_get() {
@@ -124,6 +127,177 @@ function karta_get() {
 	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
 
 	return $s;
+}
+
+function meraora_get() {
+	global $deltio;
+
+	$s = pandora::parameter_get("meraora");
+
+	if (!isset($s))
+	return "NULL";
+
+	if (!$s)
+	return "NULL";
+
+	$t = DateTime::createFromFormat("d-m-Y H:i", $s);
+
+	if ($t === FALSE)
+	lathos($s . ": λανθασμένη ημερομηνία/ώρα συμβάντος");
+
+	$tdlt = $deltio->imerominia_get();
+
+	if (!isset($tdlt))
+	return pandora::sql_string($t->format("Y-m-d H:i"));
+
+	$tdlt = DateTime::createFromFormat("Y-m-d H:i:s",
+		$tdlt->format("Y-m-d") . " 00:00:00");
+
+	$diafora = $tdlt->diff($t);
+
+	if ($diafora === FALSE)
+	lathos($s . ": ακαθόριστη ημερομηνία παρουσιολογίου");
+
+	$max = ($diafora->invert ? 0 : 1);
+
+	if ($diafora->d > $max)
+	lathos($s . ": μη αποδεκτή ημερομηνία/ώρα συμβάντος");
+
+	return pandora::sql_string($t->format("Y-m-d H:i"));
+}
+
+function adia_get(&$adapo, &$adeos) {
+	global $deltio;
+
+	// Είδος αδείας
+
+	$adidos = pandora::parameter_get("adidos");
+
+	if (!isset($adidos))
+	$adidos = NULL;
+
+	elseif (!$adidos)
+	$adidos = NULL;
+
+	// Έναρξη αδείας
+
+	$adapo = pandora::parameter_get("adapo");
+
+	if (!isset($adapo))
+	$adapo = NULL;
+
+	elseif (!$adapo)
+	$adapo = NULL;
+
+	// Λήξη αδείας
+
+	$adeos = pandora::parameter_get("adeos");
+
+	if (!isset($adeos))
+	$adeos = NULL;
+
+	elseif (!$adeos)
+	$adeos = NULL;
+
+	// Διάφοροι έλεγχοι
+
+	if ((!isset($adidos)) && (isset($adidos) || isset($adeos)))
+	lathos("Ακαθόριστο είδος αδείας");
+
+	if (isset($adidos) && (!isset($adapo)) && (!isset($adeos)))
+	lathos("Ακαθόριστο διάστημα αδείας");
+
+	if (!isset($adidos)) {
+		$adapo = "NULL";
+		$adeos = "NULL";
+		return "NULL";
+	}
+
+	if (isset($adapo)) {
+		$s = DateTime::createFromFormat("d-m-Y", $adapo);
+
+		if ($s === FALSE)
+		lathos($adapo . ": λανθασμένη ημερομηνία έναρξης αδείας");
+
+		$adapo = $s->format("Y-m-d");
+		$apo = DateTime::createFromFormat("Y-m-d H:i:s",
+			$adapo . " 00:00:00");
+		$adapo = pandora::sql_string($adapo);
+	}
+
+	else {
+		$adapo = "NULL";
+		$apo = NULL;
+	}
+
+	if (isset($adeos)) {
+		$s = DateTime::createFromFormat("d-m-Y", $adeos);
+
+		if ($s === FALSE)
+		lathos($adeos . ": λανθασμένη ημερομηνία λήξης αδείας");
+
+		$adeos = $s->format("Y-m-d");
+		$eos = DateTime::createFromFormat("Y-m-d H:i:s",
+			$adeos . " 00:00:00");
+		$adeos = pandora::sql_string($adeos);
+	}
+
+	else {
+		$adeos = "NULL";
+		$eos = NULL;
+	}
+
+	$tdlt = $deltio->imerominia_get();
+
+	$tdlt = DateTime::createFromFormat("Y-m-d H:i:s",
+		$tdlt->format("Y-m-d") . " 00:00:00");
+
+	if (isset($apo) && isset($eos)) {
+		$diafora = $apo->diff($eos);
+
+		if (($diafora === FALSE) || $diafora->invert)
+		lathos("Μη αποδεκτό διάστημα αδείας");
+	}
+
+	if (isset($apo)) {
+		$diafora = $apo->diff($tdlt);
+
+		if (($diafora === FALSE) || $diafora->invert)
+		lathos("Μη αποδεκτή ημερομηνία αρχής αδείας");
+	}
+
+	if (isset($eos)) {
+		$diafora = $tdlt->diff($eos);
+
+		if (($diafora === FALSE) || $diafora->invert)
+		lathos("Μη αποδεκτή ημερομηνία λήξης αδείας");
+	}
+
+	return pandora::sql_string($adidos);
+}
+
+function excuse_get() {
+	$excuse = pandora::parameter_get("excuse");
+
+	if (!isset($excuse))
+	return "NULL";
+
+	if (!$excuse)
+	return "NULL";
+
+	return pandora::sql_string($excuse);
+}
+
+function info_get() {
+	$info = pandora::parameter_get("info");
+
+	if (!isset($info))
+	return "NULL";
+
+	if (!$info)
+	return "NULL";
+
+	return pandora::sql_string($info);
 }
 
 function lathos($s) {

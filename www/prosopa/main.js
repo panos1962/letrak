@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-16
 // Updated: 2020-05-13
 // Updated: 2020-05-11
 // Updated: 2020-05-09
@@ -1123,8 +1124,8 @@ prosopa.editorSetup = () => {
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos');
-	prosopa.editorAdapoDOM = $('#peAdapo');
-	prosopa.editorAdeosDOM = $('#peAdeos');
+	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
+	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();
 	prosopa.editorExcuseDOM = $('#peExcuse');
 	prosopa.editorInfoDOM = $('#peInfo');
 
@@ -1256,7 +1257,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
 
 	prosopa.editorMeraoraDOM.
-	val(meraora);
+	val(meraora).
+	on('change', (e) => prosopa.editorMeraoraFix());
 
 	// Άδεια
 
@@ -1264,10 +1266,10 @@ prosopa.parousiaEdit = (e, parousia) => {
 	val(parousia.adidos);
 
 	prosopa.editorAdapoDOM.
-	val(parousia.adapo);
+	val(pnd.date2date(parousia.adapo, 'Y-M-D', '%D-%M-%Y'));
 
 	prosopa.editorAdeosDOM.
-	val(parousia.adeos);
+	val(pnd.date2date(parousia.adeos, 'Y-M-D', '%D-%M-%Y'));
 
 	// Excuse
 
@@ -1325,6 +1327,52 @@ prosopa.editorProsvasiRefresh = () => {
 	}
 
 	return prosopa;
+};
+
+prosopa.editorMeraoraFix = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let meraora = prosopa.editorMeraoraDOM.val();
+
+	if (!meraora)
+	return prosopa.editorMeraoraDOM.val('');
+
+	let a = meraora.split(/ +/);
+
+	if (a.length < 1)
+	return prosopa.editorMeraoraDOM.val('');
+
+	if (a.length > 2)
+	return prosopa.editorMeraoraDOM.val('');
+
+	switch (a.length) {
+	case 1:
+		var imerominia = pnd.date(prosopa.deltio.imerominiaGet(),
+			'%D-%M-%Y');
+		var oralepto = a[0];
+		break;
+	case 2:
+		imerominia = a[0];
+		oralepto = a[1];
+		break;
+	default:
+		return undefined;
+	}
+
+	oralepto = new letrak.oralepto(oralepto);
+
+	if (oralepto.notOralepto())
+	return;
+
+	imerominia = pnd.date2date(imerominia, 'D-M-Y', '%Y-%M-%D');
+	meraora = new Date(imerominia + ' ' + oralepto.toString());
+	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
+
+	if (!meraora)
+	return;
+
+	prosopa.editorMeraoraDOM.val(meraora);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
