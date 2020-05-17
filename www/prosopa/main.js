@@ -1108,7 +1108,8 @@ prosopa.prosopaUpdateAllow = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorSetup = () => {
-	prosopa.parousiaEditorDOM = $('#parousiaEditor');
+	prosopa.parousiaEditorDOM = $('#parousiaEditor').
+	on('submit', (e) => prosopa.editorIpovoli(e));
 
 	prosopa.parousiaEditorDOM.find('.peDeltioPedio').
 	attr('disabled', true);
@@ -1283,6 +1284,16 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.parousiaEditorDOM.
 	data('parousia', parousia).
 	dialog('open');
+
+	if (update) {
+		if (prosthiki)
+		prosopa.editorIpalilosKodikosDOM.focus();
+
+		else
+		prosopa.editorMeraoraDOM.focus();
+	}
+
+	else
 	prosopa.editorPliktroAkiroDOM.focus();
 
 	return prosopa;
@@ -1324,13 +1335,17 @@ prosopa.editorIpovoli = (e) => {
 
 	let deltio = prosopa.editorDeltioKodikosDOM.val();
 
-	if (!deltio)
-	return porosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
+	if (!deltio) {
+		pnd.fyiError('Απροσδιόριστο παρουσιολόγιο');
+		return false;
+	}
 
 	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
 
-	if (!ipalilos)
-	return porosopa.fyiError('Απροσδιόριστος υπάλληλος');
+	if (!ipalilos) {
+		pnd.fyiError('Απροσδιόριστος υπάλληλος');
+		return false;
+	}
 
 	$.post({
 		'url': 'parousiaIpovoli.php',
@@ -1338,6 +1353,14 @@ prosopa.editorIpovoli = (e) => {
 		'data': {
 			'deltio': deltio,
 			'ipalilos': ipalilos,
+			'orario': prosopa.editorIpalilosOrarioDOM.val(),
+			'karta': prosopa.editorIpalilosKartaDOM.val(),
+			'meraora': prosopa.editorMeraoraDOM.val(),
+			'adidos': prosopa.editorAdidosDOM.val(),
+			'adapo': prosopa.editorAdapoDOM.val(),
+			'adeos': prosopa.editorAdeosDOM.val(),
+			'excuse': prosopa.editorExcuseDOM.val(),
+			'info': prosopa.editorInfoDOM.val(),
 		},
 		'success': (rsp) => prosopa.editorAlagiPost(rsp),
 		'error': (err) => {
@@ -1346,7 +1369,7 @@ prosopa.editorIpovoli = (e) => {
 		},
 	});
 
-	return prosopa;
+	return false;
 };
 
 prosopa.editorDiagrafi = (e) => {

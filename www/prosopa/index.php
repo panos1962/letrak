@@ -185,7 +185,7 @@ document_body();
 
 	<div id="pePanel">
 		<input id="pePliktroIpovoli" class="prosopaPliktroUpdate"
-			type="button" value="Υποβολή">
+			type="submit" value="Υποβολή">
 		<input id="pePliktroDiagrafi" class="prosopaPliktroUpdate"
 			type="button" value="Διαγραφή">
 		<input id="pePliktroEpanafora" class="prosopaPliktroUpdate"

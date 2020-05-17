@@ -136,6 +136,14 @@ class letrakCore {
 		return !self::ipografi_valid_taxinomisi($taxinomisi);
 	}
 
+	public static function ipalilos_valid_karta($karta) {
+		return pandora::is_integer($karta, 10000, 99999);
+	}
+
+	public static function ipalilos_invalid_karta($karta) {
+		return !self::ipalilos_valid_karta($karta);
+	}
+
 	// Η μέθοδος "deltio_is_klisto" δέχεται έναν κωδικό παρουσιολογίου
 	// και επιστρέφει true εφόσον το παρουσιολόγιο είναι κλειστό. Επίσης
 	// επιστρέφει true εφόσον ο κωδικός δεν είναι αποδεκτός ή δεν υπάρχει
@@ -218,19 +226,29 @@ class Orario {
 
 		$x = explode(":", $s);
 
-		if (count($x) != 2)
+		switch (count($x)) {
+		case 1:
+			$ora = $x[0];
+			$lepto = 0;
+			break;
+		case 2:
+			$ora = $x[0];
+			$lepto = $x[1];
+			break;
+		default:
+			return NULL;
+		}
+
+		if (pandora::not_integer($ora, 0, 24))
 		return NULL;
 
-		if (pandora::not_integer($x[0], 0, 24))
+		if (pandora::not_integer($lepto, 0, 59))
 		return NULL;
 
-		if (pandora::not_integer($x[1], 0, 59))
-		return NULL;
+		$ora = (int)$ora;
+		$lepto = (int)$lepto;
 
-		$ora = (int)($x[0]);
-		$lepto = (int)($x[1]);
-
-		if (($ora === 24) && ($lepto != 0))
+		if (($ora === 24) && ($lepto !== 0))
 		return NULL;
 
 		return sprintf("%02d:%02d", $ora, $lepto);
@@ -337,6 +355,20 @@ class Orario {
 		return $eos->modify('+1 day');
 	}
 
+	public function is_orario() {
+		if (self::oxi_ora_lepto($this->apo))
+		return FALSE;
+
+		if (self::oxi_ora_lepto($this->eos))
+		return FALSE;
+
+		return TRUE;
+	}
+
+	public function oxi_orario() {
+		return !$this->is_orario();
+	}
+
 	public function from_string($s) {
 		$this->apo = NULL;
 		$this->eos = NULL;
@@ -362,18 +394,18 @@ class Orario {
 		return $this;
 	}
 
-	public function is_orario() {
-		if (self::oxi_ora_lepto($this->apo))
-		return FALSE;
+	public function to_string() {
+		$apo = self::is_ora_lepto($this->apo);
 
-		if (self::oxi_ora_lepto($this->eos))
-		return FALSE;
+		if (!isset($apo))
+		return "";
 
-		return TRUE;
-	}
+		$eos = self::is_ora_lepto($this->eos);
 
-	public function oxi_orario() {
-		return !$this->is_orario();
+		if (!isset($eos))
+		return "";
+
+		return $apo . "-" . $eos;
 	}
 
 	// Η μέθοδος "proselefsi_diastima" χρησιμοποιείται κατά τον έλεγχο

@@ -70,8 +70,9 @@ lathos($ipalilos_kodikos . ": δεν εντοπίστηκε ο εργαζόμε�
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$orario = NULL;
-$karta = NULL;
+$orario = orario_get();
+$karta = karta_get();
+
 $adidos = NULL;
 $adapo = NULL;
 $adeos = NULL;
@@ -80,15 +81,50 @@ $info = NULL;
 
 $query = "REPLACE INTO `letrak`.`parousia` " .
 	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`," .
-	" `adidos`, `adapo`, `adeos`, `excuse`, `info`)".
-	" VALUES (" . $deltio_kodikos . ", " . $ipalilos_kodikos . ", " .
-	" NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)";
+	" `adidos`, `adapo`, `adeos`, `excuse`, `info`) VALUES (" .
+	$deltio_kodikos . ", " .
+	$ipalilos_kodikos . ", " .
+	pandora::sql_string($orario) . "," .
+	$karta . "," .
+	"NULL, NULL, NULL, NULL, NULL, NULL)";
 pandora::query($query);
 
 if (pandora::affected_rows() < 1)
 lathos("Αστοχία υποβολής στοιχείων παρουσίας");
 
 exit(0);
+
+function orario_get() {
+	$s = pandora::parameter_get("orario");
+
+	if (!isset($s))
+	return "";
+
+	if (!$s)
+	return "";
+
+	$orario = new Orario($s);
+
+	if ($orario->oxi_orario())
+	lathos($s . ": μη αποδεκτό ωράριο");
+
+	return $orario->to_string();
+}
+
+function karta_get() {
+	$s = pandora::parameter_get("karta");
+
+	if (!isset($s))
+	return "NULL";
+
+	if (!$s)
+	return "NULL";
+
+	if (letrak::ipalilos_invalid_karta($s))
+	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
+
+	return $s;
+}
 
 function lathos($s) {
 	print $s;
