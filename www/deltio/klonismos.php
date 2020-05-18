@@ -192,13 +192,13 @@ function antigrafi_adion($target, $source) {
 
 function antigrafi_adias($deltio, $adia) {
 	if ($adia["adapo"])
-	$adapo = pandora::sql_string($row["adapo"]);
+	$adapo = pandora::sql_string($adia["adapo"]);
 
 	else
 	$adapo = "NULL";
 
 	if ($adia["adeos"])
-	$adeos = pandora::sql_string($row["adeos"]);
+	$adeos = pandora::sql_string($adia["adeos"]);
 
 	else
 	$adeos = "NULL";
