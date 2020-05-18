@@ -1114,6 +1114,7 @@ prosopa.prosopaUpdateAllow = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorSetup = () => {
+	prosopa.alagiOkIndicatorDOM = $('#peAlagiOkIndicator');
 	prosopa.ipalilosZoomDOM = $('#peIpalilosZoom').
 	on('click', '.ipalilosZoom', function(e) {
 		prosopa.ipalilosZoomEpilogi(e, $(this));
@@ -1687,9 +1688,13 @@ prosopa.editorAlagiPost = (rsp) => {
 	if (rsp)
 	return prosopa.fyiError(rsp);
 
-	prosopa.ananeosi();
-	prosopa.parousiaEditorDOM.dialog('close');
+	prosopa.alagiOkIndicatorDOM.
+	finish().
+	css('opacity', 1).
+	delay(100).
+	fadeTo(800, 0);
 
+	prosopa.ananeosi();
 	return prosopa;
 };
 

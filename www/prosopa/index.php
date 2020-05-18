@@ -196,6 +196,9 @@ document_body();
 			type="button" value="Επαναφορά">
 		<input id="pePliktroAkiro" type="button" value="Άκυρο">
 	</div>
+	<div id="peAlagiOkIndicator">
+		Ok!
+	</div>
 </form>
 <?php
 pandora::
