@@ -16,9 +16,13 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα καλείται από τη βασική σελίδα διαχείρισης
+// παρουσιολογίων και σκοπό έχει το φρεσκάρισμα των δεδομένων και
+// των μεταδεδομένων των παρουσιολογίων που υπάρχουν στη σελίδα.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-18
 // Created: 2020-05-13
 // @HISTORY END
 //
@@ -54,5 +58,4 @@ foreach ($dlist as $kodikos) {
 print '{';
 print '"dlist":' . pandora::json_string($tsild);
 print '}';
-exit(0);
 ?>

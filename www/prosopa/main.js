@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-18
 // Updated: 2020-05-17
 // Updated: 2020-05-16
 // Updated: 2020-05-13
@@ -1113,7 +1114,10 @@ prosopa.prosopaUpdateAllow = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorSetup = () => {
-	prosopa.ipalilosZoomDOM = $('#peIpalilosZoom');
+	prosopa.ipalilosZoomDOM = $('#peIpalilosZoom').
+	on('click', '.ipalilosZoom', function(e) {
+		prosopa.ipalilosZoomEpilogi(e, $(this));
+	});
 
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
 	on('submit', (e) => prosopa.editorIpovoli(e));
@@ -1248,6 +1252,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 		val('').
 		on('keyup', (e) => prosopa.ipalilosZoom(e)).
 		on('blur', (e) => prosopa.ipalilosZoomClose(e));
+		//on('blur', (e) => $.noop());
 
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val('');
@@ -1398,6 +1403,14 @@ prosopa.ipalilosZoom = (e) => {
 	if (e)
 	e.stopPropagation();
 
+console.log(e.which);
+	switch (e.which) {
+	case 40:	// Down arrow
+		return prosopa.ipalilosZoomEpilogiAlagi(1);
+	case 38:	// Up arrow
+		return prosopa.ipalilosZoomEpilogiAlagi(-1);
+	}
+
 	let zoom = prosopa.ipalilosZoomDOM;
 	let fld = prosopa.editorIpalilosKodikosDOM;
 
@@ -1448,15 +1461,66 @@ prosopa.ipalilosZoom = (e) => {
 	});
 };
 
+prosopa.ipalilosZoomEpilogiAlagi = (step) => {
+	let list = prosopa.ipalilosZoomDOM.children('.ipalilosZoom');
+
+	if (!list.length)
+	return false;
+
+	let count = 0;
+	let trexon = 0;
+
+	list.each(function() {
+		count++;
+
+		if (!$(this).hasClass('ipalilosZoomEpilogi'))
+		return;
+
+		$(this).removeClass('ipalilosZoomEpilogi');
+		trexon = count;
+	});
+
+	if (!count)
+	return false;
+
+	trexon += step;
+
+	if (trexon < 1)
+	trexon = count;
+
+	else if (trexon > count)
+	trexon = 1;
+
+	count = 0;
+
+	list.each(function() {
+		count++;
+
+		if (count !== trexon)
+		return;
+
+		$(this).addClass('ipalilosZoomEpilogi');
+		return false;
+	});
+
+	return false;
+};
+
 prosopa.ipalilosZoomDomGet = (x, n) => {
 	if (!x)
 	return $('<div>').
 	text('More…');
 
+	let cls = 'ipalilosZoom';
+
+	if (n === 0)
+	cls += ' ipalilosZoomEpilogi';
+
+	cls += ' ipalilosZoomZebra' + (n % 2);
+
 	return $('<div>').
 	data('ipalilos', x).
-	addClass('ipalilosZoom').
-	addClass('ipalilosZoomZebra' + (n % 2)).
+	addClass(cls).
 
 	append($('<div>').
 	addClass('ipalilosZoomKodikos').
@@ -1464,7 +1528,11 @@ prosopa.ipalilosZoomDomGet = (x, n) => {
 
 	append($('<div>').
 	addClass('ipalilosZoomOnomateponimo').
-	text(x.e + ' ' + x.o + ' ' + x.p));
+	text(x.e + ' ' + x.o + ' ' + x.p)).
+
+	append($('<div>').
+	addClass('ipalilosZoomGenisi').
+	text(x.g));
 };
 
 prosopa.ipalilosZoomClose = (e) => {
@@ -1478,13 +1546,22 @@ prosopa.ipalilosZoomClose = (e) => {
 	return prosopa;
 };
 
+prosopa.ipalilosZoomEpilogi = (e, dom) => {
+	prosopa.ipalilosZoomDOM.
+	children('.ipalilosZoomEpilogi').
+	removeClass('.ipalilosZoomEpilogi');
+
+	if (dom.hasClass('ipalilosZoom'))
+	dom.addClass('ipalilosZoomEpilogi');
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.editorIpovoli = (e) => {
 	if (e)
 	e.stopPropagation();
 
-	let x = prosopa.ipalilosZoomDOM.children('.ipalilosZoom')
+	let x = prosopa.ipalilosZoomDOM.children('.ipalilosZoomEpilogi')
 
 	if (x.length === 1) {
 		x = x.data('ipalilos');

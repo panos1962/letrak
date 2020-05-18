@@ -16,6 +16,7 @@
 // @FILE END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-18
 // Created: 2020-04-22
 // @HISTORY END
 //
@@ -34,22 +35,25 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("kodikos");
 
 if (pandora::not_integer($kodikos, 1, LETRAK_DELTIO_KODIKOS_MAX))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
+letrak::fatal_error("Αδυναμία εντοπισμού παρουσιολογίου προς διαγραφή");
+
+if ($deltio->is_klisto())
+letrak::fatal_error("Το παρουσιολόγιο έχει κλείσει");
 
 $ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->oxi_update_ipiresia($ipiresia))
-lathos("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
+letrak::fatal_error("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -57,14 +61,5 @@ $query = "DELETE FROM `letrak`.`deltio` WHERE `kodikos` = " . $kodikos;
 pandora::query($query);
 
 if (pandora::affected_rows() < 1)
-lathos("Αποτυχία διαγραφής παρουσιολογίου");
-
-exit(0);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($msg) {
-	print $msg;
-	exit(0);
-}
+letrak::fatal_error("Αποτυχία διαγραφής παρουσιολογίου");
 ?>

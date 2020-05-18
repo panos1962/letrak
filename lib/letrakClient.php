@@ -175,6 +175,20 @@ class letrak extends letrakCore {
 		print ']';
 	}
 
+	// Η function "fatal_error" χρησιμοποιείται κυρίως μέσα από
+	// προγράμματα που καλούνται μέσω ajax και δεν επιστρέφουν
+	// δεδομένα, δηλαδή δεν περιμένουμε να εκτυπώσουν κάτι στο
+	// output. Σε αυτές τις περιπτώσεις μπορούμε να θεωρήσουμε
+	// οποιαδήποτε επιστροφή ως δείγμα σημαντικού σφάλματος ακόμη
+	// και αν το πρόγραμμα κάνει exit με μηδενικό status, επομένως
+	// η συνήθης κλήση της function είναι με κάποιο (μη κενό)
+	// μήνυμα.
+
+	public function fatal_error($msg, $stat = 0) {
+		print $msg;
+		exit($stat);
+	}
+
 	public function fatal_error_json($msg, $tag = "error") {
 		print '{"' . $tag . '":' . pandora::json_string($msg) . '}';
 		exit(0);

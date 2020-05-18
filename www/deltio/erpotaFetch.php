@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-18
 // Created: 2020-04-20
 // @HISTORY END
 //
@@ -41,33 +42,15 @@ database();
 if (letrak::oxi_xristis())
 letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
 
-///////////////////////////////////////////////////////////////////////////////@
-
-$query = "SELECT `timi` FROM `kartel`.`parametros` WHERE `kodikos` = " .
-	pandora::sql_string("erpota12");
-$row = pandora::first_row($query, MYSQLI_ASSOC);
-
-if (!$row)
-letrak::fatal_error_json("Ακαθόριστη έκδοση database προσωπικού");
-
-switch ($row["timi"]) {
-case 1:
-case 2:
-	$erpota12 = "erpota" . $row["timi"];
-	break;
-default:
-	letrak::fatal_error_json("Μη αποδεκτή έκδοση database προσωπικού");
-}
-
 print '{';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT " .
-	"`kodikos` AS `k`, " .
-	"`perigrafi` AS `p` " .
-	"FROM `" . $erpota12 . "`.`ipiresia` " .
-	"ORDER BY `kodikos`";
+$query = "SELECT" .
+	" `kodikos` AS `k`," .
+	" `perigrafi` AS `p`" .
+	" FROM " . letrak::erpota12("ipiresia") .
+	" ORDER BY `k`";
 $result = pandora::query($query);
 
 print '"ipiresia":[';
@@ -82,16 +65,16 @@ print '],';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "SELECT " .
-	"`kodikos` AS `k`, " .
-	"`eponimo` AS `e`, " .
-	"`onoma` AS `o`, " .
-	"`patronimo` AS `p`, " .
-	"DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`, " .
-	"`afm` AS `a`" .
-	"FROM `" . $erpota12 . "`.`ipalilos` " .
-	"WHERE `katastasi` = 'ΕΝΕΡΓΟΣ' " .
-	"ORDER BY `eponimo`, `onoma`, `patronimo`, `kodikos`";
+$query = "SELECT" .
+	" `kodikos` AS `k`," .
+	" `eponimo` AS `e`," .
+	" `onoma` AS `o`," .
+	" `patronimo` AS `p`," .
+	" DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`," .
+	" `afm` AS `a`" .
+	" FROM " . letrak::erpota12("ipalilos") .
+	" WHERE `katastasi` = 'ΕΝΕΡΓΟΣ'" .
+	" ORDER BY `e`, `o`, `p`, `k`";
 $result = pandora::query($query);
 
 print '"ipalilos":[';
@@ -113,6 +96,4 @@ print '],';
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '"error":""}';
-
-exit(0);
 ?>

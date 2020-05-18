@@ -170,7 +170,8 @@ CREATE TABLE `deltio` (
 		'ΚΥΡΩΜΕΝΟ',
 		'ΕΠΙΚΥΡΩΜΕΝΟ'
 	) NOT NULL DEFAULT 'ΕΚΚΡΕΜΕΣ' COMMENT 'Κατάσταση παρουσιολογίου',
-	`alagi`		DATETIME NOT NULL COMMENT 'Ημερομηνία και ώρα αλλαγής κατάστασης',
+	`alagi`		DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+			COMMENT 'Ημερομηνία και ώρα αλλαγής κατάστασης',
 
 	PRIMARY KEY (
 		`kodikos`

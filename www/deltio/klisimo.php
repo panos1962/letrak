@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-18
 // Updated: 2020-05-11
 // Updated: 2020-05-06
 // Updated: 2020-05-04
@@ -44,25 +45,28 @@ database();
 $prosvasi = letrak::prosvasi_get();
 
 if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+letrak::fatal_error("Διαπιστώθηκε ανώνυμη χρήση");
 
 $kodikos = pandora::parameter_get("kodikos");
 
 if (pandora::not_integer($kodikos, 1, LETRAK_DELTIO_KODIKOS_MAX))
-lathos("Μη αποδεκτός κωδικός παρουσιολογίου");
+letrak::fatal_error("Μη αποδεκτός κωδικός παρουσιολογίου");
 
 $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
-lathos("Αδυναμία εντοπισμού παρουσιολογίου");
+letrak::fatal_error($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
+
+if ($deltio->is_klisto())
+letrak::fatal_error($kodikos . ": το παρουσιολόγιο είναι ήδη επικυρωμένο");
 
 $ipiresia = $deltio->ipiresia_get();
 
 if ($prosvasi->ipiresia_oxi_admin($ipiresia))
-lathos("Δεν έχετε δικαίωμα κλεισίματος παρουσιολογίου");
+letrak::fatal_error("Δεν έχετε δικαίωμα κλεισίματος παρουσιολογίου");
 
 if ($deltio->is_anipografo())
-lathos("Δεν υπάρχουν οι απαραίτητες υπογραφές");
+letrak::fatal_error("Δεν υπάρχουν οι απαραίτητες υπογραφές");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -73,14 +77,5 @@ $query = "UPDATE `letrak`.`deltio` SET" .
 pandora::query($query);
 
 if (pandora::affected_rows() != 1)
-lathos("Αποτυχία κλεισίματος παρουσιολογίου");
-
-exit(0);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-function lathos($msg) {
-	print $msg;
-	exit(0);
-}
+letrak::fatal_error("Αποτυχία επικύρωσης παρουσιολογίου");
 ?>
