@@ -191,10 +191,22 @@ function antigrafi_adion($target, $source) {
 }
 
 function antigrafi_adias($deltio, $adia) {
+	if ($adia["adapo"])
+	$adapo = pandora::sql_string($row["adapo"]);
+
+	else
+	$adapo = "NULL";
+
+	if ($adia["adeos"])
+	$adeos = pandora::sql_string($row["adeos"]);
+
+	else
+	$adeos = "NULL";
+
 	$query = "UPDATE `letrak`.`parousia` SET" .
 		" `adidos` = " . $adia["adidos"] . "," .
-		" `adapo` = '" . $adia["adapo"] . "'," .
-		" `adeos` = '" . $adia["adeos"] . "'" .
+		" `adapo` = " . $adapo . "," .
+		" `adeos` = " . $adeos .
 		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`ipalilos` = " . $adia["ipalilos"] .")";
 	pandora::query($query);
