@@ -170,6 +170,7 @@ document_body();
 			</label>
 			<select id="peExcuse" class="peParousiaPedio pePedioUpdate">
 			<option value="" selected="true"></option>
+			<option value="ΕΝΤΑΞΕΙ">ΕΝΤΑΞΕΙ</option>
 			<option value="ΕΚΤΟΣ ΕΔΡΑΣ">ΕΚΤΟΣ ΕΔΡΑΣ</option>
 			<option value="ΑΙΜΟΔΟΣΙΑ">ΑΙΜΟΔΟΣΙΑ</option>
 			<option value="ΕΟΡΤΗ">ΕΟΡΤΗ</option>
