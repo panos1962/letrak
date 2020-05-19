@@ -82,9 +82,9 @@ function add_deltio(kodip, perigrafi, prosapo,		query,
 	deltio, l, i, count) {
 
 	if (!prosapo)
-	prosapo = "NULL"
+	prosapo = "ΠΡΟΣΕΛΕΥΣΗ"
 
-	else if (prosapo in prosapo_valid)
+	if (prosapo in prosapo_valid)
 	prosapo = spawk_escape(prosapo)
 
 	else
