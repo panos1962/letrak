@@ -57,7 +57,7 @@ $deltio = (new Deltio())->from_database($kodikos);
 if ($deltio->oxi_kodikos())
 letrak::fatal_error($kodikos . ": δεν εντοπίστηκε το παρουσιολόγιο");
 
-if ($deltio->oxi_klisto())
+if ($deltio->is_anikto())
 letrak::fatal_error($kodikos . ": το παρουσιολόγιο είναι ήδη «ανοικτό»");
 
 $ipiresia = $deltio->ipiresia_get();
