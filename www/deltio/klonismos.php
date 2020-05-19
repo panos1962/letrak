@@ -84,11 +84,11 @@ $prosapo = $protipo["prosapo"];
 $perigrafi = $protipo["perigrafi"];
 
 switch ($prosapo) {
-case "ΠΡΟΣΕΛΕΥΣΗ":
-	$prosapo = "ΑΠΟΧΩΡΗΣΗ";
+case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+	$prosapo = LETRAK_DELTIO_PROSAPO_APOXORISI;
 	break;
-case "ΑΠΟΧΩΡΗΣΗ":
-	$prosapo = "ΠΡΟΣΕΛΕΥΣΗ";
+case LETRAK_DELTIO_PROSAPO_APOXORISI:
+	$prosapo = LETRAK_DELTIO_PROSAPO_PROSELEFSI;
 	break;
 default:
 	letrak::fatal_error_json("Ακαθόριστος τύπος παρουσιολογίου");
@@ -130,7 +130,7 @@ pandora::query($query);
 // παρουσιολόγιο προσέλευσης και συμπληρώνουμε τυχόν άδειες που εκκίνησαν
 // σήμερα.
 
-if ($prosapo === "ΑΠΟΧΩΡΗΣΗ")
+if ($prosapo === LETRAK_DELTIO_PROSAPO_APOXORISI)
 simerines_adies($kodikos, $imerominia, $ipiresia);
 
 // Ενημερώνουμε τα νεοεισαχθέντα πρόσωπα καταργώντας τυχόν άδειες που έχουν
@@ -172,7 +172,8 @@ function simerines_adies($deltio, $imerominia, $ipiresia) {
 	$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
 		" WHERE (`imerominia` = '" . $imerominia . "')" .
 		" AND (`ipiresia` = '" . $ipiresia . "')" .
-		" AND (`prosapo` = 'ΠΡΟΣΕΛΕΥΣΗ')";
+		" AND (`prosapo` = " .
+		pandora::sql_string(LETRAK_DELTIO_PROSAPO_PROSELEFSI) . ")";
 	$result = pandora::query($query);
 
 	while ($row = $result->fetch_array(MYSQLI_NUM))
@@ -191,8 +192,6 @@ function antigrafi_adion($target, $source) {
 }
 
 function antigrafi_adias($deltio, $adia) {
-	$adidos = pandora::sql_string($adia["adidos"]);
-
 	if ($adia["adapo"])
 	$adapo = pandora::sql_string($adia["adapo"]);
 
@@ -206,7 +205,7 @@ function antigrafi_adias($deltio, $adia) {
 	$adeos = "NULL";
 
 	$query = "UPDATE `letrak`.`parousia` SET" .
-		" `adidos` = " . $adidos . "," .
+		" `adidos` = " . pandora::sql_string($adia["adidos"]) . "," .
 		" `adapo` = " . $adapo . "," .
 		" `adeos` = " . $adeos .
 		" WHERE (`deltio` = " . $deltio . ")" .

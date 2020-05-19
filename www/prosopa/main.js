@@ -262,10 +262,10 @@ prosopa.deltioProcess = (deltio) => {
 	let prosapoDOM = $('#peDeltioProsapo');
 
 	switch (prosapo) {
-	case 'ΠΡΟΣΕΛΕΥΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		prosapoDOM.addClass('deltioProsapoProselefsi');
 		break;
-	case 'ΑΠΟΧΩΡΗΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		prosapoDOM.addClass('deltioProsapoApoxorisi');
 		break;
 	}
@@ -1155,7 +1155,7 @@ prosopa.editorSetup = () => {
 
 	prosopa.editorPanelDOM = $('#pePanel');
 
-	prosopa.parousiaEditorDOM.
+	prosopa.editorPanelDOM.
 	find('input').
 	addClass('letrak-formaPliktro').
 	addClass('pePliktro');
@@ -1838,7 +1838,8 @@ letrak.deltio.prototype.domGet = function() {
 	append($('<div>').
 	addClass('deltioProsapo').
 	addClass('deltioProsapo' +
-	(prosapo === 'ΠΡΟΣΕΛΕΥΣΗ' ? 'Proselefsi' : 'Apoxorisi')).
+	(prosapo === php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI ?
+		'Proselefsi' : 'Apoxorisi')).
 	text(prosapo)).
 
 	append($('<div>').

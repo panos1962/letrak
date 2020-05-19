@@ -97,12 +97,12 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 	return;
 
 	switch ($prosapo) {
-	case "ΠΡΟΣΕΛΕΥΣΗ":
+	case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		$exact = $orario->proselefsi_diastima($imerominia, $apo, $eos);
 		$proselefsi = TRUE;
 		$ord = "ASC";
 		break;
-	case "ΑΠΟΧΩΡΗΣΗ":
+	case LETRAK_DELTIO_PROSAPO_APOXORISI:
 		$exact = $orario->apoxorisi_diastima($imerominia, $apo, $eos);
 		$proselefsi = FALSE;
 		$ord = "DESC";

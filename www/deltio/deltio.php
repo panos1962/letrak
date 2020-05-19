@@ -126,8 +126,8 @@ $x = pandora::parameter_get("prosapo");
 
 if ($x) {
 	switch ($x) {
-	case "ΠΡΟΣΕΛΕΥΣΗ":
-	case "ΑΠΟΧΩΡΗΣΗ":
+	case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+	case LETRAK_DELTIO_PROSAPO_APOXORISI:
 		$query .= $enotiko . " (`prosapo` = " .
 			pandora::sql_string($x) . ")";
 		$enotiko = " AND";

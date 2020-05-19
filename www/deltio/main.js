@@ -185,8 +185,12 @@ deltio.filtraSetup = () => {
 	text(deltio.minima.filtraProsapoLabel)).
 	append(deltio.filtraProsapoDOM = $('<select>').
 	append($('<option>').val('').text('').attr('selected', true)).
-	append($('<option>').val('ΠΡΟΣΕΛΕΥΣΗ').text('ΠΡΟΣΕΛΕΥΣΗ')).
-	append($('<option>').val('ΑΠΟΧΩΡΗΣΗ').text('ΑΠΟΧΩΡΗΣΗ')).
+	append($('<option>').
+	val(php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI).
+	text(php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI)).
+	append($('<option>').
+	val(php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI).
+	text(php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI)).
 	attr('id', 'prosapoFiltro').
 	addClass('filtraInput'))).
 
@@ -938,10 +942,10 @@ deltio.klonismosAnte = (e) => {
 	let imerominia;
 
 	switch (protipo.prosapoGet()) {
-	case 'ΠΡΟΣΕΛΕΥΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		imerominia = protipo.imerominiaGet();
 		break;
-	case 'ΑΠΟΧΩΡΗΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		imerominia = new Date();
 		break;
 	default:
@@ -1045,7 +1049,6 @@ deltio.prosopa = (opts) => {
 	// τη σελίδα επεξεργασίας παρουσιολογίου.
 
 	self.LETRAK.deltio = x;
-console.log(self.LETRAK);
 	self.LETRAK.deltioDOM = dom;
 	self.LETRAK.klonos = opts.klonos;
 
@@ -1236,10 +1239,10 @@ letrak.deltio.prototype.domGet = function() {
 	let prosapoClass = 'deltioProsapo';
 
 	switch (this.prosapoGet()) {
-	case 'ΠΡΟΣΕΛΕΥΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		prosapoClass += ' deltioProsapoProselefsi';
 		break;
-	case 'ΑΠΟΧΩΡΗΣΗ':
+	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		prosapoClass += ' deltioProsapoApoxorisi';
 		break;
 	}

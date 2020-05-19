@@ -204,9 +204,6 @@ function adia_get(&$adapo, &$adeos) {
 	if ((!isset($adidos)) && (isset($adidos) || isset($adeos)))
 	lathos("Ακαθόριστο είδος αδείας");
 
-	if (isset($adidos) && (!isset($adapo)) && (!isset($adeos)))
-	lathos("Ακαθόριστο διάστημα αδείας");
-
 	if (!isset($adidos)) {
 		$adapo = "NULL";
 		$adeos = "NULL";

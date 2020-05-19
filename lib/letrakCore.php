@@ -41,6 +41,9 @@ define("LETRAK_IPALILOS_KODIKOS_MAX", 999999);
 define("LETRAK_DELTIO_KODIKOS_MAX", 999999);
 define("LETRAK_IPOGRAFI_TAXINOMISI_MAX", 255);
 
+define("LETRAK_DELTIO_PROSAPO_PROSELEFSI", "ΠΡΟΣΕΛΕΥΣΗ");
+define("LETRAK_DELTIO_PROSAPO_APOXORISI", "ΑΠΟΧΩΡΗΣΗ");
+
 define("LETRAK_DELTIO_KATASTASI_EKREMES", "ΕΚΚΡΕΜΕΣ");
 define("LETRAK_DELTIO_KATASTASI_ANIPOGRAFO", "ΑΝΥΠΟΓΡΑΦΟ");
 define("LETRAK_DELTIO_KATASTASI_KIROMENO", "ΚΥΡΩΜΕΝΟ");
@@ -635,8 +638,8 @@ class Deltio {
 		return $this;
 
 		switch ($prosapo) {
-		case "ΠΡΟΣΕΛΕΥΣΗ":
-		case "ΑΠΟΧΩΡΗΣΗ":
+		case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+		case LETRAK_DELTIO_PROSAPO_APOXORISI:
 			$this->prosapo = $prosapo;
 		}
 
