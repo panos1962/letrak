@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-19
 // Created: 2020-05-16
 // @HISTORY END
 //
@@ -68,13 +69,17 @@ $ipalilos = (new Ipalilos())->from_database($ipalilos_kodikos);
 if ($ipalilos->oxi_kodikos())
 lathos($ipalilos_kodikos . ": δεν εντοπίστηκε ο εργαζόμενος");
 
+$adidos = adia_get($adapo, $adeos);
+$excuse = excuse_get();
+
+if (($adidos !== "NULL")  && ($excuse !== "NULL"))
+lathos("Καθορίσατε άδεια ΚΑΙ αιτιολογία");
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 $orario = orario_get();
 $karta = karta_get();
 $meraora = meraora_get();
-$adidos = adia_get($adapo, $adeos);
-$excuse = excuse_get();
 $info = info_get();
 
 $query = "REPLACE INTO `letrak`.`parousia` " .

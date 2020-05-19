@@ -1129,8 +1129,14 @@ prosopa.editorSetup = () => {
 	prosopa.editorDeltioKodikosDOM = $('#peDeltioKodikos');
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
-	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
-	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
+	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario').
+	on('change', function() {
+		let val = $(this).val();
+		let orario = new letrak.orario(val);
+
+		if (orario.isOrario())
+		$(this).val(orario.toString());
+	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
@@ -1589,7 +1595,7 @@ prosopa.editorIpovoli = (e) => {
 		return false;
 	}
 
-try {
+	try {
 	$.post({
 		'url': 'parousiaIpovoli.php',
 		'dataType': 'text',
@@ -1611,12 +1617,10 @@ try {
 			console.error(err);
 		},
 	});
-}
-
-catch (e) {
-	console.error(e);
-	return false;
-}
+	} catch (e) {
+		console.error(e);
+		return false;
+	}
 
 	return false;
 };
@@ -1797,6 +1801,7 @@ prosopa.winpakProcess = (rsp) => {
 
 		$(this).
 		children('.parousiaMeraora').
+		removeClass('parousiaMeraoraProvlima').
 		text(data[ipalilos]);
 	});
 
@@ -1853,19 +1858,6 @@ letrak.deltio.prototype.domGet = function() {
 };
 
 letrak.parousia.prototype.domGet = function() {
-/*
-this.ipalilos = 1234567;
-this.karta = 1234567;
-this.orario = '09:00-17:00';
-this.excuse = 'ΕΚΤΟΣ ΕΔΡΑΣ';
-this.orario = new letrak.orario('830-1530');
-*/
-
-	let meraora = this.meraoraGet();
-
-	if (meraora)
-	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
-
 	let orario = this.orarioGet();
 
 	if (orario)
@@ -1873,6 +1865,16 @@ this.orario = new letrak.orario('830-1530');
 
 	else
 	orario = '';
+
+	let meraora = this.meraoraGet();
+
+	if (meraora)
+	meraora = pnd.date(meraora, '%D-%M-%Y %h:%m');
+
+	let meraoraClass = 'parousiaMeraora';
+
+	if (this.oxiParousia())
+	meraoraClass += ' parousiaMeraoraProvlima';
 
 	let dom = $('<div>').
 	data('parousia', this).
@@ -1901,7 +1903,7 @@ this.orario = new letrak.orario('830-1530');
 	text(orario)).
 
 	append($('<div>').
-	addClass('parousiaMeraora').
+	addClass(meraoraClass).
 	text(meraora)).
 
 	append($('<div>').
