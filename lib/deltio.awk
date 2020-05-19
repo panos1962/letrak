@@ -143,8 +143,8 @@ function add_ipalilos(deltio, kodikos,		karta, query) {
 	karta = "NULL"
 
 	query = "INSERT INTO `letrak`.`parousia` " \
-		"(`deltio`, `ipalilos`, `karta`) " \
-		"VALUES (" deltio ", " kodikos ", " karta ")"
+		"(`deltio`, `ipalilos`, `karta`, `orario`) " \
+		"VALUES (" deltio ", " kodikos ", " karta ", '07:00-15:00')"
 
 	if (spawk_submit(query) != 2)
 	pd_fatal("αποτυχία ένταξης υπαλλήλου")

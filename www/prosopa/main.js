@@ -30,6 +30,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-20
+// Updated: 2020-05-19
 // Updated: 2020-05-18
 // Updated: 2020-05-17
 // Updated: 2020-05-16
@@ -1130,6 +1132,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario').
+	on('keydown', (e) => prosopa.orarioEdit(e)).
 	on('change', function() {
 		let val = $(this).val();
 		let orario = new letrak.orario(val);
@@ -1191,6 +1194,59 @@ prosopa.editorSetup = () => {
 	dialog('close');
 
 	return prosopa;
+};
+
+prosopa.orarioEdit = (e) => {
+	let orario = prosopa.editorIpalilosOrarioDOM.val();
+
+	if (!orario)
+	orario = '07:00-15:00';
+
+	orario = new letrak.orario(orario);
+
+	if (orario.oxiOrario())
+	return;
+
+	let apo = orario.apoGet();
+
+	if (apo.oxiOralepto())
+	return;
+
+	let eos = orario.eosGet();
+
+	if (eos.oxiOralepto())
+	return;
+
+	let step = undefined;
+
+	switch (e.which) {
+	case 187:	// + key
+	case 38:	// up arrow
+		step = 30;
+		break;
+	case 189:	// - key
+	case 40:	// down arrow
+		step = -30;
+		break;
+	}
+
+	if (!step)
+	return;
+
+	e.stopPropagation();
+	e.preventDefault();
+
+	apo.leptaAdd(step);
+	eos.leptaAdd(step);
+
+	orario = (new letrak.orario()).
+	apoSet(apo).
+	eosSet(eos);
+
+	if (orario.oxiOrario())
+	return;
+
+	prosopa.editorIpalilosOrarioDOM.val(orario.toString());
 };
 
 prosopa.editorClose = (e) => {
@@ -1393,7 +1449,7 @@ prosopa.editorMeraoraFix = (e) => {
 
 	oralepto = new letrak.oralepto(oralepto);
 
-	if (oralepto.notOralepto())
+	if (oralepto.oxiOralepto())
 	return;
 
 	imerominia = pnd.date2date(imerominia, 'D-M-Y', '%Y-%M-%D');
