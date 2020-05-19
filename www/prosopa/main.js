@@ -1691,8 +1691,8 @@ prosopa.editorAlagiPost = (rsp) => {
 	prosopa.alagiOkIndicatorDOM.
 	finish().
 	css('opacity', 1).
-	delay(100).
-	fadeTo(800, 0);
+	delay(50).
+	fadeTo(100, 0);
 
 	prosopa.ananeosi();
 	return prosopa;
