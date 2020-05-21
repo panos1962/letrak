@@ -1836,6 +1836,12 @@ prosopa.winpak = () => {
 	each(function() {
 		let parousia = $(this).data('parousia');
 
+		if (parousia.adiaGet())
+		return;
+
+		if (parousia.excuseGet())
+		return;
+
 		if (!parousia)
 		return;
 
