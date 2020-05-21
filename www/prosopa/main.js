@@ -1839,6 +1839,12 @@ prosopa.winpak = () => {
 		if (!parousia)
 		return;
 
+		if (parousia.adiaGet())
+		return;
+
+		if (parousia.excuseGet())
+		return;
+
 		if (parousia.meraora)
 		return;
 
