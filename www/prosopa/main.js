@@ -1839,11 +1839,18 @@ prosopa.winpak = () => {
 		if (!parousia)
 		return;
 
+		/*
+
+		Οι έλεγχοι καταγραφών για όσους έχουν άδεια ή excuse μάλλον
+		δεν προκαλούν κάποιο πρόβλημα.
+
 		if (parousia.adiaGet())
 		return;
 
 		if (parousia.excuseGet())
 		return;
+
+		*/
 
 		if (parousia.meraora)
 		return;
