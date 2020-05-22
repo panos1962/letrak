@@ -892,10 +892,12 @@ deltio.anigmaProcess = (msg, dlt, dom) => {
 deltio.klonismosSetup = () => {
 	deltio.klonismosFormaDOM = $('#klonismosForma');
 	deltio.klonismosFormaImerominiaDOM = deltio.klonismosFormaDOM.
-	children('#klonismosFormaImerominia').
+	find('#klonismosFormaImerominia').
 	datepicker({
 		'autoOpen': false,
 	});
+	deltio.klonismosFormaEnarktirioDOM = deltio.klonismosFormaDOM.
+	find('#klonismosFormaEnarktirio');
 
 	deltio.klonismosFormaDOM.
 	dialog({
@@ -917,6 +919,8 @@ deltio.klonismosSetup = () => {
 				$(this).dialog('close');
 			},
 		},
+		'open': () => deltio.klonismosFormaEnarktirioDOM.
+			prop('checked', false),
 	});
 
 	return deltio;
@@ -962,18 +966,21 @@ deltio.klonismosAnte = (e) => {
 };
 
 deltio.klonismos = () => {
-	let protipo = deltio.klonismosFormaDOM.data('protipo');
-	let imerominia = deltio.klonismosFormaImerominiaDOM.val();
+	let data = {
+		'protipo': deltio.klonismosFormaDOM.data('protipo'),
+		'imerominia': deltio.klonismosFormaImerominiaDOM.val(),
+	};
 
-	pnd.fyiMessage('Κλωνισμός παρουσιολογίου <b>' + protipo + '</b>…');
+	if (deltio.klonismosFormaEnarktirioDOM.prop('checked'))
+	data.enarktirio = 1;
+
+	pnd.fyiMessage('Κλωνισμός παρουσιολογίου ' +
+		'<b>' + data.protipo + '</b>…');
 	$.post({
 		'url': 'klonismos.php',
-		'data': {
-			'protipo': protipo,
-			'imerominia': imerominia,
-		},
+		'data': data,
 		'dataType': 'json',
-		'success': (rsp) => deltio.klonosProcess(rsp, protipo),
+		'success': (rsp) => deltio.klonosProcess(rsp, data.protipo),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα κλωνισμού');
 			console.error(e);
@@ -1281,6 +1288,13 @@ letrak.deltio.prototype.domGet = function() {
 	katastasiDOM.
 	addClass('letrak-deltioKatastasi' + katastasiEnglish).
 	html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
+
+	if (this.oxiProtipo())
+	dom.
+	append($('<div>').
+	attr('title', 'Εναρκτήριο παρουσιολόγιο').
+	addClass('deltioNova').
+	html('&#x2605;'));
 
 	return dom;
 };

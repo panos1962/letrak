@@ -57,10 +57,18 @@ document_body();
 
 ?>
 <div id="klonismosForma">
+<div class="letrak-inputLine">
 <label for="klonismosFormaImerominia">
 Ημερομηνία
 </label>
 <input id="klonismosFormaImerominia" tabindex="-1">
+</div>
+<div class="letrak-inputLine">
+<label for="klonismosFormaEnarktirio">
+Εναρκτήριο
+</label>
+<input id="klonismosFormaEnarktirio" type="checkbox" tabindex="-1">
+</div>
 </div>
 <?php
 

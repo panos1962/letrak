@@ -687,6 +687,10 @@ class Deltio {
 		return $this->kodikos;
 	}
 
+	public function protipo_get() {
+		return $this->protipo;
+	}
+
 	public function is_kodikos() {
 		return $this->kodikos_get();
 	}
@@ -958,6 +962,9 @@ class Deltio {
 
 		$x = $this->kodikos_get();
 		if ($x) $row["k"] = $x;
+
+		$x = $this->protipo_get();
+		if ($x) $row["p"] = $x;
 
 		$x = $this->imerominia_get();
 		if ($x) $row["i"] = $x->format("Y-m-d");

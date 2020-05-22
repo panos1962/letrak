@@ -75,6 +75,9 @@ letrak::fatal_error_json("Αδυναμία εντοπισμού προτύπου
 if ($prosvasi->oxi_update_ipiresia($protipo["ipiresia"]))
 letrak::fatal_error_json("Δεν έχετε δικαίωμα δημιουργίας παρουσιολογίου");
 
+$enarktirio = pandora::parameter_get("enarktirio");
+$enarktirio = isset($enarktirio) && $enarktirio;
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
@@ -97,7 +100,7 @@ default:
 $query = "INSERT IGNORE INTO `letrak`.`deltio` " .
 "(`protipo`, `ipalilos`, `imerominia`," .
 " `ipiresia`, `prosapo`, `perigrafi`, `alagi`) VALUES (" .
-$protipo["kodikos"] . ", " .
+($enarktirio ? "NULL" : $protipo["kodikos"]) . ", " .
 $prosvasi->ipalilos_get() . ", " .
 pandora::sql_string($imerominia) . ", " .
 pandora::sql_string($ipiresia) . ", " .
@@ -157,7 +160,6 @@ $deltio = (new Deltio())->from_database($kodikos);
 
 if ($deltio->oxi_kodikos())
 letrak::fatal_error_json("Αποτυχία εντοπισμού αντιγράφου");
-
 
 print '{"deltio":' . $deltio->json_economy() . '}';
 exit(0);
