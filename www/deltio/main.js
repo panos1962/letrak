@@ -1293,7 +1293,7 @@ letrak.deltio.prototype.domGet = function() {
 	dom.
 	append($('<div>').
 	attr('title', 'Εναρκτήριο παρουσιολόγιο').
-	addClass('deltioNova').
+	addClass('deltioEnarktirio').
 	html('&#x2605;'));
 
 	return dom;
