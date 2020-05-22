@@ -183,7 +183,7 @@ document_body();
 			<label for="peInfo">
 				Παρατηρήσεις
 			</label>
-			<textarea id="peInfo" maxlength="140" class="peParousiaPedio pePedioUpdate">
+			<textarea id="peInfo" maxlength="134" class="peParousiaPedio pePedioUpdate">
 			</textarea>
 		</div>
 	</div>

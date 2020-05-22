@@ -288,7 +288,7 @@ prosopa.deltioProcess = (deltio) => {
 
 		if (dief) {
 			if (dief.length > 20)
-			ipdesc = dief.substr(0, 64) + '…\n';
+			ipdesc = dief.substr(0, 50) + '…\n';
 
 			else
 			ipdesc = dief + '\n';
