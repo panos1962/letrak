@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-23
 // Updated: 2020-05-20
 // Updated: 2020-05-19
 // Updated: 2020-05-18
@@ -1220,10 +1221,57 @@ prosopa.editorSetup = () => {
 };
 
 prosopa.orarioEdit = (e) => {
-	let orario = prosopa.editorIpalilosOrarioDOM.val();
+	e.stopPropagation();
 
-	if (!orario)
-	orario = '07:00-15:00';
+	const misaoro = 30;	// σε λεπτά
+	const oktaoro = 480;	// σε λεπτά
+
+	let step;
+	let prosimo;
+
+	// Με τα βελάκια πάνω/κάτω αλλάζουμε ωράρια με βήμα μισής ώρας.
+	// Με τα pageUp/pageDown αλλάζουμε ωράρια βάρδιας από 06:00-14:00,
+	// σε 14:00-22:00, σε 22:00-06:00 κοκ και αντιστρόφως.
+
+	switch (e.which) {
+	case 189:	// - key
+	case 38:	// Up arrow
+		step = misaoro;
+		prosimo = -1;
+		break;
+	case 187:	// + key
+	case 40:	// Down arrow
+		step = misaoro;
+		prosimo = 1;
+		break;
+	case 33:	// page Up
+		step = oktaoro;
+		prosimo = -1;
+		break;
+	case 34:	// page Down
+		step = oktaoro;
+		prosimo = 1;
+		break;
+	}
+
+	if (!step)
+	return;
+
+	e.preventDefault();
+
+	let fld = prosopa.editorIpalilosOrarioDOM;
+	let orario = fld.val();
+
+	if (!orario) {
+		switch (step) {
+		case misaoro:
+			return fld.val('07:00-15:00');
+		case oktaoro:
+			return fld.val('06:00-14:00');
+		}
+
+		return;
+	}
 
 	orario = new letrak.orario(orario);
 
@@ -1240,36 +1288,20 @@ prosopa.orarioEdit = (e) => {
 	if (eos.oxiOralepto())
 	return;
 
-	let step = undefined;
-
-	switch (e.which) {
-	case 187:	// + key
-	case 38:	// up arrow
-		step = 30;
-		break;
-	case 189:	// - key
-	case 40:	// down arrow
-		step = -30;
-		break;
+	if (step === oktaoro) {
+		switch (apo.leptaGet()) {
+		case 360:	// 06:00 σε λεπτά
+		case 840:	// 14:00 σε λεπτά
+		case 1320:	// 22:00 σε λεπτά
+			break;
+		default:
+			return fld.val('06:00-14:00');
+		}
 	}
 
-	if (!step)
-	return;
-
-	e.stopPropagation();
-	e.preventDefault();
-
-	apo.leptaAdd(step);
-	eos.leptaAdd(step);
-
-	orario = (new letrak.orario()).
-	apoSet(apo).
-	eosSet(eos);
-
-	if (orario.oxiOrario())
-	return;
-
-	prosopa.editorIpalilosOrarioDOM.val(orario.toString());
+	step *= prosimo;
+	orario = new letrak.orario(apo.leptaAdd(step), eos.leptaAdd(step));
+	fld.val(orario.toString());
 };
 
 prosopa.editorClose = (e) => {
@@ -1396,8 +1428,11 @@ prosopa.parousiaEdit = (e, parousia) => {
 		if (prosthiki)
 		prosopa.editorIpalilosKodikosDOM.focus();
 
-		else
+		else if (prosopa.editorIpalilosOrarioDOM.val())
 		prosopa.editorMeraoraDOM.focus();
+
+		else
+		prosopa.editorIpalilosOrarioDOM.focus();
 	}
 
 	else
