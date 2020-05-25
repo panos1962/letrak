@@ -256,48 +256,59 @@ prosopa.deltioProcess = (deltio) => {
 	empty().
 	append(prosopa.deltio.domGet());
 
-	$('#peDeltioKodikos').val(prosopa.deltio.kodikosGet());
-	$('#peDeltioPerigrafi').val(prosopa.deltio.perigrafiGet());
-	$('#peDeltioImerominia').val(prosopa.deltio.imerominiaGet().
-	toLocaleDateString('el-GR', {
-		'weekday': 'long',
-		'year': 'numeric',
-		'month': 'long',
-		'day': 'numeric',
-	}));
+	prosopa.editorDeltioKodikosDOM.val(prosopa.deltio.kodikosGet());
+	prosopa.editorDeltioPerigrafiDOM.val(prosopa.deltio.perigrafiGet());
+	prosopa.editorDeltioImerominiaDOM.
+	val(pnd.imerominia(prosopa.deltio.imerominiaGet()));
+	prosopa.deltioProsapoProcess();
+	prosopa.deltioIpiresiaProcess();
+
+	return prosopa;
+};
+
+prosopa.deltioProsapoProcess = () => {
+	prosopa.editorDeltioProsapoDOM.
+	removeClass('deltioProsapoProselefsi').
+	removeClass('deltioProsapoApoxorisi');
 
 	let prosapo = prosopa.deltio.prosapoGet();
-	let prosapoDOM = $('#peDeltioProsapo');
 
 	switch (prosapo) {
 	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
-		prosapoDOM.addClass('deltioProsapoProselefsi');
+		prosopa.editorDeltioProsapoDOM.
+		addClass('deltioProsapoProselefsi');
 		break;
 	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
-		prosapoDOM.addClass('deltioProsapoApoxorisi');
+		prosopa.editorDeltioProsapoDOM.
+		addClass('deltioProsapoApoxorisi');
 		break;
 	}
 
-	prosapoDOM.text(prosapo);
+	prosopa.editorDeltioProsapoDOM.text(prosapo);
 	prosopa.editorMeraoraLabelDOM.text(prosapo);
 
+	return prosopa;
+};
+
+prosopa.deltioIpiresiaProcess = () => {
+	prosopa.editorDeltioIpiresiaDOM.val('');
+	prosopa.editorDeltioDiefDOM.val('');
+	prosopa.editorDeltioDiefSectionDOM.css('display', 'none');
+
 	let ipiresia = prosopa.deltio.ipiresiaGet();
-	let ipdesc = '';
 
-	if (ipiresia.length > 3) {
-		let dief = prosopa.goniki.ipiresiaList[ipiresia.substr(0, 3)];
+	if (!ipiresia)
+	return prosopa;
 
-		if (dief) {
-			if (dief.length > 20)
-			ipdesc = dief.substr(0, 50) + '…\n';
+	let ipdesc = prosopa.goniki.ipiresiaList[ipiresia];
+	prosopa.editorDeltioIpiresiaDOM.val(ipdesc);
 
-			else
-			ipdesc = dief + '\n';
-		}
-	}
+	if (ipiresia.length < 4)
+	return prosopa;
 
-	ipdesc += prosopa.goniki.ipiresiaList[ipiresia];
-	$('#peDeltioIpiresia').val(ipdesc);
+	ipdesc = prosopa.goniki.ipiresiaList[ipiresia.substr(0, 3)];
+	prosopa.editorDeltioDiefDOM.val(ipdesc);
+	prosopa.editorDeltioDiefSectionDOM.css('display', '');
 
 	return prosopa;
 };
@@ -1148,6 +1159,13 @@ prosopa.editorSetup = () => {
 	attr('disabled', true);
 
 	prosopa.editorDeltioKodikosDOM = $('#peDeltioKodikos');
+	prosopa.editorDeltioPerigrafiDOM = $('#peDeltioPerigrafi');
+	prosopa.editorDeltioImerominiaDOM = $('#peDeltioImerominia');
+	prosopa.editorDeltioProsapoDOM = $('#peDeltioProsapo');
+	prosopa.editorDeltioIpiresiaDOM = $('#peDeltioIpiresia');
+	prosopa.editorDeltioDiefDOM = $('#peDeltioDief');
+	prosopa.editorDeltioDiefSectionDOM = $('#peDeltioDiefSection');
+
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario').
@@ -1160,6 +1178,7 @@ prosopa.editorSetup = () => {
 		$(this).val(orario.toString());
 	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
+	prosopa.editorKartaMeraoraDOM = $('#peKartaMeraora');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
@@ -1392,6 +1411,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val('');
 	}
+
+	prosopa.editorKartaMeraoraDOM.attr('disabled', true);
 
 	// Ωράριο
 
@@ -2002,13 +2023,7 @@ letrak.deltio.prototype.domGet = function() {
 	let ipiresia = this.ipiresiaGet();
 	let ipiresiaDOM;
 	let prosapo = this.prosapoGet();
-
-	let imerominia = this.imerominiaGet().toLocaleDateString('el-GR', {
-		'weekday': 'long',
-		'year': 'numeric',
-		'month': 'long',
-		'day': 'numeric',
-	});
+	let imerominia = pnd.imerominia(this.imerominiaGet());
 
 	let dom = $('<div>').
 	addClass('deltio').

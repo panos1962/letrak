@@ -75,7 +75,14 @@ document_body();
 			<label for="peDeltioIpiresia">
 				Υπηρεσία
 			</label>
-			<textarea id="peDeltioIpiresia" class="peDeltioPedio">
+			<input id="peDeltioIpiresia" class="peDeltioPedio">
+			</textarea>
+		</div>
+		<div class="peFormaInputLine" id="peDeltioDiefSection">
+			<label for="peDeltioDief">
+				Διεύθυνση
+			</label>
+			<input id="peDeltioDief" class="peDeltioPedio">
 			</textarea>
 		</div>
 	</div>
@@ -102,7 +109,7 @@ document_body();
 			<label for="peKartaMeraora">
 				Καταγραφή
 			</label>
-			<input id="peKartaMeraora" class="peParousiaPedio pePedioUpdate">
+			<input id="peKartaMeraora" class="peParousiaPedio pePedioUpdate" disabled="true">
 		</div>
 		<div class="peFormaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
