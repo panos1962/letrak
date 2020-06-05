@@ -179,6 +179,7 @@ document_body();
 			<option value="" selected="true"></option>
 			<option value="ΕΝΤΑΞΕΙ">ΕΝΤΑΞΕΙ</option>
 			<option value="ΕΚΤΟΣ ΕΔΡΑΣ">ΕΚΤΟΣ ΕΔΡΑΣ</option>
+			<option value="ΓΟΝΙΚΗ">ΓΟΝΙΚΗ</option>
 			<option value="ΑΙΜΟΔΟΣΙΑ">ΑΙΜΟΔΟΣΙΑ</option>
 			<option value="ΕΟΡΤΗ">ΕΟΡΤΗ</option>
 			<option value="ΑΣΘΕΝΕΙΑ">ΑΣΘΕΝΕΙΑ</option>

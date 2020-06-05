@@ -1271,6 +1271,10 @@ letrak.deltio.prototype.domGet = function() {
 	text(pnd.date(this.imerominiaGet(), '%D-%M-%Y'))).
 
 	append($('<div>').
+	addClass('deltioImera').
+	text(pnd.dowLongGet(this.imerominiaGet()))).
+
+	append($('<div>').
 	addClass('deltioIpiresia').
 	text(this.ipiresiaGet())).
 

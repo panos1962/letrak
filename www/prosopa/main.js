@@ -1224,8 +1224,8 @@ prosopa.editorSetup = () => {
 		'width': 'auto',
 		'height': 'auto',
 		'position': {
-			'my': 'left+290 top+90',
-			'at': 'left top',
+			'my': 'right-30 top+90',
+			'at': 'right top',
 		},
 		'close': () => {
 			prosopa.parousiaEditorDOM.removeData('parousia');
