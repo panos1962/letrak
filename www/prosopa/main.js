@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-04
 // Updated: 2020-05-23
 // Updated: 2020-05-20
 // Updated: 2020-05-19
@@ -95,8 +96,7 @@ prosopa.minima = {
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
-	'epexergasiaTabLabel': 'Επεξεργασία',
-	'prosopoInsertTabLabel': 'Προσθήκη υπαλλήλου',
+	'ergaliaTabLabel': 'Επεξεργασία',
 	'winpakTabLabel': 'WIN-PAK',
 };
 
@@ -191,6 +191,7 @@ prosopa.selidaSetup = () => {
 	prosopa.
 	ipografesSetup().
 	prosopaSetup().
+	ergaliaSetup().
 	editorSetup();
 
 	pnd.toolbarLeftDOM.
@@ -431,14 +432,14 @@ prosopa.ipografesSetup = () => {
 	on('click', function(e) {
 		e.stopPropagation();
 
-		if ($(this).hasClass('ipografiTabHide')) {
-			$(this).removeClass('ipografiTabHide');
+		if ($(this).hasClass('tabActive')) {
+			$(this).removeClass('tabActive');
 			prosopa.ipografesAreaDOM.addClass('ipografesAreaHidden');
 			prosopa.browserDOM.removeClass('browserEmfanesOrio');
 		}
 
 		else {
-			$(this).addClass('ipografiTabHide');
+			$(this).addClass('tabActive');
 			prosopa.ipografesAreaDOM.removeClass('ipografesAreaHidden');
 			prosopa.browserDOM.addClass('browserEmfanesOrio');
 		}
@@ -1063,32 +1064,151 @@ prosopa.ipografiPraxi = (e, praxi) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.prosopaSetup = () => {
+prosopa.ergaliaSetup = () => {
 	pnd.toolbarLeftDOM.
 
-	append(prosopa.epexergasiaTabDOM = letrak.tabDOM().
+	append(prosopa.ergaliaTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
 	addClass('prosopaPliktroUpdate').
-	text(prosopa.minima.epexergasiaTabLabel).
+	text(prosopa.minima.ergaliaTabLabel).
 	on('click', function(e) {
 		e.stopPropagation();
 
-		if ($(this).data('active'))
-		prosopa.epexergasiaHide();
+		if ($(this).hasClass('tabActive'))
+		prosopa.ergaliaDOM.dialog('close');
 
 		else
-		prosopa.epexergasiaShow();
-	})).
-
-	append(prosopa.prosopoInsertTabDOM = letrak.tabDOM().
-	addClass('prosopaPliktro').
-	addClass('prosopaPliktroUpdate').
-	text(prosopa.minima.prosopoInsertTabLabel).
-	on('click', function(e) {
-		prosopa.parousiaTargetClear();
-		prosopa.parousiaEdit(e);
+		prosopa.ergaliaDOM.dialog('open');
 	}));
 
+	$('#prosopoInsert').
+	on('click', (e) => {
+		prosopa.parousiaTargetClear();
+		prosopa.parousiaEdit(e);
+	});
+
+	$('#prosopaDiagrafi').
+	on('click', (e) => {
+		let dialogDOM = $('<div>').
+		attr('title', 'Διαγραφή υπαλλήλων').
+		append($('<div>').
+		html('Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;')).
+		dialog({
+			'resizable': false,
+			'height': 'auto',
+			'width': '350px',
+			'modal': true,
+			'position': {
+				'my': 'left+50 top+50',
+				'at': 'left top',
+			},
+
+			'buttons': {
+				'Διαγραφή': function() {
+					prosopa.prosopaDiagrafi();
+					$(this).dialog('close');
+				},
+				'Άκυρο': function() {
+					$(this).dialog('close');
+				},
+			},
+			'close': function() {
+				dialogDOM.remove();
+			},
+		});
+	});
+
+	$('#orariaDiagrafi').
+	on('click', (e) => {
+		let dialogDOM = $('<div>').
+		attr('title', 'Διαγραφή ωραρίων').
+		append($('<div>').
+		html('Να διαγραφούν τα ωράρια όλων των υπαλλήλων του παρουσιολογίου;')).
+		dialog({
+			'resizable': false,
+			'height': 'auto',
+			'width': '350px',
+			'modal': true,
+			'position': {
+				'my': 'left+50 top+50',
+				'at': 'left top',
+			},
+
+			'buttons': {
+				'Διαγραφή': function() {
+					prosopa.orariaDiagrafi();
+					$(this).dialog('close');
+				},
+				'Άκυρο': function() {
+					$(this).dialog('close');
+				},
+			},
+			'close': function() {
+				dialogDOM.remove();
+			},
+		});
+	});
+
+	prosopa.ergaliaDOM = $('#ergalia').
+	dialog({
+		'title': 'Eπερξεργασία',
+		'width': '220px',
+		'height': 'auto',
+		'position': {
+			'my': 'left top',
+			'at': 'left+290 top+93',
+		},
+		'open': () => prosopa.ergaliaShow(),
+		'close': () => prosopa.ergaliaHide(),
+	}).
+	dialog('close');
+
+	return prosopa;
+};
+
+prosopa.ergaliaShow = () => {
+	prosopa.ergaliaTabDOM.addClass('tabActive');
+	return prosopa;
+};
+
+prosopa.ergaliaHide = () => {
+	prosopa.ergaliaTabDOM.removeClass('tabActive');
+	return prosopa;
+};
+
+prosopa.prosopaDiagrafi = () => {
+	$.post({
+		'url': 'prosopaDiagrafi.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+		},
+		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα διαγραφής υπαλλήλων');
+			console.error(err);
+		},
+	});
+};
+
+prosopa.orariaDiagrafi = () => {
+	$.post({
+		'url': 'orariaDiagrafi.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+		},
+		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα διαγραφής ωραρίων');
+			console.error(err);
+		},
+	});
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.prosopaSetup = () => {
 	prosopa.browserDOM.
 	on('click', '.parousia', function(e) {
 		prosopa.parousiaTargetClear();
@@ -1096,14 +1216,6 @@ prosopa.prosopaSetup = () => {
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
 
-	return prosopa;
-};
-
-prosopa.epexergasiaHide = () => {
-	return prosopa;
-};
-
-prosopa.epexergasiaShow = () => {
 	return prosopa;
 };
 
@@ -1119,13 +1231,23 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		pnd.toolbarLeftDOM.
 		children('.prosopaPliktroUpdate').
 		css('display', 'inline-block');
+
+		prosopa.ergaliaDOM.
+		children('.prosopaPliktroUpdate').
+		css('display', 'block');
+
+		return prosopa;
 	}
 
-	else {
-		pnd.toolbarLeftDOM.
-		children('.prosopaPliktroUpdate').
-		css('display', update ? 'inline-block' : 'none');
-	}
+	pnd.toolbarLeftDOM.
+	children('.prosopaPliktroUpdate').
+	css('display', 'none');
+
+	prosopa.ergaliaDOM.
+	children('.prosopaPliktroUpdate').
+	css('display', 'none');
+
+	prosopa.ergaliaDOM.dialog('close');
 
 	return prosopa;
 }

@@ -209,6 +209,18 @@ document_body();
 		Ok!
 	</div>
 </form>
+
+<div id="ergalia">
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopoInsert">
+		Προσθήκη υπαλλήλου
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafi">
+		Διαγραφή υπαλλήλων
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="orariaDiagrafi">
+		Διαγραφή ωραρίων
+	</div>
+</div>
 <?php
 pandora::
 document_close();
