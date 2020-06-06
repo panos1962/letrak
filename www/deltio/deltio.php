@@ -175,6 +175,7 @@ if ($x) {
 $query .= " ORDER BY" .
 	" `imerominia` DESC," .
 	" `ipiresia`," .
+	" `perigrafi`," .
 	" `prosapo` DESC," .
 	" `kodikos` DESC";
 
