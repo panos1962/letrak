@@ -1,1 +1,19 @@
-ALTER TABLE `parousia` CHANGE `excuse` `excuse` ENUM('ΕΝΤΑΞΕΙ','ΕΚΤΟΣ ΕΔΡΑΣ','ΑΙΜΟΔΟΣΙΑ','ΕΟΡΤΗ','ΑΣΘΕΝΕΙΑ','ΠΕΝΘΟΣ','ΕΚΤΑΚΤΩΣ','ΓΟΝΙΚΗ') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Αιτιολόγηση απουσίας';
+USE `letrak`
+;
+
+CREATE TABLE `xparam` (
+	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Υπάλληλος',
+	`param` ENUM (
+		'ΤΑΞΙΝΟΜΗΣΗ ΔΕΛΤΙΩΝ',
+		'ΟΜΑΔΟΠΟΙΗΣΗ ΔΕΛΤΙΩΝ'
+	) NOT NULL COMMENT 'Είδος παραμέτρου',
+	`timi` VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Τιμή παραμέτρου',
+
+	PRIMARY KEY (
+		`ipalilos`,
+		`param`
+	) USING BTREE
+)
+
+COMMENT = 'Παράμετροι υπαλλήλων ως χρηστών εφαρμογής παρουσιολογίων'
+;
