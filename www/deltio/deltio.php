@@ -172,7 +172,11 @@ if ($x) {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query .= order_by_clause();
+$query .= " ORDER BY" .
+	" `imerominia` DESC," .
+	" `ipiresia`," .
+	" `prosapo` DESC," .
+	" `kodikos` DESC";
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -234,33 +238,6 @@ print ']}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
-
-function order_by_clause() {
-	$order_by = " ORDER BY";
-
-	switch (letrak::xparam_get(LETRAK_XPARAM_DELTIO_ORDER)) {
-	case LETRAK_XPARAM_DELTIO_ORDER_PALEOTERA:
-		$prosapo = "ASC";
-		$kodikos = "ASC";
-		break;
-	default:
-		$prosapo = "DESC";
-		$kodikos = "DESC";
-		break;
-	}
-
-	switch (letrak::xparam_get(LETRAK_XPARAM_DELTIO_GROUP)) {
-	case LETRAK_XPARAM_DELTIO_GROUP_IPIRESIA:
-		$order_by .= "`ipiresia`, `imerominia` DESC";
-		break;
-	default:
-		$order_by .= "`imerominia` DESC, `ipiresia`";
-		break;
-	}
-
-	$order_by .= ", `prosapo` " . $prosapo . ", `kodikos` " . $kodikos;
-	return $order_by;
-}
 
 function lathos_imerominia($s) {
 	lathos($s . ": λανθασμένη ημερομηνία");
