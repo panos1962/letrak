@@ -240,12 +240,10 @@ function order_by_clause() {
 
 	switch (letrak::xparam_get(LETRAK_XPARAM_DELTIO_ORDER)) {
 	case LETRAK_XPARAM_DELTIO_ORDER_PALEOTERA:
-		$imerominia = "ASC";
 		$prosapo = "ASC";
 		$kodikos = "ASC";
 		break;
 	default:
-		$imerominia = "DESC";
 		$prosapo = "DESC";
 		$kodikos = "DESC";
 		break;
@@ -253,10 +251,10 @@ function order_by_clause() {
 
 	switch (letrak::xparam_get(LETRAK_XPARAM_DELTIO_GROUP)) {
 	case LETRAK_XPARAM_DELTIO_GROUP_IPIRESIA:
-		$order_by .= "`ipiresia`, `imerominia` " . $imerominia;
+		$order_by .= "`ipiresia`, `imerominia` DESC";
 		break;
 	default:
-		$order_by .= "`imerominia` " . $imerominia . ", `ipiresia`";
+		$order_by .= "`imerominia` DESC, `ipiresia`";
 		break;
 	}
 
