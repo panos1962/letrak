@@ -113,13 +113,13 @@ class letrak extends letrakCore {
 			return $x->xparam_get($param);
 		}
 
-		if (!isset($ipalilos["xparam"]))
+		if (!isset($ipalilos->xparam))
 		return $x->xparam_get($param);
 
-		if (!is_array($ipalilos["xparam"]))
+		if (!is_array($ipalilos->xparam))
 		return $x->xparam_get($param);
 
-		$x->xparam = $ipalilos["xparam"];
+		$x->xparam = $ipalilos->xparam;
 		return $x->xparam_get($param);
 	}
 
