@@ -94,6 +94,7 @@ $ipalilos["xparam"] = $x->xparam;
 	
 $x = json_encode(
 	$ipalilos,
+	JSON_FORCE_OBJECT |
 	JSON_UNESCAPED_UNICODE |
 	JSON_UNESCAPED_SLASHES
 );
