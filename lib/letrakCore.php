@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-06
 // Updated: 2020-05-11
 // Updated: 2020-05-09
 // Updated: 2020-05-06
@@ -48,6 +49,14 @@ define("LETRAK_DELTIO_KATASTASI_EKREMES", "ΕΚΚΡΕΜΕΣ");
 define("LETRAK_DELTIO_KATASTASI_ANIPOGRAFO", "ΑΝΥΠΟΓΡΑΦΟ");
 define("LETRAK_DELTIO_KATASTASI_KIROMENO", "ΚΥΡΩΜΕΝΟ");
 define("LETRAK_DELTIO_KATASTASI_EPIKIROMENO", "ΕΠΙΚΥΡΩΜΕΝΟ");
+
+define("LETRAK_XPARAM_DELTIO_ORDER", "ΤΑΞΙΝΟΜΗΣΗ ΔΕΛΤΙΩΝ");
+define("LETRAK_XPARAM_DELTIO_ORDER_PROSFATA", "ΠΡΟΣΦΑΤΑ");
+define("LETRAK_XPARAM_DELTIO_ORDER_PALEOTERA", "ΠΑΛΑΙΟΤΕΡΑ");
+
+define("LETRAK_XPARAM_DELTIO_GROUP", "ΟΜΑΔΟΠΟΙΗΣΗ ΔΕΛΤΙΩΝ");
+define("LETRAK_XPARAM_DELTIO_GROUP_IMEROMINIA", "ΗΜΕΡΟΜΗΝΙΑ");
+define("LETRAK_XPARAM_DELTIO_GROUP_IPIRESIA", "ΥΠΗΡΕΣΙΑ");
 
 // Η συμβολική σταθερά "LETRAK_ORARIO_WINDOW_MIN" καθορίζει το μέγιστο
 // «παράθυρο» ελέγχου καταγραφής ώρας προσέλευσης μετά την προσέλευση,
@@ -486,9 +495,11 @@ class Orario {
 
 class Ipalilos {
 	public $kodikos = NULL;
+	public $xparam = NULL;
 
 	public function __construct($x = NULL) {
 		$this->from_array($x);
+		$this->xparam = NULL;
 	}
 
 	private function from_array($x) {
@@ -533,11 +544,73 @@ class Ipalilos {
 		return !$this->is_kodikos();
 	}
 
+	public function xparam_set($param, $timi) {
+		if (!isset($param))
+		return $this;
+
+		if (!isset($timi)) {
+			if (isset($this->xparam) && is_array($this->xparam))
+			unset($this->xparam[$param]);
+
+			return $this;
+		}
+
+		switch ($param) {
+		case LETRAK_XPARAM_DELTIO_ORDER:
+			switch ($timi) {
+			case LETRAK_XPARAM_DELTIO_ORDER_PROSFATA:
+			case LETRAK_XPARAM_DELTIO_ORDER_PALEOTERA:
+				break;
+			default:
+				return $this;
+			}
+		}
+
+		if (!isset($this->xparam))
+		$this->xparam = array();
+
+		$this->xparam[$param] = $timi;
+		return $this;
+	}
+
+	public function xparam_get($param) {
+		switch ($param) {
+		case LETRAK_XPARAM_DELTIO_ORDER:
+			$dflt = LETRAK_XPARAM_DELTIO_ORDER_PROSFATA;
+			break;
+		case LETRAK_XPARAM_DELTIO_GROUP:
+			$dflt = LETRAK_XPARAM_DELTIO_GROUP_IMEROMINIA;
+			break;
+		default:
+			return NULL;
+		}
+
+		if (!isset($this->xparam))
+		return $dflt;
+
+		if (!is_array($this->xparam))
+		return $dflt;
+
+		if (!array_key_exists($param, $this->xparam))
+		return $dflt;
+
+		return $this->xparam[$param];
+	}
+
 	public function from_database($kodikos) {
 		$query = "SELECT `kodikos` FROM " . letrak::erpota12("ipalilos") .
 			" WHERE `kodikos` = " . $kodikos;
 		$row = pandora::first_row($query, MYSQLI_ASSOC);
-		return $this->from_array($row);
+		$this->from_array($row);
+
+		$query = "SELECT `param`, `timi` FROM `xparam`" .
+			" WHERE `ipalilos` =" . $kodikos;
+		$result = pandora::query($query);
+
+		while ($row = $result->fetch_array(MYSQLI_NUM))
+		$this->xaparam_set($row[0], $row[1]);
+
+		return $this;
 	}
 }
 

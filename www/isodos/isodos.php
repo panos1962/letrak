@@ -79,6 +79,18 @@ $ipalilos["onomateponimo"] =
 $row["eponimo"] . " " .
 $row["onoma"] . " " .
 mb_substr($row["patronimo"], 0, 3);
+
+$query = "SELECT `param`, `timi` FROM `letrak`.`xparam`" .
+	" WHERE `ipalilos` = " . $kodikos;
+$result = pandora::query($query);
+
+$x = new Ipalilos();
+
+while ($row = $result->fetch_array(MYSQLI_NUM))
+$x->xparam_set($row[0], $row[1]);
+
+if (isset($x->xparam))
+$ipalilos["xparam"] = $x->xparam;
 	
 $x = json_encode(
 	$ipalilos,

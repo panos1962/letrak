@@ -20,6 +20,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-06
 // Updated: 2020-05-06
 // Updated: 2020-04-09
 // Created: 2020-03-05
@@ -96,6 +97,24 @@ class letrak extends letrakCore {
 		}
 
 		return $prosvasi->fromdb();
+	}
+
+	public function xparam_get($param) {
+		$ipalilos = $_SESSION[LETRAK_SESSION_IPALILOS];
+
+		$x = new Ipalilos();
+
+		if (!isset($ipalilos))
+		return $x->xparam_get($param);
+
+		if (!isset($ipalilos["xparam"]))
+		return $x->xparam_get($param);
+
+		if (!is_array($ipalilos["xparam"]))
+		return $x->xparam_get($param);
+
+		$x->xparam = $ipalilos["xparam"];
+		return $x->xparam_get($param);
 	}
 
 	// Η μέθοδος "ipografes_taxinomisi" επιχειρεί επεναρίθμηση των
