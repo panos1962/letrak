@@ -95,6 +95,7 @@ prosopa.minima = {
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
+	'epexergasiaTabLabel': 'Επεξεργασία',
 	'prosopoInsertTabLabel': 'Προσθήκη υπαλλήλου',
 	'winpakTabLabel': 'WIN-PAK',
 };
@@ -1065,6 +1066,20 @@ prosopa.ipografiPraxi = (e, praxi) => {
 prosopa.prosopaSetup = () => {
 	pnd.toolbarLeftDOM.
 
+	append(prosopa.epexergasiaTabDOM = letrak.tabDOM().
+	addClass('prosopaPliktro').
+	addClass('prosopaPliktroUpdate').
+	text(prosopa.minima.epexergasiaTabLabel).
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if ($(this).data('active'))
+		prosopa.epexergasiaHide();
+
+		else
+		prosopa.epexergasiaShow();
+	})).
+
 	append(prosopa.prosopoInsertTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
 	addClass('prosopaPliktroUpdate').
@@ -1081,6 +1096,14 @@ prosopa.prosopaSetup = () => {
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
 
+	return prosopa;
+};
+
+prosopa.epexergasiaHide = () => {
+	return prosopa;
+};
+
+prosopa.epexergasiaShow = () => {
 	return prosopa;
 };
 
