@@ -116,9 +116,6 @@ class letrak extends letrakCore {
 		if (!isset($ipalilos->xparam))
 		return $x->xparam_get($param);
 
-		if (!is_array($ipalilos->xparam))
-		return $x->xparam_get($param);
-
 		$x->xparam = $ipalilos->xparam;
 		return $x->xparam_get($param);
 	}
