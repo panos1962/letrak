@@ -608,7 +608,7 @@ class Ipalilos {
 		$result = pandora::query($query);
 
 		while ($row = $result->fetch_array(MYSQLI_NUM))
-		$this->xaparam_set($row[0], $row[1]);
+		$this->xparam_set($row[0], $row[1]);
 
 		return $this;
 	}

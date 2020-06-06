@@ -91,6 +91,7 @@ $x->xparam_set($row[0], $row[1]);
 
 if (isset($x->xparam))
 $ipalilos["xparam"] = $x->xparam;
+var_dump($ipalilos);
 	
 $x = json_encode(
 	$ipalilos,
