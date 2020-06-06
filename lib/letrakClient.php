@@ -100,12 +100,18 @@ class letrak extends letrakCore {
 	}
 
 	public function xparam_get($param) {
-		$ipalilos = $_SESSION[LETRAK_SESSION_IPALILOS];
+		$ipalilos = pandora::session_get(LETRAK_SESSION_IPALILOS);
 
 		$x = new Ipalilos();
 
-		if (!isset($ipalilos))
+		if (!$ipalilos)
 		return $x->xparam_get($param);
+
+		try {
+			$ipalilos = json_decode($ipalilos);
+		} catch (Exception $e) {
+			return $x->xparam_get($param);
+		}
 
 		if (!isset($ipalilos["xparam"]))
 		return $x->xparam_get($param);
