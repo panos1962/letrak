@@ -7,7 +7,7 @@ BEGIN {
 
 	deltio_create = "awk -v verbose=0 " \
 		"-v creator=3307 " \
-		"-v imerominia=2020-02-26 " \
+		"-v imerominia=2020-01-21 " \
 		"-f /var/opt/letrak/lib/deltio.awk"
 
 	select_ipiresia()

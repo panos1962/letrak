@@ -601,9 +601,13 @@ class Ipalilos {
 		$query = "SELECT `kodikos` FROM " . letrak::erpota12("ipalilos") .
 			" WHERE `kodikos` = " . $kodikos;
 		$row = pandora::first_row($query, MYSQLI_ASSOC);
-		$this->from_array($row);
+		return $this->from_array($row);
+	}
 
-		$query = "SELECT `param`, `timi` FROM `xparam`" .
+	public function xparam_from_database($kodikos) {
+		unset($this->xparam);
+
+		$query = "SELECT `param`, `timi` FROM `letrak`.`xparam`" .
 			" WHERE `ipalilos` =" . $kodikos;
 		$result = pandora::query($query);
 
