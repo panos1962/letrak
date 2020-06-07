@@ -107,13 +107,34 @@ document_body();
 				Κάρτα
 			</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<label id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
-				WIN&ndash;PAK
-			</label>
-			<select id="peKatagrafi" class="peParousiaPedio pePedioUpdate" disabled="true">
-			<option value="" selected="true"></option>
-			<option value="xxx" selected="true">xxx</option>
-			</select>
+			<div id="peKatagrafiLabelWrap">
+				<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
+					WIN&ndash;PAK
+				</div>
+				<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate">
+					<div>
+						Καθαρισμός
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+					<div>
+						2020-19-01 08:32
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="peFormaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
