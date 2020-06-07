@@ -1323,7 +1323,8 @@ prosopa.editorSetup = () => {
 		$(this).val(orario.toString());
 	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
-	prosopa.editorKartaMeraoraDOM = $('#peKartaMeraora');
+	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel');
+	prosopa.editorKatagrafiDOM = $('#peKatagrafi');
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
@@ -1557,7 +1558,15 @@ prosopa.parousiaEdit = (e, parousia) => {
 		val('');
 	}
 
-	prosopa.editorKartaMeraoraDOM.attr('disabled', true);
+	prosopa.editorKatagrafiLabelDOM.
+	on('click', (e) => {
+		e.stopPropagation();
+		prosopa.editorKatagrafiDOM.
+		attr('disabled', false).
+		css('visibility', 'visible');
+	});
+
+	prosopa.editorKatagrafiDOM.attr('disabled', true);
 
 	// Ωράριο
 

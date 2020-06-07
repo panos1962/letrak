@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-07
 // Updated: 2020-05-17
 // Updated: 2020-05-13
 // Updated: 2020-05-09
@@ -106,10 +107,13 @@ document_body();
 				Κάρτα
 			</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<label for="peKartaMeraora">
-				Καταγραφή
+			<label id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
+				WIN&ndash;PAK
 			</label>
-			<input id="peKartaMeraora" class="peParousiaPedio pePedioUpdate" disabled="true">
+			<select id="peKatagrafi" class="peParousiaPedio pePedioUpdate" disabled="true">
+			<option value="" selected="true"></option>
+			<option value="xxx" selected="true">xxx</option>
+			</select>
 		</div>
 		<div class="peFormaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>

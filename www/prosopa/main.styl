@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2020-06-07
 * Updated: 2020-06-04
 * Updated: 2020-05-17
 * Updated: 2020-05-16
@@ -313,8 +314,9 @@ $ordinalWidth = 2.2em
 #peIpalilosKarta
 	width 4em
 
-#peKartaMeraora
-	width 184px
+#peKatagrafi
+	width 202px
+	visibility hidden
 
 #peMeraora
 	width 10em
@@ -445,3 +447,17 @@ $ordinalWidth = 2.2em
 		cursor pointer
 		text-shadow 1px 0 0
 		box-shadow 1px 1px 1px #443232, -1px -1px 1px #e6e6e6
+
+#peKatagrafiLabel
+	padding 2px 6px
+	font-style normal
+	background-color #f3f2cd
+	border-style solid
+	border-width 1px
+	border-radius 2px
+	vendor('user-select', none)
+	&:hover
+		cursor pointer
+		background-color lightyellow
+		text-shadow 0.5px 0px 0px
+		box-shadow 1px 1px 2px #888888, -1px -1px 2px #888888
