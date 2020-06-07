@@ -1324,7 +1324,8 @@ prosopa.editorSetup = () => {
 		$(this).val(orario.toString());
 	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
-	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel');
+	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel').
+	on('click', (e) => prosopa.katagrafiToggle(e));
 	prosopa.editorKatagrafiDOM = $('#peKatagrafi').
 	on('click', 'div', function(e) {
 		prosopa.
@@ -1563,11 +1564,6 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val('');
 	}
-
-	// Καταγραφή συμβάντων WIN-PAK
-
-	prosopa.editorKatagrafiLabelDOM.
-	on('click', (e) => prosopa.katagrafiToggle(e));
 
 	// Ωράριο
 
