@@ -111,29 +111,7 @@ document_body();
 				<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
 					WIN&ndash;PAK
 				</div>
-				<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate">
-					<div>
-						Καθαρισμός
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-					<div>
-						2020-19-01 08:32
-					</div>
-				</div>
+				<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
 			</div>
 		</div>
 		<div class="peFormaInputLine">

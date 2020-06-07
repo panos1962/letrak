@@ -98,6 +98,7 @@ prosopa.minima = {
 
 	'ergaliaTabLabel': 'Επεξεργασία',
 	'winpakTabLabel': 'WIN-PAK',
+	'katagrafiKatharismos': 'Καθαρισμός',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -782,7 +783,7 @@ prosopa.ipografiInsertExec = function(forma) {
 		'url': 'ipografiInsert.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
 			'titlos': forma.titlosDOM.val(),
@@ -902,7 +903,7 @@ prosopa.ipografiEditExec = function(forma) {
 		'url': 'ipografiEdit.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 			'isimonixat': forma.isimonixat,
 			'taxinomisi': forma.taxinomisiDOM.val(),
 			'armodios': forma.armodiosDOM.val(),
@@ -982,7 +983,7 @@ prosopa.ipografiDiagrafi = (e) => {
 		'url': 'ipografiDelete.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 			'taxinomisi': taxinomisi,
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
@@ -1006,7 +1007,7 @@ prosopa.ipografiAnaneosi = (e) => {
 		'url': 'ipografiAnaneosi.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {
@@ -1048,7 +1049,7 @@ prosopa.ipografiPraxi = (e, praxi) => {
 		'url': 'ipografiPraxi.php',
 		'dataType': 'json',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 			'armodios': ipografi.armodiosGet(),
 			'praxi': praxi,
 		},
@@ -1324,7 +1325,12 @@ prosopa.editorSetup = () => {
 	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel');
-	prosopa.editorKatagrafiDOM = $('#peKatagrafi');
+	prosopa.editorKatagrafiDOM = $('#peKatagrafi').
+	on('click', 'div', function(e) {
+		prosopa.
+		katagrafiGet(e, $(this)).
+		katagrafiHide();
+	});
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
@@ -1558,15 +1564,10 @@ prosopa.parousiaEdit = (e, parousia) => {
 		val('');
 	}
 
-	prosopa.editorKatagrafiLabelDOM.
-	on('click', (e) => {
-		e.stopPropagation();
-		prosopa.editorKatagrafiDOM.
-		attr('disabled', false).
-		css('visibility', 'visible');
-	});
+	// Καταγραφή συμβάντων WIN-PAK
 
-	prosopa.editorKatagrafiDOM.attr('disabled', true);
+	prosopa.editorKatagrafiLabelDOM.
+	on('click', (e) => prosopa.katagrafiToggle(e));
 
 	// Ωράριο
 
@@ -1577,6 +1578,10 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 	prosopa.editorIpalilosKartaDOM.
 	val(parousia.karta);
+
+	// Καταγραφές
+
+	prosopa.katagrafiHide();
 
 	// Ημερομηνία και ώρα παρουσίας
 
@@ -1869,6 +1874,95 @@ prosopa.ipalilosZoomEpilogi = (e, dom) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+prosopa.katagrafiToggle = (e) => {
+	e.stopPropagation();
+
+	if (prosopa.editorKatagrafiDOM.css('visibility') === 'visible')
+	return prosopa.katagrafiHide();
+
+	return prosopa.katagrafiShow();
+};
+
+prosopa.katagrafiHide = () => {
+	prosopa.editorKatagrafiDOM.css('visibility', 'hidden');
+	return prosopa;
+};
+
+prosopa.katagrafiShow = () => {
+	let data = {};
+
+	data.karta = prosopa.editorIpalilosKartaDOM.val();
+
+	if (!data.karta)
+	return prosopa.fyiError('Απροσδιόριστος αριθμός κάρτας εργαζομένου');
+
+	if (data.karta != parseInt(data.karta))
+	return prosopa.fyiError('Μη αποδεκτός αριθμός κάρτας εργαζομένου');
+
+	data.deltio = prosopa.deltioKodikos;
+
+	pnd.fyiMessage('Αναζήτηση καταγραφών…');
+	$.post({
+		'url': 'katagrafi.php',
+		'dataType': 'json',
+		'data': data,
+		'success': (rsp) => prosopa.katagrafiProcess(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα επιλογής καταγραφών');
+			console.error(err);
+		},
+	});
+};
+
+prosopa.katagrafiProcess = (rsp) => {
+	pnd.fyiMessage();
+	prosopa.editorKatagrafiDOM.
+	empty().
+	append($('<div>').text(prosopa.minima.katagrafiKatharismos));
+
+	while ((rsp.prin.length + rsp.meta.length) > rsp.max) {
+		if (rsp.prin.length > rsp.meta.length)
+		rsp.prin.pop();
+
+		else
+		rsp.meta.pop();
+	}
+
+	while (rsp.prin.length > 0)
+	prosopa.editorKatagrafiDOM.append($('<div>').text(rsp.prin.pop()));
+
+	while (rsp.meta.length > 0)
+	prosopa.editorKatagrafiDOM.append($('<div>').text(rsp.meta.shift()));
+
+	prosopa.editorKatagrafiDOM.css('visibility', 'visible');
+	return prosopa;
+};
+
+prosopa.katagrafiGet = (e, dom) => {
+	e.stopPropagation();
+
+	let x = dom.text();
+
+	if (x === prosopa.minima.katagrafiKatharismos)
+	x = '';
+
+	prosopa.editorMeraoraDOM.
+	val(x).
+	css({
+		'color': 'midnightblue',
+		'background-color': 'yellow',
+	}).
+	finish().
+	animate({
+		'color': '#000000',
+		'background-color': '#ffffff',
+	}, 1000);
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 prosopa.editorIpovoli = (e) => {
 	if (e)
 	e.stopPropagation();
@@ -2116,7 +2210,7 @@ prosopa.winpak = () => {
 	$.post({
 		'url': 'winpak.php',
 		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
+			'deltio': prosopa.deltioKodikos,
 			'plist': plist,
 		},
 		'dataType': 'json',
