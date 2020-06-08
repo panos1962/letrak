@@ -30,6 +30,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-08
+// Updated: 2020-06-06
 // Updated: 2020-06-04
 // Updated: 2020-05-23
 // Updated: 2020-05-20
@@ -1408,14 +1410,10 @@ prosopa.orarioEdit = (e) => {
 	// το πλήκτρο pageUp.
 
 	switch (e.which) {
-	case 189:	// - key
-	case 109:	// - key (numpad)
 	case 38:	// Up arrow
 		step = misaoro;
 		prosimo = -1;
 		break;
-	case 187:	// + key
-	case 107:	// + key (numpad)
 	case 40:	// Down arrow
 		step = misaoro;
 		prosimo = 1;
@@ -2333,11 +2331,7 @@ prosopa.winpakProcess = (rsp) => {
 		return;
 
 		parousia.meraora = new Date(data[ipalilos] + ':00');
-
-		$(this).
-		children('.parousiaMeraora').
-		removeClass('parousiaMeraoraProvlima').
-		text(data[ipalilos]);
+		$(this).html(parousia.domGet().html());
 	});
 
 	return prosopa;
@@ -2405,6 +2399,20 @@ letrak.parousia.prototype.domGet = function() {
 	if (this.oxiParousia())
 	meraoraClass += ' parousiaMeraoraProvlima';
 
+	if (!this.hasOwnProperty('pleonelima'))
+	this.pleonelimaSet(prosopa.deltio);
+
+	let pleonelima = this.pleonelimaGet();
+	let pleonelimaClass = 'parousiaPleonelima';
+
+	if (pleonelima < 0)
+	pleonelimaClass += ' parousiaPleonelimaElima';
+
+	else if (pleonelima > 0)
+	pleonelimaClass += ' parousiaPleonelimaPleonasma';
+
+	pleonelima = letrak.pleonelima2hm(pleonelima, true);
+
 	let dom = $('<div>').
 	data('parousia', this).
 	addClass('parousia').
@@ -2434,6 +2442,10 @@ letrak.parousia.prototype.domGet = function() {
 	append($('<div>').
 	addClass(meraoraClass).
 	text(meraora)).
+
+	append($('<div>').
+	addClass(pleonelimaClass).
+	html(pleonelima)).
 
 	append($('<div>').
 	addClass('parousiaExcuse').
