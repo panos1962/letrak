@@ -1324,14 +1324,7 @@ prosopa.editorSetup = () => {
 		$(this).val(orario.toString());
 	});
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
-	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel').
-	on('click', (e) => prosopa.katagrafiToggle(e));
-	prosopa.editorKatagrafiDOM = $('#peKatagrafi').
-	on('click', 'div', function(e) {
-		prosopa.
-		katagrafiGet(e, $(this)).
-		katagrafiHide();
-	});
+	prosopa.katagrafiSetup();
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
@@ -1870,6 +1863,41 @@ prosopa.ipalilosZoomEpilogi = (e, dom) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Ακολουθούν δομές και μέθοδοι που αφορούν στην εμφάνιση καταγραφών από το
+// σύστημα καταγραφής συμβάντων εισόδου/εξόδου (WIN-PAK). Πράγματι, στη φόρμα
+// επεξεργασίας λεπτομερειών προσέλευσης/αποχώρησης υπαλλήλου (editor) υπάρχει
+// πλήκτρο [WIN-PAK] με το οποίο επιλέγονται και εμφανίζονται σε pop-up χωρίο
+// συμβάντα που αφορούν στον τρέχοντα υπάλληλο και είναι κοντά στην ημερομηνία
+// του τρέχοντος δελτίου. Ο χρήστης μπορεί να επιλέξει κάποιο από τα συμβάντα
+// προκειμένου να τεθεί ανάλογα η ημερομηνία και η ώρα προσέλευσης/αποχώρησης.
+// Επιπλέον, στο ίδιο χωρίο παρέχεται η δυνατότητα «καθαρισμού» του σχετικού
+// πεδίου.
+
+prosopa.katagrafiSetup = () => {
+	// Εφοπλίζουμε το πλήκτρο ελέγχου συμβάντων με τη δυνατότητα
+	// εμφάνισης και απόκρυψης του σχετικού χωρίου κατά το κλικ.
+
+	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel').
+	on('click', (e) => prosopa.katagrafiToggle(e));
+
+	// Εφοπλίζουμε τα στοιχεία που θα περιέχουνται στο χωρίο ελέγχου
+	// συμβάντων με τη function ενημέρωσης του πεδίου καταγραφής.
+
+	prosopa.editorKatagrafiDOM = $('#peKatagrafi').
+	on('click', 'div', function(e) {
+		prosopa.
+		katagrafiGet(e, $(this)).
+		katagrafiHide();
+	});
+
+	return prosopa;
+};
+
+// Η function "katagrafiToggle" καλείται όποτε ο χρήστης κάνει κλικ στο
+// πλήκτρο [WIN-PAK]. Αν το πλήκτρο έχει ήδη πατηθεί και το χωρίο είναι ήδη
+// ανοικτό, τότε το χωρίο κλείνει, αλλιώς το πρόγραμμα επιλέγει τα συμβάντα
+// που αφορούν τον συγκεκριμένο εργαζόμενο και τα εμφανίζει στο σχετικό χωρίο.
+
 prosopa.katagrafiToggle = (e) => {
 	e.stopPropagation();
 
@@ -1879,10 +1907,17 @@ prosopa.katagrafiToggle = (e) => {
 	return prosopa.katagrafiShow();
 };
 
+// Η function "katagrafiHide" κλείνει το χωρίο επιλογής συμβάντων και θέτει
+// το σχετικό πλήκτρο σε κατάσταση αναμονής.
+
 prosopa.katagrafiHide = () => {
 	prosopa.editorKatagrafiDOM.css('visibility', 'hidden');
 	return prosopa;
 };
+
+// Η function "katagrafiShow" αποστέλλει τον αριθμό κάρτας εργαζομένου και
+// τον κωδικό του δελτίου στον server προκειμένου να αναζητηθούν τα σχετικά
+// συμβάντα από το σύστημα καταγραφής (WIN-PAK).
 
 prosopa.katagrafiShow = () => {
 	let data = {};
@@ -1910,11 +1945,38 @@ prosopa.katagrafiShow = () => {
 	});
 };
 
+// Η function "katagrafiProcess" καλείται κατά την επιστροφή των επιλεγμένων
+// συμβάντων από τον server. Τα επιστρεφόμενα δεδομένα είναι σε μορφή json
+// και περιέχουν τα παρακάτω πεδία:
+//
+//	prin	Πρόκειται για array με τα τελευταία συμβάντα που αφορούν
+//		τον τρέχοντα υπάλληλο μέχρι και την ημερομηνία του δελτίου.
+//
+//	meta	Πρόκειται για array των πρώτων συμβάντων που αφορούν τον
+//		τρέχοντα υπάλληλο αμέσως μετά την ημερομηνία του δελτίου.
+//
+//	max	Είναι μικρός θετικός ακέραιος που δείχνει το μέγιστο πλήθος
+//		στοιχείων των arrays "prin" και "meta". Ο αριθμός αυτός θα
+//		χρησιμοποιηθεί και κατά την εμφάνιση των καταγραφών στη
+//		σελίδα, αν π.χ. ο αριθμός αυτός είναι 6 και έχουν επιστραφεί
+//		6 καταγραφές πριν και 6 καταγραφές μετά την ημερομηνία του
+//		δελτίου, τότε θα εμφανιστούν 3 καταγραφές πριν και 3 μετά.
+
 prosopa.katagrafiProcess = (rsp) => {
 	pnd.fyiMessage();
+
+	// Το πρώτο στοιχείο στο χωρίο καταγραφών είναι πλήκτρο καθαρισμού
+	// του πεδίου καταγραφής.
+
 	prosopa.editorKatagrafiDOM.
 	empty().
 	append($('<div>').text(prosopa.minima.katagrafiKatharismos));
+
+	// Αφαιρούμε στοιχεία από τα arrays "prin" και "meta" προκειμένου
+	// να μην υπερβαίνουν στο σύνολο το μέγιστο πλήθος καταγραφών που
+	// χωράνε στη σχετική φόρμα επιλογής. Η μείωση γίνεται με τρόπο
+	// τέτοιο που τα στοιχεία πριν και μετά την ημερομηνία του δελτίου
+	// να είναι κατά το δυνατόν «ζυγισμένα».
 
 	while ((rsp.prin.length + rsp.meta.length) > rsp.max) {
 		if (rsp.prin.length > rsp.meta.length)
@@ -1924,23 +1986,43 @@ prosopa.katagrafiProcess = (rsp) => {
 		rsp.meta.pop();
 	}
 
+	// Εμφανίζουμε τα συμβάντα στο σχετικό χωρίο προκειμένου ο χρήστης
+	// να έχει τη δυνατότητα επιλογής κάποιου από αυτά τα συμβάντα.
+
 	while (rsp.prin.length > 0)
-	prosopa.editorKatagrafiDOM.append($('<div>').text(rsp.prin.pop()));
+	prosopa.editorKatagrafiDOM.
+	append($('<div>').
+	text(rsp.prin.pop()));
 
 	while (rsp.meta.length > 0)
-	prosopa.editorKatagrafiDOM.append($('<div>').text(rsp.meta.shift()));
+	prosopa.editorKatagrafiDOM.
+	append($('<div>').
+	text(rsp.meta.shift()));
+
+	// Τέλος, καθιστούμε το χωρίο που μόλις κατασκευάσαμε εμφανές.
 
 	prosopa.editorKatagrafiDOM.css('visibility', 'visible');
 	return prosopa;
 };
+
+// Η function "katagrafiGet" καλείται όταν ο χρήστης κάνει κλικ σε κάποιο
+// από τα συμβάντα που εμφανίζονται στο χωρίο επιλογής συμβάντων.
 
 prosopa.katagrafiGet = (e, dom) => {
 	e.stopPropagation();
 
 	let x = dom.text();
 
+	// Αν ο χρήστης έχει κάνει κλικ στην πλήκτρο καθαρισμού (πρώτο
+	// στοιχείο στο χωρίο επιλογής συμβάντων), τότε θα πρέπει να
+	// καθαρίσουμε το πεδίο καταγραφής.
+
 	if (x === prosopa.minima.katagrafiKatharismos)
 	x = '';
+
+	// Θέτουμε την τιμή του πεδίου καταγραφής και εφαρμόζουμε λίγο
+	// animation με τα χρώματα του πεδίου καταγραφής προκειμένου να
+	// γίνει σαφής η αλλαγή της τιμής του πεδίου.
 
 	prosopa.editorMeraoraDOM.
 	val(x).
