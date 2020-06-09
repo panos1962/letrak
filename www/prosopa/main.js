@@ -2399,19 +2399,19 @@ letrak.parousia.prototype.domGet = function() {
 	if (this.oxiParousia())
 	meraoraClass += ' parousiaMeraoraProvlima';
 
-	if (!this.hasOwnProperty('pleonelima'))
-	this.pleonelimaSet(prosopa.deltio);
+	if (!this.hasOwnProperty('isozigio'))
+	this.isozigioSet(prosopa.deltio);
 
-	let pleonelima = this.pleonelimaGet();
-	let pleonelimaClass = 'parousiaPleonelima';
+	let isozigio = this.isozigioGet();
+	let isozigioClass = 'parousiaIsozigio';
 
-	if (pleonelima < 0)
-	pleonelimaClass += ' parousiaPleonelimaElima';
+	if (isozigio < 0)
+	isozigioClass += ' parousiaIsozigioElima';
 
-	else if (pleonelima > 0)
-	pleonelimaClass += ' parousiaPleonelimaPleonasma';
+	else if (isozigio > 0)
+	isozigioClass += ' parousiaIsozigioPleonasma';
 
-	pleonelima = letrak.pleonelima2hm(pleonelima, true);
+	isozigio = letrak.isozigio2hm(isozigio, true);
 
 	let dom = $('<div>').
 	data('parousia', this).
@@ -2444,8 +2444,8 @@ letrak.parousia.prototype.domGet = function() {
 	text(meraora)).
 
 	append($('<div>').
-	addClass(pleonelimaClass).
-	html(pleonelima)).
+	addClass(isozigioClass).
+	html(isozigio)).
 
 	append($('<div>').
 	addClass('parousiaExcuse').
