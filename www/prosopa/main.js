@@ -2399,10 +2399,7 @@ letrak.parousia.prototype.domGet = function() {
 	if (this.oxiParousia())
 	meraoraClass += ' parousiaMeraoraProvlima';
 
-	if (!this.hasOwnProperty('isozigio'))
-	this.isozigioSet(prosopa.deltio);
-
-	let isozigio = this.isozigioGet();
+	let isozigio = this.isozigioGet(prosopa.deltio);
 	let isozigioClass = 'parousiaIsozigio';
 
 	if (isozigio < 0)
