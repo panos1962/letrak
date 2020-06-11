@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-11
 // Updated: 2020-05-15
 // Updated: 2020-05-10
 // Updated: 2020-05-09
@@ -90,11 +91,9 @@ switch ($prosapo) {
 case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 	$prosapo = LETRAK_DELTIO_PROSAPO_APOXORISI;
 	break;
-case LETRAK_DELTIO_PROSAPO_APOXORISI:
+default:
 	$prosapo = LETRAK_DELTIO_PROSAPO_PROSELEFSI;
 	break;
-default:
-	letrak::fatal_error_json("Ακαθόριστος τύπος παρουσιολογίου");
 }
 
 $query = "INSERT IGNORE INTO `letrak`.`deltio` " .

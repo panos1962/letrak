@@ -24,7 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
-// Updated: 2020-06-19
+// Updated: 2020-06-11
 // Updated: 2020-05-19
 // Updated: 2020-05-15
 // Updated: 2020-05-13
@@ -950,11 +950,9 @@ deltio.klonismosAnte = (e) => {
 	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		imerominia = protipo.imerominiaGet();
 		break;
-	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
+	default:
 		imerominia = new Date();
 		break;
-	default:
-		return deltio.fyiError('Απροσδιόριστο είδος παρουσιολογίου');
 	}
 
 	imerominia = pnd.date(imerominia, '%D-%M-%Y');
