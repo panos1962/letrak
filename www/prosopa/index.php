@@ -107,12 +107,10 @@ document_body();
 				Κάρτα
 			</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<div id="peKatagrafiLabelWrap">
-				<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
-					WIN&ndash;PAK
-				</div>
-				<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
+			<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
+				WIN&ndash;PAK
 			</div>
+			<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
 		</div>
 		<div class="peFormaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
