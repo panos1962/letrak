@@ -1870,21 +1870,21 @@ prosopa.ipalilosZoomEpilogi = (e, dom) => {
 
 prosopa.protipoSetup = () => {
 	prosopa.protipoDOM = $('#protipo').
-	on('submit', (e) => prosopa.protipoIpovoli(e));
+	on('submit', (e) => prosopa.protipoMetatropi(e));
 
-	prosopa.protipoDeltioPerigrafiDOM = $('#mpDeltioPerigrafi');
+	prosopa.protipoPerigrafiDOM = $('#protipoPerigrafi');
 
-	prosopa.protipoIpovoliDOM = $('#mpPliktroProtipo').
+	prosopa.protipoIpovoliDOM = $('#protipoPliktroMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
-	prosopa.protipoPanelDOM = $('#mpPanel');
+	prosopa.protipoPanelDOM = $('#protipoPanel');
 
 	prosopa.protipoPanelDOM.
 	find('input').
 	addClass('letrak-formaPliktro').
-	addClass('pePliktro');
+	addClass('protipoPliktro');
 
-	prosopa.protipoPliktroAkiroDOM = $('#mpPliktroAkiro').
+	prosopa.protipoPliktroAkiroDOM = $('#protipoPliktroAkiro').
 	on('click', (e) => prosopa.protipoClose(e));
 
 	prosopa.protipoDOM.
@@ -1896,9 +1896,25 @@ prosopa.protipoSetup = () => {
 			'my': 'left top',
 			'at': 'left+20 top+144',
 		},
+		'open': () => {
+			if (prosopa.deltio)
+			prosopa.protipoPerigrafiDOM.
+			val(prosopa.deltio.perigrafiGet());
+		},
 	}).
 	dialog('close');
 
+	return prosopa;
+};
+
+prosopa.protipoMetatropi = (e) => {
+	return false;
+};
+
+prosopa.protipoClose = (e) => {
+	e.stopPropagation();
+
+	prosopa.protipoDOM.dialog('close');
 	return prosopa;
 };
 

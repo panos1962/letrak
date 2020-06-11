@@ -227,37 +227,34 @@ document_body();
 </div>
 
 <form id="protipo">
-<div id="protipoEnimerotiko">
-drwxr-xr-x 3 panos www-data  4096 May 26 15:21 local
--rw-rw-r-- 1 panos panos     1346 May 11 09:15 Makefile
-drwxrwxr-x 3 panos panos     4096 Jun 10 10:38 misc
-drwxrwxr-x 2 panos panos     4096 Apr  9 12:12 mnt
--rw-rw-r-- 1 panos panos      507 May 12 10:49 panos1.php
--rw-rw-r-- 1 panos panos      242 Apr 11 14:56 panos1.sh
--rw-rw-r-- 1 panos panos    14446 Jun 11 16:39 README.md
-drwxrwxr-x 7 panos panos     4096 Jun 11 10:48 www
-drwxrwxr-x 2 panos panos     4096 Jun 11 10:48 database
-drwxrwxr-x 2 panos panos     4096 Apr 13 18:50 images
-drwxrwxr-x 3 panos panos     4096 Jun  7 18:13 lacol
-drwxrwxr-x 2 panos panos     4096 Jun 11 10:48 lib
-drwxr-xr-x 3 panos www-data  4096 May 26 15:21 local
--rw-rw-r-- 1 panos panos     1346 May 11 09:15 Makefile
-drwxrwxr-x 3 panos panos     4096 Jun 10 10:38 misc
-drwxrwxr-x 2 panos panos     4096 Apr  9 12:12 mnt
--rw-rw-r-- 1 panos panos      507 May 12 10:49 panos1.php
--rw-rw-r-- 1 panos panos      242 Apr 11 14:56 panos1.sh
--rw-rw-r-- 1 panos panos    14446 Jun 11 16:39 README.md
-drwxrwxr-x 7 panos panos     4096 Jun 11 10:48 www
-</div>
-		<label for="mpDeltioPerigrafi">
-			Περιγραφή
-		</label>
-		<input id="mpDeltioPerigrafi" class="peDeltioPedio">
+	<div id="protipoEnimerotiko">
+		Με την μετατροπή του παρουσιολογίου σε πρότυπο, ουσιαστικά
+		μετατρέπουμε το παρουσιολόγιο σε ομάδα υπαλλήλων προκειμένου
+		το ανά χείρας παρουσιολόγιο να χρησιμοποιηθεί σε δεύτερο
+		χρόνο ως πρότυπο για νέα παρουσιολόγια προσέλευσης ή
+		αποχώρησης των υπαλλήλων της συγκεκριμένης ομάδας.
+		Τα ωράρια των υπαλλήλων θα διαγραφούν, όπως επίσης θα
+		διαγραφούν και τυχόν άδειες που περιέχονται στο παρουσιολόγιο.
+		Επίσης, θα αναιρεθούν οι τυχό κυρώσεις των υπογραφόντων.
+		<br>
+		<p>
+		<b>
+		Αν δεν είστε βέβαιοι για την μετατροπή του παρουσιολογίου
+		σε πρότυπο, πατήστε το πλήκτρο ακύρωσης.
+		</b>
+		</p>
 	</div>
 
-	<div id="mpPanel">
-		<input id="mpPliktroProtipo" type="submit" value="Μετατροπή">
-		<input id="mpPliktroAkiro" type="button" value="Άκυρο">
+	<div>
+		<label for="protipoPerigrafi">
+			Περιγραφή
+		</label>
+		<input id="protipoPerigrafi">
+	</div>
+
+	<div id="protipoPanel">
+		<input id="protipoPliktroMetatropi" type="submit" value="Μετατροπή">
+		<input id="protipoPliktroAkiro" type="button" value="Άκυρο">
 	</div>
 </form>
 <?php
