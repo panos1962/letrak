@@ -195,7 +195,8 @@ prosopa.selidaSetup = () => {
 	ipografesSetup().
 	prosopaSetup().
 	ergaliaSetup().
-	editorSetup();
+	editorSetup().
+	protipoSetup();
 
 	pnd.toolbarLeftDOM.
 	append(prosopa.winpakTabDOM = letrak.tabDOM().
@@ -1152,6 +1153,12 @@ prosopa.ergaliaSetup = () => {
 		});
 	});
 
+	$('#protipoMetatropi').
+	on('click', (e) => {
+		e.stopPropagation();
+		prosopa.protipoDOM.dialog('open');
+	});
+
 	prosopa.ergaliaDOM = $('#ergalia').
 	dialog({
 		'title': 'Eπερξεργασία',
@@ -1857,6 +1864,42 @@ prosopa.ipalilosZoomEpilogi = (e, dom) => {
 
 	if (dom.hasClass('ipalilosZoom'))
 	dom.addClass('ipalilosZoomEpilogi');
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.protipoSetup = () => {
+	prosopa.protipoDOM = $('#protipo').
+	on('submit', (e) => prosopa.protipoIpovoli(e));
+
+	prosopa.protipoDeltioPerigrafiDOM = $('#mpDeltioPerigrafi');
+
+	prosopa.protipoIpovoliDOM = $('#mpPliktroProtipo').
+	on('click', (e) => prosopa.protipoMetatropi(e));
+
+	prosopa.protipoPanelDOM = $('#mpPanel');
+
+	prosopa.protipoPanelDOM.
+	find('input').
+	addClass('letrak-formaPliktro').
+	addClass('pePliktro');
+
+	prosopa.protipoPliktroAkiroDOM = $('#mpPliktroAkiro').
+	on('click', (e) => prosopa.protipoClose(e));
+
+	prosopa.protipoDOM.
+	dialog({
+		'title': 'Μετατροπή σε πρότυπο',
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left top',
+			'at': 'left+20 top+144',
+		},
+	}).
+	dialog('close');
+
+	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
