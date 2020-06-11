@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-19
 // Updated: 2020-05-19
 // Updated: 2020-05-15
 // Updated: 2020-05-13
@@ -1192,6 +1193,7 @@ deltio.deltioProcess = (rsp, opts) => {
 	else if (opts.onEmpty)
 	opts.onEmpty();
 
+	deltio.clearCandi();
 	return deltio;
 };
 
