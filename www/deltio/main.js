@@ -185,14 +185,26 @@ deltio.filtraSetup = () => {
 	append(deltio.filtraProsapoDOM = $('<label>').
 	attr('for', 'prosapoFiltro').
 	text(deltio.minima.filtraProsapoLabel)).
+
 	append(deltio.filtraProsapoDOM = $('<select>').
-	append($('<option>').val('').text('').attr('selected', true)).
+
+	append($('<option>').
+	val('').
+	text('').
+	attr('selected', true)).
+
 	append($('<option>').
 	val(php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI).
 	text(php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI)).
+
 	append($('<option>').
 	val(php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI).
 	text(php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI)).
+
+	append($('<option>').
+	val(php.defs.LETRAK_DELTIO_PROSAPO_PROTIPO).
+	text(php.defs.LETRAK_DELTIO_PROSAPO_PROTIPO)).
+
 	attr('id', 'prosapoFiltro').
 	addClass('filtraInput'))).
 
@@ -1243,14 +1255,19 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 letrak.deltio.prototype.domGet = function() {
 	let kodikos = this.kodikosGet();
 	let katastasiDOM;
+	let prosapo = this.prosapoGet();
 	let prosapoClass = 'deltioProsapo';
 
-	switch (this.prosapoGet()) {
+	switch (prosapo) {
 	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 		prosapoClass += ' deltioProsapoProselefsi';
 		break;
 	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		prosapoClass += ' deltioProsapoApoxorisi';
+		break;
+	default:
+		prosapo = 'ΠΡΟΤΥΠΟ';
+		prosapoClass += ' deltioProsapoProtipo';
 		break;
 	}
 
@@ -1280,7 +1297,7 @@ letrak.deltio.prototype.domGet = function() {
 
 	append($('<div>').
 	addClass(prosapoClass).
-	text(this.prosapoGet())).
+	text(prosapo)).
 
 	append($('<div>').
 	addClass('deltioPerigrafi').

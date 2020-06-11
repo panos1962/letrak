@@ -54,6 +54,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-11
 // Updated: 2020-05-13
 // Updated: 2020-05-06
 // Updated: 2020-05-05
@@ -132,9 +133,18 @@ if ($x) {
 			pandora::sql_string($x) . ")";
 		$enotiko = " AND";
 		break;
+	case LETRAK_DELTIO_PROSAPO_PROTIPO:
+		$query .= $enotiko . " (`prosapo` IS NULL)";
+		$enotiko = " AND";
+		break;
 	default:
 		lathos("Μη αποδεκτό κριτήριο προσέλευσης/αποχώρησης");
 	}
+}
+
+else {
+	$query .= $enotiko . " (`prosapo` IS NOT NULL)";
+	$enotiko = " AND";
 }
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -239,6 +249,10 @@ print ']}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+function lathos($s) {
+	letrak::fatal_error_json($s);
+}
 
 function lathos_imerominia($s) {
 	lathos($s . ": λανθασμένη ημερομηνία");
