@@ -1153,15 +1153,12 @@ prosopa.ergaliaSetup = () => {
 		});
 	});
 
-	$('#protipoMetatropi').
-	on('click', (e) => {
-		e.stopPropagation();
-		prosopa.protipoDOM.dialog('open');
-	});
+	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
+	on('click', (e) => prosopa.protipoMetatropi(e));
 
 	prosopa.ergaliaDOM = $('#ergalia').
 	dialog({
-		'title': 'Eπερξεργασία',
+		'title': 'Eπεξεργασία',
 		'width': '220px',
 		'height': 'auto',
 		'position': {
@@ -1216,6 +1213,20 @@ prosopa.orariaDiagrafi = () => {
 	});
 };
 
+prosopa.protipoMetatropi = (e) => {
+	e.stopPropagation();
+
+	if (!prosopa.deltio)
+	return;
+
+	let ipiresia = prosopa.deltio.ipiresiaGet();
+
+	if (letrak.prosvasiOxiAdmin(ipiresia))
+	return;
+
+	prosopa.protipoDOM.dialog('open');
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.prosopaSetup = () => {
@@ -1246,6 +1257,13 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		children('.prosopaPliktroUpdate').
 		css('display', 'block');
 
+		// Ειδικά για το πλήκτρο μετατροπής σε πρότυπο απαιτείται
+		// επιπλέον πρόσβαση διαχειριστή.
+
+		if (!prosopa.deltio ||
+		letrak.prosvasiOxiAdmin(prosopa.deltio.ipiresiaGet()))
+		prosopa.protipoMetatropiDOM.css('display', 'none');
+
 		return prosopa;
 	}
 
@@ -1258,7 +1276,6 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	css('display', 'none');
 
 	prosopa.ergaliaDOM.dialog('close');
-
 	return prosopa;
 }
 
@@ -1323,15 +1340,20 @@ prosopa.editorSetup = () => {
 
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
-	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario').
-	on('keydown', (e) => prosopa.orarioEdit(e)).
-	on('change', function() {
+	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
+
+	pnd.bodyDOM.
+	on('keydown', '.orarioPedio', function(e){
+		prosopa.orarioEdit(e, $(this));
+	}).
+	on('change', '.orarioPedio', function() {
 		let val = $(this).val();
 		let orario = new letrak.orario(val);
 
 		if (orario.isOrario())
 		$(this).val(orario.toString());
 	});
+
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
 	prosopa.katagrafiSetup();
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
@@ -1400,7 +1422,7 @@ prosopa.editorSetup = () => {
 // και pageUp, το "+" και το "-" για να μεταθέτει το ωράριο του υπαλλήλου κατά
 // διαστήματα μισής ώρας, ή σε άλλα ωράρια βάρδιας.
 
-prosopa.orarioEdit = (e) => {
+prosopa.orarioEdit = (e, fld) => {
 	const misaoro = 30;	// μισή ώρα σε λεπτά
 	const oktaoro = 480;	// οκτώ ώρες σε λεπτά
 
@@ -1440,13 +1462,12 @@ prosopa.orarioEdit = (e) => {
 
 	// Εδώ είναι το σωστό σημείο για τις εντολές διαχείρισης event που
 	// ακολουθούν, καθώς σε αυτό το σημείο έχουμε διασφαλίσει ότι έχει
-	// κατηθεί πλήκτρο αλλαγής ωραρίου και επομένως ο όποιος ρόλος του
+	// πατηθεί πλήκτρο αλλαγής ωραρίου και επομένως ο όποιος ρόλος του
 	// συγκεκριμένου πλήκτρου έχει εκπληρωθεί.
 
 	e.stopPropagation();
 	e.preventDefault();
 
-	let fld = prosopa.editorIpalilosOrarioDOM;
 	let orario = fld.val();
 
 	if (!orario) {
@@ -1870,12 +1891,12 @@ prosopa.ipalilosZoomEpilogi = (e, dom) => {
 
 prosopa.protipoSetup = () => {
 	prosopa.protipoDOM = $('#protipo').
-	on('submit', (e) => prosopa.protipoMetatropi(e));
+	on('submit', (e) => prosopa.protipoMetatropiExec(e));
 
 	prosopa.protipoPerigrafiDOM = $('#protipoPerigrafi');
 
 	prosopa.protipoIpovoliDOM = $('#protipoPliktroMetatropi').
-	on('click', (e) => prosopa.protipoMetatropi(e));
+	on('click', (e) => prosopa.protipoMetatropiExec(e));
 
 	prosopa.protipoPanelDOM = $('#protipoPanel');
 
@@ -1907,7 +1928,7 @@ prosopa.protipoSetup = () => {
 	return prosopa;
 };
 
-prosopa.protipoMetatropi = (e) => {
+prosopa.protipoMetatropiExec = (e) => {
 	return false;
 };
 

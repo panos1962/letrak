@@ -54,14 +54,14 @@ document_body();
 ?>
 <form id="parousiaEditor">
 	<div class="peFormaEnotita">
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peDeltioKodikos">
 				Παρουσιολόγιο
 			</label>
 			<input id="peDeltioKodikos" class="peDeltioPedio">
 			<input id="peDeltioPerigrafi" class="peDeltioPedio">
 		</div>
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peDeltioImerominia">
 				Ημερομηνία
 			</label>
@@ -72,14 +72,14 @@ document_body();
 			<div id="peDeltioProsapo" class="deltioProsapo">
 			</div>
 		</div>
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peDeltioIpiresia">
 				Υπηρεσία
 			</label>
 			<input id="peDeltioIpiresia" class="peDeltioPedio">
 			</textarea>
 		</div>
-		<div class="peFormaInputLine" id="peDeltioDiefSection">
+		<div class="formaInputLine" id="peDeltioDiefSection">
 			<label for="peDeltioDief">
 				Διεύθυνση
 			</label>
@@ -89,7 +89,7 @@ document_body();
 	</div>
 
 	<div class="peFormaEnotita">
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peIpalilosKodikos">
 				Υπάλληλος
 			</label>
@@ -98,11 +98,11 @@ document_body();
 			</div>
 			<input id="peIpalilosOnomateponimo" class="peIpalilosPedio" disabled="true">
 		</div>
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peIpalilosOrario">
 				Ωράριο
 			</label>
-			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate">
+			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate orarioPedio">
 			<label for="peIpalilosKarta">
 				Κάρτα
 			</label>
@@ -112,14 +112,14 @@ document_body();
 			</div>
 			<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
 		</div>
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
 			<input id="peMeraora" class="peParousiaPedio pePedioUpdate">
 		</div>
 	</div>
 
 	<div class="peFormaEnotita">
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peAdidos">
 				Άδεια
 			</label>
@@ -172,7 +172,7 @@ document_body();
 	</div>
 
 	<div class="peFormaEnotita">
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peExcuse">
 				Εξαίρεση
 			</label>
@@ -188,7 +188,7 @@ document_body();
 			<option value="ΕΚΤΑΚΤΩΣ">ΕΚΤΑΚΤΩΣ</option>
 			</select>
 		</div>
-		<div class="peFormaInputLine">
+		<div class="formaInputLine">
 			<label for="peInfo">
 				Παρατηρήσεις
 			</label>
@@ -235,7 +235,9 @@ document_body();
 		αποχώρησης των υπαλλήλων της συγκεκριμένης ομάδας.
 		Τα ωράρια των υπαλλήλων θα διαγραφούν, όπως επίσης θα
 		διαγραφούν και τυχόν άδειες που περιέχονται στο παρουσιολόγιο.
-		Επίσης, θα αναιρεθούν οι τυχό κυρώσεις των υπογραφόντων.
+		Επίσης, θα αναιρεθούν τυχόν κυρώσεις των υπογραφόντων.
+		Τέλος, το παρουσιολόγιο θα αποκοπεί από τη σειρά παρουσιολογίων
+		στην οποία, ενδεχομένως, ανήκει.
 		<br>
 		<p>
 		<b>
@@ -245,11 +247,18 @@ document_body();
 		</p>
 	</div>
 
-	<div>
+	<div class="formaInputLine">
 		<label for="protipoPerigrafi">
 			Περιγραφή
 		</label>
 		<input id="protipoPerigrafi">
+	</div>
+
+	<div class="formaInputLine">
+		<label for="protipoOrario">
+			Ωράριο
+		</label>
+		<input id="protipoOrario" class="orarioPedio">
 	</div>
 
 	<div id="protipoPanel">

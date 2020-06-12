@@ -266,8 +266,11 @@ $ordinalWidth = 2.2em
 #ipografiFormaTitlos
 	width 40em
 
-.peFormaInputLine
+.formaInputLine
 	padding 2px
+
+.orarioPedio
+	width $orarioWidth
 
 #parousiaEditor
 	position relative
@@ -288,7 +291,7 @@ $ordinalWidth = 2.2em
 		border-style none none solid solid
 		border-width 1px;
 		border-color #d8d8d8
-		> .peFormaInputLine
+		> .formaInputLine
 			> label:first-of-type
 				vertical-align top
 				width 120px
@@ -321,9 +324,6 @@ $ordinalWidth = 2.2em
 	text-shadow 1px 0 0
 	color #0e3450 !important
 	background-color #ffeba3 !important
-
-#peIpalilosOrario
-	width $orarioWidth
 
 #peIpalilosKarta
 	width 4em
@@ -485,6 +485,7 @@ $ordinalWidth = 2.2em
 	display none
 	padding 0px
 	min-height 0 !important
+	vendor('user-select', none)
 
 .ergalioTab
 	padding 2px 4px
@@ -501,10 +502,16 @@ $ordinalWidth = 2.2em
 		text-shadow 1px 0 0
 		box-shadow 1px 1px 1px #443232, -1px -1px 1px #e6e6e6
 
+#protipoMetatropi
+	display none
+
 #protipo
 	display none
 	position relative
 	padding 2px
+	> .formaInputLine
+		> label
+			width 84px
 
 #protipoEnimerotiko
 	width 686px
