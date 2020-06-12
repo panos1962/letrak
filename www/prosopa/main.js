@@ -1122,36 +1122,35 @@ prosopa.ergaliaSetup = () => {
 		});
 	});
 
-	$('#orariaDiagrafi').
-	on('click', (e) => {
-		let dialogDOM = $('<div>').
-		attr('title', 'Διαγραφή ωραρίων').
-		append($('<div>').
-		html('Να διαγραφούν τα ωράρια όλων των υπαλλήλων του παρουσιολογίου;')).
-		dialog({
-			'resizable': false,
-			'height': 'auto',
-			'width': '350px',
-			'modal': true,
-			'position': {
-				'my': 'left+50 top+50',
-				'at': 'left top',
-			},
-
-			'buttons': {
-				'Διαγραφή': function() {
-					prosopa.orariaDiagrafi();
-					$(this).dialog('close');
-				},
-				'Άκυρο': function() {
-					$(this).dialog('close');
-				},
-			},
-			'close': function() {
-				dialogDOM.remove();
-			},
-		});
+	prosopa.orariaDiagrafiFormaDOM = $('#orariaDiagrafiForma').
+	on('submit', (e) => prosopa.orariaDiagrafi(e)).
+	dialog({
+		'title': 'Διαγραφή ωραρίων',
+		'autoOpen': false,
+		'resizable': false,
+		'height': 'auto',
+		'width': '450px',
+		'modal': true,
+		'position': {
+			'my': 'left+50 top+50',
+			'at': 'left top',
+		},
 	});
+
+	$('#orariaDiagrafiPliktroAkiro').
+	on('click', (e) => {
+		e.stopPropagation();
+		prosopa.orariaDiagrafiFormaDOM.dialog('close');
+	});
+
+	$('#orariaDiagrafiPanel').
+	find('input').
+	addClass('letrak-formaPliktro').
+	addClass('protipoPliktro');
+
+	$('#orariaDiagrafi').
+	attr('title', 'Διαγραφή ωραρίων').
+	on('click', (e) => prosopa.orariaDiagrafiFormaDOM.dialog('open'));
 
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
@@ -1205,12 +1204,20 @@ prosopa.orariaDiagrafi = () => {
 		'data': {
 			'deltio': prosopa.deltioKodikos,
 		},
-		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'success': (rsp) => {
+			if (rsp)
+			return prosopa.fyiError(rsp);
+
+			prosopa.orariaDiagrafiFormaDOM.dialog('close');
+			prosopa.ananeosi();
+		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα διαγραφής ωραρίων');
 			console.error(err);
 		},
 	});
+
+	return false;
 };
 
 prosopa.protipoMetatropi = (e) => {

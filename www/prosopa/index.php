@@ -266,6 +266,24 @@ document_body();
 		<input id="protipoPliktroAkiro" type="button" value="Άκυρο">
 	</div>
 </form>
+
+<form id="orariaDiagrafiForma">
+	<p>
+		Να διαγραφούν τα ωράρια όλων των υπαλλήλων;
+	</piv>
+
+	<div class="formaInputLine">
+		<label for="orarioDefault">
+			Ωράριο
+		</label>
+		<input id="orarioDefault" class="orarioPedio">
+	</div>
+
+	<div id="orariaDiagrafiPanel">
+		<input id="orariaDiagrafiPliktro" type="submit" value="Διαγραφή">
+		<input id="orariaDiagrafiAkiro" type="button" value="Άκυρο">
+	</div>
+</form>
 <?php
 pandora::
 document_close();
