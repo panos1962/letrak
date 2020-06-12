@@ -91,8 +91,19 @@ switch ($prosapo) {
 case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 	$prosapo = LETRAK_DELTIO_PROSAPO_APOXORISI;
 	break;
+case LETRAK_DELTIO_PROSAPO_APOXORISI:
+	$prosapo = LETRAK_DELTIO_PROSAPO_PROSELEFSI;
+	break;
+
+// Αν το δελτίο δεν είναι ούτε δελτίο προσέλευσης ούτε δελτίο αποχώρησης, τότε
+// θεωρείται «πρότυπο» δελτίο το οποίο απλώς προσδιορίζει συγκεκριμένη ομάδα
+// υπαλλήλων και σ' αυτήν την περίπτωση δεν μπορεί να αποτελεί μέρος κάποιας
+// σειράς, οπότε το αντίγραφο που δημιουργούμε θα θεωρηθεί εναρκτήριο δελτίο
+// προσέλευσης.
+
 default:
 	$prosapo = LETRAK_DELTIO_PROSAPO_PROSELEFSI;
+	$enarktirio = TRUE;
 	break;
 }
 
