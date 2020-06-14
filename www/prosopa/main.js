@@ -2447,8 +2447,10 @@ prosopa.winpakProcess = (rsp) => {
 		if (!data.hasOwnProperty(ipalilos))
 		return;
 
+		let ordinal = $(this).children('.parousiaOrdinal').text();
 		parousia.meraora = new Date(data[ipalilos] + ':00');
 		$(this).html(parousia.domGet().html());
+		$(this).children('.parousiaOrdinal').text(ordinal);
 	});
 
 	return prosopa;
