@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-14
 // Updated: 2020-06-07
 // Updated: 2020-05-17
 // Updated: 2020-05-13
@@ -142,6 +143,7 @@ document_body();
 			<option value="ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ</option>
 			<option value="ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ</option>
 
+			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ" class="peAdidosOmadaIdiki">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
 			<option value="ΣΕΜΙΝΑΡΙΟ" class="peAdidosOmadaIdiki">ΣΕΜΙΝΑΡΙΟ</option>
 			<option value="ΣΠΟΥΔΑΣΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΠΟΥΔΑΣΤΙΚΗ</option>
 			<option value="ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ</option>
@@ -151,7 +153,6 @@ document_body();
 			<option value="ΑΘΛΗΤΙΚΗ" class="peAdidosOmadaIdiki">ΑΘΛΗΤΙΚΗ</option>
 			<option value="ΔΙΚΑΣΤΗΡΙΟ" class="peAdidosOmadaIdiki">ΔΙΚΑΣΤΗΡΙΟ</option>
 			<option value="ΣΤΡΑΤΙΩΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΤΡΑΤΙΩΤΙΚΗ</option>
-			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ" class="peAdidosOmadaIdiki">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
 
 			<option value="ΑΠΕΡΓΙΑ" class="peAdidosOmadaAtono">ΑΠΕΡΓΙΑ</option>
 			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ" class="peAdidosOmadaAtono">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
@@ -269,19 +270,22 @@ document_body();
 
 <form id="orariaDiagrafiForma">
 	<p>
-		Να διαγραφούν τα ωράρια όλων των υπαλλήλων;
+		Να επανακαθοριστούν τα ωράρια όλων των υπαλλήλων;
 	</piv>
 
 	<div class="formaInputLine">
-		<label for="orarioDefault">
+		<label for="orariaDiagrafiOrario">
 			Ωράριο
 		</label>
-		<input id="orarioDefault" class="orarioPedio">
+		<input id="orariaDiagrafiOrario" class="orarioPedio"
+			title="Κοινό ωράριο για όλους τους υπαλλήλους">
 	</div>
 
+	<hr>
+
 	<div id="orariaDiagrafiPanel">
-		<input id="orariaDiagrafiPliktro" type="submit" value="Διαγραφή">
-		<input id="orariaDiagrafiAkiro" type="button" value="Άκυρο">
+		<input id="orariaDiagrafiDiagrafiPliktro" type="submit" value="Υποβολή">
+		<input id="orariaDiagrafiAkiroPliktro" type="button" value="Άκυρο">
 	</div>
 </form>
 <?php

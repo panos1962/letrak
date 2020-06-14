@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-14
 // Updated: 2020-06-11
 // Updated: 2020-05-19
 // Updated: 2020-05-15
@@ -418,6 +419,17 @@ deltio.browserSetup = () => {
 		removeClass('deltioCandiCandi');
 		deltio.candiTabsShow();
 	}));
+
+	// Αν ο χρήστης κάνει κλικ στον κωδικό του δελτίου, τότε ανοίγει
+	// απευθείας νέο παράθυρο επεξεργασίας του παρουσιολογίου.
+
+	deltio.browserDOM.
+	on('click', '.deltioKodikos', function(e) {
+		deltio.prosopa({
+			'clickEvent': e,
+			'deltioDOM': $(this).closest('.deltio'),
+		});
+	});
 
 	return deltio;
 };
@@ -1043,12 +1055,23 @@ deltio.prosopa = (opts) => {
 	if (opts.hasOwnProperty('clickEvent'))
 	opts.clickEvent.stopPropagation();
 
-	let dom = $('.deltioCandi').first();
+	let deltioDOM;
+	let amolimeno;
 
-	if (dom.length !== 1)
+	if (opts.hasOwnProperty('deltioDOM')) {
+		deltioDOM = opts.deltioDOM;
+		amolimeno = true;
+	}
+
+	else {
+		deltioDOM = $('.deltioCandi').first();
+		amolimeno = false;
+	}
+
+	if (deltioDOM.length !== 1)
 	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
 
-	let x = dom.data('deltio');
+	let x = deltioDOM.data('deltio');
 
 	if (!x)
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
@@ -1067,22 +1090,68 @@ deltio.prosopa = (opts) => {
 	// τη σελίδα επεξεργασίας παρουσιολογίου.
 
 	self.LETRAK.deltio = x;
-	self.LETRAK.deltioDOM = dom;
+	self.LETRAK.deltioDOM = deltioDOM;
 	self.LETRAK.klonos = opts.klonos;
 
 	if (deltio.hasOwnProperty('ipiresiaList')) {
 		self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 		self.LETRAK.ipalilosArray = deltio.ipalilosArray;
-		deltio.prosopaOpen(kodikos);
+		deltio.prosopaOpen(kodikos, amolimeno);
 		return deltio;
 	}
 
-	deltio.erpotaFetch(kodikos);
+	deltio.erpotaFetch(kodikos, amolimeno);
 	return deltio;
 };
 
-deltio.prosopaOpen = (kodikos) => {
-	window.open('../prosopa?deltio=' + kodikos, '_blank');
+///////////////////////////////////////////////////////////////////////////////@
+
+// Διατηρούμε array με όλα τα ξεχωριστά παράθυρα επεξεργασίας δελτίων που
+// έχει ανοίγει ο χρήστης κάνοντας κλικ στον κωδικό του δελτίου.
+
+deltio.prosopaWindows = [];
+
+// Κατά το κλείσιμο της αρχικής σελίδας φροντίζουμε να κλείσουμε πρώτα όλα
+// τα ξεχωριστά παράθυρα που ενδεχομένως έχει ανοίξει ο χρήστης.
+
+$(window).
+on('beforeunload', () => {
+	while (deltio.prosopaWindows.length)
+	deltio.prosopaWindows.pop().close();
+});
+
+// Η function "prosopaOpen" ανοίγει νέα καρτέλα ή νέο παράθυρο επεξεργασίας
+// του επιλεγμένου δελτίου. Η συνήθης διαδικασία είναι ο χρήστης να κάνει
+// κλικ κάπου στη γραμμή του δελτίου οπότε καθιστά το συγκεκριμένο δελτίο
+// υποψήφιο προς επεξεργασία· κατόπιν μπορεί να κάνει κλικ στο πλήκτρο
+// επεξεργασίας δελτίου οπότε το πρόγραμμα ανοίγει νέα καρτέλα επεξεργασίας
+// του συγκεκριμένου δελτίου. Εναλλακτικά ο χρήστης μπορεί να κάνει κλικ
+// στον κωδικό του δελτίου (στο αριστερό μέρος της γραμμής δελτίου), οπότε
+// το πρόγραμμα ανοίγει νέο παράθυρο επεξεργασίας του συγκεκριμένου δελτίου.
+
+deltio.prosopaOpen = (kodikos, amolimeno) => {
+	let url = '../prosopa?deltio=' + kodikos;
+
+	// Αν δεν έχει δοθεί δεύτερη παράμετρος, τότε ανοίγει νέα καρτέλα
+	// επεξεργασίας δελτίου.
+
+	if (!amolimeno) {
+		deltio.prosopaWindows.push(window.open(url, '_blank'));
+		return deltio;
+	}
+
+	// Αλλιώς ανοίγει νέο παράθυρο επεξεργασίας δελτίου, οπότε
+	// μεριμνούμε, έστω υποτυπωδώς, για τη χωροταξία των παραθύρων.
+
+	let n = (deltio.prosopaWindows.length % 4) + 1;
+
+	let specs = '';
+	specs += 'width=1500,';
+	specs += 'height=600,';
+	specs += 'top=' + (n * 100) + ',';
+	specs += 'left=' + (n * 100);
+
+	deltio.prosopaWindows.push(window.open(url, kodikos, specs));
 	return deltio;
 };
 
@@ -1209,15 +1278,15 @@ deltio.deltioProcess = (rsp, opts) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-deltio.erpotaFetch = (kodikos) => {
+deltio.erpotaFetch = (kodikos, amolimeno) => {
 	if (deltio.hasOwnProperty('ipiresiaArray'))
-	return deltio.prosopaOpen(kodikos);
+	return deltio.prosopaOpen(kodikos, amolimeno);
 
 	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
 	$.post({
 		'url': 'erpotaFetch.php',
 		'dataType': 'json',
-		'success': (rsp) => deltio.erpotaProcess(rsp, kodikos),
+		'success': (rsp) => deltio.erpotaProcess(rsp, kodikos, amolimeno),
 		'error': (e) => {
 			pnd.fyiError(deltio.minima.erpotaFetchError);
 			console.error(e);
@@ -1227,7 +1296,7 @@ deltio.erpotaFetch = (kodikos) => {
 	return deltio;
 };
 
-deltio.erpotaProcess = (rsp, kodikos) => {
+deltio.erpotaProcess = (rsp, kodikos, amolimeno) => {
 	if (!rsp.hasOwnProperty('error'))
 	return deltio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
 
@@ -1245,7 +1314,7 @@ deltio.erpotaProcess = (rsp, kodikos) => {
 
 	self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 	self.LETRAK.ipalilosArray = deltio.ipalilosArray;
-	deltio.prosopaOpen(kodikos);
+	deltio.prosopaOpen(kodikos, amolimeno);
 
 	return deltio;
 };

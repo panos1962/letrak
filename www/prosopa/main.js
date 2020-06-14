@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-14
 // Updated: 2020-06-08
 // Updated: 2020-06-06
 // Updated: 2020-06-04
@@ -1122,25 +1123,26 @@ prosopa.ergaliaSetup = () => {
 		});
 	});
 
+	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
+	on('click', (e) => prosopa.protipoMetatropi(e));
+
+	///////////////////////////////////////////////////////////////////////@
+
+	prosopa.orariaDiagrafiOrarioDOM = $('#orariaDiagrafiOrario');
 	prosopa.orariaDiagrafiFormaDOM = $('#orariaDiagrafiForma').
 	on('submit', (e) => prosopa.orariaDiagrafi(e)).
 	dialog({
 		'title': 'Διαγραφή ωραρίων',
 		'autoOpen': false,
+		'position': {
+			'my': 'left top',
+			'at': 'left+120 top+145',
+		},
 		'resizable': false,
 		'height': 'auto',
-		'width': '450px',
+		'width': '460px',
 		'modal': true,
-		'position': {
-			'my': 'left+50 top+50',
-			'at': 'left top',
-		},
-	});
-
-	$('#orariaDiagrafiPliktroAkiro').
-	on('click', (e) => {
-		e.stopPropagation();
-		prosopa.orariaDiagrafiFormaDOM.dialog('close');
+		'open': () => prosopa.orariaDiagrafiOrarioDOM.val(''),
 	});
 
 	$('#orariaDiagrafiPanel').
@@ -1148,12 +1150,20 @@ prosopa.ergaliaSetup = () => {
 	addClass('letrak-formaPliktro').
 	addClass('protipoPliktro');
 
+	$('#orariaDiagrafiDiagrafiPliktro').
+	on('click', (e) => prosopa.orariaDiagrafi(e));
+
+	$('#orariaDiagrafiAkiroPliktro').
+	on('click', (e) => {
+		e.stopPropagation();
+		prosopa.orariaDiagrafiFormaDOM.dialog('close');
+	});
+
 	$('#orariaDiagrafi').
 	attr('title', 'Διαγραφή ωραρίων').
 	on('click', (e) => prosopa.orariaDiagrafiFormaDOM.dialog('open'));
 
-	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
-	on('click', (e) => prosopa.protipoMetatropi(e));
+	///////////////////////////////////////////////////////////////////////@
 
 	prosopa.ergaliaDOM = $('#ergalia').
 	dialog({
@@ -1197,18 +1207,30 @@ prosopa.prosopaDiagrafi = () => {
 	});
 };
 
-prosopa.orariaDiagrafi = () => {
+prosopa.orariaDiagrafi = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	let data = {
+		'deltio': prosopa.deltioKodikos,
+		'orario': prosopa.orariaDiagrafiOrarioDOM.val(),
+	};
+
+	let orario = new letrak.orario(data.orario);
+
+	if (orario.oxiOrario())
+	delete data.orario;
+
 	$.post({
 		'url': 'orariaDiagrafi.php',
 		'dataType': 'text',
-		'data': {
-			'deltio': prosopa.deltioKodikos,
-		},
+		'data': data,
 		'success': (rsp) => {
 			if (rsp)
 			return prosopa.fyiError(rsp);
 
 			prosopa.orariaDiagrafiFormaDOM.dialog('close');
+			prosopa.ergaliaDOM.dialog('close');
 			prosopa.ananeosi();
 		},
 		'error': (err) => {
@@ -1482,7 +1504,7 @@ prosopa.orarioEdit = (e, fld) => {
 		case misaoro:
 			return fld.val('07:00-15:00');
 		case oktaoro:
-			return fld.val('06:00-14:00');
+			return fld.val('07:00-15:00');
 		}
 
 		return;
@@ -1503,14 +1525,25 @@ prosopa.orarioEdit = (e, fld) => {
 	if (eos.oxiOralepto())
 	return;
 
+	// Τα προκαθορισμένα ωράρια βάρδιας είναι
+	//
+	//	⚫ 07:00-15:00
+	//	⚫ 14:00-22:00
+	//	⚫ 22:00-06:00
+
 	if (step === oktaoro) {
 		switch (apo.leptaGet()) {
-		case 360:	// 06:00 σε λεπτά
+		case 420:	// 07:00 σε λεπτά
+			step = (prosimo > 0 ? 420 : 540);
+			break;
 		case 840:	// 14:00 σε λεπτά
+			step = (prosimo > 0 ? 480 : 420);
+			break;
 		case 1320:	// 22:00 σε λεπτά
+			step = (prosimo > 0 ? 540 : 480);
 			break;
 		default:
-			return fld.val('06:00-14:00');
+			return fld.val('07:00-15:00');
 		}
 	}
 
@@ -2323,18 +2356,15 @@ prosopa.winpak = () => {
 		if (!parousia)
 		return;
 
-		/*
-
-		Οι έλεγχοι καταγραφών για όσους έχουν άδεια ή excuse μάλλον
-		δεν προκαλούν κάποιο πρόβλημα.
+		// Οι έλεγχοι καταγραφών για εργαζομένους που έχουν άδεια
+		// ή excuse μάλλον προκαλούν πρόβλημα, οπότε δεν θα τους
+		// συμπεριλάβουμε στην αναζήτηση καταγραφών.
 
 		if (parousia.adiaGet())
 		return;
 
 		if (parousia.excuseGet())
 		return;
-
-		*/
 
 		if (parousia.meraora)
 		return;

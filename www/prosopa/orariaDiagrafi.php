@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-14
 // Created: 2020-06-06
 // @HISTORY END
 //
@@ -58,11 +59,20 @@ lathos("Το παρουσιολόγιο έχει κυρωθεί");
 if ($prosvasi->oxi_deltio_edit($deltio_kodikos))
 lathos("Access denied");
 
+$orario = pandora::parameter_get("orario");
+$orario = new Orario($orario);
+
 ///////////////////////////////////////////////////////////////////////////////@
 
-$query = "UPDATE `letrak`.`parousia`" .
-	" SET `orario` = NULL" .
-	" WHERE `deltio` = " . $deltio_kodikos;
+$query = "UPDATE `letrak`.`parousia` SET `orario` = ";
+
+if ($orario->is_orario())
+$query .= pandora::sql_string($orario->to_string());
+
+else
+$query .= "NULL";
+
+$query .= ", `meraora` = NULL WHERE `deltio` = " . $deltio_kodikos;
 pandora::query($query);
 
 if (pandora::affected_rows() > 0)
