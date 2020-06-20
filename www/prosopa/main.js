@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-20
 // Updated: 2020-06-14
 // Updated: 2020-06-08
 // Updated: 2020-06-06
@@ -1389,11 +1390,22 @@ prosopa.editorSetup = () => {
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
 	on('change', () => {
-		if (prosopa.editorAdidosDOM.val())
+		if (!prosopa.editorAdidosDOM.val()) {
+			prosopa.editorAdapoDOM.val('');
+			prosopa.editorAdeosDOM.val('');
+			return;
+		}
+
+		if (prosopa.editorAdapoDOM.val())
 		return;
 
-		prosopa.editorAdapoDOM.val('');
-		prosopa.editorAdeosDOM.val('');
+		if (prosopa.editorAdeosDOM.val())
+		return;
+
+		let imerominia = prosopa.deltio.imerominiaGet();
+		imerominia = pnd.date(imerominia, '%D-%M-%Y');
+		prosopa.editorAdapoDOM.val(imerominia);
+		prosopa.editorAdeosDOM.val(imerominia);
 	});
 	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
 	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();

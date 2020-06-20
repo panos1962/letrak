@@ -131,7 +131,7 @@ document_body();
 			<option value="ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)</option>
 			<option value="ΤΗΛΕΡΓΑΣΙΑ" class="peAdidosOmadaKanoniki">ΤΗΛΕΡΓΑΣΙΑ</option>
 
-			<option value="ΑΝΑΡΡΩΤΙΚΗ Υ/Δ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ Υ/Δ</option>
+			<option value="ΑΣΘΕΝΕΙΑ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ</option>
 			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
 			<option value="ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ</option>
 
