@@ -70,6 +70,7 @@ const letrak =
 require('../lib/letrak.js');
 
 const prosopa = {};
+prosopa.ektiposi =
 require('./ektiposi.js')(pnd, letrak, prosopa);
 
 prosopa.minima = {
@@ -150,12 +151,13 @@ pnd.domInit(() => {
 	prosopa.
 	selidaSetup();
 
-	window.onbeforeprint = prosopa.ektiposi;
+	window.onbeforeprint = prosopa.ektiposi.ante;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.selidaSetup = () => {
+	prosopa.ektiposi.setup();
 	letrak.
 	toolbarTitlosSetup('<b>Επεξεργασία Παρουσιολογίου</b>').
 	toolbarXristisSetup().

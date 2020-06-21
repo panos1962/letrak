@@ -26,16 +26,93 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 "use strict";
+
 module.exports = function(pnd, letrak, prosopa) {
+const ektiposi = {};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-console.log('ektiposi');
+ektiposi.setup = () => {
+	console.log('EKTIPOSI SETUP');
 
-prosopa.ektiposi = () => {
-	console.log('EKTIPOSI');
+	ektiposi.bodyDOM = $('<div>').
+	attr('id', 'ektiposi').
+	appendTo(pnd.bodyDOM);
+
+	return ektiposi;
 };
 
+ektiposi.ante = () => {
+	console.log('EKTIPOSI ANTE');
+
+	ektiposi.
+	deltio().
+	prosopa();
+
+	return ektiposi;
+};
+
+ektiposi.deltio = () => {
+	$('<div>').
+	addClass('ektiposi-deltio').
+
+	append($('<div>').
+	addClass('ektiposi-deltioKodikos').
+	text(prosopa.deltio.kodikosGet())).
+
+	appendTo(ektiposi.bodyDOM);
+
+	return ektiposi;
+};
+
+ektiposi.prosopa = () => {
+	let prosopaDOM = $('<div>').
+	addClass('ektiposi-prosopa').
+	appendTo(ektiposi.bodyDOM);
+
+for (let i = 0; i < 4; i++) {
+	prosopa.browserDOM.
+	children().
+	each(function() {
+		let parousiaWrapperDOM = $('<div>').
+		addClass('ektiposi-parousiaWrapper').
+		addClass('pnd-idiaSelida').
+		appendTo(prosopaDOM);
+
+		let parousiaDOM = $('<div>').
+		addClass('ektiposi-parousia').
+		appendTo(parousiaWrapperDOM);
+
+		let x = $(this).
+		children('.parousiaOrdinal').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaOrdinal').
+		text(x).
+		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaIpalilos').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaIpalilos').
+		text(x).
+		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaOnomateponimo').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaOnomateponimo').
+		text(x).
+		appendTo(parousiaDOM);
+	});
+}
+};
 ///////////////////////////////////////////////////////////////////////////////@
 
+return ektiposi;
 };
