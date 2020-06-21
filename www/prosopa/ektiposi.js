@@ -1,0 +1,41 @@
+///////////////////////////////////////////////////////////////////////////////@
+//
+// @BEGIN
+//
+// @COPYRIGHT BEGIN
+// Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+// @COPYRIGHT END
+//
+// @FILETYPE BEGIN
+// javascript
+// @FILETYPE END
+//
+// @FILE BEGIN
+// www/prosopa/ektiposi.js —— Πρόγραμμα εκτύπωσης δελτίου
+// @FILE END
+//
+// @DESCRIPTION BEGIN
+// @DESCRIPTION END
+//
+// @HISTORY BEGIN
+// Created: 2020-06-21
+// @HISTORY END
+//
+// @END
+//
+///////////////////////////////////////////////////////////////////////////////@
+
+"use strict";
+module.exports = function(pnd, letrak, prosopa) {
+
+///////////////////////////////////////////////////////////////////////////////@
+
+console.log('ektiposi');
+
+prosopa.ektiposi = () => {
+	console.log('EKTIPOSI');
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+};

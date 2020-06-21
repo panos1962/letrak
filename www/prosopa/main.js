@@ -70,6 +70,7 @@ const letrak =
 require('../lib/letrak.js');
 
 const prosopa = {};
+require('./ektiposi.js')(pnd, letrak, prosopa);
 
 prosopa.minima = {
 	'ipografiCheckSymbol': '&#x2714;',
@@ -148,6 +149,8 @@ pnd.domInit(() => {
 
 	prosopa.
 	selidaSetup();
+
+	window.onbeforeprint = prosopa.ektiposi;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@
