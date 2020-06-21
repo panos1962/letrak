@@ -5,9 +5,13 @@ html
 	background-color #ffffff !important
 
 body
-	font-family "Georgia", "Times New Roman", "Times", serif
-	font-size 12pt
+	font-size 10pt
 	background-color #ffffff !important
+
+// Για τους διαλόγους
+
+body > div
+	display none
 
 #ektiposi
 	display block
@@ -20,31 +24,46 @@ body
 	content 'Κωδικός'
 	font-style italic
 
-.parousiaWrapper
-	border-style solid
+.parousia
+	border-style none none none solid
 	border-width 1pt
 	border-color #000000
-
-.parousia
 	>div
 		display inline-block
-		padding 2pt 6pt
+		padding 0pt 6pt
 
 		white-space nowrap
 		overflow hidden
 		text-overflow ellipsis
 
-		border-style none none none solid
+		border-style solid solid none none
 		border-width 1pt
 		border-color #000000
 
+		&:before
+			content '\200B'
+
 .parousiaOrdinal
-	width 30pt
+	width 20pt
 	text-align right
 
 .parousiaIpalilos
-	width 50pt
+	width 40pt
 	text-align right
 
 .parousiaOnomateponimo
+	width 160pt
+
+.parousiaOrario
+	width 56pt
+
+.parousiaMeraora
+	width 80pt
+
+.parousiaExcuse
+	width 80pt
+	text-align center
+
+.parousiaInfo
 	width 250pt
+	text-align left

@@ -109,6 +109,42 @@ for (let i = 0; i < 4; i++) {
 		addClass('ektiposi-parousiaOnomateponimo').
 		text(x).
 		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaOrario').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaOrario').
+		text(x).
+		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaMeraora').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaMeraora').
+		text(x).
+		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaExcuse').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaExcuse').
+		text(x).
+		appendTo(parousiaDOM);
+
+		x = $(this).
+		children('.parousiaInfo').
+		text();
+
+		$('<div>').
+		addClass('ektiposi-parousiaInfo').
+		text(x).
+		appendTo(parousiaDOM);
 	});
 }
 };
