@@ -57,8 +57,26 @@ ektiposi.deltio = () => {
 	addClass('ektiposi-deltio').
 
 	append($('<div>').
+	addClass('ektiposi-deltioIdos').
+
+	append($('<div>').
+	addClass('ektiposi-deltioProsapo').
+	text('Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων'))).
+
+	append($('<div>').
+	addClass('ektiposi-deltioData').
+
+	append($('<div>').
 	addClass('ektiposi-deltioKodikos').
 	text(prosopa.deltio.kodikosGet())).
+
+	append($('<div>').
+	addClass('ektiposi-deltioPerigrafi').
+	text(prosopa.deltio.perigrafiGet()))).
+
+	append($('<div>').
+	addClass('ektiposi-deltioImerominia').
+	text(prosopa.deltioAreaDOM.find('.deltioImerominia').text())).
 
 	appendTo(ektiposi.bodyDOM);
 
