@@ -2601,6 +2601,7 @@ letrak.ipografi.prototype.domGet = function() {
 	let dom = $('<div>').
 	addClass('ipografi').
 	data('ipografi', this).
+	data('checkok', checkok).
 
 	append($('<div>').
 	addClass('ipografiTaxinomisi').
