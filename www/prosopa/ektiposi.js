@@ -99,15 +99,9 @@ ektiposi.deltio = () => {
 	text('Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων'))).
 
 	append($('<div>').
-	addClass('ektiposi-deltioData').
-
-	append($('<div>').
-	addClass('ektiposi-deltioKodikos').
-	text(prosopa.deltio.kodikosGet())).
-
-	append($('<div>').
 	addClass('ektiposi-deltioPerigrafi').
-	text(prosopa.deltio.perigrafiGet())))).
+	html(prosopa.deltio.kodikosGet() + '.&nbsp;' +
+		prosopa.deltio.perigrafiGet()))).
 
 	append($('<div>').
 	addClass('ektiposi-deltioDexia').
