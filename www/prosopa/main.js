@@ -105,6 +105,7 @@ prosopa.minima = {
 	'ergaliaTabLabel': 'Επεξεργασία',
 	'winpakTabLabel': 'WIN-PAK',
 	'katagrafiKatharismos': 'Καθαρισμός',
+	'katagrafiOrario': 'Από ωράριο',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -2108,7 +2109,8 @@ prosopa.katagrafiProcess = (rsp) => {
 
 	prosopa.editorKatagrafiDOM.
 	empty().
-	append($('<div>').text(prosopa.minima.katagrafiKatharismos));
+	append($('<div>').text(prosopa.minima.katagrafiKatharismos)).
+	append($('<div>').text(prosopa.minima.katagrafiOrario));
 
 	// Αφαιρούμε στοιχεία από τα arrays "prin" και "meta" προκειμένου
 	// να μην υπερβαίνουν στο σύνολο το μέγιστο πλήθος καταγραφών που
@@ -2149,14 +2151,22 @@ prosopa.katagrafiProcess = (rsp) => {
 prosopa.katagrafiGet = (e, dom) => {
 	e.stopPropagation();
 
-	let x = dom.text();
+	let x = dom.text().trim();
 
-	// Αν ο χρήστης έχει κάνει κλικ στην πλήκτρο καθαρισμού (πρώτο
+	// Αν ο χρήστης έχει κάνει κλικ στην επιλογή καθαρισμού (πρώτο
 	// στοιχείο στο χωρίο επιλογής συμβάντων), τότε θα πρέπει να
 	// καθαρίσουμε το πεδίο καταγραφής.
 
 	if (x === prosopa.minima.katagrafiKatharismos)
 	x = '';
+
+	// Αν ο χρήστης έχει κάνει κλικ στην επιλογή ώρας με βάση το
+	// ωράριο του υπαλλήλου (δεύτερο στοιχείο στο χωρίο επιλογής
+	// συμβάντων), τότε θέτουμε την ώρα προσέλευσης με βάση το
+	// ωράριο του υπαλλήλου.
+
+	else if (x === prosopa.minima.katagrafiOrario)
+	x = prosopa.katagrafiApoOrarioGet();
 
 	// Θέτουμε την τιμή του πεδίου καταγραφής και εφαρμόζουμε λίγο
 	// animation με τα χρώματα του πεδίου καταγραφής προκειμένου να
@@ -2176,6 +2186,29 @@ prosopa.katagrafiGet = (e, dom) => {
 
 	return prosopa;
 };
+
+prosopa.katagrafiApoOrarioGet = () => {
+	let parousia = prosopa.parousiaEditorDOM.data('parousia');
+
+	if (!parousia)
+	return '';
+
+	let orario = new letrak.orario(parousia.orarioGet());
+
+	if (orario.oxiOrario())
+	return '';
+
+	let imerominia = pnd.date(prosopa.deltio.imerominiaGet(), '%D-%M-%Y ');
+
+	switch (prosopa.deltio.prosapoGet()) {
+	case 'ΠΡΟΣΕΛΕΥΣΗ':
+		return imerominia + orario.apoGet().toString();
+	case 'ΑΠΟΧΩΡΗΣΗ':
+		return imerominia + orario.eosGet().toString();
+	}
+
+	return '';
+}
 
 ///////////////////////////////////////////////////////////////////////////////@
 
