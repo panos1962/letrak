@@ -16,9 +16,14 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα καλείται κατά το submit της φόρμας επεξεργασίας
+// λεπτομερειών παρουσίας. Σκοπός του προγράμματος είναι να ενημερωθεί
+// ή να εισαχθεί η σχετική εγγραφή στον πίνακα "parousia" με τα στοιχεία
+// που παρέχονται από τη φόρμα.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-24
 // Updated: 2020-05-19
 // Created: 2020-05-16
 // @HISTORY END
@@ -78,7 +83,7 @@ lathos("Καθορίσατε άδεια ΚΑΙ αιτιολογία");
 ///////////////////////////////////////////////////////////////////////////////@
 
 $orario = orario_get();
-$karta = karta_get();
+$karta = karta_get($ipalilos_kodikos);
 $meraora = meraora_get();
 $info = info_get();
 
@@ -119,19 +124,33 @@ function orario_get() {
 	return pandora::sql_string($orario->to_string());
 }
 
-function karta_get() {
+function karta_get($ipalilos) {
 	$s = pandora::parameter_get("karta");
 
-	if (!isset($s))
-	return "NULL";
-
-	if (!$s)
-	return "NULL";
-
-	if (letrak::ipalilos_invalid_karta($s))
+	if (isset($s) && ($s) && letrak::ipalilos_invalid_karta($s))
 	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
 
+	if ((!isset($s)) || (!$s))
+	$s = karta_apo_database($ipalilos);
+
+	if (letrak::ipalilos_invalid_karta($s))
+	return "NULL";
+
 	return $s;
+}
+
+function karta_apo_database($ipalilos) {
+	$query = "SELECT `timi` FROM " . letrak::erpota12("metavoli") .
+		" WHERE (`ipalilos` = " . $ipalilos . ")" .
+		" AND (`idos` = 'ΚΑΡΤΑ') " .
+		" ORDER BY `efarmogi` DESC LIMIT 1";
+
+	$row = pandora::first_row($query, MYSQLI_NUM);
+
+	if (!$row)
+	return NULL;
+
+	return $row[0];
 }
 
 function meraora_get() {
