@@ -2151,7 +2151,7 @@ prosopa.katagrafiProcess = (rsp) => {
 prosopa.katagrafiGet = (e, dom) => {
 	e.stopPropagation();
 
-	let x = dom.text().trim();
+	let x = dom.text();
 
 	// Αν ο χρήστης έχει κάνει κλικ στην επιλογή καθαρισμού (πρώτο
 	// στοιχείο στο χωρίο επιλογής συμβάντων), τότε θα πρέπει να
