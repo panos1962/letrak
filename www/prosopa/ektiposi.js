@@ -158,7 +158,7 @@ ektiposi.prosopa = () => {
 
 ektiposi.isEktiposimiParousia = (dom) => {
 	switch (ektiposi.ektipotiko) {
-	case 'deltio':
+	case 'Apontes':
 		let parousia = dom.data('parousia');
 
 		if (!parousia)
@@ -178,7 +178,7 @@ ektiposi.isEktiposimiParousia = (dom) => {
 
 ektiposi.titlosGet = () => {
 	switch (ektiposi.ektipotiko) {
-	case 'deltio':
+	case 'Apontes':
 		return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
 	}
 
@@ -229,6 +229,7 @@ ektiposi.parousiaDOM = (deltioDOM, aa) => {
 
 	$('<div>').
 	addClass('ektiposi-parousiaMeraora').
+	addClass('ektiposi-parousiaMeraora' + ektiposi.ektipotiko).
 	text(x).
 	appendTo(dom);
 
@@ -247,6 +248,7 @@ ektiposi.parousiaDOM = (deltioDOM, aa) => {
 
 	$('<div>').
 	addClass('ektiposi-parousiaInfo').
+	addClass('ektiposi-parousiaInfo' + ektiposi.ektipotiko).
 	text(x).
 	appendTo(dom);
 
@@ -316,7 +318,7 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 
 ektiposi.deltioAponton = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
-	ektiposi.ektipotiko = 'deltio';
+	ektiposi.ektipotiko = 'Apontes';
 	window.print();
 	delete ektiposi.ektipotiko;
 };

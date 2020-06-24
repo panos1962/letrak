@@ -1080,7 +1080,6 @@ prosopa.ergaliaSetup = () => {
 
 	append(prosopa.ergaliaTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
-	addClass('prosopaPliktroUpdate').
 	text(prosopa.minima.ergaliaTabLabel).
 	on('click', function(e) {
 		e.stopPropagation();
@@ -1176,6 +1175,7 @@ prosopa.ergaliaSetup = () => {
 
 	prosopa.ergaliaDOM = $('#ergalia').
 	dialog({
+		'resizable': false,
 		'title': 'Eπεξεργασία',
 		'width': '220px',
 		'height': 'auto',
