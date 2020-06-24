@@ -226,6 +226,10 @@ document_body();
 	<div class="ergalioTab prosopaPliktroUpdate" id="protipoMetatropi">
 		Μετατροπή σε πρότυπο
 	</div>
+	<div class="ergalioTab" id="deltioAponton"
+		title="Εκτύπωση δελτίου απόντων">
+		Δελτίο απόντων
+	</div>
 </div>
 
 <form id="protipo">

@@ -70,7 +70,7 @@ const letrak =
 require('../lib/letrak.js');
 
 const prosopa = {};
-prosopa.ektiposi =
+const ektiposi =
 require('./ektiposi.js')(pnd, letrak, prosopa);
 
 prosopa.minima = {
@@ -151,13 +151,13 @@ pnd.domInit(() => {
 	prosopa.
 	selidaSetup();
 
-	window.onbeforeprint = prosopa.ektiposi.ante;
+	window.onbeforeprint = ektiposi.ante;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.selidaSetup = () => {
-	prosopa.ektiposi.setup();
+	ektiposi.setup();
 	letrak.
 	toolbarTitlosSetup('<b>Επεξεργασία Παρουσιολογίου</b>').
 	toolbarXristisSetup().
@@ -1131,6 +1131,9 @@ prosopa.ergaliaSetup = () => {
 
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
+
+	$('#deltioAponton').
+	on('click', (e) => ektiposi.deltioAponton(e));
 
 	///////////////////////////////////////////////////////////////////////@
 

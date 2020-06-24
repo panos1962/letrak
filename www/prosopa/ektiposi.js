@@ -96,7 +96,7 @@ ektiposi.deltio = () => {
 
 	append($('<div>').
 	addClass('ektiposi-deltioProsapo').
-	text('Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων'))).
+	text(ektiposi.titlosGet()))).
 
 	append($('<div>').
 	addClass('ektiposi-deltioPerigrafi').
@@ -115,19 +115,40 @@ ektiposi.deltio = () => {
 
 ektiposi.prosopa = () => {
 	let plist = prosopa.browserDOM.children();
-	let prest = plist.length;
-	let parea = ektiposi.bodyDOM;
+	let count = 0;
+
+	// Επιτελούμε καταμέτρηση των εκτυπώσιμων παρουσιών. Αυτό κρίνεται
+	// απαραίτητο προκειμένου να αποφύγουμε «ορφανές» γραμμές στο τέλος
+	// της εκτύπωσης.
 
 	plist.each(function() {
-		prest--;
+		if (ektiposi.isEktiposimiParousia($(this)))
+		count++;
+	});
 
-		if (prest === 4)
+	let parea = ektiposi.bodyDOM;
+	let aa = 0;
+
+	plist.each(function() {
+		if (ektiposi.oxiEktiposimiParousia($(this)))
+		return;
+
+		aa++;
+		count--;
+
+		// Αν έχει απομείνει μικρό πλήθος παρουσιών προς εκτύπωση,
+		// φροντίζουμε αυτές οι παρουσίες μαζί με τις υπογραφές
+		// να τοποθετηθούν σε αδιάσπαστο wrapper προκειμένου να
+		// αποφύγουμε φαινόμενα «ορφανών» γραμμών στο τέλος της
+		// εκτύπωσης.
+
+		if (count == 4)
 		parea = $('<div>').
 		addClass('ektiposi-parousiaWrapper').
 		addClass('pnd-idiaSelida').
 		appendTo(parea);
 
-		ektiposi.parousiaDOM($(this)).
+		ektiposi.parousiaDOM($(this), aa).
 		appendTo(parea);
 	});
 
@@ -135,20 +156,47 @@ ektiposi.prosopa = () => {
 	append(ektiposi.ipografesDOM());
 };
 
-ektiposi.parousiaDOM = (deltioDOM) => {
+ektiposi.isEktiposimiParousia = (dom) => {
+	switch (ektiposi.ektipotiko) {
+	case 'deltio':
+		let parousia = dom.data('parousia');
+
+		if (!parousia)
+		return false;
+
+		if (parousia.excuseGet())
+		return false;
+
+		if (parousia.meraoraGet())
+		return false;
+
+		return true;
+	}
+
+	return true;
+};
+
+ektiposi.titlosGet = () => {
+	switch (ektiposi.ektipotiko) {
+	case 'deltio':
+		return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
+	}
+
+	return 'Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων';
+};
+
+ektiposi.oxiEktiposimiParousia = (dom) => !ektiposi.isEktiposimiParousia(dom);
+
+ektiposi.parousiaDOM = (deltioDOM, aa) => {
 	let dom = $('<div>').
 	addClass('ektiposi-parousia');
 
-	let x = deltioDOM.
-	children('.parousiaOrdinal').
-	text();
-
 	$('<div>').
 	addClass('ektiposi-parousiaOrdinal').
-	text(x).
+	text(aa).
 	appendTo(dom);
 
-	x = deltioDOM.
+	let x = deltioDOM.
 	children('.parousiaIpalilos').
 	text();
 
@@ -264,6 +312,13 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 	appendTo(dom);
 
 	return dom;
+};
+
+ektiposi.deltioAponton = (e) => {
+	prosopa.ergaliaDOM.dialog('close');
+	ektiposi.ektipotiko = 'deltio';
+	window.print();
+	delete ektiposi.ektipotiko;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
