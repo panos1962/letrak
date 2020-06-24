@@ -124,20 +124,37 @@ function orario_get() {
 	return pandora::sql_string($orario->to_string());
 }
 
+// Η function "karta_get" επιχειρεί να εντοπίσει τον αριθμό κάρτας του
+// υπαλλήλου που εισάγεται ή ενημερώνεται.
+
 function karta_get($ipalilos) {
+	// Πρώτα ελέγχουμε αν ο αριθμός κάρτας έχει συμπληρωθεί από τον
+	// χρήστη στη φόρμα ενημέρωσης λεπτομερειών συμβάντων.
+
 	$s = pandora::parameter_get("karta");
 
 	if (isset($s) && ($s) && letrak::ipalilos_invalid_karta($s))
 	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
 
+	// Αν δεν έχει συμπληρωθεί αριθμός κάρτας από τον χρήστη, τότε το
+	// πρόγραμμα επιχειρεί να τον εντοπίσει από τον πίνακα μεταβολών
+	// που αφορούν στον εν λόγω υπάλληλο.
+
 	if ((!isset($s)) || (!$s))
 	$s = karta_apo_database($ipalilos);
+
+	// Αν δεν εντοπίστηκε αριθμός κάρτας ούτε στις μεταβολές του
+	// υπαλλήλου, τότε τίθεται null.
 
 	if (letrak::ipalilos_invalid_karta($s))
 	return "NULL";
 
 	return $s;
 }
+
+// Η function "karta_apo_database" δέχεται ένα κωδικό υπαλλήλου και επιχειρεί
+// να εντοπίσει τον τρέχοντα αριθμό κάρτας του συγκεκριμένου υπαλλήλου από
+// τον πίνακα μεταβολών.
 
 function karta_apo_database($ipalilos) {
 	$query = "SELECT `timi` FROM " . letrak::erpota12("metavoli") .
