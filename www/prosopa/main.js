@@ -2652,7 +2652,7 @@ letrak.ipografi.prototype.domGet = function() {
 	let checkok = this.checkokGet();
 
 	if (checkok)
-	checkok = pnd.date(checkok, '%D-%M-%Y %h:%s');
+	checkok = pnd.date(checkok, '%D-%M-%Y %h:%m');
 
 	let dom = $('<div>').
 	addClass('ipografi').
