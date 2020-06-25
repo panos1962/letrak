@@ -2198,13 +2198,32 @@ prosopa.katagrafiApoOrarioGet = () => {
 	if (orario.oxiOrario())
 	return '';
 
-	let imerominia = pnd.date(prosopa.deltio.imerominiaGet(), '%D-%M-%Y ');
+	// Θα επιστραφεί ημερομηνία και ώρα προσέλευσης/αποχώρησης με βάση
+	// το ωράριο του υπαλλήλου. Αν πρόκειται για προσέλευση επιστρέφεται
+	// η ώρα αρχής τους ωραρίου μείον λίγα λεπτά, ενώ για την αποχώρηση
+	// επιστρέφεται η ώρα λήξης του ωραρίου συν λίγα λεπτά.
 
-	switch (prosopa.deltio.prosapoGet()) {
-	case 'ΠΡΟΣΕΛΕΥΣΗ':
-		return imerominia + orario.apoGet().toString();
-	case 'ΑΠΟΧΩΡΗΣΗ':
-		return imerominia + orario.eosGet().toString();
+	let imerominia = prosopa.deltio.imerominiaGet();
+	let sinplin = Math.floor(Math.random() * 7);
+
+	try {
+		switch (prosopa.deltio.prosapoGet()) {
+		case 'ΠΡΟΣΕΛΕΥΣΗ':
+			imerominia = orario.apomeraoraGet(imerominia);
+			sinplin = -sinplin;
+			break;
+		case 'ΑΠΟΧΩΡΗΣΗ':
+			imerominia = orario.eosmeraoraGet(imerominia);
+			break;
+		default:
+			return '';
+		}
+
+		imerominia = new Date(imerominia.getTime() + (sinplin * 60000));
+		return pnd.date(imerominia, '%D-%M-%Y %h:%m');
+
+	} catch (e) {
+		cosnole.error(e);
 	}
 
 	return '';
