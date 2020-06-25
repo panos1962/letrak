@@ -133,16 +133,6 @@ ektiposi.deltio = () => {
 
 ektiposi.prosopa = () => {
 	let plist = prosopa.browserDOM.children();
-	let count = 0;
-
-	// Επιτελούμε καταμέτρηση των εκτυπώσιμων παρουσιών. Αυτό κρίνεται
-	// απαραίτητο προκειμένου να αποφύγουμε «ορφανές» γραμμές στο τέλος
-	// της εκτύπωσης.
-
-	plist.each(function() {
-		if (ektiposi.isEktiposimiParousia($(this)))
-		count++;
-	});
 
 	let parea = ektiposi.bodyDOM;
 	let aa = 0;
@@ -152,7 +142,6 @@ ektiposi.prosopa = () => {
 		return;
 
 		aa++;
-		count--;
 
 		// Αν έχει απομείνει μικρό πλήθος παρουσιών προς εκτύπωση,
 		// φροντίζουμε αυτές οι παρουσίες μαζί με τις υπογραφές
@@ -160,11 +149,10 @@ ektiposi.prosopa = () => {
 		// αποφύγουμε φαινόμενα «ορφανών» γραμμών στο τέλος της
 		// εκτύπωσης.
 
-		if (count == 4)
-		parea = $('<div>').
+		let parea = $('<div>').
 		addClass('ektiposi-parousiaWrapper').
 		addClass('pnd-idiaSelida').
-		appendTo(parea);
+		appendTo(ektiposi.bodyDOM);
 
 		ektiposi.parousiaDOM($(this), aa).
 		appendTo(parea);

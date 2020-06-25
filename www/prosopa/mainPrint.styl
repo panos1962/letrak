@@ -16,7 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
-* Updated: 2020-06-15
+* Updated: 2020-06-25
 * Updated: 2020-06-24
 * Updated: 2020-06-22
 * Created: 2020-06-21
@@ -90,7 +90,8 @@ body > div
 	border-width 0.1pt
 	border-color #000000
 	>div
-		display inline-block
+		display table-cell
+		vertical-align top
 		padding 0pt 6pt
 
 		white-space nowrap
@@ -109,35 +110,46 @@ body > div
 
 .parousiaOrdinal
 	width 20pt
+	max-width 20pt
 	text-align right
 
 .parousiaIpalilos
 	width 34pt
+	max-width 34pt
 	text-align right
 
 .parousiaOnomateponimo
 	width 156pt
+	max-width 156pt
 
 .parousiaOrario
 	width 54pt
+	max-width 54pt
 
 .parousiaMeraora
 	width 78pt
+	max-width 78pt
 
 .parousiaMeraoraApontes
 	display none !important
 
 .parousiaExcuse
 	width 90pt
+	max-width 90pt
 	text-align center
 	letter-spacing -0.5pt
 
 .parousiaInfo
 	width 261pt
+	max-width 261pt
+	white-space normal !important
 	text-align left
+	overflow-x visible !important
+	text-overflow initial !important
 
 .parousiaInfoApontes
 	width 350pt
+	max-width 350pt
 
 .parousiaWrapper
 	display inline-block
