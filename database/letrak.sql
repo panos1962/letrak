@@ -66,6 +66,7 @@
 -- @DESCRIPTION END
 --
 -- @HISTORY BEGIN
+-- Updated: 2020-06-26
 -- Updated: 2020-06-06
 -- Updated: 2020-05-15
 -- Created: 2020-04-08
@@ -275,7 +276,7 @@ CREATE TABLE `parousia` (
 	-- Ακολουθεί κείμενο με παρατηρήσεις που αφορούν σε επεξεγήσεις
 	-- σχετικές με την ώρα προσέλευσης/αποχώρησης.
 
-	`info`		VARCHAR(1024) NULL DEFAULT NULL COMMENT 'Σχόλια',
+	`info`		VARCHAR(4096) NULL DEFAULT NULL COMMENT 'Σχόλια',
 
 	PRIMARY KEY (
 		`deltio`,

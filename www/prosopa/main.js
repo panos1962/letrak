@@ -1420,7 +1420,12 @@ prosopa.editorSetup = () => {
 	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
 	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();
 	prosopa.editorExcuseDOM = $('#peExcuse');
-	prosopa.editorInfoDOM = $('#peInfo');
+	prosopa.editorInfoDOM = $('#peInfo').
+	on('change', function(e) {
+		e.stopPropagation();
+		let x = $(this).val().trim();
+		$(this).val(x);
+	});
 
 	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli').
 	on('click', (e) => prosopa.editorIpovoli(e));

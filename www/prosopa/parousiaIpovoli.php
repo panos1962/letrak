@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-26
 // Updated: 2020-06-24
 // Updated: 2020-05-19
 // Created: 2020-05-16
@@ -335,7 +336,7 @@ function info_get() {
 	if (!$info)
 	return "NULL";
 
-	return pandora::sql_string($info);
+	return pandora::sql_string(trim($info));
 }
 
 function lathos($s) {

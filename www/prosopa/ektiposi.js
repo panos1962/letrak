@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-26
 // Updated: 2020-06-25
 // Updated: 2020-06-24
 // Updated: 2020-06-23
@@ -133,7 +134,6 @@ ektiposi.deltio = () => {
 
 ektiposi.prosopa = () => {
 	let plist = prosopa.browserDOM.children();
-
 	let parea = ektiposi.bodyDOM;
 	let aa = 0;
 
@@ -160,7 +160,16 @@ ektiposi.prosopa = () => {
 
 	parea.
 	append(ektiposi.ipografesDOM());
+
+	return ektiposi;
 };
+
+// Ανάλογα με το είδος του report κάποιες εγγραφές του δελτίου (παρουσίες)
+// εκτυπώνονται ή δεν εκτυπώνονται. Επί παραδείγματι, στο δελτίο απόντων δεν
+// εκτυπώνονται εγγραφές που έχουν συμπληρωμένη ώρα προσέλευσης/αποχώρησης.
+// Η function "isEktiposimiParousia" δέχεται το DOM element μιας εγγραφής
+// και επιστρέφει true εφόσον η συγκεκριμένη εγγραφή πρέπει να περιληφθεί
+// στο τρέχον report, αλλιώς επιστρέφει false.
 
 ektiposi.isEktiposimiParousia = (dom) => {
 	switch (ektiposi.ektipotiko) {
@@ -182,6 +191,8 @@ ektiposi.isEktiposimiParousia = (dom) => {
 	return true;
 };
 
+ektiposi.oxiEktiposimiParousia = (dom) => !ektiposi.isEktiposimiParousia(dom);
+
 ektiposi.titlosGet = () => {
 	switch (ektiposi.ektipotiko) {
 	case 'Apontes':
@@ -190,8 +201,6 @@ ektiposi.titlosGet = () => {
 
 	return 'Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων';
 };
-
-ektiposi.oxiEktiposimiParousia = (dom) => !ektiposi.isEktiposimiParousia(dom);
 
 // Η function "parousiaDOM" δέχεται ως παράμετρο το DOM element υπαλλήλου και
 // επιστρέφει το αντίστοιχο DOM element για τη σελίδα εκτύπωσης του δελτίου.
@@ -256,12 +265,13 @@ ektiposi.parousiaDOM = (deltioDOM, aa) => {
 
 	x = deltioDOM.
 	children('.parousiaInfo').
-	text();
+	text().
+	replace(/\n+/, '<br>', 'g');
 
 	$('<div>').
 	addClass('ektiposi-parousiaInfo').
 	addClass('ektiposi-parousiaInfo' + ektiposi.ektipotiko).
-	text(x).
+	html(x).
 	appendTo(dom);
 
 	return dom;
