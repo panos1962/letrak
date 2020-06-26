@@ -108,48 +108,45 @@ body > div
 .parousiaLast
 	border-style solid none none solid
 
+hard_width(args)
+	width args
+	min-width args
+	max-width args
+
 .parousiaOrdinal
-	width 20pt
-	max-width 20pt
+	hard_width(20pt)
 	text-align right
 
 .parousiaIpalilos
-	width 34pt
-	max-width 34pt
+	hard_width(34pt)
 	text-align right
 
 .parousiaOnomateponimo
-	width 156pt
-	max-width 156pt
+	hard_width(156pt)
 
 .parousiaOrario
-	width 54pt
-	max-width 54pt
+	hard_width(54pt)
 
 .parousiaMeraora
-	width 78pt
-	max-width 78pt
+	hard_width(78pt)
 
 .parousiaMeraoraApontes
 	display none !important
 
 .parousiaExcuse
-	width 90pt
-	max-width 90pt
+	hard_width(90pt)
 	text-align center
 	letter-spacing -0.5pt
 
 .parousiaInfo
-	width 261pt
-	max-width 261pt
+	hard_width(261pt)
 	white-space normal !important
 	text-align left
 	overflow-x visible !important
 	text-overflow initial !important
 
 .parousiaInfoApontes
-	width 350pt
-	max-width 350pt
+	hard_width(350pt)
 
 .parousiaWrapper
 	display inline-block
@@ -179,7 +176,8 @@ body > div
 	content 'Ελέγχθηκε και κυρώθηκε '
 
 .ipografiAnamoni:before
-	content '\2733\0020ΑΝΑΜΕΝΕΤΑΙ ΕΛΕΓΧΟΣ & ΚΥΡΩΣΗ\0020\2733'
+	//content '\2733\0020ΑΝΑΜΕΝΕΤΑΙ ΕΛΕΓΧΟΣ & ΚΥΡΩΣΗ\0020\2733'
+	content ''
 	font-weight bold
 
 .ipografiTitlos
