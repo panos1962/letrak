@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-27
 // Updated: 2020-06-26
 // Updated: 2020-06-25
 // Updated: 2020-06-24
@@ -133,6 +134,15 @@ ektiposi.deltio = () => {
 };
 
 ektiposi.prosopa = () => {
+	switch (ektiposi.ektipotiko) {
+	case 'Imerisio':
+		return ektiposi.prosopaImerisio();
+	}
+
+	return ektiposi.prosopaAplo();
+};
+
+ektiposi.prosopaAplo = () => {
 	let plist = prosopa.browserDOM.children();
 	let parea = ektiposi.bodyDOM;
 	let aa = 0;
@@ -193,10 +203,44 @@ ektiposi.isEktiposimiParousia = (dom) => {
 
 ektiposi.oxiEktiposimiParousia = (dom) => !ektiposi.isEktiposimiParousia(dom);
 
+ektiposi.prosopaImerisio = () => {
+	let plist = {};
+
+	pnd.fyiMessage('Επιλογή στοιχείων προσέλευσης/αποχώρησης υπαλλήλων…');
+	$.post({
+		'url': 'imerisio.php',
+		'data': {
+			'deltio': prosopa.deltio.kodikosGet(),
+		},
+		'dataType': 'json',
+		'success': (rsp) => ektiposi.imerisioProcess(rsp),
+		'error': (err) => ektiposi.imerisioError(err),
+	});
+
+	return ektiposi;
+};
+
+ektiposi.imerisioProcess = (rsp) => {
+	if (rsp.error)
+	return pnd.fyiError(rsp.error);
+
+	pnd.fyiClear();
+	console.log(rsp);
+};
+
+ektiposi.imerisioError = (err) => {
+	console.error(err);
+	pnd.fyiError('Σφάλμα επιλογής στοιχείων ημερήσιου δελτίου');
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 ektiposi.titlosGet = () => {
 	switch (ektiposi.ektipotiko) {
 	case 'Apontes':
 		return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
+	case 'Imerisio':
+		return 'ΗΜΕΡΗΣΙΟ ΠΑΡΟΥΣΙΟΛΟΓΙΟ';
 	}
 
 	return 'Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων';
@@ -368,6 +412,22 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 ektiposi.deltioAponton = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
 	ektiposi.ektipotiko = 'Apontes';
+	window.print();
+	delete ektiposi.ektipotiko;
+};
+
+// Η εκτύπωση του ημερήσιου δελτίου προσέλευσης/αποχώρησης δρομολογείται
+// από το μενού εργαλείων του προγράμματος επεξεργασίας δελτίων και
+// συνδυάζει τις εγγραφές δύο δελτίων της ίδιας ημερομηνίας, με σχέση
+// προτύπου/αντιγράφου, όπου το πρότυπο είναι δελτίο προσέλευσης και
+// το αντίγραφο είναι δελτίο αποχώρησης. Ουσιαστικά, η συγκεκριμένη
+// εκτύπωση παρουσιάζει συνολικά την προσέλευση, την αποχώρηση και
+// τις απουσίες -αιτιολογημένες ή μη- των εργαζομένων σε μια οργανική
+// μονάδα, για μια συγκεκριμένη ημερομηνία.
+
+ektiposi.deltioImerisio = (e) => {
+	prosopa.ergaliaDOM.dialog('close');
+	ektiposi.ektipotiko = 'Imerisio';
 	window.print();
 	delete ektiposi.ektipotiko;
 };

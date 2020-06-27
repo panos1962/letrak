@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-27
 // Updated: 2020-06-21
 // Updated: 2020-06-14
 // Updated: 2020-06-07
@@ -231,6 +232,10 @@ document_body();
 	<div class="ergalioTab" id="deltioAponton"
 		title="Εκτύπωση δελτίου απόντων">
 		Δελτίο απόντων
+	</div>
+	<div class="ergalioTab" id="deltioImerisio"
+		title="Εκτύπωση ημερήσιου δελτίου προσέλευσης/αποχώρησης">
+		Ημερήσιο δελτίο
 	</div>
 </div>
 
