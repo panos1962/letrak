@@ -1135,6 +1135,113 @@ class Ipografi {
 	}
 }
 
+class Parousia {
+	public $deltio = NULL;		// κωδικός δελτίου
+	public $ipalilos = NULL;	// κωδικός εργαζομένου
+	public $orario = NULL;		// ωράριο
+	public $karta = NULL;		// αριθμός κάρτας WIN-PAK
+	public $meraora = NULL;		// ημερομηνία και ώρα συμβάντος
+	public $adidos = NULL;		// είδος αδείας
+	public $adapo = NULL;		// ημερομηνία έναρξης αδείας
+	public $adeos = NULL;		// ημερομηνία λήξης αδείας
+	public $excuse = NULL;		// είδος excuse
+	public $info = NULL;		// σχόλια
+
+	public function __construct($x) {
+		$this->deltio = NULL;
+		$this->ipalilos = NULL;
+		$this->orario = NULL;
+		$this->karta = NULL;
+		$this->meraora = NULL;
+		$this->adidos = NULL;
+		$this->adapo = NULL;
+		$this->adeos = NULL;
+		$this->excuse = NULL;
+		$this->info = NULL;
+
+		foreach ($x as $k => $v) {
+			try {
+				$func = $k . "_set";
+				$this->$func($v);
+			}
+
+			catch (Exception $e) {
+				continue;
+			}
+		}
+	}
+
+	public function deltio_set($x) {
+		$this->deltio = $x;
+		return $this;
+	}
+
+	public function ipalilos_set($x) {
+		$this->ipalilos = $x;
+		return $this;
+	}
+
+	public function orario_set($x) {
+		$this->orario = $x;
+		return $this;
+	}
+
+	public function karta_set($x) {
+		$this->karta = $x;
+		return $this;
+	}
+
+	public function meraora_set($x) {
+		$this->meraora = $x;
+		return $this;
+	}
+
+	public function adidos_set($x) {
+		$this->adidos = $x;
+		return $this;
+	}
+
+	public function adapo_set($x) {
+		$this->adapo = $x;
+		return $this;
+	}
+
+	public function adeos_set($x) {
+		$this->adeos = $x;
+		return $this;
+	}
+
+	public function excuse_set($x) {
+		$this->excuse = $x;
+		return $this;
+	}
+
+	public function info_set($x) {
+		$this->info = $x;
+		return $this;
+	}
+
+	public function deltio_get() {
+		return $this->deltio;
+	}
+
+	public function ipalilos_get() {
+		return $this->ipalilos;
+	}
+
+	public function orario_get() {
+		return $this->orario;
+	}
+
+	public function karta_get() {
+		return $this->karta;
+	}
+
+	public function meraora_get() {
+		return $this->meraora;
+	}
+}
+
 // Η κλάση "Prosvasi" απεικονίζει εγγραφές πρόσβασης χρηστών στα χρονικά
 // δεδομένα προσέλευσης και αποχώρησης των υπαλλήλων. Οι προσβάσεις των
 // χρηστών καθορίζονται στον πίνακα "prosvasi" της database "erpota".

@@ -67,10 +67,15 @@ default:
 	letrak::fatal_error_json("Μη αποδεκτό είδος δελτίου");
 }
 
+$parousia = array();
+
+parousia_get($proselefsi);
+
 print '{';
 ///////////////////////////////////////////////////////////////////////////////@
 	print '"proselefsi":' . $proselefsi->kodikos_get() . ',';
 	print '"apoxorisi":' . $apoxorisi->kodikos_get() . ',';
+	print '"parousia":' . pandora::json_string($parousia) . ',';
 	print '"error":""';
 ///////////////////////////////////////////////////////////////////////////////@
 print '}';
@@ -83,7 +88,7 @@ function apoxirisi_get($deltio) {
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
-	if (!$row)
+	if ((!$row) || (!$row[0]))
 	letrak::fatal_error_json("Ακαθόριστο σχετικό δελτίο αποχώρησης");
 
 	$x = (new Deltio())->from_database($row[0]);
@@ -102,7 +107,7 @@ function proselefsi_get($deltio) {
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
-	if (!$row)
+	if ((!$row) || (!$row[0]))
 	letrak::fatal_error_json("Ακαθόριστο σχετικό δελτίο προσέλευσης");
 
 	$x = (new Deltio())->from_database($row[0]);
@@ -112,6 +117,25 @@ function proselefsi_get($deltio) {
 	letrak::fatal_error_json("Δεν εντοπίστηκε σχετικό δελτίο προσέλευσης");
 
 	return $x;
+}
+
+function parousia_get($proselefsi) {
+	global $parousia;
+
+	$query = "SELECT * FROM `letrak`.`parousia`" .
+		" WHERE `deltio` = " . $proselefsi->kodikos_get();
+	$result = pandora::query($query);
+
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		$p =  new Parousia($row);
+		$x = array();
+
+		$x["o"] = $p->orario_get();
+		$x["k"] = $p->karta_get();
+		$x["p"] = $p->meraora_get();
+
+		$parousia[$p->ipalilos_get()] = $x;
+	}
 }
 
 print '"deltio":' . $deltio->json_economy() . ",";
