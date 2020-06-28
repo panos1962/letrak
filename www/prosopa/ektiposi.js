@@ -73,6 +73,15 @@ ektiposi.ante = () => {
 	return ektiposi;
 };
 
+ektiposi.post = () => {
+	delete ektiposi.ektipotiko;
+	ektiposi.prosopa = ektiposi.prosopaDeltio;
+
+	return ektiposi;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 ektiposi.reset = () => {
 	ektiposi.bodyDOM.
 	empty();
@@ -133,25 +142,16 @@ ektiposi.deltio = () => {
 	return ektiposi;
 };
 
-ektiposi.prosopa = () => {
-	switch (ektiposi.ektipotiko) {
-	case 'Imerisio':
-		return ektiposi.prosopaImerisio();
-	}
-
-	return ektiposi.prosopaAplo();
-};
-
-ektiposi.prosopaAplo = () => {
+ektiposi.prosopa =
+ektiposi.prosopaDeltio = () => {
 	let plist = prosopa.browserDOM.children();
+	let count = plist.length;
 	let parea = ektiposi.bodyDOM;
 	let aa = 0;
 
 	plist.each(function() {
-		if (ektiposi.oxiEktiposimiParousia($(this)))
-		return;
-
 		aa++;
+		count--;
 
 		// Αν έχει απομείνει μικρό πλήθος παρουσιών προς εκτύπωση,
 		// φροντίζουμε αυτές οι παρουσίες μαζί με τις υπογραφές
@@ -159,7 +159,8 @@ ektiposi.prosopaAplo = () => {
 		// αποφύγουμε φαινόμενα «ορφανών» γραμμών στο τέλος της
 		// εκτύπωσης.
 
-		let parea = $('<div>').
+		if (count === 4)
+		parea = $('<div>').
 		addClass('ektiposi-parousiaWrapper').
 		addClass('pnd-idiaSelida').
 		appendTo(ektiposi.bodyDOM);
@@ -174,63 +175,101 @@ ektiposi.prosopaAplo = () => {
 	return ektiposi;
 };
 
-// Ανάλογα με το είδος του report κάποιες εγγραφές του δελτίου (παρουσίες)
-// εκτυπώνονται ή δεν εκτυπώνονται. Επί παραδείγματι, στο δελτίο απόντων δεν
-// εκτυπώνονται εγγραφές που έχουν συμπληρωμένη ώρα προσέλευσης/αποχώρησης.
-// Η function "isEktiposimiParousia" δέχεται το DOM element μιας εγγραφής
-// και επιστρέφει true εφόσον η συγκεκριμένη εγγραφή πρέπει να περιληφθεί
-// στο τρέχον report, αλλιώς επιστρέφει false.
+ektiposi.prosopaApontes = () => {
+	let plist = prosopa.browserDOM.children();
+	let count = plist.length;
+	let parea = ektiposi.bodyDOM;
+	let aa = 0;
 
-ektiposi.isEktiposimiParousia = (dom) => {
-	switch (ektiposi.ektipotiko) {
-	case 'Apontes':
-		let parousia = dom.data('parousia');
+	plist.each(function() {
+		if (ektiposi.isParon($(this)))
+		return;
 
-		if (!parousia)
-		return false;
+		aa++;
+		count--;
 
-		if (parousia.excuseGet())
-		return false;
+		if (count === 4)
+		parea = $('<div>').
+		addClass('ektiposi-parousiaWrapper').
+		addClass('pnd-idiaSelida').
+		appendTo(ektiposi.bodyDOM);
 
-		if (parousia.meraoraGet())
-		return false;
-
-		return true;
-	}
-
-	return true;
-};
-
-ektiposi.oxiEktiposimiParousia = (dom) => !ektiposi.isEktiposimiParousia(dom);
-
-ektiposi.prosopaImerisio = () => {
-	let plist = {};
-
-	pnd.fyiMessage('Επιλογή στοιχείων προσέλευσης/αποχώρησης υπαλλήλων…');
-	$.post({
-		'url': 'imerisio.php',
-		'data': {
-			'deltio': prosopa.deltio.kodikosGet(),
-		},
-		'dataType': 'json',
-		'success': (rsp) => ektiposi.imerisioProcess(rsp),
-		'error': (err) => ektiposi.imerisioError(err),
+		ektiposi.parousiaDOM($(this), aa).
+		appendTo(parea);
 	});
+
+	parea.
+	append(ektiposi.ipografesDOM());
 
 	return ektiposi;
 };
 
-ektiposi.imerisioProcess = (rsp) => {
-	if (rsp.error)
-	return pnd.fyiError(rsp.error);
+ektiposi.isParon = (dom) => {
+	let parousia = dom.data('parousia');
 
-	pnd.fyiClear();
-	console.log(rsp);
+	if (!parousia)
+	return true;
+
+	if (parousia.excuseGet())
+	return true;
+
+	if (parousia.meraoraGet())
+	return true;
+
+	return false;
 };
 
-ektiposi.imerisioError = (err) => {
-	console.error(err);
-	pnd.fyiError('Σφάλμα επιλογής στοιχείων ημερήσιου δελτίου');
+ektiposi.prosopaImerisio = (plist) => {
+	if (!ektiposi.hasOwnProperty('ipalilosList')) {
+		ektiposi.ipalilosList = {};
+		pnd.arrayWalk(prosopa.goniki.ipalilosArray, (x) => {
+			let o = x.e + ' ' + x.o;
+
+			if (x.p)
+			o += ' ' + x.p.substr(0, 3);
+
+			ektiposi.ipalilosList[x.k] = o;
+		});
+
+	}
+
+	let pl = [];
+
+	pnd.objectWalk(plist, (x, i) => {
+		let p = new ektiposi.parousia(i, x);
+		pl.push(p);
+	});
+
+	pl.sort((p1, p2) => {
+		let i1 = p1.ipalilos;
+		let i2 = p2.ipalilos;
+
+		let o1 = ektiposi.ipalilosList[i1];
+		let o2 = ektiposi.ipalilosList[i2];
+
+		return o1.localeCompare(o2);
+	});
+
+	let count = pl.length;
+	let parea = ektiposi.bodyDOM;
+	let aa = 0;
+
+	pnd.arrayWalk(pl, (x) => {
+		aa++;
+		count--;
+
+		if (count === 4)
+		parea = $('<div>').
+		addClass('ektiposi-parousiaWrapper').
+		addClass('pnd-idiaSelida').
+		appendTo(ektiposi.bodyDOM);
+
+		x.domGet(aa).
+		appendTo(parea);
+	});
+
+	parea.
+	append(ektiposi.ipografesDOM());
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -240,7 +279,7 @@ ektiposi.titlosGet = () => {
 	case 'Apontes':
 		return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
 	case 'Imerisio':
-		return 'ΗΜΕΡΗΣΙΟ ΠΑΡΟΥΣΙΟΛΟΓΙΟ';
+		return 'ΗΜΕΡΗΣΙΟ ΔΕΛΤΙΟ ΠΡΟΣΕΛΕΥΣΗΣ/ΑΠΟΧΩΡΗΣΗΣ';
 	}
 
 	return 'Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων';
@@ -412,8 +451,8 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 ektiposi.deltioAponton = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
 	ektiposi.ektipotiko = 'Apontes';
+	ektiposi.prosopa = ektiposi.prosopaApontes;
 	window.print();
-	delete ektiposi.ektipotiko;
 };
 
 // Η εκτύπωση του ημερήσιου δελτίου προσέλευσης/αποχώρησης δρομολογείται
@@ -427,9 +466,104 @@ ektiposi.deltioAponton = (e) => {
 
 ektiposi.deltioImerisio = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
+	let plist = {};
+
+	pnd.fyiMessage('Επιλογή στοιχείων προσέλευσης/αποχώρησης υπαλλήλων…');
+	$.post({
+		'url': 'imerisio.php',
+		'data': {
+			'deltio': prosopa.deltio.kodikosGet(),
+		},
+		'dataType': 'json',
+		'success': (rsp) => ektiposi.imerisioProcess(rsp),
+		'error': (err) => ektiposi.imerisioError(err),
+	});
+
+	return ektiposi;
+};
+
+ektiposi.imerisioProcess = (rsp) => {
+	if (rsp.error)
+	return pnd.fyiError(rsp.error);
+
+	pnd.fyiClear();
 	ektiposi.ektipotiko = 'Imerisio';
+	ektiposi.prosopa = () => {
+		ektiposi.prosopaImerisio(rsp.parousia);
+	};
+
 	window.print();
-	delete ektiposi.ektipotiko;
+};
+
+ektiposi.imerisioError = (err) => {
+	console.error(err);
+	pnd.fyiError('Σφάλμα επιλογής στοιχείων ημερήσιου δελτίου');
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+ektiposi.parousia = function(i, x) {
+	this.ipalilos = parseInt(i);
+
+	this.orario = new letrak.orario(x.o);
+	this.karta = parseInt(x.k);
+
+	this.proselefsi = new Date(x.p);
+	this.apoxorisi = new Date(x.a);
+
+	this.poselefsiExcuse = x.px;
+	this.apoxorisiExcuse = x.ax;
+
+	this.adidos = x.ai;
+	this.adapo = x.aa;
+	this.adeos = x.ae;
+};
+
+ektiposi.parousia.prototype.domGet = function(aa) {
+	let dom = $('<div>').
+	addClass('ektiposi-parousia');
+
+	$('<div>').
+	addClass('ektiposi-parousiaOrdinal').
+	text(aa).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaIpalilos').
+	text(this.ipalilos).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaOnomateponimo').
+	text(ektiposi.ipalilosList[this.ipalilos]).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaOrario').
+	text(this.orario.toString()).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaMeraora').
+	text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaMeraora').
+	text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaMeraora').
+	text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+	appendTo(dom);
+
+	$('<div>').
+	addClass('ektiposi-parousiaMeraora').
+	text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+	appendTo(dom);
+
+	return dom;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-28
 // Created: 2020-06-27
 // @HISTORY END
 //
@@ -69,7 +70,8 @@ default:
 
 $parousia = array();
 
-parousia_get($proselefsi);
+parousia_get($apoxorisi, "a");
+parousia_get($proselefsi, "p");
 
 print '{';
 ///////////////////////////////////////////////////////////////////////////////@
@@ -81,7 +83,7 @@ print '{';
 print '}';
 exit(0);
 
-function apoxirisi_get($deltio) {
+function apoxorisi_get($deltio) {
 	$query = "SELECT `kodikos`" .
 		" FROM `letrak`.`deltio`" .
 		" WHERE `protipo` = " . $deltio->kodikos_get();
@@ -119,22 +121,31 @@ function proselefsi_get($deltio) {
 	return $x;
 }
 
-function parousia_get($proselefsi) {
+function parousia_get($deltio, $prosapo) {
 	global $parousia;
 
 	$query = "SELECT * FROM `letrak`.`parousia`" .
-		" WHERE `deltio` = " . $proselefsi->kodikos_get();
+		" WHERE `deltio` = " . $deltio->kodikos_get();
 	$result = pandora::query($query);
 
 	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		$p =  new Parousia($row);
-		$x = array();
+		$ipalilos = $p->ipalilos_get();
+
+		if (!array_key_exists($ipalilos, $parousia))
+		$parousia[$ipalilos] = array();
+
+		$x = $parousia[$ipalilos];
 
 		$x["o"] = $p->orario_get();
 		$x["k"] = $p->karta_get();
-		$x["p"] = $p->meraora_get();
+		$x[$prosapo] = $p->meraora_get();
+		$x["ai"] = $p->adidos_get();
+		$x["aa"] = $p->adapo_get();
+		$x["ae"] = $p->adeos_get();
+		$x[$prosapo . "x"] = $p->excuse_get();
 
-		$parousia[$p->ipalilos_get()] = $x;
+		$parousia[$ipalilos] = $x;
 	}
 }
 

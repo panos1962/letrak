@@ -156,6 +156,7 @@ pnd.domInit(() => {
 	selidaSetup();
 
 	window.onbeforeprint = ektiposi.ante;
+	window.onafterprint = ektiposi.post;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@

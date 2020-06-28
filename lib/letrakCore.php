@@ -1240,6 +1240,22 @@ class Parousia {
 	public function meraora_get() {
 		return $this->meraora;
 	}
+
+	public function adidos_get() {
+		return $this->adidos;
+	}
+
+	public function adapo_get() {
+		return $this->adapo;
+	}
+
+	public function adeos_get() {
+		return $this->adeos;
+	}
+
+	public function excuse_get() {
+		return $this->excuse;
+	}
 }
 
 // Η κλάση "Prosvasi" απεικονίζει εγγραφές πρόσβασης χρηστών στα χρονικά
