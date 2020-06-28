@@ -72,6 +72,7 @@ $parousia = array();
 
 parousia_get($apoxorisi, "a");
 parousia_get($proselefsi, "p");
+parousia_fix();
 
 print '{';
 ///////////////////////////////////////////////////////////////////////////////@
@@ -124,7 +125,11 @@ function proselefsi_get($deltio) {
 function parousia_get($deltio, $prosapo) {
 	global $parousia;
 
-	$query = "SELECT * FROM `letrak`.`parousia`" .
+	$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`," .
+		" `excuse`, `adidos`," .
+		" DATE_FORMAT(`adapo`, '%d-%m-%Y') AS `adapo`," .
+		" DATE_FORMAT(`adeos`, '%d-%m-%Y') AS `adeos`" .
+		" FROM `letrak`.`parousia`" .
 		" WHERE `deltio` = " . $deltio->kodikos_get();
 	$result = pandora::query($query);
 
@@ -145,75 +150,48 @@ function parousia_get($deltio, $prosapo) {
 		$x["ae"] = $p->adeos_get();
 		$x[$prosapo . "x"] = $p->excuse_get();
 
+		foreach ($x as $k => $v) {
+			if (!isset($v))
+			unset($x[$k]);
+		}
+
 		$parousia[$ipalilos] = $x;
 	}
 }
 
-print '"deltio":' . $deltio->json_economy() . ",";
+function parousia_fix() {
+	global $parousia;
 
-$query = "SELECT " . LETRAK_PROSOPA_PROJECTION_COLUMNS .
-" FROM `letrak`.`parousia` AS `parousia`" .
-" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
-" ON `ipalilos`.`kodikos` = `parousia`.`ipalilos`" .
-" WHERE (`parousia`.`deltio` = " . $kodikos . ")";
+	foreach ($parousia as $ipalilos => $data) {
+		// Αν υπάρχει άδεια για τον ανά χείρας υπάλληλο, μηδενίζουμε
+		// τυχόν ώρες και αιτιολογίες προσέλευσης και αποχώρησης.
 
-$ipalilos = $prosvasi->ipalilos_get();
-$ipiresia = $deltio->ipiresia_get();
+		if (array_key_exists("ai", $data) && $data["ai"]) {
+			unset($data["p"]);
+			unset($data["a"]);
+			unset($data["px"]);
+			unset($data["ax"]);
+			continue;
+		}
 
-if ($deltio->oxi_ipografon($ipalilos) &&
-	$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
-$query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
+		// Δεν υπάρχει άδεια, επομένως μηδενίζουμε τυχόν συμπληρωμένα
+		// στοιχεία αδείας.
 
-$query .= " ORDER BY `l`, `f`, `r`, `i`";
+		unset($data["ai"]);
+		unset($data["aa"]);
+		unset($data["ae"]);
 
-print '"query":' . pandora::json_string($query) . ',';
+		// Αν υπάρχει αιτιολογία προσέλευσης, μηδενίζουμε τυχόν
+		// ώρα προσέλευσης.
 
-print '"prosopa":[';
-$enotiko = "";
-$result = pandora::query($query);
+		if (array_key_exists("px", $data) && $data["px"])
+		unset($data["p"]);
 
-while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	print $enotiko . pandora::json_string(pandora::null_purge($row));
-	$enotiko = ",";
-}
+		// Αν υπάρχει αιτιολογία αποχώρησης, μηδενίζουμε τυχόν
+		// ώρα αποχώρησης.
 
-print '],';
-
-///////////////////////////////////////////////////////////////////////////////@
-
-$query = "SELECT " .
-"`ipografi`.`taxinomisi` AS `x`, " .
-"`ipografi`.`titlos` AS `t`, " .
-"`ipografi`.`armodios` AS `a`, " .
-"`ipalilos`.`eponimo` AS `e`, " .
-"`ipalilos`.`onoma` AS `o`, " .
-"`ipografi`.`checkok` AS `c`" .
-" FROM `letrak`.`ipografi` AS `ipografi` " .
-" LEFT JOIN " . $ipalilos_table . " AS `ipalilos` " .
-" ON `ipalilos`.`kodikos` = `ipografi`.`armodios`" .
-" WHERE (`ipografi`.`deltio` = " . $kodikos . ")" .
-" ORDER BY `x`";
-
-print '"queryIpografi":' . pandora::json_string($query) . ',';
-
-print '"ipografes":[';
-$enotiko = "";
-$result = pandora::query($query);
-
-while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	// Απαλοιφή των πεδίων με null τιμές
-	foreach ($row as $k => $v) {
-		if (!isset($v))
-		unset($row[$k]);
+		if (array_key_exists("ax", $data) && $data["ax"])
+		unset($data["a"]);
 	}
-
-	print $enotiko . pandora::json_string($row);
-	$enotiko = ",";
 }
-
-print '],';
-
-///////////////////////////////////////////////////////////////////////////////@
-print '"error":""}';
-exit(0);
 ?>

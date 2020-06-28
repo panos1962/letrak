@@ -220,23 +220,10 @@ ektiposi.isParon = (dom) => {
 };
 
 ektiposi.prosopaImerisio = (plist) => {
-	if (!ektiposi.hasOwnProperty('ipalilosList')) {
-		ektiposi.ipalilosList = {};
-		pnd.arrayWalk(prosopa.goniki.ipalilosArray, (x) => {
-			let o = x.e + ' ' + x.o;
-
-			if (x.p)
-			o += ' ' + x.p.substr(0, 3);
-
-			ektiposi.ipalilosList[x.k] = o;
-		});
-
-	}
-
 	let pl = [];
 
 	pnd.objectWalk(plist, (x, i) => {
-		let p = new ektiposi.parousia(i, x);
+		let p = (new ektiposi.parousia()).fromImerisio(i, x);
 		pl.push(p);
 	});
 
@@ -244,8 +231,8 @@ ektiposi.prosopaImerisio = (plist) => {
 		let i1 = p1.ipalilos;
 		let i2 = p2.ipalilos;
 
-		let o1 = ektiposi.ipalilosList[i1];
-		let o2 = ektiposi.ipalilosList[i2];
+		let o1 = prosopa.goniki.ipalilosList[i1];
+		let o2 = prosopa.goniki.ipalilosList[i2];
 
 		return o1.localeCompare(o2);
 	});
@@ -502,24 +489,43 @@ ektiposi.imerisioError = (err) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-ektiposi.parousia = function(i, x) {
+ektiposi.parousia = function() {
+};
+
+ektiposi.parousia.prototype.fromImerisio = function(i, x) {
 	this.ipalilos = parseInt(i);
 
+	if (x.o)
 	this.orario = new letrak.orario(x.o);
+
+	if (x.k)
 	this.karta = parseInt(x.k);
 
+	if (x.p)
 	this.proselefsi = new Date(x.p);
+
+	if (x.a)
 	this.apoxorisi = new Date(x.a);
 
-	this.poselefsiExcuse = x.px;
+	if (x.px)
+	this.proselefsiExcuse = x.px;
+
+	if (x.ax)
 	this.apoxorisiExcuse = x.ax;
 
-	this.adidos = x.ai;
-	this.adapo = x.aa;
-	this.adeos = x.ae;
+	if (x.ai) {
+		this.adidos = x.ai;
+		this.adapo = x.aa;
+		this.adeos = x.ae;
+	}
+
+	return this;
 };
 
 ektiposi.parousia.prototype.domGet = function(aa) {
+	let imerominia = prosopa.deltio.imerominiaGet();
+	let prosapo = prosopa.deltio.prosapoGet();
+
 	let dom = $('<div>').
 	addClass('ektiposi-parousia');
 
@@ -535,8 +541,13 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 	$('<div>').
 	addClass('ektiposi-parousiaOnomateponimo').
-	text(ektiposi.ipalilosList[this.ipalilos]).
+	text(prosopa.goniki.ipalilosList[this.ipalilos]).
 	appendTo(dom);
+
+	let x = this.orario;
+
+	if (x.oxiOrario())
+	x = '';
 
 	$('<div>').
 	addClass('ektiposi-parousiaOrario').
@@ -544,23 +555,88 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	appendTo(dom);
 
 	$('<div>').
-	addClass('ektiposi-parousiaMeraora').
-	text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+	addClass('ektiposi-parousiaKarta').
+	text(this.karta).
 	appendTo(dom);
 
+	if (this.adidos) {
+		let x = this.adidos;
+
+		if (this.adapo)
+		x = pnd.strPush(x, 'από ' + this.adapo);
+
+		if (this.adeos)
+		x = pnd.strPush(x, 'έως ' + this.adeos);
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioAdia').
+		text(x).
+		appendTo(dom);
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioIsozigio').
+		appendTo(dom);
+
+		return dom;
+	}
+
+	let pdif = letrak.isozigioCalc(imerominia, "ΠΡΟΣΕΛΕΥΣΗ",
+			this.orario, this.proselefsi);
+
+	if (this.proselefsi) {
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioProsapo').
+		text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+		appendTo(dom);
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioIsozigio').
+		html(letrak.isozigio2hm(pdif, true)).
+		appendTo(dom);
+	}
+
+	else
 	$('<div>').
-	addClass('ektiposi-parousiaMeraora').
-	text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+	addClass('ektiposi-parousiaImerisioExcuse').
+	html(this.proselefsiExcuse).
 	appendTo(dom);
 
+	let adif = letrak.isozigioCalc(imerominia, "ΑΠΟΧΩΡΗΣΗ",
+			this.orario, this.apoxorisi);
+
+	if (this.apoxorisi) {
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioProsapo').
+		text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+		appendTo(dom);
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioIsozigio').
+		html(letrak.isozigio2hm(adif, true)).
+		appendTo(dom);
+	}
+
+	else
 	$('<div>').
-	addClass('ektiposi-parousiaMeraora').
-	text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+	addClass('ektiposi-parousiaImerisioExcuse').
+	html(this.apoxorisiExcuse).
 	appendTo(dom);
 
+	if (adif > 15)
+	adif = 15;
+
+	if (pdif < 0)
+	pdif += adif;
+
+	if (pdif >= 0)
+	pdif = '';
+
+	else
+	pdif = letrak.isozigio2hm(pdif, true);
+
 	$('<div>').
-	addClass('ektiposi-parousiaMeraora').
-	text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+	addClass('ektiposi-parousiaImerisioIsozigio').
+	html(pdif).
 	appendTo(dom);
 
 	return dom;

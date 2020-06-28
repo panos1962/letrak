@@ -1096,6 +1096,7 @@ deltio.prosopa = (opts) => {
 	if (deltio.hasOwnProperty('ipiresiaList')) {
 		self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 		self.LETRAK.ipalilosArray = deltio.ipalilosArray;
+		self.LETRAK.ipalilosList = deltio.ipalilosList;
 		deltio.prosopaOpen(kodikos, amolimeno);
 		return deltio;
 	}
@@ -1312,8 +1313,25 @@ deltio.erpotaProcess = (rsp, kodikos, amolimeno) => {
 		deltio.ipiresiaList[v.k] = v.p;
 	});
 
+	deltio.ipalilosList = {};
+	pnd.arrayWalk(deltio.ipalilosArray, (v) => {
+		if (!v.k)
+		return;
+
+		let onomateponimo = '';
+
+		pnd.strPush(onomateponimo, v.e);
+		pnd.strPush(onomateponimo, v.o);
+
+		if (v.p)
+		pnd.strPush(onomateponimo, v.p.substr(0, 3));
+
+		deltio.ipalilosList[v.k] = v;
+	});
+
 	self.LETRAK.ipiresiaList = deltio.ipiresiaList;
 	self.LETRAK.ipalilosArray = deltio.ipalilosArray;
+	self.LETRAK.ipalilosList = deltio.ipalilosList;
 	deltio.prosopaOpen(kodikos, amolimeno);
 
 	return deltio;
