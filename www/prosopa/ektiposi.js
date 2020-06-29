@@ -602,13 +602,11 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	appendTo(dom);
 
 	let x = this.orario;
-
-	if (x.oxiOrario())
-	x = '';
+	x = (x.isOrario() ? x.toString() : '');
 
 	$('<div>').
 	addClass('ektiposi-parousiaOrario').
-	text(this.orario.toString()).
+	text(x).
 	appendTo(dom);
 
 	$('<div>').

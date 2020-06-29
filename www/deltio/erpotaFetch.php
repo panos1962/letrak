@@ -73,7 +73,6 @@ $query = "SELECT" .
 	" DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`," .
 	" `afm` AS `a`" .
 	" FROM " . letrak::erpota12("ipalilos") .
-	" WHERE `katastasi` = 'ΕΝΕΡΓΟΣ'" .
 	" ORDER BY `e`, `o`, `p`, `k`";
 $result = pandora::query($query);
 
