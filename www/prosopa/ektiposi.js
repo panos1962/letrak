@@ -251,7 +251,7 @@ ektiposi.prosopaImerisio = (plist) => {
 	let pl = [];
 
 	pnd.objectWalk(plist, (x, i) => {
-		let p = (new ektiposi.parousia()).fromImerisio(i, x);
+		let p = new ektiposi.parousia(i, x);
 		pl.push(p);
 	});
 
@@ -530,10 +530,26 @@ ektiposi.imerisioError = (err) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-ektiposi.parousia = function() {
-};
+// Για την εκτύπωση του ημερήσιου δελτίου προσέλευσης/αποχώρησης κρίνεται
+// σκόπιμο να δημιουργήσουμε αντικείμενα πλήρους παρουσίας τα οποία
+// περιλαμβάνουν στοιχεία τόσο της προσέλευσης όσο και της αποχώρησης
+// των υπαλλήλων. Τα αντικείμενα αυτά δημιουργούνται από τα πρωτογενή
+// στοιχεία που επιστρέφονται από τον server αντιστοιχίζοντας τα πεδία
+// ως εξής:
+//
+// Περιγραφή		Server		Client			Τύπος
+// -------------------------------------------------------------------
+// Ωράριο		  o		orario			Ωράριο
+// Αρ. κάρτας		  k		karta			Number
+// Ώρα προσέλευσης	  p		proselefsi		Date
+// Ώρα αποχώρησης	  a		apoxorisi		Date
+// Excuse προσέλευσης	  px		proselefsiExcuse	String
+// Excuse αποχώρησης	  px		apoxorisiExcuse		String
+// Είδος αδείας		  ai		adidos			String
+// Έναρξη αδείας	  aa		adapo			String
+// Λήξη αδείας		  ae		adeos			String
 
-ektiposi.parousia.prototype.fromImerisio = function(i, x) {
+ektiposi.parousia = function(i, x) {
 	this.ipalilos = parseInt(i);
 
 	if (x.o)
@@ -563,10 +579,10 @@ ektiposi.parousia.prototype.fromImerisio = function(i, x) {
 	return this;
 };
 
-ektiposi.parousia.prototype.domGet = function(aa) {
-	let imerominia = prosopa.deltio.imerominiaGet();
-	let prosapo = prosopa.deltio.prosapoGet();
+// Η μέθοδος "domGet" επιστρέφει DOM element που αφορά σε εγγραφή πλήρους
+// παρουσίας.
 
+ektiposi.parousia.prototype.domGet = function(aa) {
 	let dom = $('<div>').
 	addClass('ektiposi-parousia');
 
@@ -621,8 +637,8 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 		return dom;
 	}
 
-	let pdif = letrak.isozigioCalc(imerominia, "ΠΡΟΣΕΛΕΥΣΗ",
-			this.orario, this.proselefsi);
+	let pdif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
+		"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
 
 	if (this.proselefsi) {
 		$('<div>').
@@ -642,8 +658,8 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	html(this.proselefsiExcuse).
 	appendTo(dom);
 
-	let adif = letrak.isozigioCalc(imerominia, "ΑΠΟΧΩΡΗΣΗ",
-			this.orario, this.apoxorisi);
+	let adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
+		"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
 
 	if (this.apoxorisi) {
 		$('<div>').
@@ -662,6 +678,10 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	addClass('ektiposi-parousiaImerisioExcuse').
 	html(this.apoxorisiExcuse).
 	appendTo(dom);
+
+	// Ο υπάλληλος έχει το δικαίωμα να συμπληρώσει τυχόν έλλειμμα χρόνου
+	// προσέλευσης, παρατείνοντας την αποχώρησή του. Ωστόσο, αυτή η ανοχή
+	// δεν μπορεί να καλύψει έλλειμμα μεγαλύτερο από 15 λεπτά της ώρας.
 
 	if (adif > 15)
 	adif = 15;
