@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-06-28
 // Updated: 2020-06-27
 // Updated: 2020-06-26
 // Updated: 2020-06-25
@@ -145,8 +146,8 @@ ektiposi.deltio = () => {
 ektiposi.prosopa =
 ektiposi.prosopaDeltio = () => {
 	let plist = prosopa.browserDOM.children();
-	let count = plist.length;
 	let parea = ektiposi.bodyDOM;
+	let count = plist.length;
 	let aa = 0;
 
 	plist.each(function() {
@@ -177,12 +178,12 @@ ektiposi.prosopaDeltio = () => {
 
 ektiposi.prosopaApontes = () => {
 	let plist = prosopa.browserDOM.children();
-	let count = plist.length;
 	let parea = ektiposi.bodyDOM;
+	let count = plist.length;
 	let aa = 0;
 
 	plist.each(function() {
-		if (ektiposi.isParon($(this)))
+		if (ektiposi.oxiApon($(this)))
 		return;
 
 		aa++;
@@ -192,7 +193,7 @@ ektiposi.prosopaApontes = () => {
 		parea = $('<div>').
 		addClass('ektiposi-parousiaWrapper').
 		addClass('pnd-idiaSelida').
-		appendTo(ektiposi.bodyDOM);
+		appendTo(ektiposi.bodyDOM)
 
 		ektiposi.parousiaDOM($(this), aa).
 		appendTo(parea);
@@ -204,22 +205,49 @@ ektiposi.prosopaApontes = () => {
 	return ektiposi;
 };
 
-ektiposi.isParon = (dom) => {
+// Η function "oxiApon" δέχεται ένα DOM element παρουσίας και ελέγχει αν ο
+// σχετικός υπάλληλος εκείνη τη μέρα δεν φαίνεται να είναι απών. Επιστρέφει
+// true εφόσον ο υπάλληλος δεν πρέπει να συμπεριληφθεί στο δελτίο απόντων.
+
+ektiposi.oxiApon = (dom) => {
 	let parousia = dom.data('parousia');
+
+	// Αν δεν υπάρχει σχετική εγγραφή δεν γνωρίζουμε καν τον υπάλληλο
+	// επομένως δεν μπορούμε να αποφανθούμε αν ο υπάλληλος πρέπει να
+	// συμπεριληφθεί στο δελτίο απόντων.
 
 	if (!parousia)
 	return true;
 
-	if (parousia.excuseGet())
-	return true;
+	// Αν υπάρχει συμπληρωμένη ημερομηνία και ώρα προσέλευσης/αποχώρησης,
+	// τότε ο υπάλληλος δεν πρέπει να συμπεριληφθεί στο δελτίο απόντων.
 
 	if (parousia.meraoraGet())
 	return true;
 
+	// Αν υπάρχει συμπληρωμένη αιτιολογία απουσίας συμβάντος, τότε
+	// ο υπάλληλος δεν πρέπει να συμπεριληφθεί στο δελτίο απόντων.
+
+	if (parousia.excuseGet())
+	return true;
+
+	// Σε κάθε άλλη περίπτωση θεωρούμε ότι ο υπάλληλος πρέπει να
+	// συμπεριληφθεί στο δελτίο απόντων.
+
 	return false;
 };
 
+// Η function "prosopaImerisio" εκτυπώνει τους υπαλλήλους που αφορούν στα
+// δελτία προσέλευσης και αποχώρησης συγκεκριμένης οργανικής μονάδας για
+// συγκεκριμένη ημερομηνία. Δέχεται μια λίστα εγγραφών πλήρους παρουσίας,
+// δηλαδή εγγραφών που περιλαμβάνουν στοιχεία τόσο για την προσέλευση όσο
+// και για την αποχώρηση των υπαλλήλων της οργανικής μονάδας στην οποία
+// αφορούν τα συγκεκριμένα δελτία.
+
 ektiposi.prosopaImerisio = (plist) => {
+	// Θα πρέπει να δημιουργηθεί array με τις εγγραφές παρουσίας
+	// ταξινομημένο ως προς το ονοματεπώνυμο των υπαλλήλων.
+
 	let pl = [];
 
 	pnd.objectWalk(plist, (x, i) => {
@@ -228,17 +256,32 @@ ektiposi.prosopaImerisio = (plist) => {
 	});
 
 	pl.sort((p1, p2) => {
-		let i1 = p1.ipalilos;
-		let i2 = p2.ipalilos;
+		let i1 = (p1.ipalilos);
+		let i2 = (p2.ipalilos);
 
-		let o1 = prosopa.goniki.ipalilosList[i1];
-		let o2 = prosopa.goniki.ipalilosList[i2];
+		let o1 = prosopa.goniki.ipalilosList[i1].oe;
+		let o2 = prosopa.goniki.ipalilosList[i2].oe;
 
-		return o1.localeCompare(o2);
+		let cmp = o1.localeCompare(o2);
+
+		if (cmp)
+		return cmp;
+
+		if (i1 < i2)
+		return -1;
+
+		if (i1 > i2)
+		return 1;
+
+		return 0;
 	});
 
-	let count = pl.length;
+	// Μετά την ταξινόμηση των εγγραφών παρουσίας ως προς το
+	// ονοματεπώνυμο των υπαλλήλων, μπορούμε να προχωρήσουμε
+	// στην εκτύπωση των εγγραφών παρουσίας.
+
 	let parea = ektiposi.bodyDOM;
+	let count = pl.length;
 	let aa = 0;
 
 	pnd.arrayWalk(pl, (x) => {
@@ -448,8 +491,8 @@ ektiposi.deltioAponton = (e) => {
 // προτύπου/αντιγράφου, όπου το πρότυπο είναι δελτίο προσέλευσης και
 // το αντίγραφο είναι δελτίο αποχώρησης. Ουσιαστικά, η συγκεκριμένη
 // εκτύπωση παρουσιάζει συνολικά την προσέλευση, την αποχώρηση και
-// τις απουσίες -αιτιολογημένες ή μη- των εργαζομένων σε μια οργανική
-// μονάδα, για μια συγκεκριμένη ημερομηνία.
+// τις απουσίες -αιτιολογημένες ή μη- των εργαζομένων σε συγκεκριμένη
+// οργανική μονάδα, για συγκεκριμένη ημερομηνία.
 
 ektiposi.deltioImerisio = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
@@ -475,9 +518,7 @@ ektiposi.imerisioProcess = (rsp) => {
 
 	pnd.fyiClear();
 	ektiposi.ektipotiko = 'Imerisio';
-	ektiposi.prosopa = () => {
-		ektiposi.prosopaImerisio(rsp.parousia);
-	};
+	ektiposi.prosopa = () => ektiposi.prosopaImerisio(rsp.parousia);
 
 	window.print();
 };
@@ -541,7 +582,7 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 	$('<div>').
 	addClass('ektiposi-parousiaOnomateponimo').
-	text(prosopa.goniki.ipalilosList[this.ipalilos]).
+	text(prosopa.goniki.ipalilosList[this.ipalilos].oe).
 	appendTo(dom);
 
 	let x = this.orario;

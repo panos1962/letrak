@@ -20,7 +20,8 @@
 // Το παρόν πρόγραμμα καλείται από τη σελίδα επεξεργασίας παρουσιολογίου και
 // δέχεται ως παράμετρο έναν κωδικό παρουσιολογίου. Σκοπός του προγράμματος
 // είναι να επιστρέψει σε json format τα στοιχεία προσέλευσης και αποχώρησης
-// των υπαλλήλων που σχετίζονται με το εν λόγω παρουσιολόγιο.
+// των υπαλλήλων που σχετίζονται με το εν λόγω παρουσιολόγιο καθώς επίσης και
+// με το συμπληρωματικό του.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -75,18 +76,14 @@ parousia_get($proselefsi, "p");
 parousia_fix();
 
 print '{';
-///////////////////////////////////////////////////////////////////////////////@
-	print '"proselefsi":' . $proselefsi->kodikos_get() . ',';
-	print '"apoxorisi":' . $apoxorisi->kodikos_get() . ',';
-	print '"parousia":' . pandora::json_string($parousia) . ',';
-	print '"error":""';
-///////////////////////////////////////////////////////////////////////////////@
+print '"proselefsi":' . $proselefsi->kodikos_get() . ',';
+print '"apoxorisi":' . $apoxorisi->kodikos_get() . ',';
+print '"parousia":' . pandora::json_string($parousia);
 print '}';
 exit(0);
 
 function apoxorisi_get($deltio) {
-	$query = "SELECT `kodikos`" .
-		" FROM `letrak`.`deltio`" .
+	$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
 		" WHERE `protipo` = " . $deltio->kodikos_get();
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
@@ -104,8 +101,7 @@ function apoxorisi_get($deltio) {
 }
 
 function proselefsi_get($deltio) {
-	$query = "SELECT `protipo`" .
-		" FROM `letrak`.`deltio`" .
+	$query = "SELECT `protipo` FROM `letrak`.`deltio`" .
 		" WHERE `kodikos` = " . $deltio->kodikos_get();
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
@@ -125,8 +121,8 @@ function proselefsi_get($deltio) {
 function parousia_get($deltio, $prosapo) {
 	global $parousia;
 
-	$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`," .
-		" `excuse`, `adidos`," .
+	$query = "SELECT `ipalilos`, `orario`, `karta`," .
+		" `meraora`, `excuse`, `adidos`," .
 		" DATE_FORMAT(`adapo`, '%d-%m-%Y') AS `adapo`," .
 		" DATE_FORMAT(`adeos`, '%d-%m-%Y') AS `adeos`" .
 		" FROM `letrak`.`parousia`" .
@@ -137,25 +133,19 @@ function parousia_get($deltio, $prosapo) {
 		$p =  new Parousia($row);
 		$ipalilos = $p->ipalilos_get();
 
-		if (!array_key_exists($ipalilos, $parousia))
-		$parousia[$ipalilos] = array();
+		if (!array_key_exists($ipalilos, $parousia)) {
+			$parousia[$ipalilos] = array();
 
-		$x = $parousia[$ipalilos];
-
-		$x["o"] = $p->orario_get();
-		$x["k"] = $p->karta_get();
-		$x[$prosapo] = $p->meraora_get();
-		$x["ai"] = $p->adidos_get();
-		$x["aa"] = $p->adapo_get();
-		$x["ae"] = $p->adeos_get();
-		$x[$prosapo . "x"] = $p->excuse_get();
-
-		foreach ($x as $k => $v) {
-			if (!isset($v))
-			unset($x[$k]);
+			$parousia[$ipalilos]["o"] = $p->orario_get();
+			$parousia[$ipalilos]["k"] = $p->karta_get();
+			$parousia[$ipalilos]["ai"] = $p->adidos_get();
+			$parousia[$ipalilos]["aa"] = $p->adapo_get();
+			$parousia[$ipalilos]["ae"] = $p->adeos_get();
 		}
 
-		$parousia[$ipalilos] = $x;
+		$parousia[$ipalilos][$prosapo] = $p->meraora_get();
+		$parousia[$ipalilos] = $parousia[$ipalilos];
+		$parousia[$ipalilos][$prosapo . "x"] = $p->excuse_get();
 	}
 }
 
@@ -163,6 +153,11 @@ function parousia_fix() {
 	global $parousia;
 
 	foreach ($parousia as $ipalilos => $data) {
+		foreach ($data as $k => $v) {
+			if (!isset($v))
+			unset($data[$k]);
+		}
+
 		// Αν υπάρχει άδεια για τον ανά χείρας υπάλληλο, μηδενίζουμε
 		// τυχόν ώρες και αιτιολογίες προσέλευσης και αποχώρησης.
 
@@ -171,6 +166,7 @@ function parousia_fix() {
 			unset($data["a"]);
 			unset($data["px"]);
 			unset($data["ax"]);
+			$parousia[$ipalilos] = $data;
 			continue;
 		}
 
@@ -192,6 +188,8 @@ function parousia_fix() {
 
 		if (array_key_exists("ax", $data) && $data["ax"])
 		unset($data["a"]);
+
+		$parousia[$ipalilos] = $data;
 	}
 }
 ?>

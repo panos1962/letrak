@@ -1318,13 +1318,13 @@ deltio.erpotaProcess = (rsp, kodikos, amolimeno) => {
 		if (!v.k)
 		return;
 
-		let onomateponimo = '';
+		v.oe = '';
 
-		pnd.strPush(onomateponimo, v.e);
-		pnd.strPush(onomateponimo, v.o);
+		v.oe = pnd.strPush(v.oe, v.e);
+		v.oe = pnd.strPush(v.oe, v.o);
 
 		if (v.p)
-		pnd.strPush(onomateponimo, v.p.substr(0, 3));
+		v.oe = pnd.strPush(v.oe, v.p.substr(0, 3));
 
 		deltio.ipalilosList[v.k] = v;
 	});
