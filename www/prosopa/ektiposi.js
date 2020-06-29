@@ -630,7 +630,6 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioIsozigio').
-		text('x').
 		appendTo(dom);
 
 		return dom;
