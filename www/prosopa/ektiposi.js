@@ -597,7 +597,7 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	appendTo(dom);
 
 	$('<div>').
-	addClass('ektiposi-parousiaOnomateponimo').
+	addClass('ektiposi-parousiaImerisioOnomateponimo').
 	text(prosopa.goniki.ipalilosList[this.ipalilos].oe).
 	appendTo(dom);
 
@@ -630,6 +630,7 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioIsozigio').
+		text('x').
 		appendTo(dom);
 
 		return dom;
