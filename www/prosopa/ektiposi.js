@@ -677,6 +677,23 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	html(this.apoxorisiExcuse).
 	appendTo(dom);
 
+	$('<div>').
+	addClass('ektiposi-parousiaImerisioIsozigio').
+	html(this.isozigio(pdif, adif)).
+	appendTo(dom);
+
+	return dom;
+};
+
+ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
+	let err = '';
+
+	if ((!this.proselefsi) && (!this.proselefsiExcuse))
+	err = '???';
+
+	if ((!this.apoxorisi) && (!this.apoxorisiExcuse))
+	err = pnd.strPush(err, '???', '-');
+
 	// Ο υπάλληλος έχει το δικαίωμα να συμπληρώσει τυχόν έλλειμμα χρόνου
 	// προσέλευσης, παρατείνοντας την αποχώρησή του. Ωστόσο, αυτή η ανοχή
 	// δεν μπορεί να καλύψει έλλειμμα μεγαλύτερο από 15 λεπτά της ώρας.
@@ -687,18 +704,10 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	if (pdif < 0)
 	pdif += adif;
 
-	if (pdif >= 0)
-	pdif = '';
+	if (pdif < 0)
+	return letrak.isozigio2hm(pdif, true);
 
-	else
-	pdif = letrak.isozigio2hm(pdif, true);
-
-	$('<div>').
-	addClass('ektiposi-parousiaImerisioIsozigio').
-	html(pdif).
-	appendTo(dom);
-
-	return dom;
+	return '';
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
