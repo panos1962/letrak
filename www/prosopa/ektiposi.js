@@ -718,6 +718,9 @@ ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
 	if ((!this.apoxorisi) && (!this.apoxorisiExcuse))
 	err = pnd.strPush(err, '???', '-');
 
+	if (err)
+	return err;
+
 	// Ο υπάλληλος έχει το δικαίωμα να συμπληρώσει τυχόν έλλειμμα χρόνου
 	// προσέλευσης, παρατείνοντας την αποχώρησή του. Ωστόσο, αυτή η ανοχή
 	// δεν μπορεί να καλύψει έλλειμμα μεγαλύτερο από 15 λεπτά της ώρας.
