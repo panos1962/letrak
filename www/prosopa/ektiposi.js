@@ -638,6 +638,10 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	text(this.karta).
 	appendTo(dom);
 
+	// Αν υπάρχει άδεια του υπαλλήλου στη συγκεκριμένη ημερομηνία,
+	// τότε εκτυπώνουμε τα στοιχεία αδείας και κλείνουμε με κενό
+	// στη στήλη λεπτών περικοπής.
+
 	if (this.adidos) {
 		let x = this.adidos;
 
@@ -659,10 +663,17 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 		return dom;
 	}
 
-	let pdif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
-		"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
+	// Ο υπάλληλος δεν είχε άδεια, επομένως πρέπει να έχει συμπληρωμένη
+	// ημερομηνία και ώρα προσέλευσης/αποχώρησης, αλλιώς πρέπει να έχει
+	// σχετική αιτιολογία.
+
+	let pdif = 0;
+	let adif = 0;
 
 	if (this.proselefsi) {
+		pdif =  letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
+			"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
+
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
 		text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
@@ -680,10 +691,10 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	html(this.proselefsiExcuse).
 	appendTo(dom);
 
-	let adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
-		"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
-
 	if (this.apoxorisi) {
+		adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
+			"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
+
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
 		text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
@@ -708,6 +719,14 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 	return dom;
 };
+
+// Η μέθοδος "isozigio" δέχεται τα χρονικά ελλείμματα/πλεονάσματα των
+// συμβάντων προσέλευσης/αποχώρησης μια πλήρους παρουσίας και επιστρέφει
+// τα λεπτά περικοπής. Αν λείπει ένα ή και τα δύο συμβάντα, επιστρέφει
+// ερωτηματικά, ενώ αν υπάρχει πλεόνασμα ή δεν υπάρχουν λεπτά περικοπής,
+// τότε επιστρέφει κενό. Όπως και να έχει, το επιστρεφόμενο string
+// εκτυπώνεται στην τελευταία στήλη του ημερήσιου δελτίου, η οποία
+// αφορά στα λεπτά περικοπής.
 
 ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
 	let err = '';
