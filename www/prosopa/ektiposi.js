@@ -15,6 +15,7 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+//
 // Το παρόν αποτελεί προσάρτημα του www/prosopa/main.js και περιλαμβάνει
 // κώδικα εκτυπώσεων δελτίων προσέλευσης/αποχώρησης. Ο χρήστης δρομολογεί
 // εκτύπωση μέσω των default εργαλείων του browser, είτε με Control+P, είτε
@@ -98,8 +99,16 @@ ektiposi.ante = () => {
 	return ektiposi;
 };
 
+// Η function "post" καλείται μετά το πέρας της εκτύπωσης του δελτίου.
+
 ektiposi.post = () => {
+	// Επαναφέρουμε το είδος εκτύπωσης στο default (undefined)
+
 	delete ektiposi.ektipotiko;
+
+	// Επαναφέρουμε την function εκτύπωσης εγγραφών παρουσίας στην
+	// default function εκτύπωσης εγγραφών παρουσίας.
+
 	ektiposi.prosopa = ektiposi.prosopaDeltio;
 
 	return ektiposi;
