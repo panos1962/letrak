@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-07-01
 // Updated: 2020-06-27
 // Updated: 2020-06-26
 // Updated: 2020-06-25
@@ -155,8 +156,8 @@ pnd.domInit(() => {
 	prosopa.
 	selidaSetup();
 
-	window.onbeforeprint = ektiposi.ante;
-	window.onafterprint = ektiposi.post;
+	window.onbeforeprint = ektiposi.before;
+	window.onafterprint = ektiposi.after;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@

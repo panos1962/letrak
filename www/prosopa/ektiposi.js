@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-07-01
 // Updated: 2020-06-30
 // Updated: 2020-06-29
 // Updated: 2020-06-28
@@ -71,8 +72,8 @@ const ektiposi = {};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// Η εκτύπωση του δελτίου προσέλευσης/αποχώρησης δημιουργείται ως κόμβος τής
-// βασικής δελίδας επεξεργασίας λεπτομερειών του δελτίου. Ο συγκεκριμένος
+// Η εκτύπωση του δελτίου προσέλευσης/αποχώρησης δημιουργείται ως DOM κόμβος
+// της βασικής δελίδας επεξεργασίας λεπτομερειών του δελτίου. Ο συγκεκριμένος
 // κόμβος δημιουργείται κατά το στήσιμο της σελίδας και «γεμίζει» κάθε φορά
 // που ο χρήστης δρομολογεί εκτύπωση δελτίου προσέλευσης/αποχώρησης ή δελτίου
 // απόντων.
@@ -82,46 +83,51 @@ ektiposi.setup = () => {
 	attr('id', 'ektiposi').
 	appendTo(pnd.bodyDOM);
 
+	ektiposi.reset();
 	return ektiposi;
 };
 
-// Η function "ante" καλείται αμέσως μετά τη δρομολόγηση εκτύπωσης του δελτίου
-// από τον χρήστη και πριν αρχίσει να δημιουργείται το περιεχόμενο του κόμβου
-// εκτύπωσης, επομένως είναι το σωστό σημείο να λάβουν χώρα οι απαραίτητες
-// εργασίες προετοιμασίας.
+// Η function "before" καλείται αμέσως μετά τη δρομολόγηση εκτύπωσης του
+// δελτίου από τον χρήστη και πριν αρχίσει να δημιουργείται το περιεχόμενο
+// του κόμβου εκτύπωσης, επομένως είναι το σωστό σημείο να λάβουν χώρα οι
+// απαραίτητες εργασίες προετοιμασίας.
 
-ektiposi.ante = () => {
+ektiposi.before = () => {
 	ektiposi.
-	reset().
 	deltio().
 	prosopa();
 
 	return ektiposi;
 };
 
-// Η function "post" καλείται μετά το πέρας της εκτύπωσης του δελτίου.
+// Η function "after" καλείται μετά το πέρας ή την ακύρωση της εκτύπωσης
+// και σκοπό έχει να «αδειάσει» τον κόμβο εκτύπωσης και να επαναφέρει τις
+// διαδικασίες εκτύπωσης στις default διαδικασίες εκτύπωσης δελτίου.
 
-ektiposi.post = () => {
-	// Επαναφέρουμε το είδος εκτύπωσης στο default (undefined)
+ektiposi.after = () => {
+	ektiposi.bodyDOM.
+	empty();
 
-	delete ektiposi.ektipotiko;
+	ektiposi.reset();
+	return ektiposi;
+};
 
-	// Επαναφέρουμε την function εκτύπωσης εγγραφών παρουσίας στην
-	// default function εκτύπωσης εγγραφών παρουσίας.
+// Σε γενικές γραμμές τα διάφορα εκτυπωτικά του δελτίου μοιάζουν μεταξύ τους.
+// Ωστόσο σε αρκετά σημεία υπάρχουν διαφοροποιήσεις οι οποίες έχουν απομονωθεί
+// σε functions (dirvers) που τίθενται κατά τη διαδικασία επιλογής εκτύπωσης
+// από τον χρήστη. Η function "reset" θέτει ή επαναφέρει τους drivers στους
+// default drivers εκτύπωσης δελτίου.
 
+ektiposi.reset = () => {
+	ektiposi.ektipotiko = 'Deltio';
+	ektiposi.titlosGet = ektiposi.titlosGetDeltio;
+	ektiposi.perigrafiGet = ektiposi.perigrafiGetDeltio;
 	ektiposi.prosopa = ektiposi.prosopaDeltio;
 
 	return ektiposi;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
-
-ektiposi.reset = () => {
-	ektiposi.bodyDOM.
-	empty();
-
-	return ektiposi;
-};
 
 ektiposi.deltio = () => {
 	let deltioDOM = $('<div>').
@@ -163,8 +169,7 @@ ektiposi.deltio = () => {
 
 	append($('<div>').
 	addClass('ektiposi-deltioPerigrafi').
-	html(prosopa.deltio.kodikosGet() + '.&nbsp;' +
-		prosopa.deltio.perigrafiGet()))).
+	html(ektiposi.perigrafiGet()))).
 
 	append($('<div>').
 	addClass('ektiposi-deltioDexia').
@@ -337,16 +342,36 @@ ektiposi.prosopaImerisio = (plist) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-ektiposi.titlosGet = () => {
-	switch (ektiposi.ektipotiko) {
-	case 'Apontes':
-		return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
-	case 'Imerisio':
-		return 'ΗΜΕΡΗΣΙΟ ΔΕΛΤΙΟ ΠΡΟΣΕΛΕΥΣΗΣ/ΑΠΟΧΩΡΗΣΗΣ';
-	}
-
+ektiposi.titlosGetDeltio = () => {
 	return 'Δελτίο ' + prosopa.deltio.prosapoGet() + 'Σ Εργαζομένων';
 };
+
+ektiposi.titlosGetApontes = () => {
+	return 'ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ';
+};
+
+ektiposi.titlosGetImerisio = () => {
+	return 'ΗΜΕΡΗΣΙΟ ΔΕΛΤΙΟ ΠΡΟΣΕΛΕΥΣΗΣ/ΑΠΟΧΩΡΗΣΗΣ';
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+ektiposi.perigrafiGetDeltio = () => {
+	return prosopa.deltio.kodikosGet() + '.&nbsp;' +
+		prosopa.deltio.perigrafiGet();
+};
+
+ektiposi.perigrafiGetImerisio = (rsp) => {
+	let x = '';
+
+	x = pnd.strPush(x, rsp.proselefsi);
+	x = pnd.strPush(x, rsp.apoxorisi, '&ndash;');
+	x = pnd.strPush(x, prosopa.deltio.perigrafiGet(), '.&nbsp;');
+
+	return x;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 // Η function "parousiaDOM" δέχεται ως παράμετρο το DOM element υπαλλήλου και
 // επιστρέφει το αντίστοιχο DOM element για τη σελίδα εκτύπωσης του δελτίου.
@@ -514,6 +539,8 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 ektiposi.deltioAponton = (e) => {
 	prosopa.ergaliaDOM.dialog('close');
 	ektiposi.ektipotiko = 'Apontes';
+	ektiposi.titlosGet = ektiposi.titlosGetApontes;
+	ektiposi.perigrafiGet = ektiposi.perigrafiGetDeltio;
 	ektiposi.prosopa = ektiposi.prosopaApontes;
 	window.print();
 };
@@ -551,6 +578,8 @@ ektiposi.imerisioProcess = (rsp) => {
 
 	pnd.fyiClear();
 	ektiposi.ektipotiko = 'Imerisio';
+	ektiposi.titlosGet = ektiposi.titlosGetImerisio;
+	ektiposi.perigrafiGet = () => ektiposi.perigrafiGetImerisio(rsp);
 	ektiposi.prosopa = () => ektiposi.prosopaImerisio(rsp.parousia);
 
 	window.print();
