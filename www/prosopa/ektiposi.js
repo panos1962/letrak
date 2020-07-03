@@ -206,6 +206,12 @@ ektiposi.deltio = () => {
 	return ektiposi;
 };
 
+// Η function "prosopa" εκτυπώνει το σώμα του δελτίου, δηλαδή τις εγγραφές
+// παρουσίας. Στην default εκτύπωση δελτίου εκτυπώνονται όλα τα στοιχεία
+// της παρουσίας, δηλαδή τα στοιχεία ταυτότητας του υπαλλήλου, το ωράριο,
+// ο αριθμός κάρτας, η ημερομηνία και η ώρα συμβάντος, η αιτιολογία έλλειψης
+// ημερομηνίας και ώρας συμβάντος, τα στοιχεία αδείας, και τα σχόλια.
+
 ektiposi.prosopa =
 ektiposi.prosopaDeltio = () => {
 	let plist = prosopa.browserDOM.children();
@@ -238,6 +244,10 @@ ektiposi.prosopaDeltio = () => {
 
 	return ektiposi;
 };
+
+// Η function "prosopaApontes" εκτυπώνει μόνο τις εγγραφές παρουσίας που
+// αφορούν στους αδειούχους και στους υπαλλήλους που δεν έχουν συμπληρωμένη
+// ημερομηνία ώρα συμβάντος χωρίς αιτιολόγηση.
 
 ektiposi.prosopaApontes = () => {
 	let plist = prosopa.browserDOM.children();
