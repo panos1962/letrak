@@ -2077,7 +2077,7 @@ prosopa.katagrafiShow = () => {
 	data.karta = prosopa.editorIpalilosKartaDOM.val();
 
 	if (!data.karta)
-	return prosopa.fyiError('Απροσδιόριστος αριθμός κάρτας εργαζομένου');
+	return prosopa.katagrafiProcess();
 
 	if (data.karta != parseInt(data.karta))
 	return prosopa.fyiError('Μη αποδεκτός αριθμός κάρτας εργαζομένου');
@@ -2115,6 +2115,16 @@ prosopa.katagrafiShow = () => {
 //		δελτίου, τότε θα εμφανιστούν 3 καταγραφές πριν και 3 μετά.
 
 prosopa.katagrafiProcess = (rsp) => {
+	if (!rsp)
+	rsp = {
+		"prin": [],
+		"meta": [],
+		"max": 0,
+	};
+
+	if (rsp.error)
+	return pnd.fyiError(rsp.error);
+
 	pnd.fyiMessage();
 
 	// Το πρώτο στοιχείο στο χωρίο καταγραφών είναι πλήκτρο καθαρισμού
@@ -2155,7 +2165,6 @@ prosopa.katagrafiProcess = (rsp) => {
 	// Τέλος, καθιστούμε το χωρίο που μόλις κατασκευάσαμε εμφανές.
 
 	prosopa.editorKatagrafiDOM.css('visibility', 'visible');
-	return prosopa;
 };
 
 // Η function "katagrafiGet" καλείται όταν ο χρήστης κάνει κλικ σε κάποιο
