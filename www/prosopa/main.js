@@ -1368,7 +1368,11 @@ prosopa.editorSetup = () => {
 	prosopa.alagiOkIndicatorDOM = $('#peAlagiOkIndicator');
 	prosopa.ipalilosZoomDOM = $('#peIpalilosZoom').
 	on('click', '.ipalilosZoom', function(e) {
-		prosopa.ipalilosZoomEpilogi(e, $(this));
+		prosopa.editorIpalilosKodikosDOM.
+		val($(this).children('.ipalilosZoomKodikos').text());
+
+		prosopa.editorIpalilosOnomateponimoDOM.
+		val($(this).children('.ipalilosZoomOnomateponimo').text());
 	});
 
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
@@ -1651,8 +1655,15 @@ prosopa.parousiaEdit = (e, parousia) => {
 		attr('disabled', false).
 		val('').
 		on('keyup', (e) => prosopa.ipalilosZoom(e)).
-		on('blur', (e) => prosopa.ipalilosZoomClose(e));
-		//on('blur', (e) => $.noop());
+		on('blur', (e) => {
+			e.stopPropagation();
+
+			// Επειδή το blur ενεργοποιείται και όταν κάνουμε κλικ
+			// σε κάποιον υπάλληλο στη zoom φόρμα, φροντίζουμε να
+			// αφήσουμε λίγο χρόνο πριν κλείσουμε τη zoom φόρμα.
+
+			setTimeout(() => prosopa.ipalilosZoomClose(), 100);
+		});
 
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val('');
@@ -1941,24 +1952,12 @@ prosopa.ipalilosZoomDomGet = (x, n) => {
 	text(x.g));
 };
 
-prosopa.ipalilosZoomClose = (e) => {
-	if (e)
-	e.stopPropagation();
-
+prosopa.ipalilosZoomClose = () => {
 	prosopa.ipalilosZoomDOM.
 	css('display', '').
 	empty();
 
 	return prosopa;
-};
-
-prosopa.ipalilosZoomEpilogi = (e, dom) => {
-	prosopa.ipalilosZoomDOM.
-	children('.ipalilosZoomEpilogi').
-	removeClass('.ipalilosZoomEpilogi');
-
-	if (dom.hasClass('ipalilosZoom'))
-	dom.addClass('ipalilosZoomEpilogi');
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
