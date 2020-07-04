@@ -110,6 +110,7 @@ prosopa.minima = {
 	'winpakTabLabel': 'WIN-PAK',
 	'katagrafiKatharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
+	'katagrafiNoEvent': 'Δεν εντοπίστηκαν καταγεγραμμένα συμβάντα',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -2116,9 +2117,7 @@ prosopa.katagrafiShow = () => {
 prosopa.katagrafiProcess = (rsp) => {
 	if (!rsp)
 	rsp = {
-		"prin": [],
-		"meta": [],
-		"max": 0,
+		"noEvent": true,
 	};
 
 	if (rsp.error)
@@ -2126,13 +2125,23 @@ prosopa.katagrafiProcess = (rsp) => {
 
 	pnd.fyiMessage();
 
-	// Το πρώτο στοιχείο στο χωρίο καταγραφών είναι πλήκτρο καθαρισμού
-	// του πεδίου καταγραφής.
+	prosopa.editorKatagrafiDOM.
+	css('visibility', 'visible').
+	empty();
+
+	if (rsp.noEvent)
+	return prosopa.editorKatagrafiDOM.
+	append($('<div>').
+	addClass('peKatagrafiNoEvent').
+	text(prosopa.minima.katagrafiNoEvent)).
+	append($('<div>').
+	text(prosopa.minima.katagrafiOrario));
 
 	prosopa.editorKatagrafiDOM.
-	empty().
-	append($('<div>').text(prosopa.minima.katagrafiKatharismos)).
-	append($('<div>').text(prosopa.minima.katagrafiOrario));
+	append($('<div>').
+	text(prosopa.minima.katagrafiKatharismos)).
+	append($('<div>').
+	text(prosopa.minima.katagrafiOrario));
 
 	// Αφαιρούμε στοιχεία από τα arrays "prin" και "meta" προκειμένου
 	// να μην υπερβαίνουν στο σύνολο το μέγιστο πλήθος καταγραφών που
@@ -2160,10 +2169,6 @@ prosopa.katagrafiProcess = (rsp) => {
 	prosopa.editorKatagrafiDOM.
 	append($('<div>').
 	text(rsp.meta.shift()));
-
-	// Τέλος, καθιστούμε το χωρίο που μόλις κατασκευάσαμε εμφανές.
-
-	prosopa.editorKatagrafiDOM.css('visibility', 'visible');
 };
 
 // Η function "katagrafiGet" καλείται όταν ο χρήστης κάνει κλικ σε κάποιο
@@ -2188,6 +2193,9 @@ prosopa.katagrafiGet = (e, dom) => {
 
 	else if (x === prosopa.minima.katagrafiOrario)
 	x = prosopa.katagrafiApoOrarioGet();
+
+	else if (x === prosopa.minima.katagrafiNoEvent)
+	x = '';
 
 	// Θέτουμε την τιμή του πεδίου καταγραφής και εφαρμόζουμε λίγο
 	// animation με τα χρώματα του πεδίου καταγραφής προκειμένου να
