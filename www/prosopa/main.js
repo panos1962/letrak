@@ -289,6 +289,7 @@ prosopa.deltioProcess = (deltio) => {
 
 prosopa.deltioProsapoProcess = () => {
 	prosopa.editorDeltioProsapoDOM.
+	addClass('deltioProsapo').
 	removeClass('deltioProsapoProselefsi').
 	removeClass('deltioProsapoApoxorisi');
 
@@ -302,6 +303,9 @@ prosopa.deltioProsapoProcess = () => {
 	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		prosopa.editorDeltioProsapoDOM.
 		addClass('deltioProsapoApoxorisi');
+		break;
+	default:
+		prosapo = php.defs.LETRAK_DELTIO_PROSAPO_PROTIPO;
 		break;
 	}
 
@@ -2589,8 +2593,12 @@ prosopa.winpakProcess = (rsp) => {
 letrak.deltio.prototype.domGet = function() {
 	let ipiresia = this.ipiresiaGet();
 	let ipiresiaDOM;
-	let prosapo = this.prosapoGet();
 	let imerominia = pnd.imerominia(this.imerominiaGet());
+	let prosapo = this.prosapoGet();
+	let prosapoDOM;
+
+	if (!prosapo)
+	prosapo = php.defs.LETRAK_DELTIO_PROSAPO_PROTIPO;
 
 	let dom = $('<div>').
 	addClass('deltio').
@@ -2610,11 +2618,8 @@ letrak.deltio.prototype.domGet = function() {
 	addClass('deltioIpiresia').
 	text(ipiresia)).
 
-	append($('<div>').
+	append(prosapoDOM = $('<div>').
 	addClass('deltioProsapo').
-	addClass('deltioProsapo' +
-	(prosapo === php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI ?
-		'Proselefsi' : 'Apoxorisi')).
 	text(prosapo)).
 
 	append($('<div>').
@@ -2623,6 +2628,15 @@ letrak.deltio.prototype.domGet = function() {
 
 	if (letrak.prosvasiIsUpdate(ipiresia))
 	ipiresiaDOM.addClass('deltioIpiresiaUpdate');
+
+	switch (prosapo) {
+	case php.defs.LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+		prosapoDOM.addClass('deltioProsapoProselefsi');
+		break;
+	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
+		prosapoDOM.addClass('deltioProsapoApoxorisi');
+		break;
+	}
 
 	return dom;
 };
