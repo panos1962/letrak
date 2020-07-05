@@ -272,6 +272,9 @@ document_body();
 			Ωράριο
 		</label>
 		<input id="protipoOrario" class="orarioPedio">
+		<div id="protipoOrarioInfo">
+			συμπληρώστε ωράριο για όλους (προαιρετικό)
+		</div>
 	</div>
 
 	<div id="protipoPanel">

@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-07-05
 // Updated: 2020-07-01
 // Updated: 2020-06-27
 // Updated: 2020-06-26
@@ -1968,6 +1969,7 @@ prosopa.protipoSetup = () => {
 	on('submit', (e) => prosopa.protipoMetatropiExec(e));
 
 	prosopa.protipoPerigrafiDOM = $('#protipoPerigrafi');
+	prosopa.protipoOrarioDOM = $('#protipoOrario');
 
 	prosopa.protipoIpovoliDOM = $('#protipoPliktroMetatropi').
 	on('click', (e) => prosopa.protipoMetatropiExec(e));
@@ -2003,7 +2005,32 @@ prosopa.protipoSetup = () => {
 };
 
 prosopa.protipoMetatropiExec = (e) => {
+	pnd.fyiMessage('μετατροπή δελτίου σε πρότυπο…');
+	$.post({
+		'url': 'protipoMetatropi.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltio.kodikosGet(),
+			'orario': prosopa.protipoOrarioDOM.val(),
+		},
+		'success': (rsp) => prosopa.protipoMetatropiPost(rsp),
+		'error': (err) => prosopa.protipoMetatropiError(err),
+	});
+
 	return false;
+};
+
+prosopa.protipoMetatropiPost = (rsp) => {
+	if (rsp)
+	return pnd.fyiError(rsp);
+
+	// Refresh
+	location.reload();
+};
+
+prosopa.protipoMetatropiError = (err) => {
+	pnd.fyiError('Απέτυχε η μετατροπή του δελτίου σε πρότυπο');
+	console.error(err);
 };
 
 prosopa.protipoClose = (e) => {

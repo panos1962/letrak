@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2020-07-05
 * Updated: 2020-06-11
 * Updated: 2020-06-10
 * Updated: 2020-06-08
@@ -542,6 +543,23 @@ $ordinalWidth = 2.2em
 .protipoPliktro
 	padding 2px 6px
 	background-color beige !important
+
+#protipoOrarioInfo
+	display inline-block
+	font-style italic
+	color grey
+
+#protipoOrarioInfo::before
+	content '['
+	margin-right 2px
+	font-style normal
+	color black
+
+#protipoOrarioInfo::after
+	content ']'
+	margin-left 2px
+	font-style normal
+	color black
 
 #orariaDiagrafiForma
 	display none
