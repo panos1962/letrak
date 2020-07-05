@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-07-05
 // Updated: 2020-06-14
 // Updated: 2020-06-11
 // Updated: 2020-05-19
@@ -364,6 +365,8 @@ deltio.filtraFormaClear = (e) => {
 	e.stopPropagation();
 	deltio.filtraIpiresiaDOM.val('').focus();
 	deltio.filtraImerominiaDOM.val('');
+	deltio.filtraProsapoDOM.val('');
+	deltio.filtraKatastasiDOM.val('');
 
 	if (!deltio.filtraIpalilosDOM.attr('disabled'))
 	deltio.filtraIpalilosDOM.val('');
