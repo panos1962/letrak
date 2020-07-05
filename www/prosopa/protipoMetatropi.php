@@ -74,32 +74,8 @@ lathos("Το παρουσιολόγιο έχει κυρωθεί");
 if ($prosvasi->oxi_deltio_edit($deltio_kodikos))
 lathos("Access denied");
 
-$orario = pandora::parameter_get("orario");
-
-if (isset($orario) && $orario) {
-	$x = new Orario($orario);
-
-	if ($x->oxi_orario())
-	lathos($orario . ": μη αποδεκτό ωράριο");
-
-	$orario = $x->to_string();
-}
-
-else
-unset($orario);
-
-///////////////////////////////////////////////////////////////////////////////@
-
-// Πρώτα ελέγχουμε αν το δελτίο έχει ήδη χρησιμοποιηθεί ως πρότυπο
-// μεταγενέστερου δελτίου. Σ' αυτήν την περίπτωση το δελτίο δεν μπορεί
-// να μετατραπεί σε πρότυπο, καθώς έτσι θα «σπάσει» η σειρά των δελτίων.
-
-$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
-	" WHERE `protipo` = " . $deltio_kodikos;
-$x = pandora::first_row($query);
-
-if (isset($x))
-lathos("Το δελτίο έχει ήδη χρησιμοποιηθεί ως πρότυπο άλλου δελτίου");
+$orario = orario_get();
+deltio_check($deltio_kodikos);
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -142,6 +118,43 @@ pandora::query($query);
 
 pandora::commit();
 exit(0);
+
+// Η function "orario_get" ελέγχει αν έχει δοθεί παράμετρος ωραρίου.
+// Η παράμετρος ωραρίου καθορίζει το default ωράριο για όλους τους
+// υπαλλήλους που εμπλέκονται στο δελτίο.
+//
+// Η function επιστρέφει το ωράριο ως string στην περίπτωση που έχει
+// δοθεί, αλλιώς επιστρέφει null. Αν έχει δοθεί μη αποδεκτό ωράριο,
+// τότε το πρόγραμμα διακόπτεται και επιστρέφεται μήνυμα λάθους.
+
+function orario_get() {
+	$orario = pandora::parameter_get("orario");
+
+	if (!isset($orario))
+	return NULL;
+
+	if (!$orario)
+	return NULL;
+
+	$x = new Orario($orario);
+
+	if ($x->oxi_orario())
+	lathos($orario . ": μη αποδεκτό ωράριο");
+
+	return $x->to_string();
+}
+
+// Η function "deltio_check" ελέγχει αν το δελτίο έχει ήδη χρησιμοποιηθεί ως
+// πρότυπο μεταγενέστερου δελτίου. Σε αυτήν την περίπτωση το δελτίο δεν μπορεί
+// να μετατραπεί σε πρότυπο, καθώς έτσι θα «σπάσει» η σειρά των δελτίων.
+
+function deltio_check($deltio) {
+	$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
+		" WHERE `protipo` = " . $deltio;
+
+	if (pandora::first_row($query))
+	lathos("Το δελτίο έχει ήδη χρησιμοποιηθεί ως πρότυπο άλλου δελτίου");
+}
 
 function lathos($s) {
 	print $s;
