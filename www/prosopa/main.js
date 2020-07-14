@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-07-14
 // Updated: 2020-07-05
 // Updated: 2020-07-01
 // Updated: 2020-06-27
@@ -1266,20 +1267,6 @@ prosopa.orariaDiagrafi = (e) => {
 	return false;
 };
 
-prosopa.protipoMetatropi = (e) => {
-	e.stopPropagation();
-
-	if (!prosopa.deltio)
-	return;
-
-	let ipiresia = prosopa.deltio.ipiresiaGet();
-
-	if (letrak.prosvasiOxiAdmin(ipiresia))
-	return;
-
-	prosopa.protipoDOM.dialog('open');
-};
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.prosopaSetup = () => {
@@ -1546,9 +1533,9 @@ prosopa.orarioEdit = (e, fld) => {
 	if (!orario) {
 		switch (step) {
 		case misaoro:
-			return fld.val('07:00-15:00');
+			return fld.val(letrak.orario.defaultAsString);
 		case oktaoro:
-			return fld.val('07:00-15:00');
+			return fld.val(letrak.orario.defaultAsString);
 		}
 
 		return;
@@ -1587,7 +1574,7 @@ prosopa.orarioEdit = (e, fld) => {
 			step = (prosimo > 0 ? 540 : 480);
 			break;
 		default:
-			return fld.val('07:00-15:00');
+			return fld.val(letrak.orario.defaultAsString);
 		}
 	}
 
@@ -1635,6 +1622,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosthiki = true;
 		prosopa.editorIpovoliDOM.val('Προσθήκη')
 		parousia = new letrak.parousia();
+		parousia.orarioSet(letrak.orario.defaultAsString);
 		prosopa.editorDiagrafiDOM.css('display', 'none');
 		prosopa.editorEpanaforaDOM.css('display', 'none');
 		prosopa.parousiaEditorDOM.data('prosthiki', true);
@@ -2006,6 +1994,20 @@ prosopa.protipoSetup = () => {
 	dialog('close');
 
 	return prosopa;
+};
+
+prosopa.protipoMetatropi = (e) => {
+	e.stopPropagation();
+
+	if (!prosopa.deltio)
+	return;
+
+	let ipiresia = prosopa.deltio.ipiresiaGet();
+
+	if (letrak.prosvasiOxiAdmin(ipiresia))
+	return;
+
+	prosopa.protipoDOM.dialog('open');
 };
 
 prosopa.protipoMetatropiExec = (e) => {
