@@ -887,6 +887,10 @@ class Deltio {
 		return pandora::first_row($query);
 	}
 
+	public function oxi_simetexon($ipalilos = NULL) {
+		return !$this->is_simetexon();
+	}
+
 	public function sxetikos_ipalilos($ipalilos = NULL) {
 		$deltio = $this->kodikos_get();
 

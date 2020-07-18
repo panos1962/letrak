@@ -75,6 +75,9 @@ default:
 	letrak::fatal_error_json("Μη αποδεκτό είδος δελτίου");
 }
 
+if (!is_prosvasi())
+letrak::fatal_error_json("Δεν έχετε πρόσβαση εκτύπωσης ημερήσιου δελτίου");
+
 $parousia = array();
 
 parousia_get($apoxorisi, "a");
@@ -122,6 +125,43 @@ function proselefsi_get($deltio) {
 	letrak::fatal_error_json("Δεν εντοπίστηκε σχετικό δελτίο προσέλευσης");
 
 	return $x;
+}
+
+function is_prosvasi() {
+	global $prosvasi;
+	global $proselefsi;
+	global $apoxorisi;
+
+	$ipalilos = $prosvasi->ipalilos;
+	$ok = TRUE;
+
+	if ($proselefsi->oxi_ipografon($ipalilos))
+	$ok = FALSE;
+
+	if ($apoxorisi->oxi_ipografon($ipalilos))
+	$ok = FALSE;
+
+	if ($ok)
+	return TRUE;
+
+	$ok = TRUE;
+
+	if ($proselefsi->oxi_simetexon($ipalilos))
+	$ok = FALSE;
+
+	if ($apoxorisi->oxi_simetexon($ipalilos))
+	$ok = FALSE;
+
+	if ($ok)
+	return TRUE;
+
+	if ($prosvasi->oxi_prosvasi_ipiresia($proselefsi->ipiresia_get()))
+	return FALSE;
+
+	if ($prosvasi->oxi_prosvasi_ipiresia($apoxorisi->ipiresia_get()))
+	return FALSE;
+
+	return TRUE;
 }
 
 function parousia_get($deltio, $prosapo) {
