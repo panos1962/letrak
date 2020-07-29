@@ -251,7 +251,7 @@ ektiposi.prosopaDeltio = () => {
 
 ektiposi.prosopaApontes = () => {
 	let plist = prosopa.browserDOM.children();
-	let parea = ektiposi.bodyDOM;
+	let parea = ektiposi.bodyDOM;	// printing area
 	let count = plist.length;
 	let aa = 0;
 
