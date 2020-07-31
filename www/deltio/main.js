@@ -70,6 +70,7 @@ deltio.minima = {
 	'filtraShowTitle': 'Εμφάνιση φίλτρων',
 	'filtraIpalilosLabel': 'Υπάλληλος',
 	'filtraImerominiaLabel': 'Ημερομηνία',
+	'filtraEosLabel': 'Έως',
 	'filtraProsapoLabel': 'Είδος',
 	'filtraKatastasiLabel': 'Κατάσταση',
 	'filtraIpiresiaLabel': 'Υπηρεσία',
@@ -172,6 +173,9 @@ deltio.filtraSetup = () => {
 	attr('id', 'ipiresiaFiltro').
 	addClass('filtraInput'))).
 
+	// Το βασικό φίλτρο ημερομηνίας καθορίζει από ποια ημερομηνία
+	// και πίσω επιθυμούμε να επιλέξουμε δελτία.
+
 	append($('<div>').
 	addClass('letrak-inputLine').
 	append($('<label>').
@@ -179,6 +183,19 @@ deltio.filtraSetup = () => {
 	text(deltio.minima.filtraImerominiaLabel)).
 	append(deltio.filtraImerominiaDOM = $('<input>').
 	attr('id', 'imerominiaFiltro').
+	addClass('filtraInput').
+	datepicker())).
+
+	// Το δευτερεύον φίλτρο ημερομηνίας καθορίζει μέχρι και
+	// ποια ημερομηνία επιθυμούμε να επιλέξουμε δελτία.
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append($('<label>').
+	attr('for', 'eosFiltro').
+	text(deltio.minima.filtraEosLabel)).
+	append(deltio.filtraEosDOM = $('<input>').
+	attr('id', 'eosFiltro').
 	addClass('filtraInput').
 	datepicker())).
 
@@ -348,6 +365,7 @@ deltio.filtraFormaIpovoli = (e) => {
 	let data = {
 		'ipiresia': deltio.filtraIpiresiaDOM.val(),
 		'imerominia': deltio.filtraImerominiaDOM.val(),
+		'eos': deltio.filtraEosDOM.val(),
 		'prosapo': deltio.filtraProsapoDOM.val(),
 		'katastasi': deltio.filtraKatastasiDOM.val(),
 		'ipalilos': deltio.filtraIpalilosDOM.val(),
