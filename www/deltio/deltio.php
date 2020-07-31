@@ -28,6 +28,9 @@
 // imerominia	Επιλέγονται παρουσιολόγια από την συγκεκριμένη ημερομηνία
 //		και πίσω.
 //
+// eos		Επιλέγονται όλα τα παρουσιολόγια μέχρι και την συγκεκριμένη
+//		ημερομηνία.
+//
 // prosapo	Επιλέγονται παρουσιολόγια προσέλευσης, αποχώρησης ή όλα,
 //		ανάλογα με το αν η τιμή της παραμέτρου είναι "ΠΡΟΣΕΛΕΥΣΗ",
 //		"ΑΠΟΧΩΡΗΣΗ" ή κενό αντίστοιχα.
@@ -114,6 +117,29 @@ if ($x) {
 	lathos_imerominia($x);
 
 	$query .= $enotiko . " (`imerominia` <= " .
+		pandora::sql_string($d) . ")";
+	$enotiko = " AND";
+}
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Το κριτήριο κάτω ορίου ημερομηνίας έχει format "D-M-Y", οπότε το
+// μετατρέπουμε στο λογικότερο "Y-M-D".
+
+$eos = pandora::parameter_get("eos");
+
+if ($eos) {
+	$d = DateTime::createFromFormat("d-m-Y", $eos);
+
+	if ($d === FALSE)
+	lathos_imerominia($eos);
+
+	$d = $d->format("Y-m-d");
+
+	if ($d === FALSE)
+	lathos_imerominia($eos);
+
+	$query .= $enotiko . " (`imerominia` >= " .
 		pandora::sql_string($d) . ")";
 	$enotiko = " AND";
 }
@@ -217,6 +243,11 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	if (!$imerominia)
 	continue;
 
+	if ($eos) {
+		print_deltio($enotiko, $deltio);
+		continue;
+	}
+
 	$count++;
 
 	// Αν είναι το πρώτο παρουσιολόγιο που επιλέγουμε, κρατάμε την
@@ -241,14 +272,18 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		$imerominia_last = $imerominia;
 	}
 
-	print $enotiko . $deltio->json_economy();
-	$enotiko = ",";
+	print_deltio($enotiko, $deltio);
 }
 
 print ']}';
 exit(0);
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+function print_deltio(&$enotiko, $deltio) {
+	print $enotiko . $deltio->json_economy();
+	$enotiko = ",";
+}
 
 function lathos($s) {
 	letrak::fatal_error_json($s);
