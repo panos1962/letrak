@@ -383,6 +383,7 @@ deltio.filtraFormaClear = (e) => {
 	e.stopPropagation();
 	deltio.filtraIpiresiaDOM.val('').focus();
 	deltio.filtraImerominiaDOM.val('');
+	deltio.filtraEosDOM.val('');
 	deltio.filtraProsapoDOM.val('');
 	deltio.filtraKatastasiDOM.val('');
 
