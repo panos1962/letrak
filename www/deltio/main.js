@@ -112,7 +112,14 @@ pnd.domInit(() => {
 
 	deltio.
 	selidaSetup();
+
+	self.onunload = deltio.onclose;
 });
+
+deltio.onclose = () => {
+	if (deltio.reportWindow)
+	deltio.reportWindow.close();
+};
 
 deltio.selidaSetup = () => {
 	letrak.
@@ -412,6 +419,12 @@ deltio.filtraFormaCancel = (e) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 deltio.reportsSetup = () => {
+	$('#reportAdiaGrid').
+	on('click', (e) => deltio.reportWindowOpen(e, 'adiaGrid'));
+
+	$('#reportAdiaFull').
+	on('click', (e) => deltio.reportWindowOpen(e, 'adiaFull'));
+
 	deltio.reportsDOM = $('#reports');
 
 	deltio.reportsDOM.
@@ -456,6 +469,28 @@ deltio.reportsToggle = (e) => {
 
 	else
 	deltio.reportsShow();
+
+	return deltio;
+};
+
+deltio.reportWindowOpen = (e, url) => {
+	e.stopPropagation();
+
+	if (deltio.reportWindow)
+	deltio.reportWindowClose();
+
+	deltio.reportWindow = window.open(url, 'reports');
+	deltio.reportWindow.onbeforeunload = () => delete deltio.reportWindow;
+
+	return deltio;
+};
+
+deltio.reportWindowClose = () => {
+	if (!deltio.reportWindow)
+	return deltio;
+
+	deltio.reportWindow.close();
+	delete deltio.reportWindow;
 
 	return deltio;
 };
