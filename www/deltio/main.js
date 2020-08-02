@@ -24,6 +24,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-08-02
+// Updated: 2020-08-01
 // Updated: 2020-07-05
 // Updated: 2020-06-14
 // Updated: 2020-06-11
@@ -91,6 +93,7 @@ deltio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
+	'reportsTabLabel': 'Εκτυπώσεις',
 
 	'deltioKatastasiΕΚΚΡΕΜΕΣSymbol': '&#x25D4;',
 	'deltioKatastasiΑΝΥΠΟΓΡΑΦΟSymbol': '&#x25D1;',
@@ -130,6 +133,7 @@ deltio.selidaSetup = () => {
 	klonismosSetup().
 	browserSetup().
 	filtraSetup().
+	reportsSetup().
 	autoFind().
 	candiTabsSetup();
 
@@ -157,7 +161,12 @@ deltio.filtraSetup = () => {
 	addClass('deltioTab').
 	attr('title', deltio.minima.paleoteraTitle).
 	append(deltio.minima.paleoteraTabLabel).
-	on('click', (e) => deltio.paleotera(e)));
+	on('click', (e) => deltio.paleotera(e))).
+
+	append(deltio.reportsTabDOM = letrak.tabDOM().
+	addClass('deltioTab').
+	append(deltio.minima.reportsTabLabel).
+	on('click', (e) => deltio.reportsToggle(e)));
 
 	pnd.bodyDOM.
 	append(deltio.filtraDOM = $('<div>').
@@ -396,6 +405,57 @@ deltio.filtraFormaClear = (e) => {
 deltio.filtraFormaCancel = (e) => {
 	e.stopPropagation();
 	deltio.filtraDOM.dialog('close');
+
+	return deltio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+deltio.reportsSetup = () => {
+	deltio.reportsDOM = $('#reports');
+
+	deltio.reportsDOM.
+	dialog({
+		'resizable': false,
+		'title': 'Εκτυπώσεις',
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left top',
+			'at': 'left+290 top+93',
+		},
+		'open': () => deltio.reportsShow(),
+		'close': () => deltio.reportsHide(),
+	}).
+	dialog('close');
+
+	return deltio;
+};
+
+deltio.reportsShow = () => {
+	deltio.reportsDOM.
+	data('anikto', true).
+	dialog('open');
+
+	return deltio;
+};
+
+deltio.reportsHide = () => {
+	deltio.reportsDOM.
+	removeData('anikto').
+	dialog('close');
+
+	return deltio;
+};
+
+deltio.reportsToggle = (e) => {
+	let anikto = deltio.reportsDOM.data('anikto');
+
+	if (anikto)
+	deltio.reportsHide();
+
+	else
+	deltio.reportsShow();
 
 	return deltio;
 };

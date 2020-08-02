@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-08-02
 // Updated: 2020-07-07
 // Updated: 2020-04-09
 // Created: 2020-03-05
@@ -64,18 +65,27 @@ document_body();
 
 ?>
 <div id="klonismosForma">
-<div class="letrak-inputLine">
-<label for="klonismosFormaImerominia">
-Ημερομηνία
-</label>
-<input id="klonismosFormaImerominia" tabindex="-1">
+	<div class="letrak-inputLine">
+		<label for="klonismosFormaImerominia">
+			Ημερομηνία
+		</label>
+		<input id="klonismosFormaImerominia" tabindex="-1">
+	</div>
+	<div class="letrak-inputLine">
+		<label for="klonismosFormaEnarktirio">
+			Εναρκτήριο
+		</label>
+		<input id="klonismosFormaEnarktirio" tabindex="-1" type="checkbox">
+	</div>
 </div>
-<div class="letrak-inputLine">
-<label for="klonismosFormaEnarktirio">
-Εναρκτήριο
-</label>
-<input id="klonismosFormaEnarktirio" tabindex="-1" type="checkbox">
-</div>
+
+<div id="reports">
+	<div class="reportTab" id="reportAdiaGrid">
+		Εκτύπωση αδειών (grid)
+	</div>
+	<div class="reportTab" id="reportAdiaFull">
+		Αναλυτική εκτύπωση αδειών
+	</div>
 </div>
 <?php
 
