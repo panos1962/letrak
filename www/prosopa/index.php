@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-08-06
 // Updated: 2020-06-27
 // Updated: 2020-06-21
 // Updated: 2020-06-14
@@ -144,6 +145,7 @@ document_body();
 			<option value="ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ</option>
 			<option value="ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ</option>
 			<option value="ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ" class="peAdidosOmadaRepo">ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ</option>
+			<option value="ΣΥΜΠΛΗΡΩΣΗ ΩΡΑΡΙΟΥ" class="peAdidosOmadaRepo">ΣΥΜΠΛΗΡΩΣΗ ΩΡΑΡΙΟΥ</option>
 
 			<option value="ΕΙΔΙΚΗ ΑΔΕΙΑ" class="peAdidosOmadaIdiki">ΕΙΔΙΚΗ ΑΔΕΙΑ</option>
 			<option value="ΣΕΜΙΝΑΡΙΟ" class="peAdidosOmadaIdiki">ΣΕΜΙΝΑΡΙΟ</option>
