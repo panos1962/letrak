@@ -2011,7 +2011,7 @@ prosopa.protipoMetatropi = (e) => {
 };
 
 prosopa.protipoMetatropiExec = (e) => {
-	pnd.fyiMessage('μετατροπή δελτίου σε πρότυπο…');
+	pnd.fyiMessage('Μετατροπή δελτίου σε πρότυπο…');
 	$.post({
 		'url': 'protipoMetatropi.php',
 		'dataType': 'text',
