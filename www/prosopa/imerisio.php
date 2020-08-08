@@ -92,8 +92,11 @@ print '}';
 exit(0);
 
 function apoxorisi_get($deltio) {
+	$imerominia = $deltio->imerominia->format('Y-m-d');
 	$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
-		" WHERE `protipo` = " . $deltio->kodikos_get();
+		" WHERE (`imerominia` = '" . $imerominia . "')" .
+		" AND (`protipo` = " . $deltio->kodikos_get() . ")" .
+		" LIMIT 1";
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
 
@@ -110,8 +113,11 @@ function apoxorisi_get($deltio) {
 }
 
 function proselefsi_get($deltio) {
+	$imerominia = $deltio->imerominia->format('Y-m-d');
 	$query = "SELECT `protipo` FROM `letrak`.`deltio`" .
-		" WHERE `kodikos` = " . $deltio->kodikos_get();
+		" WHERE (`imerominia` = '" . $imerominia . "')" .
+		" AND (`kodikos` = " . $deltio->kodikos_get() . ")" .
+		" LIMIT 1";
 
 	$row = pandora::first_row($query, MYSQLI_NUM);
 

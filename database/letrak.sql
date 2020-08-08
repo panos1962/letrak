@@ -181,7 +181,7 @@ CREATE TABLE `deltio` (
 		`kodikos`
 	) USING HASH,
 
-	UNIQUE INDEX (
+	INDEX (
 		`protipo`
 	) USING HASH,
 
