@@ -518,14 +518,27 @@ ektiposi.ipografesDOM = () => {
 // σε κατάσταση αναμονής ελέγχου και κύρωσης από τον συγκεκριμένο υπογράφοντα.
 
 ektiposi.ipografiDOM = (deltioDOM) => {
-	let x = deltioDOM.data('checkok');
-
 	let dom = $('<div>').
 	addClass('ektiposi-ipografi');
+
+	let titlos = deltioDOM.
+	children('.ipografiTitlos').
+	text();
+
+	// Αν δεν έχει συμπληρωθεί τίτλος υπογράφοντος, τότε ο συγκεκριμένος
+	// υπογράφων δεν εμφανίζεται. Αυτό είναι χρήσιμο σε περιπτώσεις που
+	// υπογράφει μόνο ένας, π.χ. ο διευθυντής της Δημοτικής Αστυνομίας,
+	// αλλά υπάρχει πρώτος υπογράφων που είναι ο συντάξας ο οποίος όμως
+	// δεν θέλουμε να εμφανίζεται.
+
+	if (!titlos)
+	return dom;
 
 	let katastasiDOM = $('<div>').
 	addClass('ektiposi-ipografiKatastasi').
 	appendTo(dom);
+
+	let x = deltioDOM.data('checkok');
 
 	if (x)
 	katastasiDOM.
@@ -536,13 +549,9 @@ ektiposi.ipografiDOM = (deltioDOM) => {
 	katastasiDOM.
 	addClass('ektiposi-ipografiAnamoni');
 
-	x = deltioDOM.
-	children('.ipografiTitlos').
-	text();
-
 	$('<div>').
 	addClass('ektiposi-ipografiTitlos').
-	text(x).
+	text(titlos).
 	appendTo(dom);
 
 	x = deltioDOM.
