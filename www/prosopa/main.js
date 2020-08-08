@@ -2017,6 +2017,7 @@ prosopa.protipoMetatropiExec = (e) => {
 		'dataType': 'text',
 		'data': {
 			'deltio': prosopa.deltio.kodikosGet(),
+			'perigrafi': prosopa.protipoPerigrafiDOM.val(),
 			'orario': prosopa.protipoOrarioDOM.val(),
 		},
 		'success': (rsp) => prosopa.protipoMetatropiPost(rsp),

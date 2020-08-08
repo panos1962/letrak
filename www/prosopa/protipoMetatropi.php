@@ -39,6 +39,8 @@
 // deltio	Ο κωδικός του δελτίου που επιθυμούμε να μετατρέψουμε σε
 //		πρότυπο.
 //
+// perigrafi	Η περιγραφή του δελτίου. Αν δεν δοθεί τότε παραμένει ως έχει.
+//
 // orario	Default ωράριο για όλους τους εργαζόμενους του δελτίου. Αν
 //		είναι κενό ή δεν έχει δοθεί, τότε τα ωράρια παραμένουν ως
 //		έχουν.
@@ -101,9 +103,16 @@ pandora::autocommit(FALSE);
 // προσέλευσης, ούτε δελτίο αποχώρησης, και καθιστούμε το δελτίο εναρκτήριο
 // ώστε να βγει εκτός οποιασδήποτε σειράς δελτίων.
 
-$query = "UPDATE `letrak`.`deltio`" .
-	" SET `prosapo` = NULL, `protipo` = NULL" .
-	" WHERE `kodikos` = " . $deltio_kodikos;
+$query = "UPDATE `letrak`.`deltio` SET";
+
+$perigrafi = pandora::parameter_get("perigrafi");
+
+if (isset($perigrafi) && ($perigrafi))
+$query .= " `perigrafi` = " . pandora::sql_string($perigrafi) . ", ";
+
+$query .= "`prosapo` = NULL, `protipo` = NULL " .
+	"WHERE `kodikos` = " . $deltio_kodikos;
+
 pandora::query($query);
 
 if (pandora::affected_rows() !== 1) {
