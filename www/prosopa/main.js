@@ -1145,6 +1145,9 @@ prosopa.ergaliaSetup = () => {
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
+	$('#deltioPlires').
+	on('click', (e) => ektiposi.deltioPlires(e));
+
 	$('#deltioAponton').
 	on('click', (e) => ektiposi.deltioAponton(e));
 
