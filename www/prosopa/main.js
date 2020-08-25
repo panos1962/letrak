@@ -305,6 +305,7 @@ prosopa.deltioProsapoProcess = () => {
 	case php.defs.LETRAK_DELTIO_PROSAPO_APOXORISI:
 		prosopa.editorDeltioProsapoDOM.
 		addClass('deltioProsapoApoxorisi');
+		$('#deltioImerisio').css('display', 'block');
 		break;
 	default:
 		prosapo = php.defs.LETRAK_DELTIO_PROSAPO_PROTIPO;
