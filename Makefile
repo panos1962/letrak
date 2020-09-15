@@ -49,8 +49,8 @@ status:
 diff:
 	git diff .
 
-.PHONY: show
-show:
+.PHONY: showadd
+showadd:
 	git add --dry-run .
 
 .PHONY: add
