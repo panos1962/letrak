@@ -121,6 +121,7 @@ $ordinalWidth = 2.2em
 
 .parousia
 	padding 0pt
+	height 19pt
 	white-space nowrap
 	font-family $fontSteno
 	color #232323
@@ -132,6 +133,9 @@ $ordinalWidth = 2.2em
 	> div
 		display inline-block
 		padding 2pt 4pt
+		vertical-align top
+		overflow-x hidden
+		text-overflow ellipsis
 
 		border-style none solid none none
 		border-width 0pt 1pt 0pt 0pt
@@ -153,7 +157,6 @@ $ordinalWidth = 2.2em
 
 .parousiaOnomateponimo
 	width 16em
-	vertical-align bottom
 	overflow-x hidden
 	text-overflow ellipsis
 
@@ -182,7 +185,7 @@ $ordinalWidth = 2.2em
 	color #ce0000
 
 .parousiaExcuse
-	width 10.5em
+	width 10em
 	text-align right
 	text-shadow 1px 0 0 #888888
 
@@ -207,6 +210,7 @@ $ordinalWidth = 2.2em
 .ipografi
 	position relative
 	padding 0px
+	height 19pt
 	white-space nowrap
 	font-family $fontSteno
 	color #3e2800
@@ -218,7 +222,10 @@ $ordinalWidth = 2.2em
 	cursor pointer
 	> div
 		display inline-block
-		padding 2px 4px
+		padding 2pt 4pt
+		vertical-align top
+		overflow-x hidden
+		text-overflow ellipsis
 
 		border-style none solid none none
 		border-width 0px 1px 0px 0px
@@ -242,12 +249,10 @@ $ordinalWidth = 2.2em
 
 .ipografiOnomateponimo
 	width 16em
-	vertical-align bottom
 	overflow-x hidden
 	text-overflow ellipsis
 
 .ipografiTitlos
-	vertical-align bottom
 	overflow-x hidden
 	border-style none !important
 
