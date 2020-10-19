@@ -139,6 +139,7 @@ document_body();
 			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
 			<option value="ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ</option>
 			<option value="ΑΙΜΟΔΟΣΙΑ" class="peAdidosOmadaIgia">ΑΙΜΟΔΟΣΙΑ</option>
+			<option value="ΚΑΤ' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ" class="peAdidosOmadaIgia">ΚΑΤ' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ</option>
 			<option value="ΙΑΤΡΙΚΕΣ ΕΞΕΤΑΣΕΙΣ" class="peAdidosOmadaIgia">ΙΑΤΡΙΚΕΣ ΕΞΕΤΑΣΕΙΣ</option>
 
 			<option value="ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ." class="peAdidosOmadaGoniki">ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ.</option>
