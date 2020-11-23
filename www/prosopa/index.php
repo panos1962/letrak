@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-11-23
 // Updated: 2020-10-19
 // Updated: 2020-08-08
 // Updated: 2020-08-06
@@ -135,6 +136,7 @@ document_body();
 			<option value="ΚΑΝΟΝΙΚΗ" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ</option>
 			<option value="ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)" class="peAdidosOmadaKanoniki">ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)</option>
 			<option value="ΤΗΛΕΡΓΑΣΙΑ" class="peAdidosOmadaKanoniki">ΤΗΛΕΡΓΑΣΙΑ</option>
+			<option value="ΕΚ ΠΕΡΙΤΡΟΠΗΣ" class="peAdidosOmadaKanoniki">ΕΚ ΠΕΡΙΤΡΟΠΗΣ</option>
 
 			<option value="ΑΣΘΕΝΕΙΑ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ</option>
 			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
