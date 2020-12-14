@@ -1,7 +1,9 @@
 <?php
+
 ///////////////////////////////////////////////////////////////////////////////@
 //
 // @BEGIN
+//
 //
 // @COPYRIGHT BEGIN
 // Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>

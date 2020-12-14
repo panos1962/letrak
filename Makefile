@@ -1,5 +1,6 @@
 #!/usr/bin/env make -f
 
+
 ###############################################################################@
 #
 # @BEGIN
@@ -40,6 +41,7 @@ test:
 	bash local/test.sh
 
 # GIT SECTION
+# This is a test!
 
 .PHONY: status
 status:
