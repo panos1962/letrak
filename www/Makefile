@@ -28,7 +28,9 @@ PANDORA_DIR = ../mnt/pandora
 
 MAIN_CSS = main.css
 BUNDLE_JS = bundle.js
-PARAGOGA = $(MAIN_CSS) $(BUNDLE_JS)
+README = readme.html
+
+PARAGOGA = $(MAIN_CSS) $(BUNDLE_JS) $(README)
 
 BROWSERIFY_OPTS = -t envify -p tinyify
 BROWSERIFY_OPTS = -t envify
@@ -49,6 +51,9 @@ $(BUNDLE_JS): \
 	lib/letrak.js \
 	lib/letrakCore.js
 	browserify $(BROWSERIFY_OPTS) -o $@ main.js
+
+$(README): ../README.md
+	pandoc -o $(README) $?
 
 .PHONY: cleanup
 cleanup:

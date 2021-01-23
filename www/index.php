@@ -61,6 +61,12 @@ document_body();
 ελέγξετε, να δημιουργήσετε, να διορθώσετε ή να εκτυπώσετε παρουσιολόγια
 σύμφωνα με τις προσβάσεις που σας έχουν αποδοθεί.
 </span>
+<div id="readmeToggle">XXX</div>
+<div id="readme">
+<?php
+require_once("readme.html");
+?>
+</div>
 </div>
 <?php
 pandora::

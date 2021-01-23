@@ -20,5 +20,6 @@ panos[0-9]*
 test[0-9]*
 bundle.js
 *.css
+/www/readme.html
 
 !/www/lib/jquery-ui.css

@@ -148,7 +148,6 @@ prosopa.goniki = {
 })();
 
 pnd.domInit(() => {
-	prosopa.opener
 	pnd.
 	toolbarSetup().
 	fyiSetup().

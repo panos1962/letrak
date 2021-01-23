@@ -53,6 +53,7 @@ welcome.selidaSetup = () => {
 	$('#welcome').
 	css('display', 'block').
 	appendTo(pnd.ofelimoDOM);
+	welcome.readmeSetup();
 
 	if (letrak.noXristis())
 	return welcome.anonimiXrisi();
@@ -63,12 +64,59 @@ welcome.selidaSetup = () => {
 	on('click', (e) => self.location = 'deltio'));
 
 	$('#eponimiXrisi').css('display', 'inline');
+
 	return welcome;
 };
 
 welcome.anonimiXrisi = () => {
 	$('#anonimiXrisi').css('display', 'inline');
 	return welcome;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+welcome.readmeSetup = () => {
+	welcome.readmeDOM = $('#readme');
+
+	welcome.readmeToggleDOM = $('#readmeToggle').
+	on('click', (e) => {
+		e.stopPropagation();
+
+		if (welcome.readmeIsClosed())
+		welcome.readmeOpen();
+
+		else
+		welcome.readmeClose();
+	});
+
+	welcome.readmeRefresh();
+	return welcome;
+};
+
+welcome.readmeOpen = () => {
+	welcome.readmeDOM.css('display', 'block');
+	welcome.readmeRefresh();
+	return welcome;
+};
+
+welcome.readmeClose = () => {
+	welcome.readmeDOM.css('display', 'none');
+	welcome.readmeRefresh();
+	return welcome;
+};
+
+welcome.readmeRefresh = () => {
+	welcome.readmeToggleDOM.text(welcome.readmeIsOpen() ?
+		'Απόκρυψη' : 'Διαβάστε περισσότερα');
+	return welcome;
+};
+
+welcome.readmeIsOpen = () => {
+	return (welcome.readmeDOM.css('display') !== 'none');
+};
+
+welcome.readmeIsClosed = () => {
+	return !welcome.readmeIsOpen();
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
