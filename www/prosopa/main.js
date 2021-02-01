@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-02-01
 // Updated: 2020-08-08
 // Updated: 2020-07-14
 // Updated: 2020-07-05
@@ -1408,7 +1409,9 @@ prosopa.editorSetup = () => {
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorAdidosDOM = $('#peAdidos').
 	on('change', () => {
-		if (!prosopa.editorAdidosDOM.val()) {
+		const adidos = prosopa.editorAdidosDOM.val();
+
+		if (!adidos) {
 			prosopa.editorAdapoDOM.val('');
 			prosopa.editorAdeosDOM.val('');
 			return;
@@ -1424,6 +1427,12 @@ prosopa.editorSetup = () => {
 		imerominia = pnd.date(imerominia, '%D-%M-%Y');
 		prosopa.editorAdapoDOM.val(imerominia);
 		prosopa.editorAdeosDOM.val(imerominia);
+
+		switch (adidos) {
+		case 'ΤΗΛΕΡΓΑΣΙΑ':
+			prosopa.editorAdeosDOM.val('');
+			break;
+		}
 	});
 	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
 	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();
