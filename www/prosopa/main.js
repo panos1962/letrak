@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-02-25
 // Updated: 2021-02-01
 // Updated: 2020-08-08
 // Updated: 2020-07-14
@@ -2506,6 +2507,12 @@ prosopa.winpak = () => {
 		if (!parousia)
 		return;
 
+		/***************************************************************
+		** Τον Φεβρουάριο του 2021 αποφασίσαμε ότι μάλλον είναι
+		** καλύτερα να φαίνεται με κάποιον τρόπο αν υπάρχει άδεια
+		** ΚΑΙ χτύπημα κάρτας, οπότε βάλαμε σε σχόλια το παρακάτω
+		** τμήμα του κώδικα.
+
 		// Οι έλεγχοι καταγραφών για εργαζομένους που έχουν άδεια
 		// ή excuse μάλλον προκαλούν πρόβλημα, οπότε δεν θα τους
 		// συμπεριλάβουμε στην αναζήτηση καταγραφών.
@@ -2515,6 +2522,8 @@ prosopa.winpak = () => {
 
 		if (parousia.excuseGet())
 		return;
+
+		***************************************************************/
 
 		if (parousia.meraora)
 		return;
@@ -2599,8 +2608,8 @@ prosopa.winpakProcess = (rsp) => {
 
 		let ordinal = $(this).children('.parousiaOrdinal').text();
 		parousia.meraora = new Date(data[ipalilos] + ':00');
-		$(this).html(parousia.domGet().html());
-		$(this).children('.parousiaOrdinal').text(ordinal);
+		$(this).after(parousia.domGet(ordinal));
+		$(this).remove();
 	});
 
 	return prosopa;
@@ -2659,7 +2668,7 @@ letrak.deltio.prototype.domGet = function() {
 	return dom;
 };
 
-letrak.parousia.prototype.domGet = function() {
+letrak.parousia.prototype.domGet = function(ordinal) {
 	let orario = this.orarioGet();
 
 	if (orario)
@@ -2694,7 +2703,8 @@ letrak.parousia.prototype.domGet = function() {
 	addClass('parousia').
 
 	append($('<div>').
-	addClass('parousiaOrdinal')).
+	addClass('parousiaOrdinal').
+	text(ordinal)).
 
 	append($('<div>').
 	attr('title', 'Κωδικός υπαλλήλου').
@@ -2731,6 +2741,9 @@ letrak.parousia.prototype.domGet = function() {
 	attr('title', 'Παρατηρήσεις').
 	addClass('parousiaInfo').
 	text(this.infoAdiaGet()));
+
+	if (this.adidosGet() && meraora)
+	dom.addClass('parousiaAdiaAndMeraora')
 
 	return dom;
 };
