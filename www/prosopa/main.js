@@ -2586,6 +2586,7 @@ prosopa.winpakProcess = (rsp) => {
 	return prosopa;
 
 	let data = rsp.data;
+	let alagi = false;
 
 	prosopa.browserDOM.
 	children('.parousia').
@@ -2610,7 +2611,11 @@ prosopa.winpakProcess = (rsp) => {
 		parousia.meraora = new Date(data[ipalilos] + ':00');
 		$(this).after(parousia.domGet(ordinal));
 		$(this).remove();
+		alagi = true;
 	});
+
+	if (alagi)
+	prosopa.browserFix();
 
 	return prosopa;
 };
