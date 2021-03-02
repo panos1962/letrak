@@ -29,7 +29,7 @@
 require_once("../../local/conf.php");
 require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
 
-define("MAX_COUNT", 6);
+define("MAX_COUNT", 60);
 
 pandora::
 header_json()::

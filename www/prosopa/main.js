@@ -2187,18 +2187,13 @@ prosopa.katagrafiProcess = (rsp) => {
 	append($('<div>').
 	text(prosopa.minima.katagrafiOrario));
 
-	prosopa.editorKatagrafiDOM.
-	append($('<div>').
-	text(prosopa.minima.katagrafiKatharismos)).
-	append($('<div>').
-	text(prosopa.minima.katagrafiOrario));
-
 	// Αφαιρούμε στοιχεία από τα arrays "prin" και "meta" προκειμένου
 	// να μην υπερβαίνουν στο σύνολο το μέγιστο πλήθος καταγραφών που
 	// χωράνε στη σχετική φόρμα επιλογής. Η μείωση γίνεται με τρόπο
 	// τέτοιο που τα στοιχεία πριν και μετά την ημερομηνία του δελτίου
 	// να είναι κατά το δυνατόν «ζυγισμένα».
 
+	/*
 	while ((rsp.prin.length + rsp.meta.length) > rsp.max) {
 		if (rsp.prin.length > rsp.meta.length)
 		rsp.prin.pop();
@@ -2206,19 +2201,26 @@ prosopa.katagrafiProcess = (rsp) => {
 		else
 		rsp.meta.pop();
 	}
+	*/
 
 	// Εμφανίζουμε τα συμβάντα στο σχετικό χωρίο προκειμένου ο χρήστης
 	// να έχει τη δυνατότητα επιλογής κάποιου από αυτά τα συμβάντα.
 
 	while (rsp.prin.length > 0)
 	prosopa.editorKatagrafiDOM.
-	append($('<div>').
+	prepend($('<div>').
 	text(rsp.prin.pop()));
 
 	while (rsp.meta.length > 0)
 	prosopa.editorKatagrafiDOM.
-	append($('<div>').
+	prepend($('<div>').
 	text(rsp.meta.shift()));
+
+	prosopa.editorKatagrafiDOM.
+	prepend($('<div>').
+	text(prosopa.minima.katagrafiOrario)).
+	prepend($('<div>').
+	text(prosopa.minima.katagrafiKatharismos));
 };
 
 // Η function "katagrafiGet" καλείται όταν ο χρήστης κάνει κλικ σε κάποιο
