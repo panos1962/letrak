@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2021-03-02
 * Updated: 2021-02-25
 * Updated: 2020-07-05
 * Updated: 2020-06-11
@@ -144,8 +145,11 @@ $ordinalWidth = 2.2em
 		&::before
 			content '\200B'
 
-.parousiaTarget
-	background-color #ffeb00
+.parousia:nth-child(odd)
+	background-color $zebraOdd
+
+.parousia:nth-child(even)
+	background-color $zebraEven
 
 .parousiaOrdinal
 	width $ordinalWidth
@@ -194,7 +198,10 @@ $ordinalWidth = 2.2em
 	border-style none !important
 
 .parousiaAdiaAndMeraora
-	background-color #fde9e1
+	background-color #fde9e1 !important
+
+.parousiaTarget
+	background-color #ffeb00 !important
 
 .tabActive
 	color red

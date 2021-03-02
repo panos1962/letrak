@@ -365,14 +365,11 @@ prosopa.prosopaProcess = (parousia, target) => {
 
 		v = new letrak.parousia(v);
 		prosopa.browserDOM.
-		append(dom = v.domGet());
+		append(dom = v.domGet(k + 1));
 
 		if (v.ipalilosGet() == target)
 		dom.addClass('parousiaTarget');
 	});
-
-	prosopa.
-	browserFix();
 
 	return prosopa;
 };
@@ -2588,7 +2585,6 @@ prosopa.winpakProcess = (rsp) => {
 	return prosopa;
 
 	let data = rsp.data;
-	let alagi = false;
 
 	prosopa.browserDOM.
 	children('.parousia').
@@ -2613,11 +2609,7 @@ prosopa.winpakProcess = (rsp) => {
 		parousia.meraora = new Date(data[ipalilos] + ':00');
 		$(this).after(parousia.domGet(ordinal));
 		$(this).remove();
-		alagi = true;
 	});
-
-	if (alagi)
-	prosopa.browserFix();
 
 	return prosopa;
 };
@@ -2814,27 +2806,6 @@ prosopa.ipografesRefreshErrorCheck = (rsp) => {
 
 	prosopa.prosvasiRefresh();
 	return false;
-};
-
-prosopa.browserFix = () => {
-	let i = 0;
-	let zebra1 = 'pnd-zebra1';
-	let zebra2 = 'pnd-zebra2';
-
-	prosopa.browserDOM.
-	children().
-	each(function() {
-		let zebra = (++i % 2 ? zebra1 : zebra2);
-
-		$(this).
-		removeClass(zebra1).
-		removeClass(zebra2).
-		addClass(zebra).
-		children('.parousiaOrdinal').
-		text(i);
-	});
-
-	return prosopa;
 };
 
 prosopa.fyiMessage = (s) => {
