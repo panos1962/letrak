@@ -68,7 +68,7 @@ katagrafi("<=", "DESC");
 print '"meta":';
 katagrafi(">", "ASC");
 
-print '"max":' . MAX_COUNT . '}';
+print '"dummy":0}';
 exit(0);
 
 function katagrafi($op, $ord) {
