@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-03-02
 // Updated: 2021-02-25
 // Updated: 2021-02-01
 // Updated: 2020-08-08
@@ -2184,22 +2185,6 @@ prosopa.katagrafiProcess = (rsp) => {
 	append($('<div>').
 	text(prosopa.minima.katagrafiOrario));
 
-	// Αφαιρούμε στοιχεία από τα arrays "prin" και "meta" προκειμένου
-	// να μην υπερβαίνουν στο σύνολο το μέγιστο πλήθος καταγραφών που
-	// χωράνε στη σχετική φόρμα επιλογής. Η μείωση γίνεται με τρόπο
-	// τέτοιο που τα στοιχεία πριν και μετά την ημερομηνία του δελτίου
-	// να είναι κατά το δυνατόν «ζυγισμένα».
-
-	/*
-	while ((rsp.prin.length + rsp.meta.length) > rsp.max) {
-		if (rsp.prin.length > rsp.meta.length)
-		rsp.prin.pop();
-
-		else
-		rsp.meta.pop();
-	}
-	*/
-
 	// Εμφανίζουμε τα συμβάντα στο σχετικό χωρίο προκειμένου ο χρήστης
 	// να έχει τη δυνατότητα επιλογής κάποιου από αυτά τα συμβάντα.
 
@@ -2212,6 +2197,10 @@ prosopa.katagrafiProcess = (rsp) => {
 	prosopa.editorKatagrafiDOM.
 	prepend($('<div>').
 	text(rsp.meta.shift()));
+
+	// Προσθέτουμε στο επάνω μέρος του χωρίου εμφάνισης καταγραφών
+	// ειδικές εγγραφές για ενημέρωση από το ωράριο, για καθαρισμό
+	// του πεδίου καταγραφής κλπ.
 
 	prosopa.editorKatagrafiDOM.
 	prepend($('<div>').
