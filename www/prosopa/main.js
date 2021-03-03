@@ -2217,7 +2217,8 @@ prosopa.katagrafiProcess = (rsp) => {
 	prepend($('<div>').
 	text(prosopa.minima.katagrafiOrario)).
 	prepend($('<div>').
-	text(prosopa.minima.katagrafiKatharismos));
+	text(prosopa.minima.katagrafiKatharismos)).
+	scrollTop(0);
 };
 
 // Η function "katagrafiGet" καλείται όταν ο χρήστης κάνει κλικ σε κάποιο
