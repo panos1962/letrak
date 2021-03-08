@@ -66,6 +66,7 @@
 -- @DESCRIPTION END
 --
 -- @HISTORY BEGIN
+-- Updated: 2021-03-08
 -- Updated: 2020-11-23
 -- Updated: 2020-08-08
 -- Updated: 2020-06-26
@@ -224,6 +225,11 @@ CREATE TABLE `parousia` (
 	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
 	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
 	`meraora`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα προσέλευσης/αποχώρησης',
+	`kataxorisi`	ENUM (
+		'',
+		'WINPAK',
+		'ΣΥΝΤΑΚΤΗΣ'
+	) NOT NULL DEFAULT '' COMMENT 'Τρόπος καταχώρησης ημερομηνία και ώρας',
 
 	-- Ακολουθούν τα στοιχεία άδειας που ίσως έχει ο εργαζόμενος στο
 	-- συγκεκριμένο διάστημα.
