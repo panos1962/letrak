@@ -88,14 +88,65 @@ $karta = karta_get($ipalilos_kodikos);
 $meraora = meraora_get();
 $info = info_get();
 
-$query = "REPLACE INTO `letrak`.`parousia` " .
-	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`," .
+// Στο σημείο αυτό επιλέγουμε τα δεδομένα χρονικής καταγραφής προκειμένου να
+// διαπιστώσουμε κατ' αρχάς αν υπάρχει ήδη σχετική καταχώρηση στην database
+// και δευτερευόντως αν τα δεδομένα χρονικής καταγραφής διαφέρουν από τα
+// αποσταλθέντα.
+
+$query = "SELECT" .
+	" DATE_FORMAT(`meraora`, '%Y-%m-%d %H:%i') AS `meraora`," .
+	" `kataxorisi`" .
+	" FROM `letrak`.`parousia`" .
+	" WHERE (`deltio` = " . $deltio_kodikos . ") " .
+	" AND (`ipalilos` = " . $ipalilos_kodikos . ")";
+$result = pandora::query($query);
+$row = $result->fetch_assoc();
+$result->close();
+
+// Προβαίνουμε τώρα στους σχετικούς ελέγχους προκειμένου να επιλέξουμε αν θα
+// προσθέσουμε νέα εγγραφή στην database ή αν θα ενημερώσουμε την υπάρχουσα.
+// Επίσης, καθορίζουμε τον τρόπο της καταγραφής που μπορεί να είναι "WINPAK"
+// εφόσον η καταγραφή έχει καταχωρηθεί από το σύστημα, "ΣΥΝΤΑΚΤΗΣ" αν έχει
+// τροποποιηθεί από τον συντάκτη, ή να παραμείνει κενή αν δεν καθορίστηκαν
+// χρονικά δεδομένα.
+
+if ($row) {
+	$action = "REPLACE";
+
+	if ($row["meraora"] === $meraora)
+	$kataxorisi = $row["kataxorisi"];
+
+	else
+	$kataxorisi = "ΣΥΝΤΑΚΤΗΣ";
+}
+
+else {
+	$action = "INSERT";
+	$kataxorisi = "ΣΥΝΤΑΚΤΗΣ";
+}
+
+// Διαμορφώνουμε κατάλληλα τα στοιχεία χρονικής καταγραφής προκειμένου να
+// μπορούν να εμφυτευτούν στο SQL query εισαγωγής ή ενημέρωσης.
+
+if ($meraora)
+$meraora = pandora::sql_string($meraora);
+
+else {
+	$meraora = "NULL";
+	$kataxorisi = '';
+}
+
+$kataxorisi = pandora::sql_string($kataxorisi);
+
+$query = $action . " INTO `letrak`.`parousia` " .
+	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`, `kataxorisi`," .
 	" `adidos`, `adapo`, `adeos`, `excuse`, `info`) VALUES (" .
 	$deltio_kodikos . ", " .
 	$ipalilos_kodikos . ", " .
 	$orario . ", " .
 	$karta . ", " .
 	$meraora . ", " .
+	$kataxorisi . ", " .
 	$adidos . ", " .
 	$adapo . ", " .
 	$adeos . ", " .
@@ -177,10 +228,10 @@ function meraora_get() {
 	$s = pandora::parameter_get("meraora");
 
 	if (!isset($s))
-	return "NULL";
+	return '';
 
 	if (!$s)
-	return "NULL";
+	return '';
 
 	$t = DateTime::createFromFormat("d-m-Y H:i", $s);
 
@@ -190,7 +241,7 @@ function meraora_get() {
 	$tdlt = $deltio->imerominia_get();
 
 	if (!isset($tdlt))
-	return pandora::sql_string($t->format("Y-m-d H:i"));
+	return $t->format("Y-m-d H:i");
 
 	$tdlt = DateTime::createFromFormat("Y-m-d H:i:s",
 		$tdlt->format("Y-m-d") . " 00:00:00");
@@ -205,7 +256,7 @@ function meraora_get() {
 	if ($diafora->d > $max)
 	lathos($s . ": μη αποδεκτή ημερομηνία/ώρα συμβάντος");
 
-	return pandora::sql_string($t->format("Y-m-d H:i"));
+	return $t->format("Y-m-d H:i");
 }
 
 function adia_get(&$adapo, &$adeos) {

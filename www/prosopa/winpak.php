@@ -35,6 +35,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-03-08
 // Updated: 2020-05-09
 // Created: 2020-05-08
 // @HISTORY END
@@ -167,9 +168,11 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 	if ($meraora === FALSE)
 	return;
 
-	$query = "UPDATE `letrak`.`parousia` SET `meraora` = '" .
-		$meraora . ":00' WHERE (`deltio` = " . $kodikos . ")" .
-		" AND (`ipalilos` = " . $ipalilos . ")";
+	$query = "UPDATE `letrak`.`parousia` SET " .
+		"`meraora` = '" . $meraora . ":00', " .
+		"`kataxorisi` = 'WINPAK' " .
+		"WHERE (`deltio` = " . $kodikos . ") " .
+		"AND (`ipalilos` = " . $ipalilos . ")";
 	pandora::query($query);
 
 	if (pandora::affected_rows() != 1)

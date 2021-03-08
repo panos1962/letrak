@@ -20,6 +20,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-03-08
 // Updated: 2020-06-06
 // Updated: 2020-05-06
 // Updated: 2020-04-09
@@ -55,6 +56,7 @@ define("LETRAK_PROSOPA_PROJECTION_COLUMNS",
 	"`parousia`.`orario` AS `o`, " .
 	"`parousia`.`karta` AS `k`, " .
 	"`parousia`.`meraora` AS `t`, " .
+	"`parousia`.`kataxorisi` AS `n`, " .
 	"`parousia`.`adidos` AS `a`, " .
 	"`parousia`.`adapo` AS `p`, " .
 	"`parousia`.`adeos` AS `e`, " .
