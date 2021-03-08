@@ -2681,6 +2681,15 @@ letrak.parousia.prototype.domGet = function(ordinal) {
 
 	isozigio = letrak.isozigio2hm(isozigio, true);
 
+	const meraoraDOM = $('<div>').
+	addClass(meraoraClass).
+	text(meraora);
+
+	if (this.isPiragmeno())
+	meraoraDOM.append($('<div>').
+	addClass('parousiaMeraoraPiragmeno').
+	html('&#x25E3;'));
+
 	let dom = $('<div>').
 	data('parousia', this).
 	addClass('parousia').
@@ -2708,9 +2717,7 @@ letrak.parousia.prototype.domGet = function(ordinal) {
 	addClass('parousiaOrario').
 	text(orario)).
 
-	append($('<div>').
-	addClass(meraoraClass).
-	text(meraora)).
+	append(meraoraDOM).
 
 	append($('<div>').
 	addClass(isozigioClass).
