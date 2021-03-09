@@ -11,7 +11,7 @@
 -- @FILETYPE END
 --
 -- @FILE BEGIN
--- database/letrak.sql —— Data dictionary for database "letrak"
+-- database/schema.sql —— Data dictionary for database "letrak"
 -- @FILE END
 --
 -- @DESCRIPTION BEGIN
@@ -225,11 +225,14 @@ CREATE TABLE `parousia` (
 	`orario`	VARCHAR(64) NULL DEFAULT NULL COMMENT 'Ωράριο υπαλλήλου',
 	`karta`		MEDIUMINT UNSIGNED NULL DEFAULT NULL COMMENT 'Αριθμός κάρτας',
 	`meraora`	DATETIME NULL DEFAULT NULL COMMENT 'Ημερομηνία και ώρα προσέλευσης/αποχώρησης',
+
+	-- Το πεδίο "kataxorisi" δείχνει τον τρόπο καταχώρησης της ημερομηνίας
+	-- και ώρας προσέλευσης/αποχώρησης.
+
 	`kataxorisi`	ENUM (
-		'',
 		'WINPAK',
 		'ΣΥΝΤΑΚΤΗΣ'
-	) NOT NULL DEFAULT '' COMMENT 'Τρόπος καταχώρησης ημερομηνία και ώρας',
+	) NULL DEFAULT NULL COMMENT 'Τρόπος καταχώρησης ημερομηνίας και ώρας',
 
 	-- Ακολουθούν τα στοιχεία άδειας που ίσως έχει ο εργαζόμενος στο
 	-- συγκεκριμένο διάστημα.

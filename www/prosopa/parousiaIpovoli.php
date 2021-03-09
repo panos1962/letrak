@@ -113,16 +113,27 @@ $result->close();
 if ($row) {
 	$action = "REPLACE";
 
+	// Αν δεν αλλάζει η ημερομηνία και ώρα προσέλευσης/αποχώρησης, τότε
+	// διατηρούμε τον ίδιο τρόπο καταχώρησης.
+
 	if ($row["meraora"] === $meraora)
 	$kataxorisi = $row["kataxorisi"];
 
+	// Σε περίπτωση αλλαγής ημερομηνίας και ώρας προσέλευσης/αποχώρησης
+	// θέτουμε στο πεδίο της καταχώρησης την τιμή "ΣΥΝΤΑΚΤΗΣ" ακόμη και
+	// αν η τιμή του πεδίου τυχαίνει να είναι ίδια με αυτήν που θα μας
+	// έδινε το σύστημα μέσω της διαδικασίας αυτόματης συμπλήρωσης. Αν
+	// επιθυμούμε να μην φαίνεται ως μεταβολή από τον συντάκτη, τότε θα
+	// πέπει να καθαρίσουμε το πεδίο ημερομηνίας και ώρας προσέλευσης/
+	// αποχώρησης και να διενεργήσουμε αυτόματη συμπλήρωση.
+
 	else
-	$kataxorisi = "ΣΥΝΤΑΚΤΗΣ";
+	$kataxorisi = LETRAK_PAROUSIA_KATAXORISI_SINTAKTIS;
 }
 
 else {
 	$action = "INSERT";
-	$kataxorisi = "ΣΥΝΤΑΚΤΗΣ";
+	$kataxorisi = LETRAK_PAROUSIA_KATAXORISI_SINTAKTIS;
 }
 
 // Διαμορφώνουμε κατάλληλα τα στοιχεία χρονικής καταγραφής προκειμένου να
@@ -133,10 +144,14 @@ $meraora = pandora::sql_string($meraora);
 
 else {
 	$meraora = "NULL";
-	$kataxorisi = '';
+	$kataxorisi = "";
 }
 
+if ($kataxorisi)
 $kataxorisi = pandora::sql_string($kataxorisi);
+
+else
+$kataxorisi = "NULL";
 
 $query = $action . " INTO `letrak`.`parousia` " .
 	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`, `kataxorisi`," .

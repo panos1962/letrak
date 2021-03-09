@@ -80,6 +80,9 @@ define("LETRAK_ORARIO_WINDOW_MAX", 360);	// έξι ώρες
 
 define("LETRAK_ORARIO_ANOXI_MAX", 15);
 
+define("LETRAK_PAROUSIA_KATAXORISI_WINPAK", "WINPAK");
+define("LETRAK_PAROUSIA_KATAXORISI_SINTAKTIS", "ΣΥΝΤΑΚΤΗΣ");
+
 class letrakCore {
 	// Η property "erpota_version" παίρνει τιμές 1 ή 2 ανάλογα με την
 	// τρέχουσα version της database "erpota".

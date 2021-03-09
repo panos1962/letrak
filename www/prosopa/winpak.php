@@ -168,11 +168,17 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 	if ($meraora === FALSE)
 	return;
 
-	$query = "UPDATE `letrak`.`parousia` SET " .
-		"`meraora` = '" . $meraora . ":00', " .
-		"`kataxorisi` = 'WINPAK' " .
-		"WHERE (`deltio` = " . $kodikos . ") " .
-		"AND (`ipalilos` = " . $ipalilos . ")";
+	// Εφόσον τα στοιχεία ημερομηνίας και ώρας προσέλευσης/αποχώρησης
+	// προκύπτουν από το σύστημα καταγραφής, θέτουμε ανάλογα και την
+	// τιμή του πεδίου τρόπου καταχώρησης.
+
+	$kataxorisi = pandora::sql_string(LETRAK_PAROUSIA_KATAXORISI_WINPAK);
+
+	$query = "UPDATE `letrak`.`parousia` SET" .
+		" `meraora` = '" . $meraora . ":00'," .
+		" `kataxorisi` = " . $kataxorisi .
+		" WHERE (`deltio` = " . $kodikos . ")" .
+		" AND (`ipalilos` = " . $ipalilos . ")";
 	pandora::query($query);
 
 	if (pandora::affected_rows() != 1)

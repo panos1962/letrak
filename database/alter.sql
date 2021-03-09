@@ -1,8 +1,10 @@
+USE `letrak`
+;
+
 ALTER TABLE `parousia`
 ADD COLUMN (
 	`kataxorisi`	ENUM (
-		'',
 		'WINPAK',
 		'ΣΥΝΤΑΚΤΗΣ'
-	) NOT NULL DEFAULT '' COMMENT 'Τρόπος καταχώρησης ημερομηνία και ώρας'
+	) NULL DEFAULT NULL COMMENT 'Τρόπος καταχώρησης ημερομηνίας και ώρας'
 );
