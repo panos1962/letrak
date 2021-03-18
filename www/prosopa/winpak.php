@@ -124,8 +124,6 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 		" AND (`meraora` < '" . $seos . "')".
 		" ORDER BY `meraora` " . $ord;
 	$result = pandora::query($query);
-print '"query":' . pandora::json_string($query) . $s;
-$s = ',';
 
 	$meraora = NULL;
 
