@@ -109,11 +109,15 @@ function katagrafi($ipalilos, $orario, $karta, &$s) {
 		$ord = "DESC";
 		break;
 	default:
+print '"XXX":true,';
+$s = ',';
 		return;
 	}
 
 	if (!$exact)
 	return;
+print '"YYY":true,';
+$s = ',';
 
 	$sapo = $apo->format("Y-m-d H:i:s");
 	$seos = $eos->format("Y-m-d H:i:s");
