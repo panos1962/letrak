@@ -101,47 +101,55 @@ $enotiko = " WHERE";
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// Το κριτήριο ημερομηνίας έχει format "D-M-Y", οπότε το μετατρέπουμε στο
-// λογικότερο "Y-M-D".
+// Ελέγχουμε τα κριτήρια ημερομηνίας τα οποία, εφόσον έχουν καθοριστεί,
+// πρέπει να έχουν δοθεί με format "d-m-Y".
 
 $x = pandora::parameter_get("imerominia");
 
 if ($x) {
-	$d = DateTime::createFromFormat("d-m-Y", $x);
+	$apo = DateTime::createFromFormat("d-m-Y", $x);
 
-	if ($d === FALSE)
+	if ($apo === FALSE)
 	lathos_imerominia($x);
+}
 
-	$d = $d->format("Y-m-d");
+else
+$apo = FALSE;
 
-	if ($d === FALSE)
+$x = pandora::parameter_get("eos");
+
+if ($x) {
+	$eos = DateTime::createFromFormat("d-m-Y", $x);
+
+	if ($eos === FALSE)
 	lathos_imerominia($x);
+}
 
+else
+$eos = FALSE;
+
+// Αν έχει δοθεί ημερομηνία αρχής ΚΑΙ ημερομηνία τέλους, τότε θα πρέπει
+// η ημερομηνία τέλους να είναι μικρότερη από την ημερομηνία αρχής, καθώς
+// τα δελτία επιστρέφονται με αντίστροφη ημερολογιακή σειρά. Είναι, όμως,
+// πολύ πθανό -και λογικό- ο χρήστης να έχει καθορίσει τις ημερομηνίες με
+// αντίστροφη σειρά, επομένως σ' αυτό το σημείο κάνουμε έλεγχο και βάζουμε
+// τάξη στις ημερομηνίες.
+
+if ($apo && $eos && ($apo < $eos)) {
+	$x = $apo;
+	$apo = $eos;
+	$eos = $x;
+}
+
+if ($apo) {
 	$query .= $enotiko . " (`imerominia` <= " .
-		pandora::sql_string($d) . ")";
+		pandora::sql_string($apo->format("Y-m-d")) . ")";
 	$enotiko = " AND";
 }
 
-///////////////////////////////////////////////////////////////////////////////@
-
-// Το κριτήριο κάτω ορίου ημερομηνίας έχει format "D-M-Y", οπότε το
-// μετατρέπουμε στο λογικότερο "Y-M-D".
-
-$eos = pandora::parameter_get("eos");
-
 if ($eos) {
-	$d = DateTime::createFromFormat("d-m-Y", $eos);
-
-	if ($d === FALSE)
-	lathos_imerominia($eos);
-
-	$d = $d->format("Y-m-d");
-
-	if ($d === FALSE)
-	lathos_imerominia($eos);
-
 	$query .= $enotiko . " (`imerominia` >= " .
-		pandora::sql_string($d) . ")";
+		pandora::sql_string($eos->format("Y-m-d")) . ")";
 	$enotiko = " AND";
 }
 
