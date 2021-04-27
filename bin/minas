@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+progname="$(basename $0)"
+
+[ -z "${PANDORA_BASEDIR}" ] &&
+PANDORA_BASEDIR="/var/opt/pandora"
+
+[ -z "${KARTEL_BASEDIR}" ] &&
+KARTEL_BASEDIR="/var/opt/kartel"
+
+[ -z "${LETRAK_BASEDIR}" ] &&
+LETRAK_BASEDIR="/var/opt/letrak"
+
+usage() {
+	echo "usage: ${progname} [ files... ]" >&2
+	exit 1
+}
+
+errs=
+
+while getopts ":s" opt
+do
+	case "${opt}" in
+	s)
+		minas="${OPTARG}"
+		;;
+	\?)
+		echo "${progname}: -${OPTARG}: invalid option" >&2
+		errs=1
+		;;
+	esac
+done
+
+[ -n "${errs}" ] &&
+usage
+
+shift $(expr ${OPTIND} - 1)
+
+awk \
+-v pd_progname="${progname}" \
+-f "${PANDORA_BASEDIR}/lib/pandora.awk" \
+-f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
+-f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
+sort |
+awk \
+-v pd_progname="${progname}" \
+-f "${PANDORA_BASEDIR}/lib/pandora.awk" \
+-f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
+-f "${LETRAK_BASEDIR}/lib/minas/minasxls.awk"
