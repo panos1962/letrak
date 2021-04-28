@@ -22,7 +22,10 @@ NF != 5 {
 	if (ipiresia != ipiresia_prev)
 	process_ipiresia()
 
-	print ipiresia, die, tmi, ipalilos, onomateponimo, imerominia, adia
+	if (full)
+	printf die OFS tmi OFS
+
+	print ipiresia, ipalilos, onomateponimo, imerominia, adia
 }
 
 function process_ipiresia(				d, t, query, x) {

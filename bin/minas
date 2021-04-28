@@ -12,17 +12,18 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [ files... ]" >&2
+	echo "usage: ${progname} [-f] [files...]" >&2
 	exit 1
 }
 
 errs=
+full=
 
-while getopts ":s" opt
+while getopts ":f" opt
 do
 	case "${opt}" in
-	s)
-		minas="${OPTARG}"
+	f)
+		full=1
 		;;
 	\?)
 		echo "${progname}: -${OPTARG}: invalid option" >&2
@@ -44,6 +45,7 @@ awk \
 sort |
 awk \
 -v pd_progname="${progname}" \
+-v full="${full}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minasxls.awk"
