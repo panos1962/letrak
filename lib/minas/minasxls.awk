@@ -26,7 +26,7 @@ NF != 4 {
 	imerominia = pd_dt2dt($(nf++), "YMD", "D‐M‐Y")
 	adia = $(nf++)
 
-	print ipalilos, onomateponimo, imerominia, imera(imerominia), adia
+	print ipalilos, onomateponimo, imera(imerominia), imerominia, adia
 }
 
 function imera(imerominia,				a, t) {
