@@ -152,7 +152,10 @@ ektiposi.deltio = () => {
 
 	append($('<div>').
 	addClass('ektiposi-deltioDimos').
-	text('ΔΗΜΟΣ ΘΕΣΣΑΛΟΝΙΚΗΣ'));
+	text('ΔΗΜΟΣ ΘΕΣΣΑΛΟΝΙΚΗΣ')).
+	// Χρειάζεται line break γιατί αλλιώς μπορεί να «κολλήσει»
+	// δίπλα η περιγραφή της διεύθυνσης.
+	append($('<br>'));
 
 	let ipiresia = prosopa.deltio.ipiresiaGet();
 
@@ -174,7 +177,10 @@ ektiposi.deltio = () => {
 		aristeraDOM.
 		append($('<div>').
 		addClass('ektiposi-deltioIpiresia').
-		text(x));
+		text(x)).
+		// Χρειάζεται line break γιατί αλλιώς μπορεί να «κολλήσει»
+		// δίπλα η περιγραφή του τμήματος, του γραφείο κοκ.
+		append($('<br>'));
 	}
 
 	// Ακολουθεί η κεντρική στήλη στην οποία εκτυπώνονται ο κωδικός και
