@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης
-# και παράγει συνολικό TSV report ταξινομημένο κατά υπηρεσία, υπάλληλο
-# και ημερομηνία.
+# και παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο και
+# ημερομηνία.
 
 progname="$(basename $0)"
 
@@ -16,25 +16,15 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-f] [files...]" >&2
+	echo "usage: ${progname} [files...]" >&2
 	exit 1
 }
 
 errs=
-full=
 
-while getopts ":f" opt
+while getopts ":" opt
 do
 	case "${opt}" in
-
-	# Η option -f δηλώνει full report, πράγμα που σημαίνει ότι
-	# θα περιλαμβάνονται περισσότερα από τα απολύτως απαραίτητα
-	# στοιχεία στο παραγόμενο report, π.χ. περιγραφή διεύθυνσης,
-	# περιγραφή τμήματος κλπ.
-	f)
-		full=1
-		;;
-
 	\?)
 		echo "${progname}: -${OPTARG}: invalid option" >&2
 		errs=1
@@ -55,7 +45,6 @@ awk \
 sort |
 awk \
 -v pd_progname="${progname}" \
--v full="${full}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minasxls.awk"

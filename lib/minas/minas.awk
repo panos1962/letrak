@@ -59,10 +59,9 @@ function print_data(deltio, parousia,			adia) {
 	adia = ""
 
 	else
-	adia = "✱✱✱ ΑΠΟΥΣΙΑ ✱✱✱"
+	adia = "?????????"
 
 	print \
-	deltio["ipiresia"], \
 	ipalilos_onoma(parousia["ipalilos"]), \
 	parousia["ipalilos"], \
 	deltio["imerominia"], \
