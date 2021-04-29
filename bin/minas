@@ -43,7 +43,7 @@ awk \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
 sort |
-awk \
+LC_TIME="el_GR.UTF-8" awk \
 -v pd_progname="${progname}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
