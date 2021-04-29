@@ -3,6 +3,8 @@ BEGIN {
 
 	spawk_verbose = 0
 	spawk_null = ""
+
+	dlist[0]
 }
 
 NF < 1 {
@@ -14,8 +16,14 @@ $1 !~ /^[0-9]{1,8}$/ {
 	next
 }
 
+$1 in dlist {
+	pd_errmsg($0 ": το δελτίο έχει ήδη περιληφθεί")
+	next
+}
+
 {
 	process_deltio($1)
+	dlist[$1]
 }
 
 function process_deltio(kodikos,			query, deltio) {
