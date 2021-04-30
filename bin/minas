@@ -42,6 +42,10 @@ LC_TIME="el_GR.UTF-8" awk \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
+
+# Ακολουθεί ταξινόμηση ως προς το ονοματεπώνυμο υπαλλήλου,
+# τον κωδικό υπαλλήλου και την ημερομηνία.
+
 sort --field-separator="	" \
 --key="2,2" \
 --key="1,1n" \
