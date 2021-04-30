@@ -1,3 +1,18 @@
+#!/usr/bin/env awk
+
+# Το παρόν διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και εκτυπώνει στο
+# standard output τους μετέχοντες υπαλλήλους των δελτίων προσέλευσης, ενώ τα
+# δελτία αποχώρησης απορρίπτονται σιωπηλά. Η εκτύπωση περιλαμβάνει τα εξής:
+#
+#	Ονοματεπώνυμο υπαλλήλου
+#	Κωδικός υπαλλήλου
+#	Ημερομηνία δελτίου
+#	Στοιχεία παρουσίας
+#
+# Τα στοιχεία παρουσίας είναι κενό εφόσον ο υπάλληλος έχει συμπληρωμένη ώρα
+# προσέλευσης στο δελτίο, αλλιώς είναι το είδος αδείας/αξαίρεσης. Αν δεν
+# υπάρχει ώρα προσέλευσης ούτε άδεια/εξαίρεση, τότε εκτυπώνονται ερωτηματικά.
+
 BEGIN {
 	OFS = "\t"
 
@@ -27,8 +42,8 @@ $1 in dlist {
 }
 
 function process_deltio(kodikos,			query, deltio) {
-	query = "SELECT `kodikos`, `imerominia`, `ipiresia`, " \
-		"`perigrafi`, `prosapo` " \
+	query = "SELECT `kodikos`, DATE_FORMAT(`imerominia`, '%d‐%m‐%Y') " \
+		"AS `imerominia`, `ipiresia`, `perigrafi`, `prosapo` " \
 		"FROM `letrak`.`deltio` " \
 		"WHERE `letrak`.`deltio`.`kodikos` = " kodikos
 
@@ -70,9 +85,10 @@ function print_data(deltio, parousia,			adia) {
 	adia = "?????????"
 
 	print \
-	ipalilos_onoma(parousia["ipalilos"]), \
 	parousia["ipalilos"], \
+	ipalilos_onoma(parousia["ipalilos"]), \
 	deltio["imerominia"], \
+	imera(deltio["imerominia"]), \
 	adia
 }
 
@@ -91,4 +107,16 @@ function ipalilos_onoma(kodikos,			ipalilos) {
 
 	return ipalilos["eponimo"] " " ipalilos["onoma"] " " \
 		substr(ipalilos["patronimo"], 1, 3)
+}
+
+function imera(imerominia,				a, t) {
+	if (split(imerominia, a, /[^0-9]/) != 3)
+	return ""
+
+	t = mktime(sprintf("%04d %02d %02d 00 00 00", a[3], a[2], a[1]))
+
+	if (t < 0)
+	return ""
+
+	return strftime("%A", t)
 }

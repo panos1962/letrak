@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης
-# και παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο και
+# Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και
+# παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο (αλφαβητικά) και
 # ημερομηνία.
 
 progname="$(basename $0)"
@@ -37,14 +37,14 @@ usage
 
 shift $(expr ${OPTIND} - 1)
 
-awk \
--v pd_progname="${progname}" \
--f "${PANDORA_BASEDIR}/lib/pandora.awk" \
--f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
--f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
-sort |
 LC_TIME="el_GR.UTF-8" awk \
 -v pd_progname="${progname}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
--f "${LETRAK_BASEDIR}/lib/minas/minasxls.awk"
+-f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
+sort --field-separator="	" \
+--key="2,2" \
+--key="1,1n" \
+--key="3.7,3.8n" \
+--key="3.4,3.5n" \
+--key="3.1,3.2n"
