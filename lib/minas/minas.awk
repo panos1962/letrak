@@ -87,8 +87,8 @@ function print_data(deltio, parousia,			adia) {
 	print \
 	parousia["ipalilos"], \
 	ipalilos_onoma(parousia["ipalilos"]), \
-	deltio["imerominia"], \
 	imera(deltio["imerominia"]), \
+	deltio["imerominia"], \
 	adia
 }
 
