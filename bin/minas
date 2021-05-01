@@ -23,24 +23,18 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-{x|X} filename] [files...]" >&2
+	echo "usage: ${progname} [-x] [files...]" >&2
 	exit 1
 }
 
 errs=
-excel=
-ovrwrt=
+exporter="Gnumeric_stf:stf_csv"
 
-while getopts ":x:X:" opt
+while getopts ":x" opt
 do
 	case "${opt}" in
 	x)
-		excel="${OPTARG}"
-		ovrwrt=
-		;;
-	X)
-		excel="${OPTARG}"
-		ovrwrt=1
+		exporter="Gnumeric_Excel:excel_dsf"
 		;;
 	:)
 		echo "${progname}: -${OPTARG}: option requires an argument" >&2
@@ -58,20 +52,6 @@ usage
 
 shift $(expr ${OPTIND} - 1)
 
-if [ -n "${excel}" ]; then
-	[[ "${excel}" =~ \.xlsx?$ ]] ||
-	excel="${excel}.xls"
-
-	if [ -z "${ovrwrt}" -a -f "${excel}" ]; then
-		echo "${progname}: ${excel}: file exists" >&2
-		errs=1
-	else
-		post="|ssconvert fd://0 ${excel}"
-	fi
-else
-	post=
-fi
-
 [ -n "${errs}" ] &&
 exit 2
 
@@ -81,13 +61,15 @@ LC_TIME="el_GR.UTF-8" awk \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
 
-# Ακολουθεί ταξινόμηση ως προς το ονοματεπώνυμο υπαλλήλου,
-# τον κωδικό υπαλλήλου και την ημερομηνία.
-
-eval sort --field-separator="$'\t'" \
+sort \
+--field-separator=$'\t' \
 --key="2,2" \
 --key="1,1n" \
 --key="4.7,4.8n" \
 --key="4.4,4.5n" \
---key="4.1,4.2n" \
-${post}
+--key="4.1,4.2n" |
+
+ssconvert \
+--import-encoding="Gnumeric_stf:stf_csvtab" \
+--export-type="${exporter}" \
+fd://0 fd://1
