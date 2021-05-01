@@ -3,6 +3,13 @@
 # Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και
 # παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο (αλφαβητικά) και
 # ημερομηνία.
+#
+# Με την option -x καθορίζουμε όνομα αρχείου και σε αυτή την περίπτωση
+# παράγεται αρχείο excel. Αν το όνομα που καθορίσαμε δεν έχει επίθεμα .xls
+# ή .xlsx, τότε το όνομα εμπλουτίζεται με το επίθεμα .xls. Αν το excel αρχείο
+# υπάρχει ήδη, τότε το πρόγραμμα σταματά και δεν πειράζει το υπάρχον αρχείο.
+# Αν θέλουμε το πρόγραμμα να μην σταματά όταν το ζητούμενο excel αρχείο υπάρχει
+# ήδη, τότε μπορούμε να χρησιμοποιήσουμε την option -X αντί της option -x.
 
 progname="$(basename $0)"
 
@@ -16,16 +23,30 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [files...]" >&2
+	echo "usage: ${progname} [-{x|X} filename] [files...]" >&2
 	exit 1
 }
 
 errs=
+excel=
+ovrwrt=
 
-while getopts ":" opt
+while getopts ":x:X:" opt
 do
 	case "${opt}" in
-	\?)
+	x)
+		excel="${OPTARG}"
+		ovrwrt=
+		;;
+	X)
+		excel="${OPTARG}"
+		ovrwrt=1
+		;;
+	:)
+		echo "${progname}: -${OPTARG}: option requires an argument" >&2
+		errs=1
+		;;
+	?)
 		echo "${progname}: -${OPTARG}: invalid option" >&2
 		errs=1
 		;;
@@ -37,6 +58,23 @@ usage
 
 shift $(expr ${OPTIND} - 1)
 
+if [ -n "${excel}" ]; then
+	[[ "${excel}" =~ \.xlsx?$ ]] ||
+	excel="${excel}.xls"
+
+	if [ -z "${ovrwrt}" -a -f "${excel}" ]; then
+		echo "${progname}: ${excel}: file exists" >&2
+		errs=1
+	else
+		post="|ssconvert fd://0 ${excel}"
+	fi
+else
+	post=
+fi
+
+[ -n "${errs}" ] &&
+exit 2
+
 LC_TIME="el_GR.UTF-8" awk \
 -v pd_progname="${progname}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
@@ -46,9 +84,10 @@ LC_TIME="el_GR.UTF-8" awk \
 # Ακολουθεί ταξινόμηση ως προς το ονοματεπώνυμο υπαλλήλου,
 # τον κωδικό υπαλλήλου και την ημερομηνία.
 
-sort --field-separator="	" \
+eval sort --field-separator="$'\t'" \
 --key="2,2" \
 --key="1,1n" \
 --key="4.7,4.8n" \
 --key="4.4,4.5n" \
---key="4.1,4.2n"
+--key="4.1,4.2n" \
+${post}
