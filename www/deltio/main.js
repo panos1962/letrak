@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-04
 // Updated: 2020-08-02
 // Updated: 2020-08-01
 // Updated: 2020-07-05
@@ -423,7 +424,7 @@ deltio.reportsSetup = () => {
 	on('click', (e) => deltio.reportWindowOpen(e, 'adiaGrid'));
 
 	$('#reportAdiaFull').
-	on('click', (e) => deltio.reportWindowOpen(e, 'adiaFull'));
+	on('click', (e) => deltio.reportMinas(e));
 
 	deltio.reportsDOM = $('#reports');
 
@@ -491,6 +492,25 @@ deltio.reportWindowClose = () => {
 
 	deltio.reportWindow.close();
 	delete deltio.reportWindow;
+
+	return deltio;
+};
+
+deltio.reportMinas = (e) => {
+	e.stopPropagation();
+
+	$.post({
+		'url': 'minas.php',
+		'data': {
+			'dlist': deltio.dlistCreate(),
+		},
+		'dataType': 'text',
+		'success': (rsp) => window.open(self.location + '/minas/' + rsp),
+		'error': (err) => {
+			pnd.fyiMessage('Σφάλμα μινιαίας κατάστασης αδειών');
+			console.error(err);
+		},
+	});
 
 	return deltio;
 };
@@ -714,31 +734,13 @@ deltio.clearCandi = () => {
 deltio.ananeosi = (e) => {
 	e.stopPropagation();
 
-	let domList = deltio.browserDOM.children('.deltio');
-	let dltList = [];
-
-	domList.
-	each(function() {
-		let deltio = $(this).data('deltio');
-
-		if (!deltio)
-		return;
-
-		deltio = deltio.kodikosGet();
-
-		if (!deltio)
-		return;
-
-		dltList.push(deltio);
-	});
-
 	$.post({
 		'url': 'ananeosi.php',
 		'data': {
-			'dlist': dltList,
+			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'json',
-		'success': (rsp) => deltio.ananeosiProcess(rsp, domList),
+		'success': (rsp) => deltio.ananeosiProcess(rsp),
 		'error': (err) => {
 			pnd.fyiMessage('Σφάλμα ανανέωσης');
 			console.error(err);
@@ -748,13 +750,14 @@ deltio.ananeosi = (e) => {
 	return deltio;
 };
 
-deltio.ananeosiProcess = (rsp, domList) => {
+deltio.ananeosiProcess = (rsp) => {
 	if (rsp.error)
 	return deltio.fyiError(rsp.error);
 
 	if (!rsp.hasOwnProperty('dlist'))
 	return deltio.clearCandi();
 
+	let domList = deltio.browserDOM.children('.deltio');
 	let candi = false;
 
 	domList.
@@ -1525,6 +1528,26 @@ letrak.deltio.prototype.domGet = function() {
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+deltio.dlistCreate = () => {
+	let dlist = [];
+
+	deltio.browserDOM.children('.deltio').each(function() {
+		let deltio = $(this).data('deltio');
+
+		if (!deltio)
+		return;
+
+		deltio = deltio.kodikosGet();
+
+		if (!deltio)
+		return;
+
+		dlist.push(deltio);
+	});
+
+	return dlist;
+};
 
 deltio.zebraFix = () => {
 	pnd.zebraFix(deltio.browserDOM);

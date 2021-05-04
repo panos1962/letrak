@@ -1,5 +1,28 @@
 #!/usr/bin/env awk
 
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# awk
+# @FILETYPE END
+#
+# @FILE BEGIN
+# lib/minas/minas.awk —— Μηνιαίο δελτίο αδειών
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2021-05-04
+# @HISTORY END
+#
+# @END
+
 # Το παρόν διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και εκτυπώνει στο
 # standard output τους μετέχοντες υπαλλήλους των δελτίων προσέλευσης, ενώ τα
 # δελτία αποχώρησης απορρίπτονται σιωπηλά. Η εκτύπωση περιλαμβάνει τα εξής:
@@ -22,28 +45,32 @@ BEGIN {
 
 	apousia = "?????????"
 	dlist[0]
+
+	if (www) {
+		for (i = 1; i < ARGC; i++)
+		process_deltio(ARGV[i])
+
+		exit(0)
+	}
 }
 
 NF < 1 {
 	next
 }
 
-$1 !~ /^[0-9]{1,8}$/ {
-	pd_errmsg($0 ": λανθασμένος κωδικός δελτίου")
-	next
-}
-
-$1 in dlist {
-	pd_errmsg($0 ": το δελτίο έχει ήδη περιληφθεί")
-	next
-}
-
 {
 	process_deltio($1)
-	dlist[$1]
 }
 
 function process_deltio(kodikos,			query, deltio) {
+	if (kodikos !~ /^[0-9]{1,8}$/)
+	return pd_errmsg(kodikos ": λανθασμένος κωδικός δελτίου")
+
+	if (kodikos in dlist)
+	return pd_errmsg(kodikos ": το δελτίο έχει ήδη περιληφθεί")
+
+	dlist[kodikos]
+
 	query = "SELECT `kodikos`, DATE_FORMAT(`imerominia`, '%d‐%m‐%Y') " \
 		"AS `imerominia`, `ipiresia`, `perigrafi`, `prosapo` " \
 		"FROM `letrak`.`deltio` " \

@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# bash
+# @FILETYPE END
+#
+# @FILE BEGIN
+# bin/minas —— Μηνιαίο δελτίο αδειών
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2021-05-04
+# @HISTORY END
+#
+# @END
+
 # Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και
 # παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο (αλφαβητικά) και
 # ημερομηνία.
-#
-# Με την option -x καθορίζουμε όνομα αρχείου και σε αυτή την περίπτωση
-# παράγεται αρχείο excel. Αν το όνομα που καθορίσαμε δεν έχει επίθεμα .xls
-# ή .xlsx, τότε το όνομα εμπλουτίζεται με το επίθεμα .xls. Αν το excel αρχείο
-# υπάρχει ήδη, τότε το πρόγραμμα σταματά και δεν πειράζει το υπάρχον αρχείο.
-# Αν θέλουμε το πρόγραμμα να μην σταματά όταν το ζητούμενο excel αρχείο υπάρχει
-# ήδη, τότε μπορούμε να χρησιμοποιήσουμε την option -X αντί της option -x.
 
 progname="$(basename $0)"
 
@@ -23,18 +39,24 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-x] [files...]" >&2
+	echo "usage: ${progname} [-x] [files...]
+       ${progname} -w dekeys..." >&2
 	exit 1
 }
 
 errs=
 exporter="Gnumeric_stf:stf_csv"
+www=
 
-while getopts ":x" opt
+while getopts ":xw" opt
 do
 	case "${opt}" in
 	x)
 		exporter="Gnumeric_Excel:excel_dsf"
+		;;
+	w)
+		exporter="Gnumeric_Excel:excel_dsf"
+		www="$$.xls"
 		;;
 	:)
 		echo "${progname}: -${OPTARG}: option requires an argument" >&2
@@ -52,11 +74,32 @@ usage
 
 shift $(expr ${OPTIND} - 1)
 
+[ -n "${www}" ] &&
+[ $# -lt 1 ] &&
+errs=1
+
 [ -n "${errs}" ] &&
 exit 2
 
-LC_TIME="el_GR.UTF-8" awk \
+if [ -n "${www}" ]; then
+	mdir="${LETRAK_BASEDIR}/local/minas"
+
+	if [ -d "${mdir}" ]; then
+		find "${mdir}" -type f -a -name '*.xls' -a -mtime +1 -exec rm {} \; 2>/dev/null
+	else
+		! mkdir --mode="777" "${mdir}" 2>/dev/null &&
+		echo "${progname}: ${mdir}: cannot create directory" >&2 &&
+		exit 2
+	fi
+
+	ofile="${mdir}/${www}"
+else
+	ofile="fd://1"
+fi
+
+LC_ALL="el_GR.UTF-8" awk \
 -v pd_progname="${progname}" \
+-v www="${www}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
@@ -72,4 +115,7 @@ sort \
 ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
 --export-type="${exporter}" \
-fd://0 fd://1
+fd://0 "${ofile}"
+
+[ -n "${www}" ] &&
+echo "${www}"
