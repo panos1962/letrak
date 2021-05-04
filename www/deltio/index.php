@@ -84,7 +84,7 @@ document_body();
 		Εκτύπωση αδειών (grid)
 	</div>
 	<div class="reportTab" id="reportAdiaFull">
-		Αναλυτική εκτύπωση αδειών
+		Μηνιαία εκτύπωση αδειών (excel)
 	</div>
 </div>
 <?php
