@@ -15,17 +15,31 @@
 # @FILE END
 #
 # @DESCRIPTION BEGIN
+#
+# Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και
+# παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο (αλφαβητικά) και
+# ημερομηνία.
+#
+# Το πρόγραμμα μπορεί να παραγάγει και αρχείο excel αντί του TSV με χρήση
+# της option -x.
+#
+# Παρέχεται, τέλος, η option -w η οποία είναι χρήσιμη όταν το πρόγραμμα τρέχει
+# μέσα από τον browser ως εκτυπωτικό στη σελίδα διαχείρισης δελτίων. Σ' αυτήν
+# την περίπτωση το πρόγραμμα παράγει αρχείο excel το οποίο φυλάσσεται στο
+# directory "local/minas" για περίπου δύο ημέρες. Επίσης, με την option -w οι
+# κωδικοί δελτίων δεν δίνονται ως input αλλά ως command line arguments. Τέλος,
+# με την option -w το πρόγραμμα εκτυπώνει στο standard output το όνομα του
+# παραγόμενου excel αρχείου. Όταν τρέχουμε το πρόγραμμα με την option -w, λέμε
+# ότι το πρόγραμμα εκτελείται σε browser report mode.
+#
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2021-05-05
 # Created: 2021-05-04
 # @HISTORY END
 #
 # @END
-
-# Το παρόν πρόγραμμα διαβάζει κωδικούς δελτίων προσέλευσης/αποχώρησης και
-# παράγει συνολικό TSV report ταξινομημένο κατά υπάλληλο (αλφαβητικά) και
-# ημερομηνία.
 
 progname="$(basename $0)"
 
@@ -51,10 +65,10 @@ www=
 while getopts ":xw" opt
 do
 	case "${opt}" in
-	x)
+	x)	# excel output
 		exporter="Gnumeric_Excel:excel_dsf"
 		;;
-	w)
+	w)	# excel output, browser repotr mode
 		exporter="Gnumeric_Excel:excel_dsf"
 		www="$$.xls"
 		;;
@@ -74,26 +88,37 @@ usage
 
 shift $(expr ${OPTIND} - 1)
 
-[ -n "${www}" ] &&
-[ $# -lt 1 ] &&
-errs=1
-
-[ -n "${errs}" ] &&
-exit 2
-
 if [ -n "${www}" ]; then
+	# Εφόσον το πρόγραμμα εκτελείται σε browser report mode, τότε πρέπει
+	# να έχουν δοθεί κωδικοί δελτίων ως command line arguments.
+
+	[ $# -lt 1 ] &&
+	usage
+
+	# Ελέγχουμε και «καθαρίζουμε» το directory προσωρινής φύλαξης των
+	# παραγόμενων excel αρχείων.
+
 	mdir="${LETRAK_BASEDIR}/local/minas"
 
 	if [ -d "${mdir}" ]; then
-		find "${mdir}" -type f -a -name '*.xls' -a -mtime +1 -exec rm {} \; 2>/dev/null
+		find "${mdir}" -type f -a -name '*.xls' -a -mtime +1 \
+			-exec rm {} \; 2>/dev/null
 	else
 		! mkdir --mode="777" "${mdir}" 2>/dev/null &&
 		echo "${progname}: ${mdir}: cannot create directory" >&2 &&
 		exit 2
 	fi
 
+	# Καθορίζουμε το output file full pathname ως excel αρχείο στο
+	# directory προσωρινής φύλαξης των excel αρχείων, π.χ.
+	#
+	#	/var/opt/letrak/local/minas/13267.xls
+
 	ofile="${mdir}/${www}"
 else
+	# Εφόσον το πρόγραμμα δεν τρέχει σε browser report mode, το output
+	# κατευθύνεται στο standard output.
+
 	ofile="fd://1"
 fi
 
@@ -120,6 +145,10 @@ dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
 --export-type="${exporter}" \
 fd://0 "${ofile}"
+
+# Αν το πρόγραμμα τρέχει σε browser report mode, τότε το παραγόμενο excel
+# αρχείο έχει φυλαχθεί στο directory φύλαξης προσωρινών excel αρχείων, και
+# εκτυπώνουμε το basename του παραγόμενου excel αρχείου στο standard output.
 
 [ -n "${www}" ] &&
 echo "${www}"
