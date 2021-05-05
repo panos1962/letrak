@@ -112,7 +112,7 @@ sort \
 --key="4.4,4.5n" \
 --key="4.1,4.2n" |
 
-ssconvert \
+dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
 --export-type="${exporter}" \
 fd://0 "${ofile}"
