@@ -500,12 +500,25 @@ deltio.reportWindowClose = () => {
 deltio.minasReport = (e) => {
 	e.stopPropagation();
 
+	// Το πρόγραμμα "minas.php" δέχεται ως παραμέτρους ένα array από
+	// κωδικούς δελτίων και παράγει ένα excel αρχείο που φυλάσσεται
+	// προσωρινά (για 1-2 ημέρες) στο directory "local/minas". Το
+	// basename του παραγόμενου excel αρχείου επιστρέφεται από το
+	// πρόγραμμα, ενώ παρέχεται τοπικό link του directory προσωρινής
+	// φύλαξης των παραγομένων αρχείων με το όνομα "minas".
+
 	$.post({
 		'url': 'minas.php',
 		'data': {
 			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'text',
+
+		// Το πρόγραμμα επιστρέφει το basename του παραγόμενου excel
+		// αρχείου, το οποίο μπορούμε να το προσπελάσουμε μέσω του
+		// τοπικού link "minas" που δείχνει στο directory προσωρινής
+		// φύλαξης των παραγομένων αρχείων.
+
 		'success': (rsp) => {
 			deltio.reportsHide();
 			pnd.fyiMessage(rsp);
