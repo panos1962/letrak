@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-05
 // Updated: 2021-05-04
 // Updated: 2020-08-02
 // Updated: 2020-08-01
@@ -505,9 +506,13 @@ deltio.minasReport = (e) => {
 			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'text',
-		'success': (rsp) => window.open('minas/' + rsp),
+		'success': (rsp) => {
+			deltio.reportsHide();
+			pnd.fyiMessage(rsp);
+			window.open('minas/' + rsp);
+		},
 		'error': (err) => {
-			pnd.fyiMessage('Σφάλμα μινιαίας κατάστασης αδειών');
+			pnd.fyiMessage('Σφάλμα μηνιαίας κατάστασης αδειών');
 			console.error(err);
 		},
 	});
