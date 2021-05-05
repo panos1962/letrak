@@ -112,6 +112,10 @@ sort \
 --key="4.4,4.5n" \
 --key="4.1,4.2n" |
 
+# Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
+# περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε
+# το ssconvert μέσω του dbus-run-session
+
 dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
 --export-type="${exporter}" \
