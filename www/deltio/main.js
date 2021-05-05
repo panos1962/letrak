@@ -424,7 +424,7 @@ deltio.reportsSetup = () => {
 	on('click', (e) => deltio.reportWindowOpen(e, 'adiaGrid'));
 
 	$('#reportAdiaFull').
-	on('click', (e) => deltio.reportMinas(e));
+	on('click', (e) => deltio.minasReport(e));
 
 	deltio.reportsDOM = $('#reports');
 
@@ -496,7 +496,7 @@ deltio.reportWindowClose = () => {
 	return deltio;
 };
 
-deltio.reportMinas = (e) => {
+deltio.minasReport = (e) => {
 	e.stopPropagation();
 
 	$.post({
@@ -505,7 +505,7 @@ deltio.reportMinas = (e) => {
 			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'text',
-		'success': (rsp) => window.open(self.location + '/minas/' + rsp),
+		'success': (rsp) => window.open('minas/' + rsp),
 		'error': (err) => {
 			pnd.fyiMessage('Σφάλμα μινιαίας κατάστασης αδειών');
 			console.error(err);
