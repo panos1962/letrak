@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-10
 // Updated: 2021-03-08
 // Updated: 2021-03-02
 // Updated: 2021-02-25
@@ -1466,7 +1467,8 @@ prosopa.editorSetup = () => {
 		prosopa.editorAdeosDOM.val(imerominia);
 
 		switch (adidos) {
-		case 'ΤΗΛΕΡΓΑΣΙΑ':
+		case "ΤΗΛΕΡΓΑΣΙΑ":
+		case "ΚΑΤ' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ":
 			prosopa.editorAdeosDOM.val('');
 			break;
 		}
