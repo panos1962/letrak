@@ -35,6 +35,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2021-05-12
 # Updated: 2021-05-05
 # Created: 2021-05-04
 # @HISTORY END
@@ -53,20 +54,24 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-x] [files...]
+	echo "usage: ${progname} [-x] [-a] [files...]
        ${progname} -w dekeys..." >&2
 	exit 1
 }
 
 errs=
+totals=1
 exporter="Gnumeric_stf:stf_csv"
 www=
 
-while getopts ":xw" opt
+while getopts ":xwt" opt
 do
 	case "${opt}" in
 	x)	# excel output
 		exporter="Gnumeric_Excel:excel_dsf"
+		;;
+	a)	# totals
+		totals=
 		;;
 	w)	# excel output, browser repotr mode
 		exporter="Gnumeric_Excel:excel_dsf"
@@ -136,6 +141,12 @@ sort \
 --key="4.7,4.8n" \
 --key="4.4,4.5n" \
 --key="4.1,4.2n" |
+
+awk \
+-v pd_progname="${progname}" \
+-v totals="${totals}" \
+-f "${PANDORA_BASEDIR}/lib/pandora.awk" \
+-f "${LETRAK_BASEDIR}/lib/minas/minasTotal.awk" |
 
 # Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
 # περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε
