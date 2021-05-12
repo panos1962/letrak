@@ -34,16 +34,19 @@
 #	Ημερομηνία δελτίου
 #	Είδος αδείας/παρουσίας/απουσίας
 #
-# Η παράμετρος "totals" δείχνει αν το πρόγραμμα πράγματι θα εκτυπώσει
+# Η παράμετρος "analitika" δείχνει αν το πρόγραμμα πράγματι θα εκτυπώσει
 # συγκεντρωτικά στοιχεία ή όχι. Για να εκτυπωθούν συγκεντρωτικά στοιχεία
-# θα πρέπει η παράμετρος "totals" να είναι μη μηδενική ή μη κενή.
+# θα πρέπει η παράμετρος "analitika" να είναι μηδενική ή κενή.
 
 BEGIN {
 	FS = "\t"
 	OFS = "\t"
+
+	parousia[""]
+	parousia["ΤΗΛΕΡΓΑΣΙΑ"]
 }
 
-!totals {
+analitika {
 	print
 	next
 }
@@ -66,12 +69,9 @@ function process_data(					nf) {
 
 	ipalilos = $(nf++)	# κωδικός υπαλλήλου
 	onoma = $(nf++)		# ονοματεπώνυμο υπαλλήλου
-	nf++			# day of the week
+	dow = $(nf++)		# day of the week
 	imerominia = $(nf++)	# ημερομηνία
 	apa = $(nf++)		# άδεια/παρουσία/απουσία
-
-	if (apa == "ΤΗΛΕΡΓΑΣΙΑ")
-	apa = ""
 
 	if (ipalilos != ipalilos_trexon)
 	return alagi_ipalilou()
@@ -80,6 +80,7 @@ function process_data(					nf) {
 	return alagi_apa()
 
 	imerominia_eos = imerominia
+	dow_eos = dow
 }
 
 function alagi_ipalilou() {
@@ -88,19 +89,29 @@ function alagi_ipalilou() {
 	onoma_trexon = onoma
 	apa_trexon = apa
 	imerominia_apo = imerominia
+	dow_apo = dow
 	imerominia_eos = imerominia
+	dow_eos = dow
 }
 
 function alagi_apa() {
 	print_data()
 	apa_trexon = apa
 	imerominia_apo = imerominia
+	dow_apo = dow
 	imerominia_eos = imerominia
+	dow_eos = dow
 }
 
 function print_data() {
-	if (imerominia_eos)
+	if (!imerominia_eos)
+	return
+
+	if (apa_trexon in parousia)
+	return
+
 	print ipalilos_trexon, onoma_trexon, \
-		imerominia_apo, imerominia_eos, \
+		dow_apo, imerominia_apo, \
+		dow_eos, imerominia_eos, \
 		apa_trexon
 }

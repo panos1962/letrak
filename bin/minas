@@ -54,13 +54,13 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-x] [-a] [files...]
+	echo "usage: ${progname} [-x] [-t] [files...]
        ${progname} -w dekeys..." >&2
 	exit 1
 }
 
 errs=
-totals=1
+analitika=1
 exporter="Gnumeric_stf:stf_csv"
 www=
 
@@ -70,8 +70,8 @@ do
 	x)	# excel output
 		exporter="Gnumeric_Excel:excel_dsf"
 		;;
-	a)	# totals
-		totals=
+	t)	# totals
+		analitika=
 		;;
 	w)	# excel output, browser repotr mode
 		exporter="Gnumeric_Excel:excel_dsf"
@@ -128,11 +128,14 @@ else
 fi
 
 LC_ALL="el_GR.UTF-8" awk \
--v pd_progname="${progname}" \
+-v pd_progname="${progname}/minas.awk" \
 -v www="${www}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${KARTEL_BASEDIR}/lib/karteldb.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minas.awk" "$@" |
+
+# Το πρόγραμμα που ακολουθεί ταξινομεί τα αναλυτικά στοιχεία
+# παρουσίας/αδείας/απουσίας κατά υπάλληλο και ημερομηνία.
 
 sort \
 --field-separator=$'\t' \
@@ -142,9 +145,15 @@ sort \
 --key="4.4,4.5n" \
 --key="4.1,4.2n" |
 
+# Το πρόγραμμα που ακολουθεί παραλαμβάνει τα αναλυτικά στοιχεία
+# παρουσίας/αδείας/απουσίας ταξινομημένα κατά υπάλληλο και ημερομηνία,
+# και τα εκτυπώνει ως έχουν εφόσον η παράμετρος "analitika" είναι μη
+# κενή ή μη μηδενική, αλλιώς τα εκτυπώνει συγκεντρωτικά κατά περίοδο
+# παρουσίας/αδείας/απουσίας.
+
 awk \
--v pd_progname="${progname}" \
--v totals="${totals}" \
+-v pd_progname="${progname}/minasTotal.awk" \
+-v analitika="${analitika}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
 -f "${LETRAK_BASEDIR}/lib/minas/minasTotal.awk" |
 

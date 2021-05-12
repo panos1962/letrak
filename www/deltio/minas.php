@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-12
 // Created: 2021-05-04
 // @HISTORY END
 //
@@ -50,6 +51,9 @@ if ($basedir === FALSE)
 $basedir = "/var/opt/letrak";
 
 $cmd = $basedir . "/bin/minas -w";
+
+if (intval(pandora::parameter_get("totals")))
+$cmd .= " -t";
 
 foreach ($dlist as $kodikos) {
 	$cmd .= " " . $kodikos;

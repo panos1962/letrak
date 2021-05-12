@@ -80,11 +80,11 @@ document_body();
 </div>
 
 <div id="reports">
-	<div class="reportTab" id="reportAdiaGrid">
-		Εκτύπωση αδειών (grid)
+	<div class="reportTab" id="reportAdiaImera">
+		Ημερήσια εκτύπωση αδειών
 	</div>
-	<div class="reportTab" id="reportAdiaFull">
-		Μηνιαία εκτύπωση αδειών (excel)
+	<div class="reportTab" id="reportAdiaMinas">
+		Μηνιαία εκτύπωση αδειών
 	</div>
 </div>
 <?php

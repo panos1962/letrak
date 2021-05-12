@@ -18,6 +18,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2021-05-12
 # Created: 2021-05-04
 # @HISTORY END
 #
@@ -101,11 +102,11 @@ function print_deltio(deltio,				query, parousia) {
 }
 
 function print_data(deltio, parousia,			adia) {
-	if (parousia["meraora"])
-	adia = ""
-
-	else if (parousia["adidos"])
+	if (parousia["adidos"])
 	adia = parousia["adidos"]
+
+	else if (parousia["meraora"])
+	adia = ""
 
 	else if (parousia["excuse"])
 	adia = ""

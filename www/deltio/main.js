@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-12
 // Updated: 2021-05-05
 // Updated: 2021-05-04
 // Updated: 2020-08-02
@@ -421,11 +422,11 @@ deltio.filtraFormaCancel = (e) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 deltio.reportsSetup = () => {
-	$('#reportAdiaGrid').
-	on('click', (e) => deltio.reportWindowOpen(e, 'adiaGrid'));
+	$('#reportAdiaImera').
+	on('click', (e) => deltio.minasReport(e, 0));
 
-	$('#reportAdiaFull').
-	on('click', (e) => deltio.minasReport(e));
+	$('#reportAdiaMinas').
+	on('click', (e) => deltio.minasReport(e, 1));
 
 	deltio.reportsDOM = $('#reports');
 
@@ -475,29 +476,7 @@ deltio.reportsToggle = (e) => {
 	return deltio;
 };
 
-deltio.reportWindowOpen = (e, url) => {
-	e.stopPropagation();
-
-	if (deltio.reportWindow)
-	deltio.reportWindowClose();
-
-	deltio.reportWindow = window.open(url, 'reports');
-	deltio.reportWindow.onbeforeunload = () => delete deltio.reportWindow;
-
-	return deltio;
-};
-
-deltio.reportWindowClose = () => {
-	if (!deltio.reportWindow)
-	return deltio;
-
-	deltio.reportWindow.close();
-	delete deltio.reportWindow;
-
-	return deltio;
-};
-
-deltio.minasReport = (e) => {
+deltio.minasReport = (e, totals) => {
 	e.stopPropagation();
 
 	// Το πρόγραμμα "minas.php" δέχεται ως παραμέτρους ένα array από
@@ -510,6 +489,7 @@ deltio.minasReport = (e) => {
 	$.post({
 		'url': 'minas.php',
 		'data': {
+			'totals': totals,
 			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'text',
@@ -525,7 +505,7 @@ deltio.minasReport = (e) => {
 			window.open('minas/' + rsp);
 		},
 		'error': (err) => {
-			pnd.fyiMessage('Σφάλμα μηνιαίας κατάστασης αδειών');
+			pnd.fyiMessage('Σφάλμα κατάστασης αδειών');
 			console.error(err);
 		},
 	});
