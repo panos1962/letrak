@@ -1408,56 +1408,69 @@ prosopa.filtroApantesEfarmogi = (e) => {
 };
 
 prosopa.filtraEfarmogi = () => {
-	let apontes = prosopa.filtroApontesDOM.prop('checked');
-	let parontes = prosopa.filtroParontesDOM.prop('checked');
-	let tilergasia = prosopa.filtroTilergasiaDOM.prop('checked');
-
-	if (prosopa.filtroApantesDOM.prop('checked')) {
-		apontes = true;
-		parontes = true;
-		tilergasia = true;
-	}
-
 	let ordinal = 0;
 
 	prosopa.browserDOM.
 	children('.parousia').
 	each(function() {
 		let parousia = $(this).data('parousia');
-		let paron = parousia.meraora;
-		let apon = parousia.adidos;
-		let tilergazomenos = false;
-		let match = false;
 
-		switch (parousia.adidos) {
-		case "ΤΗΛΕΡΓΑΣΙΑ":
-			tilergazomenos = true;
-		}
-
-		$(this).css('display', 'none');
-
-		if ((!tilergasia) && tilergazomenos)
-		return;
-
-		if (tilergasia && tilergazomenos)
-		match = true;
-
-		else if (apontes && apon)
-		match = true;
-
-		else if (parontes && paron)
-		match = true;
-
-		if (!match)
-		return;
+		if (!prosopa.filtraMatch(parousia))
+		return $(this).css('display', 'none');
 
 		ordinal++;
-		$(this).
-		css('display', '').
-		children('.parousiaOrdinal').text(ordinal);
+		$(this).children('.parousiaOrdinal').text(ordinal);
+		$(this).css('display', '');
 	});
 
 	return prosopa;
+};
+
+prosopa.filtraMatch = function(parousia) {
+	if (prosopa.filtroApantesDOM.prop('checked'))
+	return true;
+
+	switch (parousia.adidos) {
+	case "ΤΗΛΕΡΓΑΣΙΑ":
+		return prosopa.filtroTilergasiaDOM.prop('checked');
+	}
+
+	if (prosopa.filtroApontesMatch(parousia))
+	return true;
+
+	if (prosopa.filtroParontesMatch(parousia))
+	return true;
+
+	return false;
+};
+
+prosopa.filtroApontesMatch = (parousia) => {
+	if (!prosopa.filtroApontesDOM.prop('checked'))
+	return false;
+
+	if (parousia.adidos)
+	return true;
+
+	if (parousia.meraora)
+	return false;
+
+	if (parousia.excuse)
+	return false;
+
+	return true;
+};
+
+prosopa.filtroParontesMatch = (parousia) => {
+	if (!prosopa.filtroParontesDOM.prop('checked'))
+	return false;
+
+	if (parousia.meraora)
+	return true;
+
+	if (parousia.excuse)
+	return true;
+
+	return false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
