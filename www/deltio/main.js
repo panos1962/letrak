@@ -482,7 +482,6 @@ deltio.reportsToggle = (e) => {
 // το report είναι αναλυτικό κατά ημέρα.
 
 deltio.adiaReport = (e, diastima) => {
-alert('asdasd');
 	e.stopPropagation();
 
 	// Το πρόγραμμα "minas.php" δέχεται ως παραμέτρους ένα array από
