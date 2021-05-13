@@ -1353,7 +1353,7 @@ prosopa.filtraSetup = () => {
 		'height': 'auto',
 		'position': {
 			'my': 'left top',
-			'at': 'left+98 top+142',
+			'at': 'left+98 top+92',
 		},
 		'open': () => prosopa.filtraShow(),
 		'close': () => prosopa.filtraHide(),
