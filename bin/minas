@@ -35,6 +35,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2021-05-13
 # Updated: 2021-05-12
 # Updated: 2021-05-05
 # Created: 2021-05-04
@@ -54,24 +55,24 @@ KARTEL_BASEDIR="/var/opt/kartel"
 LETRAK_BASEDIR="/var/opt/letrak"
 
 usage() {
-	echo "usage: ${progname} [-x] [-t] [files...]
+	echo "usage: ${progname} [-x] [-d] [files...]
        ${progname} -w dekeys..." >&2
 	exit 1
 }
 
 errs=
-analitika=1
+imerisio=1
 exporter="Gnumeric_stf:stf_csv"
 www=
 
-while getopts ":xwt" opt
+while getopts ":xwd" opt
 do
 	case "${opt}" in
 	x)	# excel output
 		exporter="Gnumeric_Excel:excel_dsf"
 		;;
-	t)	# totals
-		analitika=
+	d)	# διάστημα, όχι ημερήσιο
+		imerisio=
 		;;
 	w)	# excel output, browser repotr mode
 		exporter="Gnumeric_Excel:excel_dsf"
@@ -147,15 +148,15 @@ sort \
 
 # Το πρόγραμμα που ακολουθεί παραλαμβάνει τα αναλυτικά στοιχεία
 # παρουσίας/αδείας/απουσίας ταξινομημένα κατά υπάλληλο και ημερομηνία,
-# και τα εκτυπώνει ως έχουν εφόσον η παράμετρος "analitika" είναι μη
+# και τα εκτυπώνει ως έχουν εφόσον η παράμετρος "imerisio" είναι μη
 # κενή ή μη μηδενική, αλλιώς τα εκτυπώνει συγκεντρωτικά κατά περίοδο
 # παρουσίας/αδείας/απουσίας.
 
 awk \
--v pd_progname="${progname}/minasTotal.awk" \
--v analitika="${analitika}" \
+-v pd_progname="${progname}/minasPost.awk" \
+-v imerisio="${imerisio}" \
 -f "${PANDORA_BASEDIR}/lib/pandora.awk" \
--f "${LETRAK_BASEDIR}/lib/minas/minasTotal.awk" |
+-f "${LETRAK_BASEDIR}/lib/minas/minasPost.awk" |
 
 # Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
 # περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε

@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-13
 // Updated: 2020-08-02
 // Updated: 2020-07-07
 // Updated: 2020-04-09
@@ -83,7 +84,7 @@ document_body();
 	<div class="reportTab" id="reportAdiaImera">
 		Ημερήσια εκτύπωση αδειών
 	</div>
-	<div class="reportTab" id="reportAdiaMinas">
+	<div class="reportTab" id="reportAdiaDiastima">
 		Μηνιαία εκτύπωση αδειών
 	</div>
 </div>

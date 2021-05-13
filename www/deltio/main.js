@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-13
 // Updated: 2021-05-12
 // Updated: 2021-05-05
 // Updated: 2021-05-04
@@ -115,14 +116,7 @@ pnd.domInit(() => {
 
 	deltio.
 	selidaSetup();
-
-	self.onunload = deltio.onclose;
 });
-
-deltio.onclose = () => {
-	if (deltio.reportWindow)
-	deltio.reportWindow.close();
-};
 
 deltio.selidaSetup = () => {
 	letrak.
@@ -423,10 +417,10 @@ deltio.filtraFormaCancel = (e) => {
 
 deltio.reportsSetup = () => {
 	$('#reportAdiaImera').
-	on('click', (e) => deltio.minasReport(e, 0));
+	on('click', (e) => deltio.adiaReport(e, 0));
 
-	$('#reportAdiaMinas').
-	on('click', (e) => deltio.minasReport(e, 1));
+	$('#reportAdiaDiastima').
+	on('click', (e) => deltio.adiaReport(e, 1));
 
 	deltio.reportsDOM = $('#reports');
 
@@ -476,7 +470,19 @@ deltio.reportsToggle = (e) => {
 	return deltio;
 };
 
-deltio.minasReport = (e, totals) => {
+// Η function "adiaReport" καλείται κατά την προετοιμασία των reports αδειών.
+// Πρόκειται για excel αρχεία τα οποία υποχρεούνται οι υπηρεσίες να υποβάλλουν
+// στο Προσωπικό τουλάχιστον κάθε μήνα. Στα αρχεία αυτά περιλαμβάνονται οι
+// άδειες που έχουν καταχωρηθεί στα καθημερινά παρουσιολόγια για το διάστημα
+// στο οποίο αναφέρεται το εκάστοτε report.
+//
+// Ως δεύτερη παράμετρος περνά ένας αριθμός που αν είναι μη μηδενικός σημαίνει
+// ότι το report θα περιλαμβάνει τις άδειες σε διαστήματα, δηλαδή το είδος τής
+// άδειας και το διάστημα στο οποίο αφορά, ενώ αν οαριθμός είναι μηδενικός,
+// το report είναι αναλυτικό κατά ημέρα.
+
+deltio.adiaReport = (e, diastima) => {
+alert('asdasd');
 	e.stopPropagation();
 
 	// Το πρόγραμμα "minas.php" δέχεται ως παραμέτρους ένα array από
@@ -489,7 +495,7 @@ deltio.minasReport = (e, totals) => {
 	$.post({
 		'url': 'minas.php',
 		'data': {
-			'totals': totals,
+			'diastima': diastima,
 			'dlist': deltio.dlistCreate(),
 		},
 		'dataType': 'text',

@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-13
 // Updated: 2021-05-12
 // Created: 2021-05-04
 // @HISTORY END
@@ -52,8 +53,8 @@ $basedir = "/var/opt/letrak";
 
 $cmd = $basedir . "/bin/minas -w";
 
-if (intval(pandora::parameter_get("totals")))
-$cmd .= " -t";
+if (intval(pandora::parameter_get("diastima")))
+$cmd .= " -d";
 
 foreach ($dlist as $kodikos) {
 	$cmd .= " " . $kodikos;
