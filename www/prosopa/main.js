@@ -1418,32 +1418,43 @@ prosopa.filtraEfarmogi = () => {
 		tilergasia = true;
 	}
 
+	let ordinal = 0;
+
 	prosopa.browserDOM.
 	children('.parousia').
 	each(function() {
 		let parousia = $(this).data('parousia');
 		let paron = parousia.meraora;
 		let apon = parousia.adidos;
-		let tile = false;
+		let tilergazomenos = false;
+		let match = false;
 
 		switch (parousia.adidos) {
 		case "ΤΗΛΕΡΓΑΣΙΑ":
-			tile = true;
+			tilergazomenos = true;
 		}
 
 		$(this).css('display', 'none');
 
-		if (tilergasia && tile)
-		return $(this).css('display', '');
-
-		if ((!tilergasia) && tile)
+		if ((!tilergasia) && tilergazomenos)
 		return;
 
-		if (apontes && apon)
-		return $(this).css('display', '');
+		if (tilergasia && tilergazomenos)
+		match = true;
 
-		if (parontes && paron)
-		return $(this).css('display', '');
+		else if (apontes && apon)
+		match = true;
+
+		else if (parontes && paron)
+		match = true;
+
+		if (!match)
+		return;
+
+		ordinal++;
+		$(this).
+		css('display', '').
+		children('.parousiaOrdinal').text(ordinal);
 	});
 
 	return prosopa;
