@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-13
 // Updated: 2021-05-10
 // Updated: 2021-03-08
 // Updated: 2021-03-02
@@ -119,6 +120,8 @@ prosopa.minima = {
 	'katagrafiKatharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
 	'katagrafiNoEvent': 'Δεν εντοπίστηκαν καταγεγραμμένα συμβάντα',
+
+	'filtraTabLabel': 'Φίλτρα',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -215,6 +218,7 @@ prosopa.selidaSetup = () => {
 	prosopa.
 	ipografesSetup().
 	prosopaSetup().
+	filtraSetup().
 	ergaliaSetup().
 	editorSetup().
 	protipoSetup();
@@ -1308,6 +1312,141 @@ prosopa.orariaDiagrafi = (e) => {
 	});
 
 	return false;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.filtraSetup = () => {
+	pnd.toolbarLeftDOM.
+
+	append(prosopa.filtraTabDOM = letrak.tabDOM().
+	addClass('prosopaPliktro').
+	text(prosopa.minima.filtraTabLabel).
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if ($(this).hasClass('tabActive'))
+		prosopa.filtraDOM.dialog('close');
+
+		else
+		prosopa.filtraDOM.dialog('open');
+	}));
+
+	prosopa.filtroApontesDOM = $('#filtroApontes').
+	on('change', prosopa.filtroApontesEfarmogi);
+
+	prosopa.filtroParontesDOM = $('#filtroParontes').
+	on('change', prosopa.filtroParontesEfarmogi);
+
+	prosopa.filtroTilergasiaDOM = $('#filtroTilergasia').
+	on('change', prosopa.filtroTilergasiaEfarmogi);
+
+	prosopa.filtroApantesDOM = $('#filtroApantes').
+	prop('checked', true).
+	on('change', prosopa.filtroApantesEfarmogi);
+
+	prosopa.filtraDOM = $('#filtra').
+	dialog({
+		'resizable': false,
+		'title': 'Φίλτρα',
+		'width': '164px',
+		'height': 'auto',
+		'position': {
+			'my': 'left top',
+			'at': 'left+98 top+142',
+		},
+		'open': () => prosopa.filtraShow(),
+		'close': () => prosopa.filtraHide(),
+	}).
+	dialog('close');
+
+	return prosopa;
+};
+
+prosopa.filtraShow = () => {
+	prosopa.filtraTabDOM.addClass('tabActive');
+	return prosopa;
+};
+
+prosopa.filtraHide = () => {
+	prosopa.filtraTabDOM.removeClass('tabActive');
+	return prosopa;
+};
+
+prosopa.filtroApontesEfarmogi = (e) => {
+	e.stopPropagation();
+	prosopa.filtroApantesDOM.prop('checked', false);
+	prosopa.filtraEfarmogi();
+	return prosopa;
+};
+
+prosopa.filtroParontesEfarmogi = (e) => {
+	e.stopPropagation();
+	prosopa.filtroApantesDOM.prop('checked', false);
+	prosopa.filtraEfarmogi();
+	return prosopa;
+};
+
+prosopa.filtroTilergasiaEfarmogi = (e) => {
+	e.stopPropagation();
+	prosopa.filtroApantesDOM.prop('checked', false);
+	prosopa.filtraEfarmogi();
+	return prosopa;
+};
+
+prosopa.filtroApantesEfarmogi = (e) => {
+	e.stopPropagation();
+
+	if (prosopa.filtroApantesDOM.prop('checked')) {
+		prosopa.filtroApontesDOM.prop('checked', false);
+		prosopa.filtroParontesDOM.prop('checked', false);
+		prosopa.filtroTilergasiaDOM.prop('checked', false);
+	}
+
+	prosopa.filtraEfarmogi();
+	return prosopa;
+};
+
+prosopa.filtraEfarmogi = () => {
+	let apontes = prosopa.filtroApontesDOM.prop('checked');
+	let parontes = prosopa.filtroParontesDOM.prop('checked');
+	let tilergasia = prosopa.filtroTilergasiaDOM.prop('checked');
+
+	if (prosopa.filtroApantesDOM.prop('checked')) {
+		apontes = true;
+		parontes = true;
+		tilergasia = true;
+	}
+
+	prosopa.browserDOM.
+	children('.parousia').
+	each(function() {
+		let parousia = $(this).data('parousia');
+		let paron = parousia.meraora;
+		let apon = parousia.adidos;
+		let tile = false;
+
+		switch (parousia.adidos) {
+		case "ΤΗΛΕΡΓΑΣΙΑ":
+			tile = true;
+		}
+
+		$(this).css('display', 'none');
+
+		if (tilergasia && tile)
+		return $(this).css('display', '');
+
+		if ((!tilergasia) && tile)
+		return;
+
+		if (apontes && apon)
+		return $(this).css('display', '');
+
+		if (parontes && paron)
+		return $(this).css('display', '');
+	});
+
+	return prosopa;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

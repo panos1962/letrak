@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-13
 // Updated: 2020-11-23
 // Updated: 2020-10-19
 // Updated: 2020-08-08
@@ -224,6 +225,17 @@ document_body();
 		Ok!
 	</div>
 </form>
+
+<div id="filtra">
+<input type="checkbox" id="filtroApontes">
+<label for="filtroApontes">Απόντες</label><br>
+<input type="checkbox" id="filtroParontes">
+<label for="filtroParontes">Παρόντες</label><br>
+<input type="checkbox" id="filtroTilergasia">
+<label for="filtroTilergasia">Τηλεργασία</label><br>
+<input type="checkbox" id="filtroApantes">
+<label for="filtroApantes">Άπαντες</label><br>
+</div>
 
 <div id="ergalia">
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopoInsert">
