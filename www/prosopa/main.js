@@ -1348,7 +1348,7 @@ prosopa.filtraSetup = () => {
 	prosopa.filtraDOM = $('#filtra').
 	dialog({
 		'resizable': false,
-		'title': 'Φίλτρα',
+		'title': prosopa.minima.filtraTabLabel,
 		'width': '164px',
 		'height': 'auto',
 		'position': {
