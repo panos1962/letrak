@@ -76,7 +76,8 @@ document_body();
 		<label for="klonismosFormaEnarktirio">
 			Εναρκτήριο
 		</label>
-		<input id="klonismosFormaEnarktirio" tabindex="-1" type="checkbox">
+		<input id="klonismosFormaEnarktirio" tabindex="-1"
+			type="checkbox" disabled="yes">
 	</div>
 </div>
 
