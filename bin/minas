@@ -114,6 +114,8 @@ if [ -n "${www}" ]; then
 		! mkdir --mode="777" "${mdir}" 2>/dev/null &&
 		echo "${progname}: ${mdir}: cannot create directory" >&2 &&
 		exit 2
+
+		cp "${LETRAK_BASEDIR}/lacol/minasBase.html" "${mdir}/index.html"
 	fi
 
 	# Καθορίζουμε το output file full pathname ως excel αρχείο στο
