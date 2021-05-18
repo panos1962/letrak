@@ -62,22 +62,22 @@ usage() {
 }
 
 errs=
-imerisio=1
-exporter="Gnumeric_stf:stf_csv"
+excel=
 www=
+imerisio=1
 
 while getopts ":xwd" opt
 do
 	case "${opt}" in
 	x)	# excel output
-		exporter="Gnumeric_Excel:excel_dsf"
+		excel=1
+		;;
+	w)	# excel output, browser report mode
+		excel=1
+		www="$$.xls"
 		;;
 	d)	# διάστημα, όχι ημερήσιο
 		imerisio=
-		;;
-	w)	# excel output, browser repotr mode
-		exporter="Gnumeric_Excel:excel_dsf"
-		www="$$.xls"
 		;;
 	:)
 		echo "${progname}: -${OPTARG}: option requires an argument" >&2
@@ -171,13 +171,18 @@ awk \
 cleanup &&
 exit 0
 
+[ ! -n "${excel}" ] &&
+cat "${tmp1}" &&
+cleanup &&
+exit 0
+
 # Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
 # περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε
 # το ssconvert μέσω του dbus-run-session
 
 dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
---export-type="${exporter}" \
+--export-type="Gnumeric_Excel:excel_dsf" \
 "${tmp1}" "${ofile}"
 
 cleanup
