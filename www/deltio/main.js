@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-18
 // Updated: 2021-05-13
 // Updated: 2021-05-12
 // Updated: 2021-05-05
@@ -506,6 +507,11 @@ deltio.adiaReport = (e, diastima) => {
 
 		'success': (rsp) => {
 			deltio.reportsHide();
+
+			if (!rsp)
+			return pnd.fyiMessage('Δεν υπάρχουν άδειες προς εκτύπωση');
+
+			rsp.trim();
 			pnd.fyiMessage(rsp);
 			window.open('minas/' + rsp);
 		},
