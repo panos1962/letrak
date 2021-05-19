@@ -182,8 +182,9 @@ cleanup &&
 exit 0
 
 # Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
-# περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε
-# το ssconvert μέσω ενός ad hoc dbus-run-session.
+# περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache σε μηχανή
+# που δεν έχει running DBUS daemon, τρέχουμε το ssconvert μέσω ενός
+# ad hoc dbus-run-session.
 
 dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
