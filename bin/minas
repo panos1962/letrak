@@ -115,6 +115,9 @@ if [ -n "${www}" ]; then
 		echo "${progname}: ${mdir}: cannot create directory" >&2 &&
 		exit 2
 
+		# Τοποθετούμε παραπεμπτικό ασφαλείας στο directory φύλαξης των
+		# παραγόμενων excel αρχείων.
+
 		cp "${LETRAK_BASEDIR}/lacol/minasBase.html" "${mdir}/index.html"
 	fi
 
@@ -180,7 +183,7 @@ exit 0
 
 # Το ssconvert χρειάζεται έναν running DBUS daemon και επειδή υπάρχει
 # περίπτωση το πρόγραμμα να εκτελείται μέσα από τον apache, τρέχουμε
-# το ssconvert μέσω του dbus-run-session
+# το ssconvert μέσω ενός ad hoc dbus-run-session.
 
 dbus-run-session -- ssconvert \
 --import-encoding="Gnumeric_stf:stf_csvtab" \
