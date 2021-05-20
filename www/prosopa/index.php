@@ -168,6 +168,7 @@ document_body();
 
 			<option value="ΑΠΕΡΓΙΑ" class="peAdidosOmadaAtono">ΑΠΕΡΓΙΑ</option>
 			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ" class="peAdidosOmadaAtono">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
+			<option value="ΑΠΟΣΠΑΣΗ" class="peAdidosOmadaAtono">ΑΠΟΣΠΑΣΗ</option>
 			<option value="ΔΙΑΘΕΣΙΜΟΤΗΤΑ" class="peAdidosOmadaAtono">ΔΙΑΘΕΣΙΜΟΤΗΤΑ</option>
 			<option value="ΑΡΓΙΑ" class="peAdidosOmadaAtono">ΑΡΓΙΑ</option>
 			<option value="ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ" class="peAdidosOmadaAtono">ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ</option>
