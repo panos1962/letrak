@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-22
 // Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
@@ -133,6 +134,19 @@ if (pandora::affected_rows() !== 1)
 letrak::fatal_error_json("Απέτυχε η προσθήκη υπογραφής");
 
 letrak::ipografes_taxinomisi($kodikos);
+
+// Αναιρούμε τυχόν κυρώσεις από οποιονδήποτε υπογράφοντα.
+
+$query = "UPDATE `letrak`.`ipografi` SET `checkok` = NULL" .
+	" WHERE `deltio` = " . $kodikos;
+pandora::query($query);
+
+// Θέτουμε το δελτίο σε εκκρεμή κατάσταση.
+
+$query = "UPDATE `letrak`.`deltio` SET `katastasi` = 'ΕΚΚΡΕΜΕΣ'" .
+	" WHERE `kodikos` = " . $kodikos;
+pandora::query($query);
+
 pandora::commit();
 
 print '{';

@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-22
 // Updated: 2021-05-21
 // Updated: 2021-05-13
 // Updated: 2021-05-10
@@ -1001,6 +1002,8 @@ prosopa.ipografiEditExec = function(forma) {
 prosopa.ipografiEditPost = (rsp, forma) => {
 	if (rsp.error)
 	return pnd.fyiError(rsp.error);
+
+	prosopa.deltio.katastasi = letrak.deltio.katastasiEkremes;
 
 	prosopa.
 	fyiClear().
