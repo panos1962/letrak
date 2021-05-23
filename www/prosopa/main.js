@@ -198,7 +198,8 @@ prosopa.selidaSetup = () => {
 	if (letrak.noXristis())
 	return prosopa.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	if (prosopa.goniki.deltio.kodikosGet() != prosopa.deltioKodikos)
+	if (prosopa.goniki.deltio &&
+		(prosopa.goniki.deltio.kodikosGet() != prosopa.deltioKodikos))
 	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
 
 	pnd.
@@ -516,6 +517,9 @@ prosopa.deltioKatastasiRefresh = () => {
 	removeClass('letrak-deltioKatastasiKIROMENO').
 	removeClass('letrak-deltioKatastasiEPIKIROMENO').
 	empty();
+
+	if (prosopa.goniki.deltio)
+	prosopa.goniki.ananeosi();
 
 	if (!katastasi)
 	return prosopa;

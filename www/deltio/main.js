@@ -741,6 +741,7 @@ deltio.clearCandi = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 deltio.ananeosi = (e) => {
+	if (e)
 	e.stopPropagation();
 
 	$.post({
@@ -1221,6 +1222,7 @@ deltio.prosopa = (opts) => {
 	self.LETRAK.deltio = x;
 	self.LETRAK.deltioDOM = deltioDOM;
 	self.LETRAK.klonos = opts.klonos;
+	self.LETRAK.ananeosi = deltio.ananeosi;
 
 	if (deltio.hasOwnProperty('ipiresiaList')) {
 		self.LETRAK.ipiresiaList = deltio.ipiresiaList;
