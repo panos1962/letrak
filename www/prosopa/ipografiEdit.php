@@ -24,7 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
-// Updated: 2020-05-22
+// Updated: 2021-05-23
 // Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
@@ -101,10 +101,8 @@ $query = "DELETE FROM `letrak`.`ipografi`" .
 	" AND (`taxinomisi` = " . $isimonixat . ")";
 pandora::query($query);
 
-if (pandora::affected_rows() != 1) {
-	pandora::rollback();
-	letrak::fatal_error_json("Απέτυχε η ενημέρωση της υπογραφής");
-}
+if (pandora::affected_rows() != 1)
+letrak::fatal_error_json("Απέτυχε η ενημέρωση της υπογραφής");
 
 if ($taxinomisi > $isimonixat) {
 	$query = "UPDATE `letrak`.`ipografi`" .
@@ -133,23 +131,13 @@ pandora::query($query);
 if (pandora::affected_rows() !== 1)
 letrak::fatal_error_json("Απέτυχε η προσθήκη υπογραφής");
 
+$deltio->ekremes_update();
 letrak::ipografes_taxinomisi($kodikos);
-
-// Αναιρούμε τυχόν κυρώσεις από οποιονδήποτε υπογράφοντα.
-
-$query = "UPDATE `letrak`.`ipografi` SET `checkok` = NULL" .
-	" WHERE `deltio` = " . $kodikos;
-pandora::query($query);
-
-// Θέτουμε το δελτίο σε εκκρεμή κατάσταση.
-
-$query = "UPDATE `letrak`.`deltio` SET `katastasi` = 'ΕΚΚΡΕΜΕΣ'" .
-	" WHERE `kodikos` = " . $kodikos;
-pandora::query($query);
-
 pandora::commit();
 
 print '{';
+print '"katastasi":' .
+pandora::json_string(LETRAK_DELTIO_KATASTASI_EKREMES) . ',';
 letrak::ipografes_json($kodikos);
 print '}';
 exit(0);

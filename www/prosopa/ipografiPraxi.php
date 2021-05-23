@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-23
 // Updated: 2020-05-06
 // Updated: 2020-05-04
 // Created: 2020-04-30
@@ -84,10 +85,8 @@ letrak::fatal_error_json("Διαπιστώθηκε αναρμοδιότητα π
 
 $katastasi = $praxi();
 
-if (!$katastasi) {
-	pandora::rollback();
-	letrak::fatal_error_json("Αδυναμία " . $minima);
-}
+if (!$katastasi)
+letrak::fatal_error_json("Αδυναμία " . $minima);
 
 pandora::commit();
 

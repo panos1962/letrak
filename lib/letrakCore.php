@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-23
 // Updated: 2020-06-07
 // Updated: 2020-06-06
 // Updated: 2020-05-11
@@ -1038,6 +1039,29 @@ class Deltio {
 		return NULL;
 
 		return $katastasi_pragma;
+	}
+
+	// Η μέθοδος "ekremes_update" θέτει εκ νέου το δελτίο σε κατάσταση
+	// εκκρεμότητας, ενώ παράλληλα αναιρεί όλες τις υπογραφές. Όλες οι
+	// αλλαγές γίνονται στην database και δεν επηρεάζουν το ανά χείρας
+	// δελτίο.
+
+	public function ekremes_update() {
+		if ($this->oxi_kodikos())
+		return $this;
+
+		$kodikos = $this->kodikos_get();
+
+		$query = "UPDATE `letrak`.`deltio` SET  `katastasi` = " .
+			pandora::json_string(LETRAK_DELTIO_KATASTASI_EKREMES) .
+			", `alagi` = NOW() WHERE `kodikos` = " . $kodikos;
+		pandora::query($query);
+
+		$query = "UPDATE `letrak`.`ipografi` SET `checkok` = NULL" .
+			" WHERE `deltio` = " . $kodikos;
+		pandora::query($query);
+
+		return $this;
 	}
 
 	public static $economy_map = array(

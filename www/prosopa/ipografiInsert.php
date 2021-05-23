@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-23
 // Updated: 2020-05-06
 // Updated: 2020-05-04
 // Updated: 2020-04-30
@@ -100,10 +101,13 @@ pandora::query($query);
 if (pandora::affected_rows() !== 1)
 letrak::fatal_error_json("Απέτυχε η προσθήκη υπογραφής");
 
+$deltio->ekremes_update();
 letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
+print '"katastasi":';
+print pandora::json_string(LETRAK_DELTIO_KATASTASI_EKREMES) . ',';
 letrak::ipografes_json($kodikos);
 print '}';
 exit(0);

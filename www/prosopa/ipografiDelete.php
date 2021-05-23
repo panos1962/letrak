@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-23
 // Updated: 2020-05-12
 // Updated: 2020-05-06
 // Updated: 2020-05-04
@@ -80,23 +81,16 @@ $query = "DELETE FROM `letrak`.`ipografi` " .
 	" AND (`taxinomisi` = " . $taxinomisi . ")";
 pandora::query($query);
 
-if (pandora::affected_rows() !== 1) {
-	pandora::rollback();
-	letrak::fatal_error_json("Απέτυχε η διαγραφή υπογραφής");
-}
+if (pandora::affected_rows() !== 1)
+letrak::fatal_error_json("Απέτυχε η διαγραφή υπογραφής");
 
-$katastasi = $deltio->katastasi_update();
-
-if (!isset($katastasi)) {
-	pandora::rollback();
-	letrak::fatal_error_json("Αστοχία ενημέρωσης κατάστασης δελτίου");
-}
-
+$deltio->ekremes_update();
 letrak::ipografes_taxinomisi($kodikos);
 pandora::commit();
 
 print '{';
-print '"katastasi":' . pandora::json_string($katastasi) . ",";
+print '"katastasi":';
+print pandora::json_string(LETRAK_DELTIO_KATASTASI_EKREMES) . ',';
 letrak::ipografes_json($kodikos);
 print '}';
 
