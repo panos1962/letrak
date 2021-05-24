@@ -216,7 +216,8 @@ prosopa.selidaSetup = () => {
 	addClass('deltioArea')).
 
 	append(prosopa.browserDOM = $('<div>').
-	addClass('browser'));
+	addClass('browser').
+	addClass('browserEmfanesOrio'));
 
 	prosopa.
 	ipografesSetup().
@@ -263,11 +264,6 @@ prosopa.ananeosi = (e) => {
 			ipografesProcess(rsp.ipografes).
 			prosopaProcess(rsp.prosopa, target).
 			prosvasiRefresh();
-
-			// Αμέσως μετά την εμφάνιση των στοιχείων του δελτίου,
-			// «ανοίγουμε» και το εδάφιο των υπογραφών.
-
-			prosopa.ipografesTabDOM.trigger('click');
 
 			// Η property "prosopa.goniki.klonos" είναι true εφόσον
 			// η παρούσα παρουσίαση προσώπων έχει προκύψει αμέσως
@@ -399,7 +395,6 @@ prosopa.prosopaProcess = (parousia, target) => {
 
 prosopa.ipografesSetup = () => {
 	prosopa.ipografesAreaDOM.
-	addClass('ipografesAreaHidden').
 
 	append(prosopa.ipografesPanelDOM = $('<div>').
 	addClass('ipografesPanel').
@@ -473,6 +468,7 @@ prosopa.ipografesSetup = () => {
 	pnd.toolbarLeftDOM.
 
 	append(prosopa.ipografesTabDOM = letrak.tabDOM().
+	addClass('tabActive').
 	text(prosopa.minima.ipografesTabLabel).
 	on('click', function(e) {
 		e.stopPropagation();
