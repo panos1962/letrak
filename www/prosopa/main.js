@@ -378,6 +378,8 @@ prosopa.ipografesProcess = (ipografes) => {
 prosopa.prosopaProcess = (parousia, target) => {
 	prosopa.browserDOM.empty();
 
+	let targetDOM = undefined;
+
 	pnd.arrayWalk(parousia, (v, k) => {
 		let dom;
 
@@ -386,8 +388,11 @@ prosopa.prosopaProcess = (parousia, target) => {
 		append(dom = v.domGet(k + 1));
 
 		if (v.ipalilosGet() == target)
-		dom.addClass('parousiaTarget');
+		targetDOM = dom.addClass('parousiaTarget');
 	});
+
+	if (targetDOM)
+	targetDOM.trigger('click');
 
 	return prosopa;
 };
@@ -1844,7 +1849,10 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 	if (parousia) {
 		var prosthiki = false;
-		prosopa.editorIpovoliDOM.val('Υποβολή')
+		prosopa.editorIpovoliDOM.
+		data('prosthiki', false).
+		val('Υποβολή');
+
 		let display = prosopa.editorIpovoliDOM.css('display');
 		prosopa.editorDiagrafiDOM.css('display', display);
 		prosopa.editorEpanaforaDOM.css('display', display);
@@ -1853,7 +1861,10 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 	else if (update) {
 		prosthiki = true;
-		prosopa.editorIpovoliDOM.val('Προσθήκη')
+		prosopa.editorIpovoliDOM.
+		data('prosthiki', true).
+		val('Προσθήκη');
+
 		parousia = new letrak.parousia();
 		parousia.orarioSet(letrak.orario.defaultAsString);
 		parousia.karta = '@';
@@ -2572,6 +2583,11 @@ prosopa.editorIpovoli = (e) => {
 			mark.ipalilosSet(ipalilos);
 
 			prosopa.editorAlagiPost(rsp);
+
+			if (prosopa.editorIpovoliDOM.data('prosthiki'))
+			setTimeout(function() {
+				prosopa.editorIpalilosOrarioDOM.focus();
+			}, 100);
 		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα υποβολής στοιχείων παρουσίας');
