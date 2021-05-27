@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-27
 // Updated: 2021-05-22
 // Updated: 2021-05-21
 // Updated: 2021-05-13
@@ -1855,6 +1856,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosopa.editorIpovoliDOM.val('Προσθήκη')
 		parousia = new letrak.parousia();
 		parousia.orarioSet(letrak.orario.defaultAsString);
+		parousia.karta = '@';
 		prosopa.editorDiagrafiDOM.css('display', 'none');
 		prosopa.editorEpanaforaDOM.css('display', 'none');
 		prosopa.parousiaEditorDOM.data('prosthiki', true);

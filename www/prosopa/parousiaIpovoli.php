@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-27
 // Updated: 2020-06-26
 // Updated: 2020-06-24
 // Updated: 2020-05-19
@@ -84,7 +85,12 @@ lathos("Καθορίσατε άδεια ΚΑΙ αιτιολογία");
 ///////////////////////////////////////////////////////////////////////////////@
 
 $orario = orario_get();
+
 $karta = karta_get($ipalilos_kodikos);
+
+if (letrak::ipalilos_invalid_karta($karta))
+$karta = "NULL";
+
 $meraora = meraora_get();
 $info = info_get();
 
@@ -200,21 +206,20 @@ function karta_get($ipalilos) {
 
 	$s = pandora::parameter_get("karta");
 
-	if (isset($s) && ($s) && letrak::ipalilos_invalid_karta($s))
-	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
+	if (!isset($s))
+	return NULL;
 
-	// Αν δεν έχει συμπληρωθεί αριθμός κάρτας από τον χρήστη, τότε το
-	// πρόγραμμα επιχειρεί να τον εντοπίσει από τον πίνακα μεταβολών
-	// που αφορούν στον εν λόγω υπάλληλο.
+	if (!$s)
+	return NULL;
 
-	if ((!isset($s)) || (!$s))
-	$s = karta_apo_database($ipalilos);
+	// Αν δοθεί "@" στον κωδικό κάρτας, τότε επιχειρούμε να εντοπίσουμε
+	// την κάρτα του υπαλλήλου από την database.
 
-	// Αν δεν εντοπίστηκε αριθμός κάρτας ούτε στις μεταβολές του
-	// υπαλλήλου, τότε τίθεται null.
+	if ($s === "@")
+	return karta_apo_database($ipalilos);
 
 	if (letrak::ipalilos_invalid_karta($s))
-	return "NULL";
+	lathos($s . ": μη αποδεκτός αριθμός κάρτας");
 
 	return $s;
 }
