@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-28
 // Updated: 2021-05-27
 // Updated: 2021-05-22
 // Updated: 2021-05-21
@@ -378,6 +379,10 @@ prosopa.ipografesProcess = (ipografes) => {
 prosopa.prosopaProcess = (parousia, target) => {
 	prosopa.browserDOM.empty();
 
+	// Αν υπάρχει επιλεγμένος υπάλληλος, θα κρατήσουμε το αντίστοιχο
+	// DOM element προκειμένου να κάνουμε ασφαλή ανανέωση στη φόρμα
+	// λεπτομερειών.
+
 	let targetDOM = undefined;
 
 	pnd.arrayWalk(parousia, (v, k) => {
@@ -391,7 +396,11 @@ prosopa.prosopaProcess = (parousia, target) => {
 		targetDOM = dom.addClass('parousiaTarget');
 	});
 
-	if (targetDOM)
+	// Εφόσον υπάρχει επιλεγμένος υπάλληλος και η φόρμα λεπτομερειών
+	// είναι ανοικτή, κάνουμε κλικ στον επιλεγμένο υπάλληλο προκειμένου
+	// να ανανεωθούν με ασφάλεια τα στοιχεία της φόρμας λεπτομερειών.
+
+	if (targetDOM && prosopa.parousiaEditorDOM.dialog('isOpen'))
 	targetDOM.trigger('click');
 
 	return prosopa;
