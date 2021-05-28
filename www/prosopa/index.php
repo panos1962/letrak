@@ -107,18 +107,17 @@ document_body();
 			<input id="peIpalilosOnomateponimo" class="peIpalilosPedio" disabled="true">
 		</div>
 		<div class="formaInputLine">
-			<label for="peIpalilosOrario">
-				Ωράριο
-			</label>
+			<label for="peIpalilosOrario">Ωράριο</label>
 			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate orarioPedio">
-			<label for="peIpalilosKarta">
-				Κάρτα
-			</label>
+
+			<div class="mazi">
+			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
 			<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
 				WIN&ndash;PAK
 			</div>
 			<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
+			</div>
 		</div>
 		<div class="formaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
@@ -174,14 +173,13 @@ document_body();
 			<option value="ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ" class="peAdidosOmadaAtono">ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ</option>
 			<option value="ΜΕΤΑΚΙΝΗΣΗ" class="peAdidosOmadaAtono">ΜΕΤΑΚΙΝΗΣΗ</option>
 			</select>
-			<label for="peAdapo">
-				Από
-			</label>
+
+			<div class="mazi">
+			<label for="peAdapo">Από</label>
 			<input id="peAdapo" class="peParousiaPedio pePedioUpdate">
-			<label for="peAdeos">
-				Έως
-			</label>
+			<label for="peAdeos">Έως</label>
 			<input id="peAdeos" class="peParousiaPedio pePedioUpdate">
+			</div>
 		</div>
 	</div>
 
