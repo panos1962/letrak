@@ -116,7 +116,6 @@ document_body();
 			<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
 				WIN&ndash;PAK
 			</div>
-			<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
 			</div>
 		</div>
 		<div class="formaInputLine">
@@ -183,7 +182,7 @@ document_body();
 		</div>
 	</div>
 
-	<div class="peFormaEnotita">
+	<div class="peFormaEnotita" style="position: relative;">
 		<div class="formaInputLine">
 			<label for="peExcuse">
 				Εξαίρεση
@@ -209,6 +208,7 @@ document_body();
 				class="peParousiaPedio pePedioUpdate">
 			</textarea>
 		</div>
+		<div id="peKatagrafi" class="peParousiaPedio pePedioUpdate"></div>
 	</div>
 
 	<div id="pePanel">
