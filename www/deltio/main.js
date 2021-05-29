@@ -1236,7 +1236,7 @@ deltio.prosopa = (opts) => {
 	// δελτίου προκειμένου να προβούμε σε αυτό αμέσως μετά τη
 	// λήψη των δεδομένων προσωπικού.
 
-	deltio.erpotaFetchWaiting = {
+	deltio.erpotaWaiting = {
 		"deltio": kodikos,
 		"amolimeno": amolimeno,
 	};
@@ -1469,7 +1469,7 @@ deltio.erpotaProcess = (rsp) => {
 	self.LETRAK.ipalilosArray = deltio.ipalilosArray;
 	self.LETRAK.ipalilosList = deltio.ipalilosList;
 
-	if (!deltio.hasOwnProperty('erpotaFetchWaiting'))
+	if (!deltio.hasOwnProperty('erpotaWaiting'))
 	return deltio;
 
 	deltio.prosopaOpen(
