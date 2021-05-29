@@ -264,8 +264,7 @@ prosopa.ananeosi = (e) => {
 			fyiClear().
 			deltioProcess(rsp.deltio).
 			ipografesProcess(rsp.ipografes).
-			prosopaProcess(rsp.prosopa, target).
-			prosvasiRefresh();
+			prosopaProcess(rsp.prosopa, target);
 
 			// Η property "prosopa.goniki.klonos" είναι true εφόσον
 			// η παρούσα παρουσίαση προσώπων έχει προκύψει αμέσως
