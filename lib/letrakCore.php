@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-05-30
 // Updated: 2021-05-23
 // Updated: 2020-06-07
 // Updated: 2020-06-06
@@ -100,11 +101,11 @@ class letrakCore {
 	// π.χ. αν περάσουμε "ipalilos" θα επιστραφεί "`erpota2`.`ipalilos`",
 	// εφόσον η τρέχουσα "erpota" database version είναι 2.
 
-	public static function erpota12($s) {
+	public static function erpota12($s = NULL) {
 		if (!isset(self::$erpota_version))
 		self::erpota_version_get();
 
-		if ($s)
+		if (isset($s))
 		return "`erpota" . self::$erpota_version . "`.`" . $s . "`";
 
 		return self::$erpota_version;

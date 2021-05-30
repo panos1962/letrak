@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-05-30
 // Updated: 2020-05-18
 // Created: 2020-04-20
 // @HISTORY END
@@ -41,6 +42,9 @@ database();
 
 if (letrak::oxi_xristis())
 letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
+
+if (cached_data())
+exit(0);
 
 print '{';
 
@@ -95,4 +99,27 @@ print '],';
 ///////////////////////////////////////////////////////////////////////////////@
 
 print '"error":""}';
+
+function cached_data() {
+	$erpota12 = letrak::erpota12();
+	$file = LETRAK_BASEDIR . "/local/erpota/erpota" . $erpota12 . ".json";
+
+	if (!file_exists($file))
+	return FALSE;
+
+	if (!($fp = fopen($file, "r")))
+	return FALSE;
+
+	while (!feof($fp)) {
+		$s = fread($fp, 8192);
+
+		if ($s === FALSE)
+		exit(2);
+
+		print $s;
+	}
+
+	fclose($fp);
+	return TRUE;
+}
 ?>
