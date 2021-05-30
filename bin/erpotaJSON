@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# bash
+# @FILETYPE END
+#
+# @FILE BEGIN
+# bin/erpotaJSON —— Δημιουργία JSON cache file δεδομένων προσωπικού
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# Το παρόν πρόγραμμα δημιουργεί cache file με ένα ενιαίο JSON object στο
+# οποίο περιλαμβάνονται ως arrays ο πίνακας των υπηρεσιών ("ipiresia") και
+# ο πίνακας των υπαλλήλων ("ipalilos").
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2021-05-30
+# @HISTORY END
+#
+# @END
+
+progname="$(basename $0)"
+
+[ -z "${PANDORA_BASEDIR}" ] &&
+PANDORA_BASEDIR="/var/opt/pandora"
+
+[ -z "${LETRAK_BASEDIR}" ] &&
+LETRAK_BASEDIR="/var/opt/letrak"
+
+erpotadir="${LETRAK_BASEDIR}/local/erpota"
+
+[ ! -d "${erpotadir}" ] &&
+mkdir --mode="777" "${erpotadir}" 2>/dev/null
+
+[ ! -d "${erpotadir}" ] &&
+echo "${progname}: ${erpotadir}: directory not found" >&2 &&
+exit 2
+
+usage() {
+	echo "usage: ${progname} version" >&2
+	exit 1
+}
+
+errs=
+
+while getopts ":" opt
+do
+	case "${opt}" in
+	:)
+		echo "${progname}: -${OPTARG}: option requires an argument" >&2
+		errs=1
+		;;
+	?)
+		echo "${progname}: -${OPTARG}: invalid option" >&2
+		errs=1
+		;;
+	esac
+done
+
+[ -n "${errs}" ] &&
+usage
+
+shift $(expr ${OPTIND} - 1)
+
+[ $# -ne 1 ] &&
+usage
+
+case "$1" in
+1|2)
+	ofile="${erpotadir}/erpota${1}.json"
+	;;
+*)
+	echo "${progname}: $1: invalid erpota version" >&2
+	exit 2
+esac
+
+exec php "${LETRAK_BASEDIR}/lib/erpotaJSON.php" >"${ofile}"
