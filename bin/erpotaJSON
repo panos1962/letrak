@@ -84,4 +84,17 @@ case "${1}" in
 	exit 2
 esac
 
-exec php "${LETRAK_BASEDIR}/lib/erpotaJSON.php" >"${ofile}" "${1}"
+php "${LETRAK_BASEDIR}/lib/erpotaJSON.php" "${1}" >"${ofile}"
+
+errs=
+[ $? -ne 0 ] && errs=1
+[ ! -s "${ofile}" ] && errs=1
+
+datalink="${LETRAK_BASEDIR}/www/public/erpotaData.js"
+
+if [ -n "${errs}" ]; then
+	rm -f "${ofile}" "${datalink}"
+	exit 2
+fi
+
+exec ln -sf "${ofile}" "${datalink}"

@@ -98,7 +98,6 @@ deltio.minima = {
 	'epexergasiaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
-	'erpotaFetchError': 'Αποτυχία λήψης δεδομένων προσωπικού',
 	'reportsTabLabel': 'Εκτυπώσεις',
 
 	'deltioKatastasiΕΚΚΡΕΜΕΣSymbol': '&#x25D4;',
@@ -117,8 +116,7 @@ pnd.domInit(() => {
 	domFixup();
 
 	deltio.
-	selidaSetup().
-	erpotaFetch();
+	selidaSetup();
 });
 
 deltio.selidaSetup = () => {
@@ -1226,21 +1224,13 @@ deltio.prosopa = (opts) => {
 	self.LETRAK.klonos = opts.klonos;
 	self.LETRAK.ananeosi = deltio.ananeosi;
 
-	// Αν έχουν ήδη παραληφθεί ακόμη τα δεδομένα προσωπικού, τότε
-	// προχωρούμε άμεσα στο άνοιγμα της σελίδας επεξεργασίας δελτίου.
+	// Αν έχουμε ήδη διαχειριστεί τα δεδομένα προσωπικού, τότε προχωρούμε
+	// άμεσα στο άνοιγμα της σελίδας επεξεργασίας δελτίου.
 
-	if (deltio.hasOwnProperty('ipiresiaList'))
-	return deltio.prosopaOpen(kodikos, amolimeno);
+	if (!deltio.hasOwnProperty('ipiresiaList'))
+	deltio.erpotaProcess();
 
-	// Αλλιώς θέτουμε σε αναμονή το άνοιγμα της σελίδας επεργασίας
-	// δελτίου προκειμένου να προβούμε σε αυτό αμέσως μετά τη
-	// λήψη των δεδομένων προσωπικού.
-
-	deltio.erpotaWaiting = {
-		"deltio": kodikos,
-		"amolimeno": amolimeno,
-	};
-
+	deltio.prosopaOpen(kodikos, amolimeno);
 	return deltio;
 };
 
@@ -1418,31 +1408,20 @@ deltio.deltioProcess = (rsp, opts) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-deltio.erpotaFetch = () => {
-	pnd.fyiMessage('Λήψη δεδομένων προσωπικού…');
-	$.post({
-		'url': 'erpotaFetch.php',
-		'dataType': 'json',
-		'success': (rsp) => deltio.erpotaProcess(rsp),
-		'error': (e) => {
-			pnd.fyiError(deltio.minima.erpotaFetchError);
-			console.error(e);
-		},
-	});
+deltio.erpotaProcess = () => {
+	if (!self.LETRAK.hasOwnProperty('erpotaData'))
+	return deltio.fyiError('Αδυναμία λήψης στοιχείων προσωπικού');
 
-	return deltio;
-};
+	if (!self.LETRAK.erpotaData.hasOwnProperty('error'))
+	return deltio.fyiError('Αστοχία λήψης στοιχείων προσωπικού');
 
-deltio.erpotaProcess = (rsp) => {
-	if (!rsp.hasOwnProperty('error'))
-	return deltio.fyiError('Ημιτελής λήψη στοιχείων προσωπικού');
+	if (self.LETRAK.erpotaData.error)
+	return deltio.fyiError(self.LETRAK.erpotaData.error);
 
-	if (rsp.error)
-	return deltio.fyiError(rsp.error);
+	deltio.ipiresiaArray = self.LETRAK.erpotaData.ipiresia;
+	deltio.ipalilosArray = self.LETRAK.erpotaData.ipalilos;
 
-	pnd.fyiClear();
-	deltio.ipiresiaArray = rsp.ipiresia;
-	deltio.ipalilosArray = rsp.ipalilos;
+	delete self.LETRAK.erpotaData;
 
 	deltio.ipiresiaList = {};
 	pnd.arrayWalk(deltio.ipiresiaArray, (v) => {
@@ -1469,15 +1448,6 @@ deltio.erpotaProcess = (rsp) => {
 	self.LETRAK.ipalilosArray = deltio.ipalilosArray;
 	self.LETRAK.ipalilosList = deltio.ipalilosList;
 
-	if (!deltio.hasOwnProperty('erpotaWaiting'))
-	return deltio;
-
-	deltio.prosopaOpen(
-		deltio.erpotaWaiting.deltio,
-		deltio.erpotaWaiting.amolimeno
-	);
-
-	delete deltio.erpotaWaiting;
 	return deltio;
 };
 

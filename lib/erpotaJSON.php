@@ -61,7 +61,7 @@ class letrak extends letrakCore {}
 
 pandora::database();
 
-print '{';
+print 'self.LETRAK.erpotaData = {';
 print '"version":' . $erpota12 . ",";
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -114,5 +114,5 @@ print '],';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-print '"error":""}';
+print '"error":""};';
 ?>
