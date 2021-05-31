@@ -44,6 +44,7 @@ class letrak extends letrakCore {}
 pandora::database();
 
 print '{';
+print '"version":' . letrak::erpota12() . ",";
 
 ///////////////////////////////////////////////////////////////////////////////@
 
