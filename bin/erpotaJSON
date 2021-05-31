@@ -18,6 +18,9 @@
 # Το παρόν πρόγραμμα δημιουργεί cache file με ένα ενιαίο JSON object στο
 # οποίο περιλαμβάνονται ως arrays ο πίνακας των υπηρεσιών ("ipiresia") και
 # ο πίνακας των υπαλλήλων ("ipalilos").
+#
+# Το πρόγραμμα πρέπει να τρέχει με μία παράμετρο που δείχνει την version
+# της "erpota" database που θα χρησιμοποιηθεί (1 ή 2).
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
@@ -72,7 +75,7 @@ shift $(expr ${OPTIND} - 1)
 [ $# -ne 1 ] &&
 usage
 
-case "$1" in
+case "${1}" in
 1|2)
 	ofile="${erpotadir}/erpota${1}.json"
 	;;
@@ -81,4 +84,4 @@ case "$1" in
 	exit 2
 esac
 
-exec php "${LETRAK_BASEDIR}/lib/erpotaJSON.php" >"${ofile}"
+exec php "${LETRAK_BASEDIR}/lib/erpotaJSON.php" >"${ofile}" "${1}"

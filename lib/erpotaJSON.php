@@ -18,6 +18,9 @@
 // @DESCRIPTION BEGIN
 // Το παρόν πρόγραμμα εκτυπώνει τον πίνακα υπηρεσιών ("ipiresia") και τον
 // πίνακα υπαλλήλων ("ipalilos") ως arrays ενός ενιαίου JSON object.
+//
+// Το πρόγραμμα πρέπει να τρέχει με μία παράμετρο που δείχνει την version
+// της "erpota" database που θα χρησιμοποιηθεί (1 ή 2).
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -27,6 +30,21 @@
 // @END
 //
 ///////////////////////////////////////////////////////////////////////////////@
+
+// Η μία και μοναδική παράμετρος του προγράμματος δείχνει την version της
+// "erpota" database που θα χρησιμοποιηθεί για την επιλογή των δεδομένων.
+
+if ($argc != 2)
+exit(2);
+
+switch ($argv[1]) {
+case 1:
+case 2:
+	$erpota12 = $argv[1];
+	break;
+default:
+	exit(2);
+}
 
 $basedir = getenv("LETRAK_BASEDIR");
 
@@ -44,14 +62,14 @@ class letrak extends letrakCore {}
 pandora::database();
 
 print '{';
-print '"version":' . letrak::erpota12() . ",";
+print '"version":' . $erpota12 . ",";
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 $query = "SELECT" .
 	" `kodikos` AS `k`," .
 	" `perigrafi` AS `p`" .
-	" FROM " . letrak::erpota12("ipiresia") .
+	" FROM `erpota" . $erpota12 . "`.`ipiresia`" .
 	" ORDER BY `k`";
 $result = pandora::query($query);
 
@@ -74,7 +92,7 @@ $query = "SELECT" .
 	" `patronimo` AS `p`," .
 	" DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`," .
 	" `afm` AS `a`" .
-	" FROM " . letrak::erpota12("ipalilos") .
+	" FROM `erpota" . $erpota12 . "`.`ipalilos`" .
 	" ORDER BY `e`, `o`, `p`, `k`";
 $result = pandora::query($query);
 
