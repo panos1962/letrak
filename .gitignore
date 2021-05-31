@@ -23,5 +23,6 @@ bundle.js
 *.css
 /www/readme.html
 /www/deltio/minas/*
+/www/public/*
 
 !/www/lib/jquery-ui.css
