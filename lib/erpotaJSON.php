@@ -90,8 +90,7 @@ $query = "SELECT" .
 	" `eponimo` AS `e`," .
 	" `onoma` AS `o`," .
 	" `patronimo` AS `p`," .
-	" DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`," .
-	" `afm` AS `a`" .
+	" DATE_FORMAT(`genisi`, '%d-%m-%Y') AS `g`" .
 	" FROM `erpota" . $erpota12 . "`.`ipalilos`" .
 	" ORDER BY `e`, `o`, `p`, `k`";
 $result = pandora::query($query);
@@ -102,9 +101,6 @@ $enotiko = "";
 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	if (!$row["g"])
 	unset($row["g"]);
-
-	if (!$row["a"])
-	unset($row["a"]);
 
 	print $enotiko . pandora::json_string($row);
 	$enotiko = ",";
