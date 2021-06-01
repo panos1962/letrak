@@ -21,6 +21,27 @@
 #
 # Το πρόγραμμα πρέπει να τρέχει με μία παράμετρο που δείχνει την version
 # της "erpota" database που θα χρησιμοποιηθεί (1 ή 2).
+#
+# Το περιεχόμενο του cache file που θα δημιουργηθεί έχει την παρακάτω μορφή:
+#
+#	self.LETRAK.erpotaData = {
+#		version: version_number,
+#		ipiresia:[
+#			...
+#		],
+#		ipalilos:[
+#			...
+#		],
+#		error: error_message
+#	};
+#
+# Το cache file δημιουργείται στο directory "local/erpota" και φέρει ονομασία
+# της μορφής "eportaV.json" όπου "V" είναι data version (1 ή 2). Παράλληλα
+# δημιουργείται symbolic link στο directory "www/public", που δείχνει στο
+# cache file που δημιουργήθηκε και φέρει το όνομα "erpotaData.js". Το εν
+# λόγω αρχείο «φορτώνεται» ως javascript script στη σελίδα παρουσίασης των
+# δελτίων προσέλευση/αποχώρησης.
+# 
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
