@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2021-06-04
 // Created: 2020-04-20
 // @HISTORY END
 //
@@ -48,6 +49,7 @@ document_head([
 document_body();
 ?>
 <div id="welcome">
+<div class="noprint">
 Καλωσήλθατε στην εφαρμογή <b>letrak</b> που αφορά στη δημιουργία, στον
 έλεγχο, στη διαχείριση και στην εκτύπωση των παρουσιολογίων.
 <span id="anonimiXrisi">
@@ -61,7 +63,8 @@ document_body();
 ελέγξετε, να δημιουργήσετε, να διορθώσετε ή να εκτυπώσετε παρουσιολόγια
 σύμφωνα με τις προσβάσεις που σας έχουν αποδοθεί.
 </span>
-<div id="readmeToggle">XXX</div>
+<div id="readmeToggle"></div>
+</div>
 <div id="readme">
 <?php
 require_once("readme.html");

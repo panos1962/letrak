@@ -29,8 +29,9 @@ PANDORA_DIR = ../mnt/pandora
 MAIN_CSS = main.css
 BUNDLE_JS = bundle.js
 README = readme.html
+PRINT_CSS = mainPrint.css
 
-PARAGOGA = $(MAIN_CSS) $(BUNDLE_JS) $(README)
+PARAGOGA = $(MAIN_CSS) $(BUNDLE_JS) $(README) $(PRINT_CSS)
 
 BROWSERIFY_OPTS = -t envify -p tinyify
 BROWSERIFY_OPTS = -t envify
@@ -43,6 +44,10 @@ all: $(PARAGOGA)
 
 $(MAIN_CSS): main.styl lib/letrak.css lib/pandora.css $(PANDORA_DIR)/www/lib/pandora.css
 	stylus $(STYLUS_OPTS) main.styl >$@
+
+$(PRINT_CSS): \
+	mainPrint.styl
+	stylus $(STYLUS_OPTS) mainPrint.styl >$@
 
 $(BUNDLE_JS): \
 	$(PANDORA_DIR)/lib/pandoraCore.js \
