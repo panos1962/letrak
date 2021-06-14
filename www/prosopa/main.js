@@ -939,9 +939,7 @@ prosopa.ipografiEdit = (e) => {
 	});
 
 	forma.titlosDOM.
-	on('change', function() {
-		prosopa.ipografiSintomografia(forma);
-	});
+	on('change', () => prosopa.ipografiSintomografia(forma));
 
 	forma.dialogDOM.
 	find('.letrak-inputLine').
@@ -958,19 +956,29 @@ prosopa.ipografiEdit = (e) => {
 	return prosopa;
 };
 
+// Στον τίτλο της υπογραφής επιτρέπουμε συντομογραφίες που αφορούν στην
+// ιδιότητα του υπογράφοντος. Πιοσ συγκεκριμένα ισχύουν τα εξής:
+//
+//	ΟΠ	Ο προϊστάμενος
+//	ΗΠ	Η προϊσταμένη
+//	ΟΑ	Ο αναπληρωτής προϊστάμενος
+//	ΗΑ	Η αναπληρώτρια προϊσταμένη
+//	ΟΣ	Ο συντάκτης
+//	ΗΣ	Η συντάκτρια
+
 prosopa.ipografiSintomografia = function(forma) {
 	let titlos = forma.titlosDOM.val();
 
 	if (titlos.match(/^[οΟoO][πΠpP] /))
 	titlos = titlos.replace(/^.. */, 'Ο προϊστάμενος ');
 
-	else if (titlos.match(/^[ηΗhH][πΠpP]/))
+	else if (titlos.match(/^[ηΗhH][πΠpP] /))
 	titlos = titlos.replace(/^.. */, 'Η προϊσταμένη ');
 
-	else if (titlos.match(/^[οΟoO][αΑaA]/))
+	else if (titlos.match(/^[οΟoO][αΑaA] /))
 	titlos = titlos.replace(/^.. */, 'Ο αναπληρωτής προϊστάμενος ');
 
-	else if (titlos.match(/^[ηΗhH][αΑaA]/))
+	else if (titlos.match(/^[ηΗhH][αΑaA] /))
 	titlos = titlos.replace(/^.. */, 'Η αναπληρώτρια προϊσταμένη ');
 
 	else if (titlos.match(/^[οΟoO][σΣsS] *$/))
@@ -984,6 +992,12 @@ prosopa.ipografiSintomografia = function(forma) {
 
 prosopa.ipografiEditExec = function(forma) {
 	pnd.fyiMessage('Ενημέρωση υπογραφής…');
+
+	// Όταν κάνουμε υποβολή υπογραφής ενώ βρισκόμαστε στο πεδίο αλλαγής
+	// τίτλου, το change event εκτελείται μετά την υποβολή και συνεπώς
+	// δεν θα εφαρμοστεί η ανάπτυξη συντομογραφιών. Για το λόγο αυτό
+	// επιτελούμε ανάπτυξη συντομογραφιών και σε αυτό το σημείο.
+
 	prosopa.ipografiSintomografia(forma);
 
 	$.post({
