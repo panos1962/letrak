@@ -940,39 +940,7 @@ prosopa.ipografiEdit = (e) => {
 
 	forma.titlosDOM.
 	on('change', function() {
-		let titlos = $(this).val();
-
-		if (titlos.match(/^ΟΠΔ /i))
-		titlos = titlos.replace(/.../, 'Ο προϊστάμενος Δ/νσης');
-
-		else if (titlos.match(/^ΗΠΔ /i))
-		titlos = titlos.replace(/.../, 'Η προϊσταμένη Δ/νσης');
-
-		else if (titlos.match(/^ΟΑΔ /i))
-		titlos = titlos.replace(/.../, 'Ο αναπληρωτής προϊστάμενος Δ/νσης');
-
-		else if (titlos.match(/^ΗΑΔ /i))
-		titlos = titlos.replace(/.../, 'Η αναπληρώτρια προϊσταμένη Δ/νσης');
-
-		else if (titlos.match(/^ΟΠΤ /i))
-		titlos = titlos.replace(/.../, 'Ο προϊστάμενος Τμ.');
-
-		else if (titlos.match(/^ΗΠΤ /i))
-		titlos = titlos.replace(/.../, 'Η προϊσταμένη Τμ.');
-
-		else if (titlos.match(/^ΟΑΤ /i))
-		titlos = titlos.replace(/.../, 'Ο αναπληρωτής προϊστάμενος Τμ.');
-
-		else if (titlos.match(/^ΗΑΤ /i))
-		titlos = titlos.replace(/.../, 'Η αναπληρώτρια προϊσταμένη Τμ.');
-
-		else if (titlos.match(/^ΟΣ *$/i))
-		titlos = 'Ο συντάκτης';
-
-		else if (titlos.match(/^ΗΣ *$/i))
-		titlos = 'Η συντάκτρια';
-
-		$(this).val(titlos);
+		prosopa.ipografiSintomografia(forma);
 	});
 
 	forma.dialogDOM.
@@ -990,8 +958,33 @@ prosopa.ipografiEdit = (e) => {
 	return prosopa;
 };
 
+prosopa.ipografiSintomografia = function(forma) {
+	let titlos = forma.titlosDOM.val();
+
+	if (titlos.match(/^[οΟoO][πΠpP] /))
+	titlos = titlos.replace(/^.. */, 'Ο προϊστάμενος ');
+
+	else if (titlos.match(/^[ηΗhH][πΠpP]/))
+	titlos = titlos.replace(/^.. */, 'Η προϊσταμένη ');
+
+	else if (titlos.match(/^[οΟoO][αΑaA]/))
+	titlos = titlos.replace(/^.. */, 'Ο αναπληρωτής προϊστάμενος ');
+
+	else if (titlos.match(/^[ηΗhH][αΑaA]/))
+	titlos = titlos.replace(/^.. */, 'Η αναπληρώτρια προϊσταμένη ');
+
+	else if (titlos.match(/^[οΟoO][σΣsS] *$/))
+	titlos = 'Ο συντάκτης';
+
+	else if (titlos.match(/[ηΗhH][σΣsS] *$/))
+	titlos = 'Η συντάκτρια';
+
+	forma.titlosDOM.val(titlos);
+};
+
 prosopa.ipografiEditExec = function(forma) {
 	pnd.fyiMessage('Ενημέρωση υπογραφής…');
+	prosopa.ipografiSintomografia(forma);
 
 	$.post({
 		'url': 'ipografiEdit.php',
