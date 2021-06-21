@@ -417,11 +417,14 @@ deltio.filtraFormaCancel = (e) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 deltio.reportsSetup = () => {
-	$('#reportAdiaImera').
-	on('click', (e) => deltio.adiaReport(e, 0));
+	$('#excelAdiaImera').
+	on('click', (e) => deltio.adiaExcel(e, 0));
 
-	$('#reportAdiaDiastima').
-	on('click', (e) => deltio.adiaReport(e, 1));
+	$('#excelAdiaDiastima').
+	on('click', (e) => deltio.adiaExcel(e, 1));
+
+	$('#reportAdiaIpalilos').
+	on('click', (e) => deltio.adiaReport(e));
 
 	deltio.reportsDOM = $('#reports');
 
@@ -471,7 +474,7 @@ deltio.reportsToggle = (e) => {
 	return deltio;
 };
 
-// Η function "adiaReport" καλείται κατά την προετοιμασία των reports αδειών.
+// Η function "adiaExcel" καλείται κατά την προετοιμασία των reports αδειών.
 // Πρόκειται για excel αρχεία τα οποία υποχρεούνται οι υπηρεσίες να υποβάλλουν
 // στο Προσωπικό τουλάχιστον κάθε μήνα. Στα αρχεία αυτά περιλαμβάνονται οι
 // άδειες που έχουν καταχωρηθεί στα καθημερινά παρουσιολόγια για το διάστημα
@@ -482,7 +485,7 @@ deltio.reportsToggle = (e) => {
 // άδειας και το διάστημα στο οποίο αφορά, ενώ αν οαριθμός είναι μηδενικός,
 // το report είναι αναλυτικό κατά ημέρα.
 
-deltio.adiaReport = (e, diastima) => {
+deltio.adiaExcel = (e, diastima) => {
 	e.stopPropagation();
 
 	// Το πρόγραμμα "minas.php" δέχεται ως παραμέτρους ένα array από
@@ -521,6 +524,18 @@ deltio.adiaReport = (e, diastima) => {
 		},
 	});
 
+	return deltio;
+};
+
+deltio.adiaReport = (e) => {
+	e.stopPropagation();
+
+	self.LETRAK.ipiresia = deltio.filtraIpiresiaDOM.val();
+	self.LETRAK.apo = deltio.filtraImerominiaDOM.val();
+	self.LETRAK.eos = deltio.filtraEosDOM.val();
+	self.LETRAK.dlist = deltio.dlistCreate();
+
+	deltio.prosopaWindows.push(window.open('../adiarpt', '_blank'));
 	return deltio;
 };
 

@@ -92,11 +92,14 @@ document_body();
 </div>
 
 <div id="reports">
-	<div class="reportTab" id="reportAdiaImera">
-		Ημερήσια εκτύπωση αδειών
+	<div class="reportTab" id="excelAdiaImera">
+		Αναλυτικό excel αδειών
 	</div>
-	<div class="reportTab" id="reportAdiaDiastima">
-		Μηνιαία εκτύπωση αδειών
+	<div class="reportTab" id="excelAdiaDiastima">
+		Συνοπτικό excel αδειών
+	</div>
+	<div class="reportTab" id="reportAdiaIpalilos">
+		Άδειες ανά εργαζόμενο
 	</div>
 </div>
 <?php

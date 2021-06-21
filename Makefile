@@ -18,6 +18,7 @@
 # @FILE END
 #
 # @HISTORY BEGIN
+# Updated: 2021-06-21
 # Updated: 2020-04-12
 # Created: 2020-03-05
 # @HISTORY END
@@ -35,6 +36,7 @@ all:
 	(cd www/isodos && make)
 	(cd www/deltio && make)
 	(cd www/prosopa && make)
+	(cd www/adiarpt && make)
 
 test:
 	make all
