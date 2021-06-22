@@ -88,7 +88,8 @@ adiarpt.selidaSetup = () => {
 
 	adiarpt.
 	toolbarSetup().
-	kritiriaSetup();
+	kritiriaSetup().
+	prepareReport();
 };
 
 adiarpt.toolbarSetup = () => {
@@ -143,6 +144,31 @@ adiarpt.kritiriaSetup = () => {
 
 console.log(adiarpt.ipiresia);
 console.log(adiarpt.dlist);
+
+	return adiarpt;
+};
+
+adiarpt.prepareReport = () => {
+	$.post({
+		"url": "prepare.php",
+		"dataType": "json",
+		"data": {
+			"dlist": adiarpt.dlist,
+			"ipiresia": adiarpt.ipiresia,
+			"apo": adiarpt.apo,
+			"eos": adiarpt.eos,
+		},
+		"success": (rsp) => {
+console.log('>>>', rsp);
+			if (rsp.hasOwnProperty("error"))
+			return pnd.fyiError(rsp.error);
+
+			console.log(rsp);
+		},
+		"error": (err) => {
+			console.error(err);
+		},
+	});
 
 	return adiarpt;
 };
