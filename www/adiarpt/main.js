@@ -87,20 +87,8 @@ adiarpt.selidaSetup = () => {
 	ribbonCopyrightSetup();
 
 	adiarpt.
-	toolbarSetup().
 	kritiriaSetup().
-	prepareReport();
-};
-
-adiarpt.toolbarSetup = () => {
-	pnd.toolbarLeftDOM.
-
-	append(adiarpt.reportTabDOM = letrak.tabDOM().
-	addClass('deltioTab').
-	append(adiarpt.minima.reportTabLabel).
-	on('click', (e) => adiarpt.report(e)));
-
-	return adiarpt;
+	dataGet();
 };
 
 adiarpt.kritiriaSetup = () => {
@@ -142,13 +130,10 @@ adiarpt.kritiriaSetup = () => {
 	addClass('kritirioValue').
 	text(adiarpt.eos))));
 
-console.log(adiarpt.ipiresia);
-console.log(adiarpt.dlist);
-
 	return adiarpt;
 };
 
-adiarpt.prepareReport = () => {
+adiarpt.dataGet = () => {
 	$.post({
 		"url": "prepare.php",
 		"dataType": "json",
@@ -159,11 +144,7 @@ adiarpt.prepareReport = () => {
 			"eos": adiarpt.eos,
 		},
 		"success": (rsp) => {
-console.log('>>>', rsp);
-			if (rsp.hasOwnProperty("error"))
-			return pnd.fyiError(rsp.error);
-
-			console.log(rsp);
+			adiarpt.reportPrepare(rsp);
 		},
 		"error": (err) => {
 			console.error(err);
@@ -171,6 +152,20 @@ console.log('>>>', rsp);
 	});
 
 	return adiarpt;
+};
+
+adiarpt.reportPrepare = (rsp) => {
+	if (rsp.hasOwnProperty("error"))
+	return pnd.fyiError(rsp.error);
+
+	pnd.toolbarLeftDOM.
+
+	append(adiarpt.reportTabDOM = letrak.tabDOM().
+	addClass('deltioTab').
+	append(adiarpt.minima.reportTabLabel).
+	on('click', (e) => adiarpt.report(e)));
+
+console.log(rsp);
 };
 
 adiarpt.report = (e) => {

@@ -59,9 +59,41 @@ class Adiarpt {
 	}
 
 	public static function process_deltio($kodikos) {
-		$query = "SELECT `ipalilos`, `meraora`, " .
-			"`adidos`, `excuse`, `info` " .
-			"FROM `parousia` " .
+		$query = "SELECT `imerominia`, `prosapo`" .
+			" FROM `letrak`.`deltio`" .
+			" WHERE `kodikos` = " . $kodikos;
+
+		$res = pandora::query($query);
+
+		if (!$res)
+		self::error_set("Database error");
+
+		$row = $res->fetch_array(MYSQLI_NUM);
+
+		if (!$row)
+		self::error_set($kodikos . ": δεν βρέθηκε το δελτίο");
+
+		$res->close();
+
+		switch ($row[1]) {
+		case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+			$prosapo = "p";
+			break;
+		case LETRAK_DELTIO_PROSAPO_APOXORISI:
+			$prosapo = "a";
+			break;
+		default:
+			return __CLASS__;
+		}
+
+		$imerominia = $row[0];
+
+		$query = "SELECT `ipalilos`, " .
+			"`meraora` AS `" . $prosapo . "t`, " .
+			"`adidos` AS `" . $prosapo . "a`, " .
+			"`excuse` AS `" . $prosapo . "e`, " .
+			"`info` AS `" . $prosapo . "i` " .
+			"FROM `letrak`.`parousia` " .
 			"WHERE `deltio` = " . $kodikos;
 
 		$res = pandora::query($query);
@@ -69,15 +101,43 @@ class Adiarpt {
 		if (!$res)
 		self::error_set("Database error");
 
-		while ($row = $res->fetch_assoc())
-		print_r($row);
+		while ($row = $res->fetch_assoc()) {
+			$ipalilos = intval($row["ipalilos"]);
+			unset($row["ipalilos"]);
+
+			foreach ($row as $k => $v) {
+				if (!$row[$k])
+				unset($row[$k]);
+			}
+
+			$row[$prosapo . "k"] = $kodikos;
+			self::parousia_push($ipalilos, $imerominia, $row);
+		}
 
 		$res->close();
 		return __CLASS__;
 	}
 
+	static private $ilist = [];
+
+	static private function parousia_push($ipalilos,
+		$imerominia, $parousia) {
+
+		if (!array_key_exists($ipalilos, self::$ilist))
+		self::$ilist[$ipalilos] = [];
+
+		if (!array_key_exists($imerominia, self::$ilist[$ipalilos]))
+		self::$ilist[$ipalilos][$imerominia] = [];
+
+		foreach ($parousia as $k => $v)
+		self::$ilist[$ipalilos][$imerominia][$k] = $v;
+
+		return __CLASS__;
+	}
+
 	public static function print_results() {
-		print "{}";
+		print pandora::json_string(self::$ilist);
+		return __CLASS__;
 	}
 }
 ?>
