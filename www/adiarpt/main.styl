@@ -1,0 +1,55 @@
+/*******************************************************************************
+*
+* @BEGIN
+*
+* @COPYRIGHT BEGIN
+* Copyright (C) 2019 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+* @COPYRIGHT END
+*
+* @FILETYPE BEGIN
+* stylus
+* @FILETYPE END
+*
+* @FILE BEGIN
+* www/adiarpt/main.styl —— Αρχείο προδιαγραφών CSS για την εκτύπωση αδειών
+* @FILE END
+*
+* @HISTORY BEGIN
+* Created: 2021-06-22
+* @HISTORY END
+*
+* @END
+*
+*******************************************************************************/
+
+@import '../mnt/pandora/lib/common.styl'
+@import '../lib/common.styl'
+
+.pnd-ofelimo
+	padding 0px
+	overflow-x hidden
+
+#kritiria
+	padding 8px
+	border-style double none
+	border-width 5px
+	border-color grey
+	
+
+.kritirio
+	display inline-block
+
+.kritirioLabel
+	display inline-block
+	text-align right
+	padding-right 0.1em
+	padding-left 0.5em
+	font-style italic
+	&:after
+		content ':'
+		font-style normal
+
+.kritirioValue
+	display inline-block
+	text-align left
+	font-weight bold

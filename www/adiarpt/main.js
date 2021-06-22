@@ -52,13 +52,13 @@ adiarpt.minima = {
 	if (!self.opener.hasOwnProperty('LETRAK'))
 	return;
 
-	if (!self.opener.LETRAK.ipiresia)
+	if (self.opener.LETRAK.ipiresia)
 	adiarpt.ipiresia = self.opener.LETRAK.ipiresia;
 
 	if (self.opener.LETRAK.apo)
 	adiarpt.apo = self.opener.LETRAK.apo;
 
-	if (!self.opener.LETRAK.eos)
+	if (self.opener.LETRAK.eos)
 	adiarpt.eos = self.opener.LETRAK.eos;
 
 	if (self.opener.LETRAK.dlist)
@@ -86,6 +86,12 @@ adiarpt.selidaSetup = () => {
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
+	adiarpt.
+	toolbarSetup().
+	kritiriaSetup();
+};
+
+adiarpt.toolbarSetup = () => {
 	pnd.toolbarLeftDOM.
 
 	append(adiarpt.reportTabDOM = letrak.tabDOM().
@@ -93,8 +99,52 @@ adiarpt.selidaSetup = () => {
 	append(adiarpt.minima.reportTabLabel).
 	on('click', (e) => adiarpt.report(e)));
 
+	return adiarpt;
+};
+
+adiarpt.kritiriaSetup = () => {
+	pnd.ofelimoDOM.
+
+	append($('<div>').
+	attr('id', 'kritiria').
+
+	append($('<div>').
+	addClass('kritirio').
+
+	append($('<div>').
+	addClass('kritirioLabel').
+	text('Υπηρεσία')).
+
+	append($('<div>').
+	addClass('kritirioValue').
+	text(adiarpt.ipiresia))).
+
+	append($('<div>').
+	addClass('kritirio').
+
+	append($('<div>').
+	addClass('kritirioLabel').
+	text('Από')).
+
+	append($('<div>').
+	addClass('kritirioValue').
+	text(adiarpt.apo))).
+
+	append($('<div>').
+	addClass('kritirio').
+
+	append($('<div>').
+	addClass('kritirioLabel').
+	text('Έως')).
+
+	append($('<div>').
+	addClass('kritirioValue').
+	text(adiarpt.eos))));
+
 console.log(adiarpt.ipiresia);
 console.log(adiarpt.dlist);
+
+	return adiarpt;
 };
 
 adiarpt.report = (e) => {
