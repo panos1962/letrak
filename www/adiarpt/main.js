@@ -144,7 +144,7 @@ adiarpt.dataGet = () => {
 			"eos": adiarpt.eos,
 		},
 		"success": (rsp) => {
-			adiarpt.reportPrepare(rsp);
+			adiarpt.dataProcess(rsp);
 		},
 		"error": (err) => {
 			console.error(err);
@@ -154,18 +154,103 @@ adiarpt.dataGet = () => {
 	return adiarpt;
 };
 
-adiarpt.reportPrepare = (rsp) => {
-	if (rsp.hasOwnProperty("error"))
-	return pnd.fyiError(rsp.error);
+adiarpt.dataProcess = (rsp) => {
+	if (rsp.hasOwnProperty("error")) {
+		self.LETRAK.klisimoTabDOM.prependTo(pnd.toolbarLeftDOM);
+		return pnd.fyiError(rsp.error);
+	}
 
+	const plist = [];
+
+	for (let ipalilos in rsp) {
+		for (let imera in rsp[ipalilos]) {
+			adiarpt.imeraProcess(ipalilos, imera,
+				rsp[ipalilos][imera], plist);
+			delete rsp[ipalilos][imera];
+		}
+
+		delete rsp[ipalilos];
+	}
+
+	adiarpt.plist = plist.sort(adiarpt.pcmp);
+	adiarpt.
+	dataDisplay().
+	reportEnable();
+
+	return adiarpt;
+};
+
+adiarpt.dataDisplay = () => {
+	const n = adiarpt.plist.length;
+
+	for (let i = 0; i < n; i++) {
+		const data = adiarpt.plist[i];
+		const onomateponimo = adiarpt.ipalilosList[data.i];
+
+		pnd.ofelimoDOM.append($('<div>').text(onomateponimo));
+	}
+
+	return adiarpt;
+};
+
+adiarpt.reportEnable = () => {
 	pnd.toolbarLeftDOM.
-
 	append(adiarpt.reportTabDOM = letrak.tabDOM().
 	addClass('deltioTab').
 	append(adiarpt.minima.reportTabLabel).
 	on('click', (e) => adiarpt.report(e)));
 
-console.log(rsp);
+	return adiarpt;
+};
+
+adiarpt.imeraProcess = (ipalilos, imera, data, list) => {
+	data["i"] = parseInt(ipalilos);
+	data["d"] = imera;
+	list.push(data);
+};
+
+adiarpt.ipalilosList = {};
+
+adiarpt.pcmp = (p1, p2) => {
+	if (!adiarpt.ipalilosList.hasOwnProperty(p1.i))
+	adiarpt.ipalilosListPush(p1.i);
+
+	if (!adiarpt.ipalilosList.hasOwnProperty(p2.i))
+	adiarpt.ipalilosListPush(p2.i);
+
+	const i1 = adiarpt.ipalilosList[p1.i];
+	const i2 = adiarpt.ipalilosList[p2.i];
+
+	const d1 = p1.d;
+	const d2 = p2.d;
+
+	const cmp = i1.localeCompare(i2);
+
+	if (cmp < 0)
+	return -1;
+
+	if (cmp > 0)
+	return 1;
+
+	if (p1.i < p2.i)
+	return -1;
+
+	if (p1.i > p2.i)
+	return 1;
+
+	if (d1 < d2)
+	return -1;
+
+	if (d1 > d2)
+	return 1;
+
+	return 0;
+};
+
+adiarpt.ipalilosListPush = (kodikos) => {
+	const ipalilos = self.opener.LETRAK.ipalilosList[kodikos];
+	return (adiarpt.ipalilosList[kodikos] = ipalilos.e + ' ' +
+		ipalilos.o + ' ' + ipalilos.p.substr(0, 3));
 };
 
 adiarpt.report = (e) => {

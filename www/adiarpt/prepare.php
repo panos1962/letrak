@@ -110,7 +110,7 @@ class Adiarpt {
 				unset($row[$k]);
 			}
 
-			$row[$prosapo . "k"] = $kodikos;
+			$row[$prosapo . "d"] = $kodikos;
 			self::parousia_push($ipalilos, $imerominia, $row);
 		}
 

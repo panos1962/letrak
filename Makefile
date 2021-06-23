@@ -78,7 +78,7 @@ git:
 
 .PHONY: pull
 pull:
-	git pull
+	git pull && make
 
 # FILE SECTION
 
