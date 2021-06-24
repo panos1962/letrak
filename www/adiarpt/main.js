@@ -96,6 +96,7 @@ adiarpt.kritiriaSetup = () => {
 
 	append($('<div>').
 	attr('id', 'kritiria').
+	addClass('noprint').
 
 	append($('<div>').
 	addClass('kritirio').
@@ -135,7 +136,7 @@ adiarpt.kritiriaSetup = () => {
 
 adiarpt.dataGet = () => {
 	$.post({
-		"url": "prepare.php",
+		"url": "dataGet.php",
 		"dataType": "json",
 		"data": {
 			"dlist": adiarpt.dlist,
@@ -144,7 +145,9 @@ adiarpt.dataGet = () => {
 			"eos": adiarpt.eos,
 		},
 		"success": (rsp) => {
-			adiarpt.dataProcess(rsp);
+			adiarpt.
+			processData(rsp).
+			prepareReport();
 		},
 		"error": (err) => {
 			console.error(err);
@@ -154,10 +157,11 @@ adiarpt.dataGet = () => {
 	return adiarpt;
 };
 
-adiarpt.dataProcess = (rsp) => {
+adiarpt.processData = (rsp) => {
 	if (rsp.hasOwnProperty("error")) {
 		self.LETRAK.klisimoTabDOM.prependTo(pnd.toolbarLeftDOM);
-		return pnd.fyiError(rsp.error);
+		pnd.fyiError(rsp.error);
+		return adiarpt;
 	}
 
 	const plist = [];
@@ -173,9 +177,69 @@ adiarpt.dataProcess = (rsp) => {
 	}
 
 	adiarpt.plist = plist.sort(adiarpt.pcmp);
+	return adiarpt;
+};
+
+adiarpt.prepareReport = () => {
+	if (!adiarpt.plist.length)
+	pnd.fyiError('Δεν βρέθηκαν εγγραφές');
+
 	adiarpt.
+	epikefalidaSetup().
+	plegmaSetup().
+	adanalSetup().
 	dataDisplay().
 	reportEnable();
+
+	return adiarpt;
+};
+
+adiarpt.epikefalidaSetup = () => {
+	const ipiresiaList = self.opener.LETRAK.ipiresiaList;
+	const die = adiarpt.ipiresia.substr(0, 3);
+	const tmi = adiarpt.ipiresia.substr(0, 7);
+	let ipiresiaDOM;
+
+	pnd.ofelimoDOM.
+	append(adiarpt.epikefalidaDOM = $('<div>').
+	attr('id', 'epikefalida').
+
+	append(ipiresiaDOM = $('<div>').
+	attr('id', 'epikefalidaLeft').
+	append($('<div id="epikefalidaOrganismos">').
+	text(letrak.minima.organismos))).
+
+	append($('<div>').
+	attr('id', 'epikefalidaRight').
+	append($('<div>').
+	text('ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ ΚΑΙ ΑΔΕΙΟΥΧΩΝ')).
+	append($('<div>').
+	append($('<div id="epikefalidaApo">').
+	text(adiarpt.apo)).
+	append($('<div id="epikefalidaEos">').
+	text(adiarpt.eos)))));
+
+	if (die)
+	ipiresiaDOM.append($('<div>').text(ipiresiaList[die]));
+
+	if (tmi !== die)
+	ipiresiaDOM.append($('<div>').text(ipiresiaList[tmi]));
+
+	return adiarpt;
+};
+
+adiarpt.plegmaSetup = () => {
+	pnd.ofelimoDOM.
+	append(adiarpt.plegmaDOM = $('<div>').
+	attr('id', 'plegma'));
+
+	return adiarpt;
+};
+
+adiarpt.adanalSetup = () => {
+	pnd.ofelimoDOM.
+	append(adiarpt.adanalDOM = $('<div>').
+	attr('id', 'adanal'));
 
 	return adiarpt;
 };

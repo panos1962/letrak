@@ -535,6 +535,9 @@ deltio.adiaReport = (e) => {
 	self.LETRAK.eos = deltio.filtraEosDOM.val();
 	self.LETRAK.dlist = deltio.dlistCreate();
 
+	if (!deltio.hasOwnProperty('ipiresiaList'))
+	deltio.erpotaProcess();
+
 	deltio.prosopaWindows.push(window.open('../adiarpt', '_blank'));
 	return deltio;
 };

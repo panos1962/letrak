@@ -52,7 +52,7 @@ $(MAIN_CSS): \
 
 $(PRINT_CSS): \
 	mainPrint.styl
-	stylus $(STYLUS_OPTS) --prefix ektiposi- mainPrint.styl >$@
+	stylus $(STYLUS_OPTS) mainPrint.styl >$@
 
 $(DEBUG_CSS): mainDebug.styl
 	stylus $(STYLUS_OPTS) mainDebug.styl >$@

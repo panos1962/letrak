@@ -152,7 +152,7 @@ ektiposi.deltio = () => {
 
 	append($('<div>').
 	addClass('ektiposi-deltioDimos').
-	text('ΔΗΜΟΣ ΘΕΣΣΑΛΟΝΙΚΗΣ')).
+	text(letrak.minima.organismos)).
 	// Χρειάζεται line break γιατί αλλιώς μπορεί να «κολλήσει»
 	// δίπλα η περιγραφή της διεύθυνσης.
 	append($('<br>'));

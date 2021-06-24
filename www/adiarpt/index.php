@@ -32,6 +32,7 @@ require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
 pandora::
 session_init()::
 document_head([
+	"title" => "Δελτίο αδειών",
 	"css" => [
 		"../mnt/pandora/lib/pandora",
 		"../lib/pandora",
@@ -39,9 +40,6 @@ document_head([
 		"main",
 	],
 ])::
-document_body();
-?>
-<?php
-pandora::
+document_body()::
 document_close();
 ?>
