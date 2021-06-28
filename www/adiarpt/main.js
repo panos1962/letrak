@@ -39,18 +39,39 @@ const adiarpt = {
 	"apo": undefined,
 	"eos": undefined,
 	"dlist": undefined,
+	"error": undefined,
 };
 
 adiarpt.minima = {
 	'reportTabLabel': 'Εκτύπωση',
 };
 
+adiarpt.errorSet = (err) => {
+	adiarpt.error = err;
+	console.error(err);
+
+	return adiarpt;
+};
+
+adiarpt.errorGet = () => {
+	return adiarpt.error;
+};
+
+adiarpt.isError = () => {
+	return adiarpt.errorGet();
+};
+
+adiarpt.errorClear = () => {
+	adiarpt.error = undefined;
+	return adiarpt;
+};
+
 (() => {
 	if (!self.opener)
-	return;
+	return adiarpt.errorSet('missing opener');
 
 	if (!self.opener.hasOwnProperty('LETRAK'))
-	return;
+	return adiarpt.errorSet("missing 'LETRAK' property in opener");
 
 	if (self.opener.LETRAK.ipiresia)
 	adiarpt.ipiresia = self.opener.LETRAK.ipiresia;
@@ -85,6 +106,9 @@ adiarpt.selidaSetup = () => {
 	toolbarTitlosSetup('<b>Κατάσταση Αδειών</b>').
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
+
+	if (adiarpt.isError())
+	return pnd.fyiError(adiarpt.errorGet());
 
 	adiarpt.
 	kritiriaSetup().
@@ -275,6 +299,18 @@ adiarpt.imeraProcess = (ipalilos, imera, data, list) => {
 
 adiarpt.ipalilosList = {};
 
+adiarpt.ipalilosListPush = (kodikos) => {
+	const ipalilos = self.opener.LETRAK.ipalilosList[kodikos];
+	return (adiarpt.ipalilosList[kodikos] = ipalilos.e + ' ' +
+		ipalilos.o + ' ' + ipalilos.p.substr(0, 3));
+};
+
+adiarpt.report = (e) => {
+	e.stopPropagation();
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 adiarpt.pcmp = (p1, p2) => {
 	if (!adiarpt.ipalilosList.hasOwnProperty(p1.i))
 	adiarpt.ipalilosListPush(p1.i);
@@ -309,14 +345,4 @@ adiarpt.pcmp = (p1, p2) => {
 	return 1;
 
 	return 0;
-};
-
-adiarpt.ipalilosListPush = (kodikos) => {
-	const ipalilos = self.opener.LETRAK.ipalilosList[kodikos];
-	return (adiarpt.ipalilosList[kodikos] = ipalilos.e + ' ' +
-		ipalilos.o + ' ' + ipalilos.p.substr(0, 3));
-};
-
-adiarpt.report = (e) => {
-	e.stopPropagation();
 };
