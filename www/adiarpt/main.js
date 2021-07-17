@@ -96,8 +96,29 @@ pnd.domInit(() => {
 	domFixup();
 
 	adiarpt.
+	kritiriaFix().
 	selidaSetup();
 });
+
+adiarpt.kritiriaFix = () => {
+	let dmy = adiarpt.apo.split(/[^0-9]/);
+	adiarpt.apoDate = new Date(dmy[2], dmy[1] - 1, dmy[0]);
+
+	dmy = adiarpt.eos.split(/[^0-9]/);
+	adiarpt.eosDate = new Date(dmy[2], dmy[1] - 1, dmy[0]);
+
+	if ((adiarpt.eosDate - adiarpt.apoDate) < 0) {
+		let t = adiarpt.apoDate;
+		adiarpt.apoDate = adiarpt.eosDate;
+		adiarpt.eosDate = t;
+
+		t = adiarpt.apo;
+		adiarpt.apo = adiarpt.eos;
+		adiarpt.eos = t;
+	}
+
+	return adiarpt;
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -236,6 +257,7 @@ adiarpt.epikefalidaSetup = () => {
 	append($('<div>').
 	attr('id', 'epikefalidaRight').
 	append($('<div>').
+	attr('id', 'epikefalidaTitlos').
 	text('ΔΕΛΤΙΟ ΑΠΟΝΤΩΝ ΚΑΙ ΑΔΕΙΟΥΧΩΝ')).
 	append($('<div>').
 	append($('<div id="epikefalidaApo">').
@@ -257,6 +279,27 @@ adiarpt.plegmaSetup = () => {
 	append(adiarpt.plegmaDOM = $('<div>').
 	attr('id', 'plegma'));
 
+	const tableDOM = $('<table>').
+	attr('border', 1).
+	appendTo(adiarpt.plegmaDOM);
+
+	const theadDOM = $('<thead>').appendTo(tableDOM);
+	adiarpt.plegmaDataDOM = $('<tbody>').appendTo(tableDOM);
+	let rowDOM = $('<tr>').appendTo(theadDOM);
+
+	rowDOM.append($('<th>').text('Υπάλληλος'));
+
+	for (let d = new Date(adiarpt.apoDate);
+		d <= adiarpt.eosDate;
+		d.setDate(d.getDate() + 1)) {
+
+		rowDOM.
+		append($('<th>').
+		append($('<div>').text(adiarpt.imeraShortcut[d.getDay()])).
+		append($('<div>').text(d.getDate())));
+	}
+
+	adiarpt.plegmaKeliDOM = {};
 	return adiarpt;
 };
 
@@ -270,16 +313,98 @@ adiarpt.adanalSetup = () => {
 
 adiarpt.dataDisplay = () => {
 	const n = adiarpt.plist.length;
+	const ilist = {};
+	let icur = undefined;
 
 	for (let i = 0; i < n; i++) {
 		const data = adiarpt.plist[i];
-		const onomateponimo = adiarpt.ipalilosList[data.i];
+		const ipalilos = data.i;
+		const onomateponimo = adiarpt.ipalilosList[ipalilos];
 
-		pnd.ofelimoDOM.append($('<div>').text(onomateponimo));
+		if (ipalilos !== icur)
+		adiarpt.plegmaIpalilosAdd(icur = ipalilos, onomateponimo);
+
+		adiarpt.plegmaDataPush(data);
+		adiarpt.adanalDOM.append($('<div>').text(onomateponimo));
 	}
 
 	return adiarpt;
 };
+
+adiarpt.plegmaIpalilosAdd = (ipalilos, onomateponimo) => {
+	let rowDOM = $('<tr>').appendTo(adiarpt.plegmaDataDOM);
+
+	rowDOM.append($('<td>').
+	addClass('plegmaIpalilos').
+	text('[' + ipalilos + '] ' + onomateponimo));
+
+	for (let d = new Date(adiarpt.apoDate);
+		d <= adiarpt.eosDate;
+		d.setDate(d.getDate() + 1)) {
+
+		const idx = adiarpt.keliIndex(ipalilos, d);
+		adiarpt.plegmaKeliDOM[idx] = $('<td>').appendTo(rowDOM);
+	}
+
+	return adiarpt;
+};
+
+adiarpt.plegmaDataPush = (data) => {
+	let ymd = data.d.split(/[^0-9]/);
+	const date = new Date(ymd[0], ymd[1] - 1, ymd[2]);
+
+	const idx = adiarpt.keliIndex(data.i, date);
+	const keliDOM = adiarpt.plegmaKeliDOM[idx];
+
+	if (data.aa) {
+		switch (data.aa) {
+		case 'ΤΗΛΕΡΓΑΣΙΑ':
+			keliDOM.append($('<div>').html('&#x2705;'));
+			break;
+		default:
+			keliDOM.text(data.aa.substr(0, 2));
+			break;
+		}
+
+		return adiarpt;
+	}
+
+	const proselefsi = adiarpt.proselefsiGet(data);
+	const apoxorisi = adiarpt.apoxorisiGet(data);
+
+	if (proselefsi && apoxorisi)
+	keliDOM.append($('<div>').html('&#x2714;'));
+
+	else if (proselefsi)
+	keliDOM.append($('<div>').html('&#x25E7;'));
+
+	else if (apoxorisi)
+	keliDOM.append($('<div>').html('&#x25E8;'));
+
+	return adiarpt;
+};
+
+adiarpt.proselefsiGet = (data) => {
+	if (data.pt)
+	return true;
+
+	if (data.pe)
+	return true;
+
+	return false;
+};
+
+adiarpt.apoxorisiGet = (data) => {
+	if (data.at)
+	return true;
+
+	if (data.ae)
+	return true;
+
+	return false;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 adiarpt.reportEnable = () => {
 	pnd.toolbarLeftDOM.
@@ -345,4 +470,34 @@ adiarpt.pcmp = (p1, p2) => {
 	return 1;
 
 	return 0;
+};
+
+adiarpt.imeraShortcut = [
+	"Κυ",
+	"Δε",
+	"Τρ",
+	"Τε",
+	"Πε",
+	"Πα",
+	"Σα",
+];
+
+adiarpt.keliIndex = (ipalilos, date) => {
+	let idx = ipalilos + ':' + date.getFullYear();
+
+	let x = date.getMonth() + 1;
+
+	if (x < 10)
+	idx += '0';
+
+	idx += x;
+
+	x = date.getDate();
+
+	if (x < 10)
+	idx += '0';
+
+	idx += x;
+
+	return idx;
 };
