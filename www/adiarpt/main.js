@@ -66,26 +66,6 @@ adiarpt.errorClear = () => {
 	return adiarpt;
 };
 
-(() => {
-	if (!self.opener)
-	return adiarpt.errorSet('missing opener');
-
-	if (!self.opener.hasOwnProperty('LETRAK'))
-	return adiarpt.errorSet("missing 'LETRAK' property in opener");
-
-	if (self.opener.LETRAK.ipiresia)
-	adiarpt.ipiresia = self.opener.LETRAK.ipiresia;
-
-	if (self.opener.LETRAK.apo)
-	adiarpt.apo = self.opener.LETRAK.apo;
-
-	if (self.opener.LETRAK.eos)
-	adiarpt.eos = self.opener.LETRAK.eos;
-
-	if (self.opener.LETRAK.dlist)
-	adiarpt.dlist = self.opener.LETRAK.dlist;
-})();
-
 pnd.domInit(() => {
 	pnd.
 	toolbarSetup().
@@ -96,9 +76,25 @@ pnd.domInit(() => {
 	domFixup();
 
 	adiarpt.
-	kritiriaFix().
 	selidaSetup();
 });
+
+adiarpt.selidaSetup = () => {
+	letrak.
+	toolbarTitlosSetup('<b>Κατάσταση Αδειών</b>').
+	toolbarXristisSetup().
+	ribbonCopyrightSetup();
+
+	if (adiarpt.isError())
+	return pnd.fyiError(adiarpt.errorGet());
+
+	adiarpt.
+	kritiriaFix().
+	kritiriaSetup().
+	dataGet();
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 adiarpt.kritiriaFix = () => {
 	let dmy = adiarpt.apo.split(/[^0-9]/);
@@ -118,22 +114,6 @@ adiarpt.kritiriaFix = () => {
 	}
 
 	return adiarpt;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-adiarpt.selidaSetup = () => {
-	letrak.
-	toolbarTitlosSetup('<b>Κατάσταση Αδειών</b>').
-	toolbarXristisSetup().
-	ribbonCopyrightSetup();
-
-	if (adiarpt.isError())
-	return pnd.fyiError(adiarpt.errorGet());
-
-	adiarpt.
-	kritiriaSetup().
-	dataGet();
 };
 
 adiarpt.kritiriaSetup = () => {
@@ -234,6 +214,7 @@ adiarpt.prepareReport = () => {
 	plegmaSetup().
 	adanalSetup().
 	dataDisplay().
+	ipomnimaDisplay().
 	reportEnable();
 
 	return adiarpt;
@@ -300,6 +281,7 @@ adiarpt.plegmaSetup = () => {
 	}
 
 	adiarpt.plegmaKeliDOM = {};
+	adiarpt.plegmaKeliOk = {};
 	return adiarpt;
 };
 
@@ -325,7 +307,7 @@ adiarpt.dataDisplay = () => {
 		adiarpt.plegmaIpalilosAdd(icur = ipalilos, onomateponimo);
 
 		adiarpt.plegmaDataPush(data);
-		adiarpt.adanalDOM.append($('<div>').text(onomateponimo));
+		//adiarpt.adanalDOM.append($('<div>').text(onomateponimo));
 	}
 
 	return adiarpt;
@@ -354,6 +336,10 @@ adiarpt.plegmaDataPush = (data) => {
 	const date = new Date(ymd[0], ymd[1] - 1, ymd[2]);
 
 	const idx = adiarpt.keliIndex(data.i, date);
+
+	if (adiarpt.plegmaKeliOk[idx])
+	return adiarpt;
+
 	const keliDOM = adiarpt.plegmaKeliDOM[idx];
 
 	if (data.aa) {
@@ -362,10 +348,19 @@ adiarpt.plegmaDataPush = (data) => {
 			keliDOM.append($('<div>').html('&#x2705;'));
 			break;
 		default:
-			keliDOM.text(data.aa.substr(0, 2));
+			let s = adiarpt.adiaEconomyMap[data.aa];
+
+			if (!s) {
+				console.error(data.aa + ': adiaEconomyMap missing');
+				s = '??';
+			}
+
+			keliDOM.text(s);
+			adiarpt.adiaEconomyUsed[s] = true;
 			break;
 		}
 
+		adiarpt.plegmaKeliOk[idx] = true;
 		return adiarpt;
 	}
 
@@ -402,6 +397,12 @@ adiarpt.apoxorisiGet = (data) => {
 	return true;
 
 	return false;
+};
+
+adiarpt.ipomnimaDisplay = () => {
+console.log(adiarpt.adiaEconomyUsed);
+
+	return adiarpt;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -501,3 +502,83 @@ adiarpt.keliIndex = (ipalilos, date) => {
 
 	return idx;
 };
+
+adiarpt.adiaEconomyMap = {
+	'ΚΑΝΟΝΙΚΗ': 'ΚΑ',
+	'ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)': 'ΚΜ',
+	'ΤΗΛΕΡΓΑΣΙΑ': 'ΤΛ',
+	'ΕΚ ΠΕΡΙΤΡΟΠΗΣ': 'ΕΠ',
+
+	'ΑΣΘΕΝΕΙΑ': 'ΥΔ',
+	'ΑΝΑΡΡΩΤΙΚΗ': 'ΑΝ',
+	'ΑΣΘΕΝΕΙΑ TEKNOY': 'ΑΤ',
+	'ΑΙΜΟΔΟΣΙΑ': 'ΑΜ',
+	'ΚΑΤ\' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ': 'ΠΟ',
+	'ΙΑΤΡΙΚΕΣ ΕΞΕΤΑΣΕΙΣ': 'ΙΕ',
+
+	'ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ.': 'ΓΕ',
+	'ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ': 'ΓΑ',
+	'ΚΥΗΣΕΩΣ & ΛΟΧΕΙΑΣ': 'ΚΥ',
+
+	'ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ': 'ΡΑ',
+	'ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ': 'ΡΥ',
+	'ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ': 'ΡΠ',
+	'ΣΥΜΠΛΗΡΩΣΗ ΩΡΑΡΙΟΥ': 'ΣΩ',
+
+	'ΕΙΔΙΚΗ ΑΔΕΙΑ': 'ΕΑ',
+	'ΣΕΜΙΝΑΡΙΟ': 'ΣΜ',
+	'ΣΠΟΥΔΑΣΤΙΚΗ': 'ΣΠ',
+	'ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ': 'ΣΝ',
+	'ΓΑΜΟΥ': 'ΓΜ',
+	'ΠΕΝΘΟΥΣ': 'ΠΘ',
+	'ΕΚΛΟΓΙΚΗ': 'ΕΚ',
+	'ΑΘΛΗΤΙΚΗ': 'ΑΘ',
+	'ΔΙΚΑΣΤΗΡΙΟ': 'ΔΚ',
+	'ΣΤΡΑΤΙΩΤΙΚΗ': 'ΣΤ',
+
+	'ΑΠΕΡΓΙΑ': 'ΑΓ',
+	'ΑΝΕΥ ΑΠΟΔΟΧΩΝ': 'ΑΑ',
+	'ΑΠΟΣΠΑΣΗ': 'ΑΠ',
+	'ΔΙΑΘΕΣΙΜΟΤΗΤΑ': 'ΔΘ',
+	'ΑΡΓΙΑ': 'ΑΡ',
+	'ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ': 'ΑΛ',
+	'ΜΕΤΑΚΙΝΗΣΗ': 'ΜΚ',
+};
+
+adiarpt.adiaEconomySetup = () => {
+	adiarpt.adiaEconomyPam = {};
+	adiarpt.adiaEconomyUsed = {};
+
+	for (let i in adiarpt.adiaEconomyMap) {
+		let x = adiarpt.adiaEconomyMap[i];
+
+		if (adiarpt.adiaEconomyPam.hasOwnProperty(x))
+		adiarpt.errorSet(i + ': adiaEconomy duplicate');
+
+		adiarpt.adiaEconomyPam[x] = i;
+	}
+
+	return adiarpt;
+};
+
+(() => {
+	if (!self.opener)
+	return adiarpt.errorSet('missing opener');
+
+	if (!self.opener.hasOwnProperty('LETRAK'))
+	return adiarpt.errorSet("missing 'LETRAK' property in opener");
+
+	if (self.opener.LETRAK.ipiresia)
+	adiarpt.ipiresia = self.opener.LETRAK.ipiresia;
+
+	if (self.opener.LETRAK.apo)
+	adiarpt.apo = self.opener.LETRAK.apo;
+
+	if (self.opener.LETRAK.eos)
+	adiarpt.eos = self.opener.LETRAK.eos;
+
+	if (self.opener.LETRAK.dlist)
+	adiarpt.dlist = self.opener.LETRAK.dlist;
+
+	adiarpt.adiaEconomySetup();
+})();
