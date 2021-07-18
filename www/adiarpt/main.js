@@ -40,6 +40,7 @@ const adiarpt = {
 	"eos": undefined,
 	"dlist": undefined,
 	"error": undefined,
+	"deltioCountMax": 500,
 };
 
 adiarpt.minima = {
@@ -160,6 +161,11 @@ adiarpt.kritiriaSetup = () => {
 };
 
 adiarpt.dataGet = () => {
+	if (adiarpt.dlist.length > adiarpt.deltioCountMax) {
+		pnd.fyiError('Μεγάλος πλήθος δελτίων');
+		return adiarpt;
+	}
+
 	$.post({
 		"url": "dataGet.php",
 		"dataType": "json",
@@ -206,7 +212,7 @@ adiarpt.processData = (rsp) => {
 };
 
 adiarpt.prepareReport = () => {
-	if (!adiarpt.plist.length)
+	if ((!adiarpt) || (!adiarpt.plist.length))
 	pnd.fyiError('Δεν βρέθηκαν εγγραφές');
 
 	adiarpt.
@@ -609,10 +615,14 @@ adiarpt.adiaEconomySetup = () => {
 	if (self.opener.LETRAK.ipiresia)
 	adiarpt.ipiresia = self.opener.LETRAK.ipiresia;
 
-	if (self.opener.LETRAK.apo)
+	if (!self.opener.LETRAK.apo)
+	return adiarpt.errorSet("Ακαθόριστη αρχή διατήματος");
+
 	adiarpt.apo = self.opener.LETRAK.apo;
 
-	if (self.opener.LETRAK.eos)
+	if (!self.opener.LETRAK.eos)
+	return adiarpt.errorSet("Ακαθόριστο τέλος διατήματος");
+
 	adiarpt.eos = self.opener.LETRAK.eos;
 
 	if (self.opener.LETRAK.dlist)
