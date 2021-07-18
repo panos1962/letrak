@@ -93,20 +93,20 @@
 	content ' έως '
 	font-weight normal
 
-#plegma table
-	border-collapse collapse
-	thead
-		border-style solid solid double solid
-
-#plegma table th,td
-	padding 4px
-	text-align center
-	max-width 14em
-	overflow hidden
-	text-overflow ellipsis
-
-#plegma th
-	min-width 1.8em
+#plegma
+	margin-top 1ex
+	table
+		border-collapse collapse
+		thead
+			border-style none none double none
+		th,td
+			padding 4px
+			text-align center
+			max-width 14em
+			overflow hidden
+			text-overflow ellipsis
+		th
+			min-width 1.8em
 
 .plegmaIpalilos
 	white-space nowrap
@@ -124,3 +124,24 @@
 	top 0
 	right 0
 	font-size 1em
+
+#ipomnima
+	margin-top 0.3ex
+
+.ipomnimaItem
+	display inline-block
+	margin 0.3em
+	font-size 70%
+	font-style italic
+	white-space nowrap
+	div
+		display inline-block
+
+.ipomnimaShort
+	font-weight bold
+
+.ipomnimaShort:after
+	content ':'
+
+.ipomnimaLong
+	color #1b1b1b

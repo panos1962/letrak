@@ -212,6 +212,7 @@ adiarpt.prepareReport = () => {
 	adiarpt.
 	epikefalidaSetup().
 	plegmaSetup().
+	ipomnimaSetup().
 	adanalSetup().
 	dataDisplay().
 	ipomnimaDisplay().
@@ -399,8 +400,45 @@ adiarpt.apoxorisiGet = (data) => {
 	return false;
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
+adiarpt.ipomnimaSetup = () => {
+	pnd.ofelimoDOM.
+	append(adiarpt.ipomnimaDOM = $('<div>').
+	attr('id', 'ipomnima'));
+
+	return adiarpt;
+};
+
 adiarpt.ipomnimaDisplay = () => {
-console.log(adiarpt.adiaEconomyUsed);
+	let list = [];
+
+	for (let i in adiarpt.adiaEconomyUsed)
+	list.push(i);
+
+	list.sort((p1, p2) => {
+		const cmp = p1.localeCompare(p2);
+
+		if (cmp < 0)
+		return -1;
+
+		if (cmp > 0)
+		return 1;
+
+		return 0;
+	});
+
+	for (let i = 0; i < list.length; i++) {
+		$('<div>').
+		addClass('ipomnimaItem').
+		append($('<div>').
+		addClass('ipomnimaShort').
+		text(list[i])).
+		append($('<div>').
+		addClass('ipomnimaLong').
+		text(adiarpt.adiaEconomyPam[list[i]])).
+		appendTo(adiarpt.ipomnimaDOM);
+	}
 
 	return adiarpt;
 };
