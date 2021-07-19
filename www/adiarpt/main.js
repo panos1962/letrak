@@ -352,7 +352,7 @@ adiarpt.plegmaDataPush = (data) => {
 	if (data.aa) {
 		switch (data.aa) {
 		case 'ΤΗΛΕΡΓΑΣΙΑ':
-			keliDOM.append($('<div>').html('&#x2705;'));
+			keliDOM.append($('<div>').html('&#x2713;'));
 			break;
 		default:
 			let s = adiarpt.adiaEconomyMap[data.aa];
