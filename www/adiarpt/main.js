@@ -362,7 +362,8 @@ adiarpt.plegmaDataPush = (data) => {
 				s = '??';
 			}
 
-			keliDOM.text(s);
+			keliDOM.removeClass('keliError').text(s);
+
 			adiarpt.adiaEconomyUsed[s] = true;
 			break;
 		}
@@ -378,10 +379,13 @@ adiarpt.plegmaDataPush = (data) => {
 	keliDOM.append($('<div>').html('&#x2714;'));
 
 	else if (proselefsi)
-	keliDOM.append($('<div>').html('&#x25E7;'));
+	keliDOM.addClass('keliError').append($('<div>').html('&#x25E7;'));
 
 	else if (apoxorisi)
-	keliDOM.append($('<div>').html('&#x25E8;'));
+	keliDOM.addClass('keliError').append($('<div>').html('&#x25E8;'));
+
+	else
+	keliDOM.addClass('keliError').append($('<div>').html('&#x2753;'));
 
 	return adiarpt;
 };
@@ -477,6 +481,7 @@ adiarpt.ipalilosListPush = (kodikos) => {
 
 adiarpt.report = (e) => {
 	e.stopPropagation();
+	self.print();
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
