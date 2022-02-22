@@ -2935,7 +2935,8 @@ letrak.parousia.prototype.domGet = function(ordinal) {
 	addClass(meraoraClass).
 	text(meraora);
 
-	if ((letrak.prosvasiIsAdmin('') || prosopa.xristisIsIpografon()) &&
+	if ((letrak.prosvasiIsAdmin(prosopa.deltio.ipiresiaGet()) ||
+		prosopa.xristisIsIpografon()) &&
 		this.isPiragmeno())
 	meraoraDOM.append($('<div>').
 	addClass('parousiaMeraoraPiragmeno').
