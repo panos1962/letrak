@@ -1,6 +1,5 @@
 #!/usr/bin/env make -f
 
-
 ###############################################################################@
 #
 # @BEGIN
@@ -18,6 +17,7 @@
 # @FILE END
 #
 # @HISTORY BEGIN
+# Updated: 2022-03-05
 # Updated: 2021-06-21
 # Updated: 2020-04-12
 # Created: 2020-03-05
@@ -37,6 +37,7 @@ all:
 	(cd www/deltio && make)
 	(cd www/prosopa && make)
 	(cd www/adiarpt && make)
+	(cd www/admin && make)
 
 test:
 	make all
@@ -84,6 +85,8 @@ pull:
 
 .PHONY: cleanup
 cleanup:
+	@(cd www/admin && make cleanup)
+	@(cd www/adiarpt && make cleanup)
 	@(cd www/prosopa && make cleanup)
 	@(cd www/deltio && make cleanup)
 	@(cd www/isodos && make cleanup)
