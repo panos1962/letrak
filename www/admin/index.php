@@ -12,7 +12,7 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/admin/index.php —— Βασική φόρμα διαχειριστή συστήματος (admin)
+// www/admin/index.php —— Βασική σελίδα διαχειριστή συστήματος (admin)
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -53,7 +53,7 @@ document_head([
 <?php
 
 pandora::
-document_body();
+document_body("display: none;");
 
 ?>
 <div id="kritiriaForma">
