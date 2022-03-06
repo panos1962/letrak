@@ -56,32 +56,6 @@ pandora::
 document_body("display: none;");
 
 ?>
-<div id="kritiriaForma">
-	<div class="letrak-inputLine">
-		<label for="kritiriaFormaKodikos">
-			Κωδικός
-		</label>
-		<input id="kritiriaFormaKodikos" tabindex="-1">
-	</div>
-	<div class="letrak-inputLine">
-		<label for="kritiriaFormaEponimo">
-			Επώνυμο
-		</label>
-		<input id="kritiriaFormaEponimo" tabindex="-1">
-	</div>
-	<div class="letrak-inputLine">
-		<label for="kritiriaFormaOnoma">
-			Όνομα
-		</label>
-		<input id="kritiriaFormaOnoma" tabindex="-1">
-	</div>
-	<div class="letrak-inputLine">
-		<label for="kritiriaFormaKarta">
-			Αρ. Κάρτας
-		</label>
-		<input id="kritiriaFormaKarta" tabindex="-1">
-	</div>
-</div>
 <?php
 
 pandora::

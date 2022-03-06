@@ -39,6 +39,13 @@ const admin = {};
 
 self.LETRAK = {};
 
+admin.minima = {
+	"kritiriaKartaLabel": "Κάρτα",
+	"kritiriaKodikosLabel": "Κωδικός",
+	"kritiriaOnomateponimoLabel": "Ονοματεπώνυμο",
+	"kritiriaImerominiaLabel": "Ημερομηνία",
+};
+
 pnd.domInit(() => {
 	if (letrak.noXristis())
 	return letrak.arxikiSelida(admin);
@@ -69,8 +76,105 @@ admin.selidaSetup = () => {
 	pnd.
 	keepAlive('../mnt/pandora');
 
+	admin.
+	kritiriaSetup();
+
 	pnd.bodyDOM.css('display', 'block');
 	return admin;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+admin.kritiriaSetup = () => {
+	pnd.bodyDOM.
+	append(admin.kritiriaFormaDOM = $('<div>').
+	append($('<form>').
+	attr('id', 'kritiriaForma').
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(admin.kritiriaKartaDOM = $('<label>').
+	attr('for', 'kritiriaKarta').
+	text(admin.minima.kritiriaKartaLabel)).
+	append(admin.kritiriaKartaDOM = $('<input>').
+	attr('id', 'kritiriaKarta').
+	addClass('kritiriaInput'))).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(admin.kritiriaKodikosDOM = $('<label>').
+	attr('for', 'kritiriaKodikos').
+	text(admin.minima.kritiriaKodikosLabel)).
+	append(admin.kritiriaKodikosDOM = $('<input>').
+	attr('id', 'kritiriaKodikos').
+	addClass('kritiriaInput'))).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append(admin.kritiriaOnomateponimoDOM = $('<label>').
+	attr('for', 'kritiriaOnomateponimo').
+	text(admin.minima.kritiriaOnomateponimoLabel)).
+	append(admin.kritiriaOnomateponimoDOM = $('<input>').
+	attr('id', 'kritiriaOnomateponimo').
+	addClass('kritiriaInput'))).
+
+	append($('<div>').
+	addClass('letrak-inputLine').
+	append($('<label>').
+	attr('for', 'kritiriaImerominia').
+	text(admin.minima.kritiriaImerominiaLabel)).
+	append(admin.kiritiriaImerominiaDOM = $('<input>').
+	attr('id', 'kritiriaImerominia').
+	addClass('kritiriaInput').
+	datepicker())).
+
+	append($('<div>').
+	addClass('letrak-formaPanel').
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'submit',
+		'value': letrak.minima.ipovoliPliktroLabel,
+	}).
+	on('click', (e) => admin.kritiriaFormaIpovoli(e))).
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'button',
+		'value': letrak.minima.clearPliktroLabel,
+	}).
+	on('click', (e) => deltio.filtraFormaClear(e))).
+
+	append($('<input>').
+	addClass('letrak-formaPliktro').
+	attr({
+		'type': 'button',
+		'value': letrak.minima.cancelPliktroLabel,
+	}).
+	on('click', (e) => deltio.filtraFormaCancel(e))))));
+
+	admin.kritiriaFormaDOM.dialog({
+		'title': 'Κριτήρια επιλογής',
+		'autoOpen': true,
+		'resizable': false,
+
+		'width': 'auto',
+		'height': 'auto',
+		'position': {
+			'my': 'left+20 top+70',
+			'at': 'left top',
+		},
+	});
+
+	let kritiriaDialogDOM = admin.kritiriaFormaDOM.closest('.ui-dialog');
+
+	kritiriaDialogDOM.
+	find('.ui-dialog-titlebar-close').
+	css('display', 'none');
+
+	kritiriaDialogDOM.
+	find('.ui-dialog-title').
+	css('text-align', 'center');
+};
