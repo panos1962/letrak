@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Created: 2022-03-07
 // Created: 2022-03-05
 // @HISTORY END
 //
@@ -44,13 +45,6 @@ document_head([
 		"main",
 	],
 ]);
-
-// Στο σημείο αυτό διαβάζουμε τα δεδομένα προσωπικού από το σχετικό link
-// που δείχνει στη νεότερη version των δεδομένων αυτών.
-
-?>
-<script src="../public/erpotaData.js" async></script>
-<?php
 
 pandora::
 document_body("display: none;");

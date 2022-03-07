@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2022-03-07
 * Updated: 2022-03-06
 * Created: 2022-03-05
 * @HISTORY END
@@ -27,12 +28,15 @@
 @import '../mnt/pandora/lib/common.styl'
 @import '../lib/common.styl'
 
+$onomaWidth = 16em
+$emailWidth = 16em
+
 .pnd-ofelimo
 	padding 0px
 
 #kritiriaForma
 	label
-		width 7em
+		width 8em
 	input
 		font-size $fontSizeInput
 	> .letrak-formaPanel
@@ -40,17 +44,26 @@
 			font-family $fontSteno
 			font-size $fontSizeNormal
 
-.kritiriaInput
-	width 9em
-
 #kritiriaKarta
 	width 5em
 
 #kritiriaKodikos
 	width 5em
 
-#kritiriaOnomateponimo
-	width 16em
+#kritiriaEponimo
+	width $onomaWidth
+
+#kritiriaOnoma
+	width $onomaWidth
+
+#kritiriaPatronimo
+	width $onomaWidth
+
+#kritiriaIpemail
+	width $emailWidth
+
+#kritiriaPremail
+	width $emailWidth
 
 #kritiriaImerominia
 	width 7em
