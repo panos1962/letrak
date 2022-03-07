@@ -256,6 +256,7 @@ admin.kritiriaFormaIpovoli = (e) => {
 	}
 
 	admin.kritiriaKartaDOM.focus();
+	data["Karta"] = parseInt(data["Karta"]);
 	admin.epilogiIpalilos(data);
 
 	return false;
@@ -268,6 +269,7 @@ admin.kritiriaFormaClear = (e) => {
 	admin['kritiria' + fld + 'DOM'].val('');
 
 	admin.kritiriaKartaDOM.val('').focus();
+admin.kritiriaKartaDOM.val(60836);
 	pnd.fyiClear();
 	return admin;
 };
@@ -280,7 +282,7 @@ admin.epilogiIpalilos = (data) => {
 		'url': 'epilogiIpalilos.php',
 		'data': data,
 		'dataType': 'json',
-		'success': (rsp) => admin.epilogiIpalilos(rsp),
+		'success': (rsp) => admin.parseIpalilos(rsp),
 		'error': (e) => {
 			pnd.fyiError('Αδυναμία επιλογής υπαλλήλων');
 			console.error(e);
@@ -288,4 +290,8 @@ admin.epilogiIpalilos = (data) => {
 	});
 
 	return admin;
+};
+
+admin.parseIpalilos = (rsp) => {
+	console.log(rsp);
 };
