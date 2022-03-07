@@ -256,6 +256,8 @@ admin.kritiriaFormaIpovoli = (e) => {
 	}
 
 	admin.kritiriaKartaDOM.focus();
+	admin.epilogiIpalilos(data);
+
 	return false;
 };
 
@@ -271,3 +273,19 @@ admin.kritiriaFormaClear = (e) => {
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+admin.epilogiIpalilos = (data) => {
+	pnd.fyiMessage('Επιλογή υπαλλήλων…');
+	$.post({
+		'url': 'epilogiIpalilos.php',
+		'data': data,
+		'dataType': 'json',
+		'success': (rsp) => admin.epilogiIpalilos(rsp),
+		'error': (e) => {
+			pnd.fyiError('Αδυναμία επιλογής υπαλλήλων');
+			console.error(e);
+		},
+	});
+
+	return admin;
+};
