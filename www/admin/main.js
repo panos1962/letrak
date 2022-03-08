@@ -82,7 +82,8 @@ admin.selidaSetup = () => {
 	keepAlive('../mnt/pandora');
 
 	admin.
-	kritiriaSetup();
+	kritiriaSetup().
+	ilistSetup();
 
 	pnd.bodyDOM.css('display', 'block');
 	return admin;
@@ -197,7 +198,7 @@ admin.kritiriaSetup = () => {
 		'width': 'auto',
 		'height': 'auto',
 		'position': {
-			'my': 'left+20 top+70',
+			'my': 'left+10 top+63',
 			'at': 'left top',
 		},
 	});
@@ -215,6 +216,33 @@ admin.kritiriaSetup = () => {
 	setTimeout(() => {
 		admin.kritiriaKartaDOM.focus();
 	}, 0);
+
+	pnd.ofelimoDOM.
+	on('mouseover', '.ilistRow', function(e) {
+		e.stopPropagation();
+		$(this).addClass('candiRow');
+	}).
+	on('mouseleave', '.ilistRow', function(e) {
+		e.stopPropagation();
+		$(this).removeClass('candiRow');
+	}).
+	on('click', '.ilistRow', function(e) {
+		e.stopPropagation();
+
+		let x = admin.ilist[$(this).data('ord')];
+		let y = admin.ilist[$(this).data('idx')];
+
+		admin.kritiriaKartaDOM.val(x.karta);
+		admin.kritiriaKodikosDOM.val(y.ipalilos);
+		admin.kritiriaEponimoDOM.val(y.eponimo);
+		admin.kritiriaOnomaDOM.val(y.onoma);
+		admin.kritiriaPatronimoDOM.val(y.patronimo);
+		admin.kritiriaIpemailDOM.val(y.ipemail);
+		admin.kritiriaPremailDOM.val(y.premail);
+		admin.kritiriaImerominiaDOM.val(x.efarmogi);
+	});
+
+	return admin;
 };
 
 admin.kritiriaFormaFlist = {
@@ -256,7 +284,13 @@ admin.kritiriaFormaIpovoli = (e) => {
 	}
 
 	admin.kritiriaKartaDOM.focus();
+
+	if (data["Karta"])
 	data["Karta"] = parseInt(data["Karta"]);
+
+	if (data["Kodikos"])
+	data["Kodikos"] = parseInt(data["Kodikos"]);
+
 	admin.epilogiIpalilos(data);
 
 	return false;
@@ -269,10 +303,18 @@ admin.kritiriaFormaClear = (e) => {
 	admin['kritiria' + fld + 'DOM'].val('');
 
 	admin.kritiriaKartaDOM.val('').focus();
-admin.kritiriaKartaDOM.val(60836);
 	pnd.fyiClear();
 	return admin;
 };
+
+admin.ilistSetup = () => {
+	let ilistDOM = $('#ilist');
+
+	pnd.ofelimoDOM.append(ilistDOM);
+	admin.ilistTbodyDOM = $('#ilistTbody');
+
+	return admin;
+}
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -281,7 +323,6 @@ admin.epilogiIpalilos = (data) => {
 	$.post({
 		'url': 'epilogiIpalilos.php',
 		'data': data,
-		'dataType': 'json',
 		'success': (rsp) => admin.parseIpalilos(rsp),
 		'error': (e) => {
 			pnd.fyiError('Αδυναμία επιλογής υπαλλήλων');
@@ -293,5 +334,101 @@ admin.epilogiIpalilos = (data) => {
 };
 
 admin.parseIpalilos = (rsp) => {
-	console.log(rsp);
+	pnd.fyiClear();
+	admin.ilist = [];
+
+	try {
+		if (rsp.hasOwnProperty('error')) {
+			pnd.fyiError(rsp.error);
+			return admin;
+		}
+
+		admin.ilist = rsp.ilist;
+	} catch (e) {
+		console.error(e);
+		pnd.fyiError('Internal error');
+		return admin;
+	}
+
+	admin.ilistTbodyDOM.empty();
+
+	let prev = undefined;
+	let idx = undefined;
+
+	for (let i = 0; i < admin.ilist.length; i++) {
+		let x = admin.ilist[i];
+
+		for (let j in x) {
+			if (x[j] === null)
+			x[j] = '';
+		}
+
+		let kartaClass = 'ilistKarta';
+
+		if (x.ipalilos === prev) {
+			x.ipalilos = '';
+			x.eponimo = '';
+			x.onoma = '';
+			x.patronimo = '';
+			x.ipemail = '';
+			x.premail = '';
+			kartaClass += ' ilistKartaOld';
+		}
+		else {
+			prev = x.ipalilos;
+			idx = i;
+		}
+
+		let ipemailClass = 'ilistIpemail';
+		let premailClass = 'ilistPremail';
+
+		let ipemail = x.ipemail;
+		let premail = x.premail;
+
+		if (ipemail) {
+			if (!ipemail.match(/@thessaloniki[.]gr/))
+			ipemailClass += ' invalidEmail';
+		}
+		else {
+			if (premail.match(/@thessaloniki[.]gr$/))
+			premailClass += ' invalidEmail';
+		}
+
+		$('<tr>').
+		data('ord', i).
+		data('idx', idx).
+		addClass('ilistRow').
+
+		append($('<td>').
+		addClass('ilistKodikos').
+		text(x.ipalilos)).
+
+		append($('<td>').
+		addClass('ilistEponimo').
+		text(x.eponimo)).
+
+		append($('<td>').
+		addClass('ilistOnoma').
+		text(x.onoma)).
+
+		append($('<td>').
+		addClass('ilistPatronimo').
+		text(x.patronimo.substr(0, 3))).
+
+		append($('<td>').
+		addClass(kartaClass).
+		text(x.karta)).
+
+		append($('<td>').
+		addClass(ipemailClass).
+		text(x.ipemail.replace(/@thessaloniki.gr$/, ''))).
+
+		append($('<td>').
+		addClass(premailClass).
+		text(x.premail)).
+
+		appendTo(admin.ilistTbodyDOM);
+	}
+
+	return admin;
 };

@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2020-03-08
 // Created: 2020-03-07
 // @HISTORY END
 //
@@ -42,31 +43,56 @@ lathos("Διαπιστώθηκε ανώνυμη χρήση");
 if ($prosvasi->ipiresia_oxi_admin(""))
 lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση");
 
-$karta = pandora::parameter_get("Karta");
+$x = pandora::parameter_get("Karta");
 
-if (letrak::ipalilos_invalid_karta($karta))
-lathos("Μη αποδεκτός αριθμός κάρτας");
+if ($x)
+epilogi_me_karta($x);
 
-if ($karta)
-epilogi_me_karta($karta);
+$x = pandora::parameter_get("Kodikos");
 
-$kodikos = pandora::parameter_get("Kodikos");
+if ($x)
+epilogi_me_kodiko($x);
 
-if (letrak::ipalilos_invalid_kodikos($kodikos))
-lathos("Μη αποδεκτός αρ. μητρώου εργαζομένου");
+$where = "";
+where_add($where, "Eponimo", "eponimo");
+where_add($where, "Onoma", "onoma");
+where_add($where, "Patronimo", "patronimo");
+where_add($where, "Premail", "premail");
+where_add($where, "Ipemail", "ipemail");
+
+if ($where)
+epilogi($where);
+
+lathos("Δεν καθορίστηκαν επαρκή κριτήρια");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 function epilogi_me_karta($karta) {
+	if (letrak::ipalilos_invalid_karta($karta))
+	lathos("Μη αποδεκτός αριθμός κάρτας");
+
+	epilogi("`karta` = '" . $karta . "'");
+}
+
+function epilogi_me_kodiko($kodikos) {
+	if (letrak::ipalilos_invalid_kodikos($kodikos))
+	lathos("Μη αποδεκτός κωδικός υπαλλήλου");
+
+	epilogi("`ipalilos` = " . $kodikos);
+}
+
+function epilogi($where_clause) {
 	$query = "SELECT `ipalilos`, `eponimo`, `onoma`, `patronimo`," .
-		" DATE_FORMAT(`efarmogi`, '%d-%m-%Y') AS `efarmogi`, `timi`" .
-		" FROM " . letrak::erpota12("karta") .
-		" WHERE (`timi` = " . $karta . ")" .
+		" `premail`, `ipemail`, `efarmogi` AS `d`, " .
+		" DATE_FORMAT(`efarmogi`, '%d-%m-%Y') AS `efarmogi`, " .
+		" `karta` FROM " . letrak::erpota12("karta") .
+		" WHERE " . $where_clause .
 		" ORDER BY `eponimo`, `onoma`, `patronimo`," .
-		" `ipalilos`, `efarmogi`";
+		" `ipalilos`, `d` DESC" .
+		" LIMIT 100";
 	$result = pandora::query($query);
 
-	print "[";
+	print '{"ilist":[';
 	$enotiko = "";
 
 	while ($row = $result->fetch_assoc()) {
@@ -75,12 +101,25 @@ function epilogi_me_karta($karta) {
 	}
 
 	$result->close();
-	print "]";
+	print "]}";
 
 	exit(0);
 }
 
+function where_add(&$where, $prm, $col) {
+	$x = pandora::parameter_get($prm);
+
+	if (!$x)
+	return;
+
+	if ($where)
+	$where .= " AND ";
+
+	$where .= "(`" . $col . "` LIKE " .
+		pandora::sql_string($x . "%") . ")";
+}
+
 function lathos($s) {
-	print $s;
+	print '{"error":' . pandora::json_string($s) . '}';
 	exit(0);
 }

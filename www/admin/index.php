@@ -50,6 +50,37 @@ pandora::
 document_body("display: none;");
 
 ?>
+<div id="ilist">
+<table id="ilistTable">
+<thead>
+<tr>
+<th class="ilistKodikos">
+Κωδ.
+</th>
+<th class="ilistEponimo">
+Επώνυμο
+</th>
+<th class="ilistOnoma">
+Όνομα
+</th>
+<th class="ilistPatronimo">
+Πατ.
+</th>
+<th class="ilistKarta">
+Κάρτα
+</th>
+<th class="ilistIpemail">
+Account
+</th>
+<th class="ilistPremail">
+Προσωπικό email
+</th>
+</tr>
+</thead>
+<tbody id="ilistTbody">
+</tbody>
+</table>
+</div>
 <?php
 
 pandora::
