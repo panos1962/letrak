@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-08
 // Updated: 2022-03-07
 // Updated: 2022-03-06
 // Created: 2022-03-05
@@ -42,6 +43,7 @@ self.LETRAK = {};
 
 admin.minima = {
 	"kritiriaKartaLabel": "Κάρτα",
+	"kritiriaEfarmogiLabel": "από",
 	"kritiriaKodikosLabel": "Κωδικός",
 	"kritiriaEponimoLabel": "Επώνυμο",
 	"kritiriaOnomaLabel": "Όνομα",
@@ -104,6 +106,15 @@ admin.kritiriaSetup = () => {
 	text(admin.minima.kritiriaKartaLabel)).
 	append(admin.kritiriaKartaDOM = $('<input>').
 	attr('id', 'kritiriaKarta').
+	addClass('kritiriaInput')).
+
+	append(admin.kritiriaEfarmogiDOM = $('<label>').
+	attr('for', 'kritiriaEfarmogi').
+	attr('id', 'kritiriaEfarmogiLabel').
+	text(admin.minima.kritiriaEfarmogiLabel)).
+	append(admin.kritiriaEfarmogiDOM = $('<input>').
+	attr('id', 'kritiriaEfarmogi').
+	attr('tabindex', -1).
 	addClass('kritiriaInput'))).
 
 	append($('<div>').
@@ -224,6 +235,10 @@ admin.kritiriaSetup = () => {
 	}).
 	on('mouseleave', '.ilistRow', function(e) {
 		e.stopPropagation();
+
+		if ($(this).data('epilogi'))
+		return;
+
 		$(this).removeClass('candiRow');
 	}).
 	on('click', '.ilistRow', function(e) {
@@ -232,27 +247,36 @@ admin.kritiriaSetup = () => {
 		let x = admin.ilist[$(this).data('ord')];
 		let y = admin.ilist[$(this).data('idx')];
 
+		$('.candiRow').
+		removeData('epilogi').
+		removeClass('candiRow');
+
+		$(this).
+		data('epilogi', true).
+		addClass('candiRow');
+
 		admin.kritiriaKartaDOM.val(x.karta);
+		admin.kritiriaEfarmogiDOM.val(x.efarmogi);
 		admin.kritiriaKodikosDOM.val(y.ipalilos);
 		admin.kritiriaEponimoDOM.val(y.eponimo);
 		admin.kritiriaOnomaDOM.val(y.onoma);
 		admin.kritiriaPatronimoDOM.val(y.patronimo);
 		admin.kritiriaIpemailDOM.val(y.ipemail);
 		admin.kritiriaPremailDOM.val(y.premail);
-		admin.kritiriaImerominiaDOM.val(x.efarmogi);
 	});
 
 	return admin;
 };
 
 admin.kritiriaFormaFlist = {
-	"Karta": 0,
-	"Kodikos": 0,
-	"Eponimo": 0,
-	"Onoma": 0,
-	"Patronimo": 0,
-	"Ipemail": 0,
-	"Premail": 0,
+	"Karta": 1,
+	"Efarmogi": 0,
+	"Kodikos": 1,
+	"Eponimo": 1,
+	"Onoma": 1,
+	"Patronimo": 1,
+	"Ipemail": 1,
+	"Premail": 1,
 	"Imerominia": 0,
 };
 
@@ -308,9 +332,8 @@ admin.kritiriaFormaClear = (e) => {
 };
 
 admin.ilistSetup = () => {
-	let ilistDOM = $('#ilist');
-
-	pnd.ofelimoDOM.append(ilistDOM);
+	admin.ilistDOM = $('#ilist');
+	pnd.ofelimoDOM.append(admin.ilistDOM);
 	admin.ilistTbodyDOM = $('#ilistTbody');
 
 	return admin;
@@ -335,6 +358,9 @@ admin.epilogiIpalilos = (data) => {
 
 admin.parseIpalilos = (rsp) => {
 	pnd.fyiClear();
+
+	admin.ilistDOM.css('display', 'none');
+	admin.ilistTbodyDOM.empty();
 	admin.ilist = [];
 
 	try {
@@ -349,8 +375,6 @@ admin.parseIpalilos = (rsp) => {
 		pnd.fyiError('Internal error');
 		return admin;
 	}
-
-	admin.ilistTbodyDOM.empty();
 
 	let prev = undefined;
 	let idx = undefined;
@@ -430,5 +454,6 @@ admin.parseIpalilos = (rsp) => {
 		appendTo(admin.ilistTbodyDOM);
 	}
 
+	admin.ilistDOM.css('display', 'block');
 	return admin;
 };
