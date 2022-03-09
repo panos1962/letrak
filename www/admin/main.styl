@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2022-03-09
 * Updated: 2022-03-08
 * Updated: 2022-03-07
 * Updated: 2022-03-06
@@ -39,6 +40,12 @@ table, th, td
 
 th
 	color #666666
+
+tr:nth-child(even)
+	background-color: cornsilk
+
+tr:nth-child(odd)
+	background-color: #fffddd
 
 $onomaWidth = 16em
 $emailWidth = 16em
@@ -130,6 +137,23 @@ $emailWidth = 16em
 	color red
 
 .candiRow
-	background-color #ffed8c
+	background-color #ffed8c !important
 	color #004678
 	text-shadow 1px 0px 0px
+
+#elist
+	display none
+	position fixed
+	top 460px
+	left 10px
+	max-height 283px
+	overflow-y scroll
+	background-color cornsilk
+	padding 4px
+
+.elistRow
+	cursor pointer
+	&:hover
+		background-color #ffed8c !important
+		color #004678
+		text-shadow 1px 0px 0px

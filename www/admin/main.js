@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-09
 // Updated: 2022-03-08
 // Updated: 2022-03-07
 // Updated: 2022-03-06
@@ -205,6 +206,7 @@ admin.kritiriaSetup = () => {
 		'title': 'Κριτήρια επιλογής',
 		'autoOpen': true,
 		'closeOnEscape': false,
+		'draggable': false,
 		'resizable': false,
 
 		'width': 'auto',
@@ -264,6 +266,35 @@ admin.kritiriaSetup = () => {
 		admin.kritiriaPatronimoDOM.val(y.patronimo);
 		admin.kritiriaIpemailDOM.val(y.ipemail);
 		admin.kritiriaPremailDOM.val(y.premail);
+
+		pnd.fyiMessage('Επιλογή συμβάντων…');
+		$.post({
+			'url': 'epilogiEvent.php',
+			'data': {
+				"karta": x.karta,
+				"imerominia": admin.kritiriaImerominiaDOM.val(),
+			},
+			'success': (rsp) => admin.parseEvent(rsp),
+			'error': (e) => {
+				pnd.fyiError('Αδυναμία επιλογής συμβάντων');
+				console.error(e);
+			},
+		});
+	});
+
+	pnd.bodyDOM.
+	on('click', '.elistRow', function(e) {
+		e.stopPropagation();
+		admin.kritiriaImerominiaDOM.
+		val($(this).data('d')).
+		trigger('change');
+	});
+
+	admin.kritiriaImerominiaDOM.
+	on('change', function(e) {
+		e.stopPropagation();
+		admin.ilistTbodyDOM.
+		children('.candiRow').trigger('click');
 	});
 
 	return admin;
@@ -345,6 +376,64 @@ admin.ilistSetup = () => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 admin.elistSetup = () => {
+	pnd.ofelimoDOM.
+	append(admin.elistDOM = $('<div>').
+	attr('id', 'elist').
+
+	append(admin.elistTableDOM = $('<table>')));
+
+	return admin;
+}
+
+admin.elistClear = () => {
+	admin.elistDOM.css('display', '');
+	admin.elistTableDOM.empty();
+
+	return admin;
+};
+
+admin.parseEvent = (rsp) => {
+	let elist;
+
+	pnd.fyiClear();
+	admin.elistClear();
+
+	try {
+		if (rsp.hasOwnProperty('error')) {
+			pnd.fyiError(rsp.error);
+			return admin;
+		}
+
+		elist = rsp.elist;
+	} catch (e) {
+		console.error(e);
+		pnd.fyiError('Internal error');
+		return admin;
+	}
+
+	if (elist.length <= 0) {
+		pnd.fyiError('Δεν βρέθηκαν συμβάντα');
+		return admin;
+	}
+
+	for (let i = 0; i < elist.length; i++) {
+		let x = elist[i];
+
+		admin.elistTableDOM.
+		append($('<tr>').
+		data('d', x.i.replace(/ .*/, '')).
+		addClass('elistRow').
+		append($('<td>').
+		text(x.i)).
+		append($('<td>').
+		text(x.e)).
+		append($('<td>').
+		text(x.r)));
+	}
+
+	admin.elistDOM.
+	css('display', 'block').
+	scrollTop(0);
 	return admin;
 }
 
@@ -370,6 +459,7 @@ admin.parseIpalilos = (rsp) => {
 
 	admin.ilistDOM.css('display', 'none');
 	admin.ilistTbodyDOM.empty();
+	admin.elistClear();
 	admin.ilist = [];
 
 	try {
