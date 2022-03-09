@@ -85,7 +85,8 @@ admin.selidaSetup = () => {
 
 	admin.
 	kritiriaSetup().
-	ilistSetup();
+	ilistSetup().
+	elistSetup();
 
 	pnd.bodyDOM.css('display', 'block');
 	return admin;
@@ -331,11 +332,19 @@ admin.kritiriaFormaClear = (e) => {
 	return admin;
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
 admin.ilistSetup = () => {
 	admin.ilistDOM = $('#ilist');
 	pnd.ofelimoDOM.append(admin.ilistDOM);
 	admin.ilistTbodyDOM = $('#ilistTbody');
 
+	return admin;
+}
+
+///////////////////////////////////////////////////////////////////////////////@
+
+admin.elistSetup = () => {
 	return admin;
 }
 
