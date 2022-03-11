@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-11
 // Updated: 2021-05-13
 // Updated: 2020-11-23
 // Updated: 2020-10-19
@@ -113,8 +114,11 @@ document_body();
 			<div class="mazi">
 			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<div id="peKatagrafiLabel" title="Κλικ για έλεγχο καταγραφών">
+			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών">
 				WIN&ndash;PAK
+			</div>
+			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο">
+				Από ωράριο
 			</div>
 			</div>
 		</div>

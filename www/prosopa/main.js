@@ -1540,6 +1540,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		children('.prosopaPliktroUpdate').
 		css('display', 'block');
 
+		prosopa.apoOrarioPliktroDOM.
+		css('display', 'inline-block');
+
 		// Ειδικά για το πλήκτρο μετατροπής σε πρότυπο απαιτείται
 		// επιπλέον πρόσβαση διαχειριστή.
 
@@ -1556,6 +1559,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 
 	prosopa.ergaliaDOM.
 	children('.prosopaPliktroUpdate').
+	css('display', 'none');
+
+	prosopa.apoOrarioPliktroDOM.
 	css('display', 'none');
 
 	prosopa.ergaliaDOM.dialog('close');
@@ -2324,7 +2330,7 @@ prosopa.katagrafiSetup = () => {
 	// Εφοπλίζουμε το πλήκτρο ελέγχου συμβάντων με τη δυνατότητα
 	// εμφάνισης και απόκρυψης του σχετικού χωρίου κατά το κλικ.
 
-	prosopa.editorKatagrafiLabelDOM = $('#peKatagrafiLabel').
+	prosopa.editorKatagrafiPliktroDOM = $('#peKatagrafiPliktro').
 	on('click', (e) => prosopa.katagrafiToggle(e));
 
 	// Εφοπλίζουμε τα στοιχεία που θα περιέχουνται στο χωρίο ελέγχου
@@ -2335,6 +2341,16 @@ prosopa.katagrafiSetup = () => {
 		prosopa.
 		katagrafiGet(e, $(this)).
 		katagrafiHide();
+	});
+
+	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
+	addClass('prosopaPliktro').
+	on('click', function(e) {
+		if (prosopa.editorIpovoliDOM.css('display') === 'none')
+		return pnd.fyiError('Δεν έχετε δικαίωμα υποβολής');
+
+		prosopa.editorMeraoraDOM.val(prosopa.katagrafiApoOrarioGet());
+		prosopa.editorIpovoliDOM.trigger('click');
 	});
 
 	return prosopa;
