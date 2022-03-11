@@ -115,10 +115,8 @@ document_body();
 			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
 			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών">
-				WIN&ndash;PAK
 			</div>
 			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο">
-				Από ωράριο
 			</div>
 			</div>
 		</div>
@@ -204,6 +202,9 @@ document_body();
 			<option value="ΠΕΝΘΟΣ">ΠΕΝΘΟΣ</option>
 			<option value="ΕΚΤΑΚΤΩΣ">ΕΚΤΑΚΤΩΣ</option>
 			</select>
+
+			<div id="peVardiaPliktro" title="Αυτόματη εξαίρεση βάρδιας">
+			</div>
 		</div>
 		<div class="formaInputLine">
 			<label for="peInfo">

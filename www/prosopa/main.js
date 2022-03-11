@@ -121,12 +121,15 @@ prosopa.minima = {
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
 	'ergaliaTabLabel': 'Επεξεργασία',
-	'winpakTabLabel': 'WIN-PAK',
+	'winpakTabLabel': 'WIN&ndash;PAK',
 	'katagrafiKatharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
+	'apoOrarioFast': 'Savior',
 	'katagrafiNoEvent': 'Δεν εντοπίστηκαν καταγεγραμμένα συμβάντα',
+	'vardiaFast': 'Βάρδια',
 
 	'filtraTabLabel': 'Φίλτρα',
+	'oxiDikaiomaIpovolis': 'Δεν έχετε δικαίωμα υποβολής',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -234,7 +237,7 @@ prosopa.selidaSetup = () => {
 	append(prosopa.winpakTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
 	addClass('prosopaPliktroUpdate').
-	text(prosopa.minima.winpakTabLabel).
+	html(prosopa.minima.winpakTabLabel).
 	on('click', (e) => prosopa.winpak(e)));
 
 	prosopa.ananeosi();
@@ -1543,6 +1546,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		prosopa.apoOrarioPliktroDOM.
 		css('display', 'inline-block');
 
+		prosopa.vardiaPliktroDOM.
+		css('display', 'inline-block');
+
 		// Ειδικά για το πλήκτρο μετατροπής σε πρότυπο απαιτείται
 		// επιπλέον πρόσβαση διαχειριστή.
 
@@ -1562,6 +1568,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	css('display', 'none');
 
 	prosopa.apoOrarioPliktroDOM.
+	css('display', 'none');
+
+	prosopa.vardiaPliktroDOM.
 	css('display', 'none');
 
 	prosopa.ergaliaDOM.dialog('close');
@@ -1682,6 +1691,23 @@ prosopa.editorSetup = () => {
 	prosopa.editorAdapoDOM = $('#peAdapo').datepicker();
 	prosopa.editorAdeosDOM = $('#peAdeos').datepicker();
 	prosopa.editorExcuseDOM = $('#peExcuse');
+
+	// Παρέχουμε πλήκτρο γρήγορης συμπλήρωσης εξαίρεσης βάρδιας. Το
+	// πλήκτρο αυτό κάνει αυτόματα και υποβολή.
+
+	prosopa.vardiaPliktroDOM = $('#peVardiaPliktro').
+	text(prosopa.minima.vardiaFast).
+	addClass('prosopaPliktro').
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if (prosopa.editorIpovoliDOM.css('display') === 'none')
+		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+
+		prosopa.editorExcuseDOM.val('ΒΑΡΔΙΑ');
+		prosopa.editorIpovoliDOM.trigger('click');
+	});
+
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
 		e.stopPropagation();
@@ -2331,6 +2357,7 @@ prosopa.katagrafiSetup = () => {
 	// εμφάνισης και απόκρυψης του σχετικού χωρίου κατά το κλικ.
 
 	prosopa.editorKatagrafiPliktroDOM = $('#peKatagrafiPliktro').
+	html(prosopa.minima.winpakTabLabel).
 	on('click', (e) => prosopa.katagrafiToggle(e));
 
 	// Εφοπλίζουμε τα στοιχεία που θα περιέχουνται στο χωρίο ελέγχου
@@ -2343,11 +2370,18 @@ prosopa.katagrafiSetup = () => {
 		katagrafiHide();
 	});
 
+	// Παρέχουμε πλήκτρο γρήγορης συμπλήρωσης ώρας προσέλευσης/αποχώρησης
+	// με βάση το ωράριο του εργαζομένου. Το πλήκτρο αυτό κάνει αυτόματα
+	// και υποβολή.
+
 	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
+	text(prosopa.minima.apoOrarioFast).
 	addClass('prosopaPliktro').
 	on('click', function(e) {
+		e.stopPropagation();
+
 		if (prosopa.editorIpovoliDOM.css('display') === 'none')
-		return pnd.fyiError('Δεν έχετε δικαίωμα υποβολής');
+		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
 
 		prosopa.editorMeraoraDOM.val(prosopa.katagrafiApoOrarioGet());
 		prosopa.editorIpovoliDOM.trigger('click');
