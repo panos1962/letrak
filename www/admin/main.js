@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-11
 // Updated: 2022-03-09
 // Updated: 2022-03-08
 // Updated: 2022-03-07
@@ -90,6 +91,17 @@ admin.selidaSetup = () => {
 	elistSetup();
 
 	pnd.bodyDOM.css('display', 'block');
+
+	// Στο σημείο αυτό κανονίζουμε την καθ' ύψος διάσταση του χώρου
+	// παρουσίασης των συμβάντων, καθώς επίσης και πώς αυτή η διάσταση
+	// θα προσαρμόζεται σε ενδεχόμενες αλλαγές διάστασης της σελίδας.
+
+	pnd.windowDOM.
+	on('resize', () => {
+		admin.elistSettle();
+	});
+	admin.elistSettle();
+
 	return admin;
 };
 
@@ -379,11 +391,19 @@ admin.elistSetup = () => {
 	pnd.ofelimoDOM.
 	append(admin.elistDOM = $('<div>').
 	attr('id', 'elist').
-
 	append(admin.elistTableDOM = $('<table>')));
 
 	return admin;
 }
+
+admin.elistSettle = () => {
+	let oh = pnd.ofelimoDOM.innerHeight();
+	let kh = admin.kritiriaFormaDOM.
+		closest('.ui-dialog').outerHeight(true);
+
+	admin.elistDOM.css('max-height', (oh - kh - 35) + 'px');
+	return admin;
+};
 
 admin.elistClear = () => {
 	admin.elistDOM.css('display', '');
@@ -434,6 +454,7 @@ admin.parseEvent = (rsp) => {
 	admin.elistDOM.
 	css('display', 'block').
 	scrollTop(0);
+
 	return admin;
 }
 
