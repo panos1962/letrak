@@ -124,6 +124,8 @@ prosopa.minima = {
 	'winpakTabLabel': 'WIN&ndash;PAK',
 	'katagrafiKatharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
+	'ipopto': '>>>',
+	'oxiIpoptesEgrafes': 'Δεν υπάρχουν ύποπτες εγγραφές',
 	'katagrafiNoEvent': 'Δεν εντοπίστηκαν καταγεγραμμένα συμβάντα',
 	'vardiaFast': 'Βάρδια',
 
@@ -1545,6 +1547,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		prosopa.apoOrarioPliktroDOM.
 		css('display', 'inline-block');
 
+		prosopa.ipoptoPliktroDOM.
+		css('display', 'inline-block');
+
 		prosopa.vardiaPliktroDOM.
 		css('display', 'inline-block');
 
@@ -1567,6 +1572,9 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	css('display', 'none');
 
 	prosopa.apoOrarioPliktroDOM.
+	css('display', 'none');
+
+	prosopa.ipoptoPliktroDOM.
 	css('display', 'none');
 
 	prosopa.vardiaPliktroDOM.
@@ -2386,8 +2394,94 @@ prosopa.katagrafiSetup = () => {
 		prosopa.editorIpovoliDOM.trigger('click');
 	});
 
+	prosopa.ipoptoPliktroDOM = $('#peIpoptoPliktro').
+	text(prosopa.minima.ipopto).
+	addClass('prosopaPliktro').
+	on('click', (e) => prosopa.epomenoIpopto(e));
+
 	return prosopa;
 };
+
+prosopa.epomenoIpopto = function(e) {
+	if (e)
+	e.stopPropagation();
+
+	if (prosopa.editorIpovoliDOM.css('display') === 'none')
+	return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+
+	let plist = prosopa.browserDOM.children();
+
+	if (plist.length <= 0)
+	return pnd.fyiError(prosopa.minima.oxiIpoptesEgrafes);
+
+	pnd.fyiClear();
+
+	let trexon = $('.parousiaTarget');
+
+	if (trexon.length != 1)
+	return $(plist[0]).trigger('click');
+
+	let aa = trexon.children('.parousiaOrdinal').text();
+
+	if (aa === undefined)
+	return pnd.fyiError(prosopa.minima.oxiIpoptesEgrafes);
+
+	let i;
+
+	for (i = aa; i < plist.length; i++) {
+		if (prosopa.isIpopto(plist[i]))
+		return $(plist[i]).trigger('click');
+	}
+
+	for (i = 0; i < aa; i++) {
+		if (prosopa.isIpopto(plist[i]))
+		return $(plist[i]).trigger('click');
+	}
+
+	return pnd.fyiError(prosopa.minima.oxiIpoptesEgrafes);
+};
+
+// Η function "isIpopto" δέχεται μια γραμμή παρουσίας και ελέγχει αν η
+// συγκεκριμένη γραμμή παρουσίας χρήζει ελέγχου.
+
+prosopa.isIpopto = function(parousia) {
+	parousia = $(parousia);
+
+	let meraora = parousia.children('.parousiaMeraora').text();
+	let excuse = parousia.children('.parousiaExcuse').text();
+
+	// Αν έχει καθοριστεί άδεια/εξαίρεση ΚΑΙ μέρα/ώρα, τότε ίσως πρέπει
+	// είτε να καθαριστεί η μέρα/ώρα, είτε να καθαριστεί η άδεια/εξαίρεση.
+
+	if (excuse && meraora)
+	return true;
+
+	// Αν έχει καταχωρηθεί άδεια ή εξαίρεση, τότε η εγγραφή θεωρείται
+	// εντάξει.
+
+	if (excuse)
+	return false;
+
+	// Δεν έχει καθοριστεί άδεια/εξαίρεση, οπότε ελέγχουμε την καταγραφή
+	// μέρας/ώρας. Αν δεν υπάρχει καταγραφή, τότε η εγγραφή θεωρείται
+	// ύποπτη.
+
+	if (!meraora)
+	return true;
+
+	// Υπάρχει καταγραφή μέρας/ώρας, οπότε ελέγχουμε αν η συγκεκριμένη
+	// καταγραφή είναι ελλειμματική.
+
+	let isozigio = parousia.children('.parousiaIsozigio');
+
+	// Αν η καταγραφή μέρας/ώρας δεν είναι ελλειματική τότε η εγγραφή
+	// θεωρείται εντάξει.
+
+	if (isozigio.hasClass('parousiaIsozigioElima'))
+	return true;
+
+	return false;
+}
 
 // Η function "katagrafiToggle" καλείται όποτε ο χρήστης κάνει κλικ στο
 // πλήκτρο [WIN-PAK]. Αν το πλήκτρο έχει ήδη πατηθεί και το χωρίο είναι ήδη

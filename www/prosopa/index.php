@@ -114,10 +114,9 @@ document_body();
 			<div class="mazi">
 			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών">
-			</div>
-			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο">
-			</div>
+			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
+			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
+			<div id="peIpoptoPliktro" title="Επόμενη ύποπτη εγγραφή"></div>
 			</div>
 		</div>
 		<div class="formaInputLine">
