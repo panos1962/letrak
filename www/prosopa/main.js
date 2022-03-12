@@ -1667,6 +1667,7 @@ prosopa.editorSetup = () => {
 	prosopa.katagrafiSetup();
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
+	prosopa.editorIsozigioDOM = $('#peIsozigio');
 	prosopa.editorAdidosDOM = $('#peAdidos').
 	on('change', () => {
 		const adidos = prosopa.editorAdidosDOM.val();
@@ -1988,6 +1989,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 	val(meraora).
 	on('change', (e) => prosopa.editorMeraoraFix());
 
+	prosopa.editorIsozigioRefresh(parousia);
+
 	// Άδεια
 
 	prosopa.editorAdidosDOM.
@@ -2030,6 +2033,32 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.editorPliktroAkiroDOM.focus();
 
 	return prosopa;
+};
+
+prosopa.editorIsozigioRefresh = (parousia) => {
+	let isozigio = parousia.isozigioGet(prosopa.deltio);
+
+	if (isozigio === undefined)
+	return prosopa.editorIsozigioDOM.
+	removeClass().
+	css('display', 'none').
+	text('');
+
+	let isozigioClass = 'parousiaIsozigio';
+
+	if (isozigio < 0)
+	isozigioClass += ' parousiaIsozigioElima';
+
+	else if (isozigio > 0)
+	isozigioClass += ' parousiaIsozigioPleonasma';
+
+	isozigio = letrak.isozigio2hm(isozigio, true);
+
+	prosopa.editorIsozigioDOM.
+	removeClass().
+	addClass(isozigioClass).
+	css('display', '').
+	html(isozigio);
 };
 
 prosopa.editorProsvasiRefresh = () => {

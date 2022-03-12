@@ -122,6 +122,7 @@ document_body();
 		<div class="formaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
 			<input id="peMeraora" class="peParousiaPedio pePedioUpdate">
+			<div id="peIsozigio"></div>
 		</div>
 	</div>
 
