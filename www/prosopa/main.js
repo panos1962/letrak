@@ -124,7 +124,6 @@ prosopa.minima = {
 	'winpakTabLabel': 'WIN&ndash;PAK',
 	'katagrafiKatharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
-	'apoOrarioFast': 'Savior',
 	'katagrafiNoEvent': 'Δεν εντοπίστηκαν καταγεγραμμένα συμβάντα',
 	'vardiaFast': 'Βάρδια',
 
@@ -2375,7 +2374,7 @@ prosopa.katagrafiSetup = () => {
 	// και υποβολή.
 
 	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
-	text(prosopa.minima.apoOrarioFast).
+	text(prosopa.minima.katagrafiOrario).
 	addClass('prosopaPliktro').
 	on('click', function(e) {
 		e.stopPropagation();
