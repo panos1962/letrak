@@ -24,8 +24,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-13
 // Updated: 2022-03-11
-// Updated: 2021-05-13
 // Updated: 2020-11-23
 // Updated: 2020-10-19
 // Updated: 2020-08-08
@@ -115,14 +115,15 @@ document_body();
 			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
 			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
-			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
 			<div id="peIpoptoPliktro" title="Επόμενη ύποπτη εγγραφή"></div>
+			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
 			</div>
 		</div>
 		<div class="formaInputLine">
 			<label id="peMeraoraLabel" for="peMeraora"></label>
 			<input id="peMeraora" class="peParousiaPedio pePedioUpdate">
 			<div id="peIsozigio"></div>
+			<div id="peKatharismosPliktro"></div>
 		</div>
 	</div>
 
@@ -203,8 +204,8 @@ document_body();
 			<option value="ΕΚΤΑΚΤΩΣ">ΕΚΤΑΚΤΩΣ</option>
 			</select>
 
-			<div id="peVardiaPliktro" title="Αυτόματη εξαίρεση βάρδιας">
-			</div>
+			<div id="peVardiaPliktro" title="Αυτόματη εξαίρεση βάρδιας"></div>
+			<div id="peClearExeresiPliktro" title="Καθαρισμός"></div>
 		</div>
 		<div class="formaInputLine">
 			<label for="peInfo">
@@ -316,7 +317,7 @@ document_body();
 <form id="orariaDiagrafiForma">
 	<p>
 		Να επανακαθοριστούν τα ωράρια όλων των υπαλλήλων;
-	</piv>
+	</p>
 
 	<div class="formaInputLine">
 		<label for="orariaDiagrafiOrario">

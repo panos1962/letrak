@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-13
 // Updated: 2022-03-11
 // Updated: 2021-05-28
 // Updated: 2021-05-27
@@ -122,7 +123,7 @@ prosopa.minima = {
 
 	'ergaliaTabLabel': 'Επεξεργασία',
 	'winpakTabLabel': 'WIN&ndash;PAK',
-	'katagrafiKatharismos': 'Καθαρισμός',
+	'katharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
 	'ipopto': '>>>',
 	'oxiIpoptesEgrafes': 'Δεν υπάρχουν ύποπτες εγγραφές',
@@ -1547,10 +1548,16 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 		prosopa.apoOrarioPliktroDOM.
 		css('display', 'inline-block');
 
+		prosopa.katharismosPliktroDOM.
+		css('display', 'inline-block');
+
 		prosopa.ipoptoPliktroDOM.
 		css('display', 'inline-block');
 
 		prosopa.vardiaPliktroDOM.
+		css('display', 'inline-block');
+
+		prosopa.clearExeresiPliktroDOM.
 		css('display', 'inline-block');
 
 		// Ειδικά για το πλήκτρο μετατροπής σε πρότυπο απαιτείται
@@ -1574,10 +1581,16 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 	prosopa.apoOrarioPliktroDOM.
 	css('display', 'none');
 
+	prosopa.katharismosPliktroDOM.
+	css('display', 'none');
+
 	prosopa.ipoptoPliktroDOM.
 	css('display', 'none');
 
 	prosopa.vardiaPliktroDOM.
+	css('display', 'none');
+
+	prosopa.clearExeresiPliktroDOM.
 	css('display', 'none');
 
 	prosopa.ergaliaDOM.dialog('close');
@@ -1713,6 +1726,19 @@ prosopa.editorSetup = () => {
 		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
 
 		prosopa.editorExcuseDOM.val('ΒΑΡΔΙΑ');
+		prosopa.editorIpovoliDOM.trigger('click');
+	});
+
+	prosopa.clearExeresiPliktroDOM = $('#peClearExeresiPliktro').
+	text(prosopa.minima.katharismos).
+	addClass('prosopaPliktro').
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if (prosopa.editorIpovoliDOM.css('display') === 'none')
+		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+
+		prosopa.editorExcuseDOM.val('');
 		prosopa.editorIpovoliDOM.trigger('click');
 	});
 
@@ -2423,6 +2449,19 @@ prosopa.katagrafiSetup = () => {
 		prosopa.editorIpovoliDOM.trigger('click');
 	});
 
+	prosopa.katharismosPliktroDOM = $('#peKatharismosPliktro').
+	text(prosopa.minima.katharismos).
+	addClass('prosopaPliktro').
+	on('click', function(e) {
+		e.stopPropagation();
+
+		if (prosopa.editorIpovoliDOM.css('display') === 'none')
+		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+
+		prosopa.editorMeraoraDOM.val('');
+		prosopa.editorIpovoliDOM.trigger('click');
+	});
+
 	prosopa.ipoptoPliktroDOM = $('#peIpoptoPliktro').
 	text(prosopa.minima.ipopto).
 	addClass('prosopaPliktro').
@@ -2618,7 +2657,7 @@ prosopa.katagrafiProcess = (rsp) => {
 	prepend($('<div>').
 	text(prosopa.minima.katagrafiOrario)).
 	prepend($('<div>').
-	text(prosopa.minima.katagrafiKatharismos)).
+	text(prosopa.minima.katharismos)).
 	scrollTop(0);
 };
 
@@ -2634,7 +2673,7 @@ prosopa.katagrafiGet = (e, dom) => {
 	// στοιχείο στο χωρίο επιλογής συμβάντων), τότε θα πρέπει να
 	// καθαρίσουμε το πεδίο καταγραφής.
 
-	if (x === prosopa.minima.katagrafiKatharismos)
+	if (x === prosopa.minima.katharismos)
 	x = '';
 
 	// Αν ο χρήστης έχει κάνει κλικ στην επιλογή ώρας με βάση το
