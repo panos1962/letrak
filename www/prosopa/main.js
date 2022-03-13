@@ -1719,28 +1719,13 @@ prosopa.editorSetup = () => {
 	prosopa.vardiaPliktroDOM = $('#peVardiaPliktro').
 	text(prosopa.minima.vardiaFast).
 	addClass('prosopaPliktro').
-	on('click', function(e) {
-		e.stopPropagation();
-
-		if (prosopa.editorIpovoliDOM.css('display') === 'none')
-		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
-
-		prosopa.editorExcuseDOM.val('ΒΑΡΔΙΑ');
-		prosopa.editorIpovoliDOM.trigger('click');
-	});
+	on('click', (e) => prosopa.amesiIpovoli(e, 'editorExcuseDOM',
+		'ΒΑΡΔΙΑ'));
 
 	prosopa.clearExeresiPliktroDOM = $('#peClearExeresiPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', function(e) {
-		e.stopPropagation();
-
-		if (prosopa.editorIpovoliDOM.css('display') === 'none')
-		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
-
-		prosopa.editorExcuseDOM.val('');
-		prosopa.editorIpovoliDOM.trigger('click');
-	});
+	on('click', (e) => prosopa.amesiIpovoli(e, 'editorExcuseDOM'));
 
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
@@ -1793,6 +1778,30 @@ prosopa.editorSetup = () => {
 
 	return prosopa;
 };
+
+prosopa.ipovoliDisabled = (e) => {
+	if (e)
+	e.stopPropagation();
+
+	if (prosopa.editorIpovoliDOM.css('display') !== 'none')
+	return false;
+
+	pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+	return true;
+}
+
+prosopa.amesiIpovoli = function(e, fld, val) {
+	if (prosopa.ipovoliDisabled(e))
+	return prosopa;
+
+	if (val === undefined)
+	val = '';
+
+	prosopa[fld].val(val);
+	prosopa.editorIpovoliDOM.trigger('click');
+
+	return prosopa;
+}
 
 // Η function "orarioEdit" καλείται on keydown στο πεδίο του ωραρίου με σκοπό
 // να διευκολύνει τον χρήστη κατά την καταχώρηση του ωραρίου. Πιο συγκεκριμένα,
@@ -2439,28 +2448,13 @@ prosopa.katagrafiSetup = () => {
 	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
 	text(prosopa.minima.katagrafiOrario).
 	addClass('prosopaPliktro').
-	on('click', function(e) {
-		e.stopPropagation();
-
-		if (prosopa.editorIpovoliDOM.css('display') === 'none')
-		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
-
-		prosopa.editorMeraoraDOM.val(prosopa.katagrafiApoOrarioGet());
-		prosopa.editorIpovoliDOM.trigger('click');
-	});
+	on('click', (e) => prosopa.amesiIpovoli(e, 'editorMeraoraDOM',
+		prosopa.katagrafiApoOrarioGet()));
 
 	prosopa.katharismosPliktroDOM = $('#peKatharismosPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', function(e) {
-		e.stopPropagation();
-
-		if (prosopa.editorIpovoliDOM.css('display') === 'none')
-		return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
-
-		prosopa.editorMeraoraDOM.val('');
-		prosopa.editorIpovoliDOM.trigger('click');
-	});
+	on('click', (e) => prosopa.amesiIpovoli(e, 'editorMeraoraDOM'));
 
 	prosopa.ipoptoPliktroDOM = $('#peIpoptoPliktro').
 	text(prosopa.minima.ipopto).
@@ -2471,11 +2465,8 @@ prosopa.katagrafiSetup = () => {
 };
 
 prosopa.epomenoIpopto = function(e) {
-	if (e)
-	e.stopPropagation();
-
-	if (prosopa.editorIpovoliDOM.css('display') === 'none')
-	return pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
+	if (prosopa.ipovoliDisabled(e))
+	return;
 
 	let plist = prosopa.browserDOM.children();
 
