@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# bash
+# @FILETYPE END
+#
+# @FILE BEGIN
+# bin/prosvasi —— Ενημέρωση στοιχείων πρόσβασης χρήστη για kartel/letrak
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+#
+# Το παρόν πρόγραμμα διαβάζει κωδικούς υπαλλήλων και ενημερώνει τα στοιχεία
+# πρόσβασης των υπαλλήλων αυτών στα προγράμματα kartel/letrak. Τα στοιχεία
+# πρόσβασης, ως γνωστόν, φυλάσσονται στον πίνακα "erpota.prosvasi".
+#
+# Το πρόγραμμα διαβάζει κωδικούς υπαλλήλων είτε από τα αρχεία που καθορίζουμε
+# στο command line, είτε από το standard input εφόσον δεν καθορίσουμε αρχεία
+# στο command line.
+#
+# Κάθε γραμμή του input αφορά σε έναν υπάλληλο και πρέπει να έχει ως πρώτο
+# πεδίο τον κωδικό υπαλλήλου, ενώ τα τελευταία τρία πεδία είναι ο κωδικός
+# υπηρεσίας (@ για null, * για όλες τις υπηρεσίες), το επίπεδο πρόσβασης
+# (VIEW, UPDATE, ADMIN ή @ για null) και το password.
+#
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2022-03-16
+# @HISTORY END
+#
+# @END
+
+progname="$(basename $0)"
+
+usage() {
+	echo "usage: ${progname} [-U] [-h] [files...]" >&2
+	exit 1
+}
+
+errs=
+help=
+enimerosi=0
+
+while getopts ":Uh" opt
+do
+	case "${opt}" in
+	U)
+		enimerosi=1
+		;;
+	h)
+		help=1
+		;;
+	\?)
+		echo "${progname}: -${OPTARG}: invalid option" >&2
+		errs=1
+		;;
+	\:)
+		echo "${progname}: -${OPTARG}: option requires an argument" >&2
+		errs=1
+		;;
+	esac
+done
+
+[ -n "${errs}" ] && usage
+
+if [ -n "${help}" ]; then
+	echo "Input format: υπάλληλος ... υπηρεσία VIEW/UPDATE password, π.χ.
+
+3307 ΠΑΠΑΔΟΠΟΥΛΟΣ ΠΑΝΑΓΙΩΤΗΣ ΙΩΑΝΝΗΣ Β100003 UPDATE xxx!@#
+7033 ΧΡΙΣΤΟΔΟΥΛΟΥ Ν08 VIEW abc123
+
+Κωδικός υπηρεσίας
+-----------------
+@: πρόσβαση μόνο στα προσωπικά του στοιχεία
+*: πρόσβαση σε όλες τις υπηρεσίες" >&2
+	exit 0
+fi
+
+shift $((${OPTIND} - 1))
+
+[ -z "${PANDORA_BASEDIR}" ] &&
+export PANDORA_BASEDIR="/var/opt/pandora"
+
+[ -z "${KARTEL_BASEDIR}" ] &&
+export KARTEL_BASEDIR="/var/opt/kartel"
+
+[ -z "${LETRAK_BASEDIR}" ] &&
+export LETRAK_BASEDIR="/var/opt/letrak"
+
+exec awk -v enimerosi="${enimerosi}" \
+	-i "${PANDORA_BASEDIR}/lib/pandora.awk" \
+	-i "${KARTEL_BASEDIR}/lib/karteldb.awk" \
+	-f "${LETRAK_BASEDIR}/lib/prosvasi.awk" "$@"
