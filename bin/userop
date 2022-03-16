@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+progname="$(basename $0)"
+
+usage() {
+	echo "usage: ${progname} [-U] [files...]" >&2
+	exit 1
+}
+
+errs=
+enimerosi=0
+
+while getopts ":U" opt
+do
+	case "${opt}" in
+	U)
+		enimerosi=1
+		;;
+	\?)
+		echo "${progname}: -${OPTARG}: invalid option" >&2
+		errs=1
+		;;
+	\:)
+		echo "${progname}: -${OPTARG}: option requires an argument" >&2
+		errs=1
+		;;
+	esac
+done
+
+[ -n "${errs}" ] && usage
+
+shift $((${OPTIND} - 1))
+
+[ -z "${LETRAK_BASEDIR}" ] &&
+export LETRAK_BASEDIR="/var/opt/letrak"
+
+exec awk -v enimerosi="${enimerosi}" \
+	-f "${LETRAK_BASEDIR}/misc/userop/userop.awk" "$@"

@@ -1,4 +1,4 @@
-#!/usr/bin/gawk
+#!/usr/bin/env gawk
 
 @load "spawk.so"
 @include "pandora.awk"
