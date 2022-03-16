@@ -3,18 +3,22 @@
 progname="$(basename $0)"
 
 usage() {
-	echo "usage: ${progname} [-U] [files...]" >&2
+	echo "usage: ${progname} [-U] [-h] [files...]" >&2
 	exit 1
 }
 
 errs=
+help=
 enimerosi=0
 
-while getopts ":U" opt
+while getopts ":Uh" opt
 do
 	case "${opt}" in
 	U)
 		enimerosi=1
+		;;
+	h)
+		help=1
 		;;
 	\?)
 		echo "${progname}: -${OPTARG}: invalid option" >&2
@@ -28,6 +32,14 @@ do
 done
 
 [ -n "${errs}" ] && usage
+
+if [ -n "${help}" ]; then
+	echo "Input format: υπάλληλος ... υπηρεσία VIEW/UPDATE password, π.χ.
+
+3307 ΠΑΠΑΔΟΠΟΥΛΟΣ ΠΑΝΑΓΙΩΤΗΣ ΙΩΑΝΝΗΣ Β100003 UPDATE xxx!@#
+7033 ΧΡΙΣΤΟΔΟΥΛΟΥ Ν08 VIEW abc123" >&2
+	exit 0
+fi
 
 shift $((${OPTIND} - 1))
 
