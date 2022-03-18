@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-18
 // Updated: 2022-03-13
 // Updated: 2022-03-11
 // Updated: 2020-11-23
@@ -168,6 +169,7 @@ document_body();
 			<option value="ΔΙΚΑΣΤΗΡΙΟ" class="peAdidosOmadaIdiki">ΔΙΚΑΣΤΗΡΙΟ</option>
 			<option value="ΣΤΡΑΤΙΩΤΙΚΗ" class="peAdidosOmadaIdiki">ΣΤΡΑΤΙΩΤΙΚΗ</option>
 
+			<option value="ΕΚΤΟΣ ΕΔΡΑΣ" class="peAdidosOmadaAtono">ΕΚΤΟΣ ΕΔΡΑΣ</option>
 			<option value="ΑΠΕΡΓΙΑ" class="peAdidosOmadaAtono">ΑΠΕΡΓΙΑ</option>
 			<option value="ΑΝΕΥ ΑΠΟΔΟΧΩΝ" class="peAdidosOmadaAtono">ΑΝΕΥ ΑΠΟΔΟΧΩΝ</option>
 			<option value="ΑΠΟΣΠΑΣΗ" class="peAdidosOmadaAtono">ΑΠΟΣΠΑΣΗ</option>
