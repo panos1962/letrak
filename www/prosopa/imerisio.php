@@ -189,7 +189,7 @@ function parousia_get($deltio, $prosapo) {
 	global $parousia;
 
 	$query = "SELECT `ipalilos`, `orario`, `karta`," .
-		" `meraora`, `excuse`, `adidos`," .
+		" `meraora`, `excuse`, `adidos`, `info`" .
 		" DATE_FORMAT(`adapo`, '%d-%m-%Y') AS `adapo`," .
 		" DATE_FORMAT(`adeos`, '%d-%m-%Y') AS `adeos`" .
 		" FROM `letrak`.`parousia`" .
