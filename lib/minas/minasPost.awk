@@ -18,6 +18,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2022-03-31
 # Updated: 2021-05-13
 # Created: 2021-05-12
 # @HISTORY END
@@ -46,6 +47,8 @@ BEGIN {
 
 	parousia[""]
 	parousia["ΤΗΛΕΡΓΑΣΙΑ"]
+	parousia["ΕΚΤΟΣ ΕΔΡΑΣ"]
+	parousia["ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ"]
 }
 
 imerisio {

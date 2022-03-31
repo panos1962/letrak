@@ -1704,6 +1704,8 @@ prosopa.editorSetup = () => {
 
 		switch (adidos) {
 		case "ΤΗΛΕΡΓΑΣΙΑ":
+		case "ΕΚΤΟΣ ΕΔΡΑΣ":
+		case "ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ":
 		case "ΚΑΤ' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ":
 			prosopa.editorAdeosDOM.val('');
 			break;
