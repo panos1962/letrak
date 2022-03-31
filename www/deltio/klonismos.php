@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-03-31
 // Updated: 2020-06-11
 // Updated: 2020-05-15
 // Updated: 2020-05-10
@@ -193,7 +194,7 @@ function simerines_adies($deltio, $imerominia, $ipiresia) {
 }
 
 function antigrafi_adion($target, $source) {
-	$query = "SELECT `ipalilos`, `adidos`, `adapo`, `adeos`" .
+	$query = "SELECT `ipalilos`, `adidos`, `adapo`, `adeos`, `info`" .
 		" FROM `letrak`.`parousia`".
 		" WHERE (`deltio` = " . $source . ")".
 		" AND (`adidos` IS NOT NULL)";
@@ -216,10 +217,17 @@ function antigrafi_adias($deltio, $adia) {
 	else
 	$adeos = "NULL";
 
+	if ($adia["info"])
+	$info = pandora::sql_string($adia["info"]);
+
+	else
+	$info = "NULL";
+
 	$query = "UPDATE `letrak`.`parousia` SET" .
 		" `adidos` = " . pandora::sql_string($adia["adidos"]) . "," .
 		" `adapo` = " . $adapo . "," .
-		" `adeos` = " . $adeos .
+		" `adeos` = " . $adeos . "," .
+		" `info` = " . $info
 		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`ipalilos` = " . $adia["ipalilos"] .")";
 	pandora::query($query);
