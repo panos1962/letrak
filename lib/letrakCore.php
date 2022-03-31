@@ -1253,6 +1253,10 @@ class Parousia {
 		return $this;
 	}
 
+	public function info_get() {
+		return $this->info;
+	}
+
 	public function deltio_get() {
 		return $this->deltio;
 	}
