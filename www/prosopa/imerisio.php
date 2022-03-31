@@ -260,8 +260,8 @@ function parousia_fix() {
 		// Αν δεν υπάρχουν παρατηρήσεις, διαγράφουμε το αντίστοιχο
 		// στοιχείο από το array.
 
-		if (!$data]["f"])
-		unset($data]["f"]);
+		if (!$data["f"])
+		unset($data["f"]);
 
 		$parousia[$ipalilos] = $data;
 	}
