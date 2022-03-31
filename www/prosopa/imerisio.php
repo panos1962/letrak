@@ -189,9 +189,10 @@ function parousia_get($deltio, $prosapo) {
 	global $parousia;
 
 	$query = "SELECT `ipalilos`, `orario`, `karta`," .
-		" `meraora`, `excuse`, `adidos`, `info`" .
+		" `meraora`, `excuse`, `adidos`," .
 		" DATE_FORMAT(`adapo`, '%d-%m-%Y') AS `adapo`," .
-		" DATE_FORMAT(`adeos`, '%d-%m-%Y') AS `adeos`" .
+		" DATE_FORMAT(`adeos`, '%d-%m-%Y') AS `adeos`," .
+		" `info`" .
 		" FROM `letrak`.`parousia`" .
 		" WHERE `deltio` = " . $deltio->kodikos_get();
 	$result = pandora::query($query);
