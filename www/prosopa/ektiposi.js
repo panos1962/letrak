@@ -695,6 +695,7 @@ ektiposi.imerisioError = (err) => {
 // Είδος αδείας		  ai		adidos			String
 // Έναρξη αδείας	  aa		adapo			String
 // Λήξη αδείας		  ae		adeos			String
+// Παρατηρήσεις		  f		info			String
 
 ektiposi.parousia = function(i, x) {
 	this.ipalilos = parseInt(i);
@@ -721,6 +722,7 @@ ektiposi.parousia = function(i, x) {
 		this.adidos = x.ai;
 		this.adapo = x.aa;
 		this.adeos = x.ae;
+		this.info = x.f;
 	}
 
 	return this;
@@ -773,6 +775,9 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 		if (this.adeos)
 		x = pnd.strPush(x, 'έως ' + this.adeos);
+
+		if (this.info)
+		x = pnd.strPush(x, this.info);
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioAdia').
