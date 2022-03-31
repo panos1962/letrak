@@ -227,7 +227,7 @@ function antigrafi_adias($deltio, $adia) {
 		" `adidos` = " . pandora::sql_string($adia["adidos"]) . "," .
 		" `adapo` = " . $adapo . "," .
 		" `adeos` = " . $adeos . "," .
-		" `info` = " . $info
+		" `info` = " . $info .
 		" WHERE (`deltio` = " . $deltio . ")" .
 		" AND (`ipalilos` = " . $adia["ipalilos"] .")";
 	pandora::query($query);
