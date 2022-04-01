@@ -132,7 +132,7 @@ $kodikos = pandora::insert_id();
 // Εισάγουμε τα πρόσωπα με τα ίδια στοιχεία που είχαν στο πρωτότυπο, χωρίς
 // τις εξαιρέσεις.
 
-$flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`";
+$flist = "`ipalilos`, `karta`, `orario`, `adidos`, `adapo`, `adeos`, `info`";
 
 $query = "INSERT INTO `letrak`.`parousia` (`deltio`, " . $flist . ")" .
 	" SELECT " . $kodikos . ", " . $flist .
