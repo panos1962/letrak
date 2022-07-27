@@ -1081,7 +1081,7 @@ deltio.klonismosSetup = () => {
 		'width': '24em',
 		'modal': true,
 		'position': {
-			'my': 'left+150 top+56',
+			'my': 'left+150 top+85',
 			'at': 'left top',
 		},
 		'buttons': {
