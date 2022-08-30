@@ -1890,16 +1890,20 @@ prosopa.orarioEdit = (e, fld) => {
 	// Τα προκαθορισμένα ωράρια βάρδιας είναι
 	//
 	//	⚫ 07:00-15:00
+	//	⚫ 10:00-18:00
 	//	⚫ 14:00-22:00
 	//	⚫ 22:00-06:00
 
 	if (step === oktaoro) {
 		switch (apo.leptaGet()) {
 		case 420:	// 07:00 σε λεπτά
-			step = (prosimo > 0 ? 420 : 540);
+			step = (prosimo > 0 ? 180 : 540);
+			break;
+		case 600:	// 10:00 σε λεπτά
+			step = (prosimo > 0 ? 240 : 180);
 			break;
 		case 840:	// 14:00 σε λεπτά
-			step = (prosimo > 0 ? 480 : 420);
+			step = (prosimo > 0 ? 480 : 240);
 			break;
 		case 1320:	// 22:00 σε λεπτά
 			step = (prosimo > 0 ? 540 : 480);
