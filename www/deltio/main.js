@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-07
 // Updated: 2021-05-29
 // Updated: 2021-05-18
 // Updated: 2021-05-13
@@ -99,6 +100,8 @@ deltio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'reportsTabLabel': 'Εκτυπώσεις',
+	'diaforesTabLabel': '&#9775;',
+	'diaforesTitle': 'Εντοπισμός διαφορών με προηγούμενο παρουσιολόγιο',
 
 	'deltioKatastasiΕΚΚΡΕΜΕΣSymbol': '&#x25D4;',
 	'deltioKatastasiΑΝΥΠΟΓΡΑΦΟSymbol': '&#x25D1;',
@@ -659,7 +662,14 @@ deltio.candiTabsSetup = () => {
 	text(deltio.minima.epexergasiaTabLabel).
 	on('click', (e) => deltio.prosopa({
 		'clickEvent': e,
-	})));
+	}))).
+
+	append(deltio.diaforesTabDOM = letrak.tabDOM().
+	addClass('candiTab').
+	addClass('adminTab').
+	attr('title', deltio.minima.diaforesTitle).
+	html(deltio.minima.diaforesTabLabel).
+	on('click', (e) => deltio.diafores(e)));
 
 	return deltio;
 };
@@ -1249,6 +1259,16 @@ deltio.prosopa = (opts) => {
 	deltio.erpotaProcess();
 
 	deltio.prosopaOpen(kodikos, amolimeno);
+	return deltio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// TODO
+
+deltio.diafores = (e) => {
+	e.stopPropagation();
+
 	return deltio;
 };
 
