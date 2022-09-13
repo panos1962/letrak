@@ -1264,12 +1264,73 @@ deltio.prosopa = (opts) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// TODO
+// Η function "diafores" καλείται όταν ο χρήστης κάνει κλικ στο πλήκτρο
+// εντοπισμού διαφορών μεταξύ του επιλεγμένου δελτίου και του αντίστοιχου
+// προηγούμενου δελτίου. Με άλλα λόγια, αν ο χρήστης έχει επιλεγμένο το
+// δελτίο προσέλευσης της Τρίτης, 13 Σεπτεμβρίου 2022, τότε με το πλήκτρο
+// εντοπισμού δοαφορών θα πρέπει να βρεθεί το δελτίο προσέλευσης της
+// Δευτέρας, 12 Σεπτεμβρίου 2022 και να εντοπιστούν οι διαφορές μεταξύ
+// των δύο δελτίων. Οι διαφορές θα επιστραφούν ως json object και, εφόσον
+// υπάρχουν διαφορές, θα πρέπει να εμφανιστούν σε νέα καρτέλα.
 
 deltio.diafores = (e) => {
 	e.stopPropagation();
+	pnd.fyiMessage('Εντοπισμός διαφορών…');
 
-	return deltio;
+	let trexon = $('.deltioCandi').first().data('deltio');
+
+	if (deltio.diaforesAnte(trexon))
+	return pnd.fyiError('Ακαθόριστο δελτίο');
+
+	$.post({
+		'url': 'diafores.php',
+		'data': {
+			"trexon": trexon.kodikos,
+			"protipo": trexon.protipo,
+		},
+		'dataType': 'json',
+		'success': (rsp) => deltio.diaforesProcess(rsp),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα εντοπισμού διαφορών');
+			console.error(e);
+		},
+	});
+};
+
+// Η function "diaforesAnte" δέχεται το τρέχον δελτίο και ελέγχει την
+// εγκυρότητα του εν λόγω δελτίου, δηλαδή αν όντως υπάρχει τρέχον (επιλεγμένο)
+// δελτίο, και αν αυτό το δελτίο έχει συμπληρωμένο πρότυπο, καθώς η έρευνα για
+// τον εντοπισμό των διαφορών θα εκκινήσει από το πρότυπο δελτίο. Η function
+// επιστρέφει true αν υπάρχει πρόβλημα, αλλιώς επιστρέφει false.
+
+deltio.diaforesAnte = (deltio) => {
+	if (!deltio)
+	return true;
+
+	if (!deltio.hasOwnProperty('kodikos'))
+	return true;
+
+	if (!deltio.kodikos)
+	return true;
+
+	if (!deltio.hasOwnProperty('protipo'))
+	return true;
+
+	if (!deltio.protipo)
+	return true;
+
+	return false;
+};
+
+deltio.diaforesProcess = (data) => {
+	if (data.hasOwnProperty('error'))
+	return pnd.fyiError(data.error);
+
+	if (!data.hasOwnProperty('proigoumeno') || (!data.proigoumeno))
+	return pnd.fyiError('Δεν εντοπίστηκε προηγούμενο παρουσιολόγιο');
+
+	pnd.fyiMessage(data.proigoumeno);
+	console.log(data);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
