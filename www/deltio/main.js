@@ -1324,32 +1324,19 @@ deltio.diaforesAnte = (deltio) => {
 };
 
 deltio.diaforesProcess = (data) => {
-	if (data.hasOwnProperty('error'))
-	return pnd.fyiError(data.error);
-
-	if ((!data.tre) || (!data.tre.parousia))
-	return pnd.fyiError('Δεν εντοπίστηκε τρέχον παρουσιολόγιο');
-
-	if ((!data.pro) || (!data.pro.parousia))
-	return pnd.fyiError('Δεν εντοπίστηκε προηγούμενο παρουσιολόγιο');
-
-	if (deltio.diaforesIdia(data))
+	if (data.hasOwnProperty('nodif'))
 	return pnd.fyiMessage('Δεν εντοπίστηκαν διαφορές');
 
+	if (!data.hasOwnProperty('tre'))
+	return pnd.fyiError('Δεν εντοπίστηκε τρέχον παρουσιολόγιο');
+
+	if (!data.hasOwnProperty('pro'))
+	return pnd.fyiError('Δεν εντοπίστηκε προηγούμενο παρουσιολόγιο');
+
 	pnd.fyiMessage('Εντοπίστηκαν διαφορές!');
-console.log(data);
-};
 
-deltio.diaforesIdia = (data) => {
-	let i;
-
-	for (i in data.tre.parousia)
-	return false;
-
-	for (i in data.pro.parousia)
-	return false;
-
-	return true;
+	let url = '../diafores?tre=' + data.tre + '&' + data.pro;
+	deltio.prosopaWindows.push(window.open(url, '_blank'));
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

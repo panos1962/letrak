@@ -73,18 +73,11 @@ select_parousia($trexon, $trexon_parousia);
 $proigoumeno_parousia = [];
 select_parousia($proigoumeno, $proigoumeno_parousia);
 
-fix_parousia($trexon_parousia, $proigoumeno_parousia);
+if (oxi_diafores($trexon_parousia, $proigoumeno_parousia))
+print '{"nodif":1}';
 
-print '{';
-print '"tre":{';
-print '"kodikos":' . $trexon . ',';
-print '"parousia":' . pandora::json_string($trexon_parousia);
-print '},';
-print '"pro":{';
-print '"kodikos":' . $proigoumeno . ',';
-print '"parousia":' . pandora::json_string($proigoumeno_parousia);
-print '},';
-print '"ok":1}';
+else
+print '{"dif":1,"tre":' . $trexon . ',"pro":' . $proigoumeno . '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -118,7 +111,7 @@ function select_parousia($deltio, &$pinakas) {
 	}
 }
 
-function fix_parousia(&$tre, &$pro) {
+function oxi_diafores(&$tre, &$pro) {
 	$columns = [
 		"orario",
 		"karta",
@@ -147,5 +140,22 @@ function fix_parousia(&$tre, &$pro) {
 		unset($tre[$ipalilos]);
 		unset($pro[$ipalilos]);
 	}
+
+	// Αν έχουν μείνει εγγραφές στο τρέχον παρουσιολόγιο, τότε
+	// επιστρέφουμε false.
+
+	foreach ($tre as $ipalilos)
+	return FALSE;
+
+	// Αν έχουν μείνει εγγραφές στο προηγούμενο παρουσιολόγιο,
+	// τότε επιστρέφουμε false.
+
+	foreach ($pro as $ipalilos)
+	return FALSE;
+
+	// Δεν έχουν μείνει εγγραφές, πράγμα που σημαίνει ότι όλες οι
+	// εγγραφές ήταν ίδιες, οπότε επιστρέφουμε true;
+
+	return TRUE;
 }
 ?>
