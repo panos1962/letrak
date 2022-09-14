@@ -23,9 +23,15 @@
 // προηγούμενο, π.χ. αν το επιλεγμένο παρουσιολόγιο είναι το δελτίο προσέλευσης
 // της Τρίτης, 13 Σεπτεμβρίου 2022, τότε αυτό θα συγκριθεί με το δελτίο
 // προσέλευσης της Δευτέρας, 12 Σεπτεμβρίου 2022.
+//
+// Η διαδικασία έχει ως εξής: Προσπελαύνουμε το πρότυπο παρουσιολόγιο του
+// επιλεγμένου παρουσιολογίου και μετά προσπελαύνουμε το πρότυπο παρουσιολόγιο
+// του προτύπου. Με αυτόν τον τρόπο εντοπίζουμε το «αντίστοιχο» προηγούμενο
+// παρουσιολόγιο του επιλεγμένου παρουσιολογίου.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-14
 // Created: 2022-09-13
 // @HISTORY END
 //
@@ -56,28 +62,55 @@ $protipo = pandora::parameter_get("protipo");
 if (letrak::deltio_invalid_kodikos($protipo))
 letrak::fatal_error_json("Ακαθόριστος κωδικός προτύπου");
 
-$proigoumeno = entopismos_protipou($protipo);
+$proigoumeno = entopismos_proigoumenou($protipo);
 
 if ($proigoumeno === FALSE)
-letrak::fatal_error_json("Αδυναμία εντοπισμού προηγούμενου");
+letrak::fatal_error_json("Αδυναμία εντοπισμού προηγούμενου παρουσιολογίου");
 
-print '{"proigoumeno":' . $proigoumeno . '}';
+$trexon_parousia = [];
+select_parousia($trexon, $trexon_parousia);
+
+$proigoumeno_parousia = [];
+select_parousia($proigoumeno, $proigoumeno_parousia);
+
+print '{';
+print '"trexon":{';
+print '"kodikos":' . $trexon . ',';
+print '"parousia":' . pandora::json_string($trexon_parousia);
+print '},';
+print '"proigoumeno":{';
+print '"kodikos":' . $proigoumeno . ',';
+print '"parousia":' . pandora::json_string($proigoumeno_parousia);
+print '},';
+print '"ok":1}';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-function entopismos_protipou($deltio) {
+function entopismos_proigoumenou($deltio) {
 	$query = "SELECT `protipo` FROM `letrak`.`deltio`" .
 		" WHERE `kodikos` = " . $deltio;
-	$row = pandora::first_row($query, MYSQLI_NUM);
+	$deltio = pandora::first_row($query, MYSQLI_NUM);
 
-	if (!$row)
+	if (!$deltio)
 	return FALSE;
 
-	$protipo = $row[0];
+	$proigoumeno = $deltio[0];
 
-	if (!$protipo)
+	if (letrak::deltio_invalid_kodikos($proigoumeno))
 	return FALSE;
 
-	return $protipo;
+	return $proigoumeno;
+}
+
+function select_parousia($deltio, &$pinakas) {
+	$query = "SELECT `ipalilos`, `orario`, `karta`, " .
+		"`adidos`, `adapo`, `adeos`" .
+		"FROM `letrak`.`parousia` " .
+		"WHERE `deltio` = " . $deltio;
+
+	$result = pandora::query($query);
+
+	while ($row = $result->fetch_array(MYSQLI_ASSOC))
+	$pinakas[$row["ipalilos"]] = $row;
 }
 ?>
