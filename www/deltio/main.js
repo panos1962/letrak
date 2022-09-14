@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-14
 // Updated: 2022-09-07
 // Updated: 2021-05-29
 // Updated: 2021-05-18
@@ -1326,11 +1327,29 @@ deltio.diaforesProcess = (data) => {
 	if (data.hasOwnProperty('error'))
 	return pnd.fyiError(data.error);
 
-	if (!data.hasOwnProperty('proigoumeno') || (!data.proigoumeno))
+	if ((!data.tre) || (!data.tre.parousia))
+	return pnd.fyiError('Δεν εντοπίστηκε τρέχον παρουσιολόγιο');
+
+	if ((!data.pro) || (!data.pro.parousia))
 	return pnd.fyiError('Δεν εντοπίστηκε προηγούμενο παρουσιολόγιο');
 
-	pnd.fyiMessage(data.proigoumeno);
-	console.log(data);
+	if (deltio.diaforesIdia(data))
+	return pnd.fyiMessage('Δεν εντοπίστηκαν διαφορές');
+
+	pnd.fyiMessage('Εντοπίστηκαν διαφορές!');
+console.log(data);
+};
+
+deltio.diaforesIdia = (data) => {
+	let i;
+
+	for (i in data.tre.parousia)
+	return false;
+
+	for (i in data.pro.parousia)
+	return false;
+
+	return true;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

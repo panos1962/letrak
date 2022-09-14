@@ -73,12 +73,14 @@ select_parousia($trexon, $trexon_parousia);
 $proigoumeno_parousia = [];
 select_parousia($proigoumeno, $proigoumeno_parousia);
 
+fix_parousia($trexon_parousia, $proigoumeno_parousia);
+
 print '{';
-print '"trexon":{';
+print '"tre":{';
 print '"kodikos":' . $trexon . ',';
 print '"parousia":' . pandora::json_string($trexon_parousia);
 print '},';
-print '"proigoumeno":{';
+print '"pro":{';
 print '"kodikos":' . $proigoumeno . ',';
 print '"parousia":' . pandora::json_string($proigoumeno_parousia);
 print '},';
@@ -110,7 +112,40 @@ function select_parousia($deltio, &$pinakas) {
 
 	$result = pandora::query($query);
 
-	while ($row = $result->fetch_array(MYSQLI_ASSOC))
-	$pinakas[$row["ipalilos"]] = $row;
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		$pinakas[$row["ipalilos"]] = $row;
+		unset($row["ipalilos"]);
+	}
+}
+
+function fix_parousia(&$tre, &$pro) {
+	$columns = [
+		"orario",
+		"karta",
+		"adidos",
+		"adapo",
+		"adeos",
+	];
+
+	foreach ($tre as $ipalilos => $parousia) {
+		if (!array_key_exists($ipalilos, $pro))
+		continue;
+
+		$dif = FALSE;
+
+		foreach ($columns as $column) {
+			if ($parousia[$column] === $pro[$ipalilos][$column])
+			continue;
+
+			$dif = TRUE;
+			break;
+		}
+
+		if ($dif)
+		continue;
+
+		unset($tre[$ipalilos]);
+		unset($pro[$ipalilos]);
+	}
 }
 ?>
