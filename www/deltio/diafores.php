@@ -98,8 +98,8 @@ function entopismos_proigoumenou($deltio) {
 }
 
 function select_parousia($deltio, &$pinakas) {
-	$query = "SELECT `ipalilos`, `orario`, `karta`, " .
-		"`adidos`, `adapo`, `adeos`" .
+	$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
+		"`adidos`, `adapo`, `adeos`, `excuse` " .
 		"FROM `letrak`.`parousia` " .
 		"WHERE `deltio` = " . $deltio;
 
@@ -115,13 +115,18 @@ function oxi_diafores(&$tre, &$pro) {
 	$columns = [
 		"orario",
 		"karta",
+		"meraora",
 		"adidos",
 		"adapo",
 		"adeos",
+		"excuse",
 	];
 
 	foreach ($tre as $ipalilos => $parousia) {
 		if (!array_key_exists($ipalilos, $pro))
+		continue;
+
+		if (adikeologiti_apousia($parousia))
 		continue;
 
 		$dif = FALSE;
@@ -155,6 +160,20 @@ function oxi_diafores(&$tre, &$pro) {
 
 	// Δεν έχουν μείνει εγγραφές, πράγμα που σημαίνει ότι όλες οι
 	// εγγραφές ήταν ίδιες, οπότε επιστρέφουμε true;
+
+	return TRUE;
+}
+
+function adikeologiti_apousia($parousia) {
+var_dump($parousia);
+	if ($parousia["meraora"])
+	return FALSE;
+
+	if ($parousia["adidos"])
+	return FALSE;
+
+	if ($parousia["excuse"])
+	return FALSE;
 
 	return TRUE;
 }
