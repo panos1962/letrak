@@ -1279,7 +1279,8 @@ deltio.diafores = (e) => {
 	e.stopPropagation();
 	pnd.fyiMessage('Εντοπισμός διαφορών…');
 
-	let trexon = $('.deltioCandi').first().data('deltio');
+	let trexonHTML = $('.deltioCandi').first();
+	let trexon = trexonHTML.data('deltio');
 
 	if (deltio.diaforesAnte(trexon))
 	return pnd.fyiError('Ακαθόριστο δελτίο');
@@ -1291,7 +1292,8 @@ deltio.diafores = (e) => {
 			"protipo": trexon.protipo,
 		},
 		'dataType': 'json',
-		'success': (rsp) => deltio.diaforesProcess(rsp),
+		'success': (rsp) => deltio.diaforesProcess(rsp,
+			trexonHTML, trexon),
 		'error': (e) => {
 			pnd.fyiError('Σφάλμα εντοπισμού διαφορών');
 			console.error(e);
@@ -1324,9 +1326,12 @@ deltio.diaforesAnte = (deltio) => {
 	return false;
 };
 
-deltio.diaforesProcess = (data) => {
+deltio.diaforesProcess = (data, trexonHTML, trexon) => {
+	if (data.hasOwnProperty('error'))
+	return pnd.fyiError(data.error);
+
 	if (data.hasOwnProperty('nodif'))
-	return pnd.fyiMessage('Δεν εντοπίστηκαν διαφορές');
+	return deltio.oxiDiafores(data, trexonHTML);
 
 	if (!data.hasOwnProperty('tre'))
 	return pnd.fyiError('Δεν εντοπίστηκε τρέχον παρουσιολόγιο');
@@ -1338,6 +1343,24 @@ deltio.diaforesProcess = (data) => {
 
 	let url = '../diafores?tre=' + data.tre + '&' + data.pro;
 	deltio.prosopaWindows.push(window.open(url, '_blank'));
+};
+
+// Η function "oxiDiafores" καλείται στην περίπτωση που δεν έχουν εντοπιστεί
+// διαφορές με το προηγούμενο παρουσιολόγιο. Σ' αυτή την περίπτωση εμφανίζουμε
+// σχετικό ενημερωτικό μήνυμα στο οποίο αναφέρουμε και τις ημερομηνίες του
+// τρέχοντος και του προηγούμενου παρουσιολογίου.
+
+deltio.oxiDiafores = (data, trexonHTML) => {
+	let treImera = trexonHTML.children('.deltioImera').text();
+	let treImerominia = trexonHTML.children('.deltioImerominia').text();
+
+	let proDate = new Date(data.imerominia);
+	let proImerominia = pnd.date2date(proDate, 'YMD', '%D-%M-%Y');
+	let proImera = pnd.dowLongGet(proDate);
+
+	return pnd.fyiMessage('<b>' + treImera + '</b>, <b>' +
+		treImerominia + '</b>: δεν εντοπίστηκαν διαφορές με ' +
+		'<b>' + proImera + '</b>, <b>' + proImerominia + '</b>');
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

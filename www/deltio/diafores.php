@@ -74,10 +74,9 @@ select_parousia($trexon, $trexon_parousia);
 $proigoumeno_parousia = [];
 select_parousia($proigoumeno, $proigoumeno_parousia);
 
-if (oxi_diafores($trexon_parousia, $proigoumeno_parousia))
-print '{"nodif":1}';
+if (oxi_diafores($trexon_parousia, $proigoumeno_parousia, $proigoumeno))
+exit(0);
 
-else
 print '{"dif":1,"tre":' . $trexon . ',"pro":' . $proigoumeno . '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -112,7 +111,7 @@ function select_parousia($deltio, &$pinakas) {
 	}
 }
 
-function oxi_diafores(&$tre, &$pro) {
+function oxi_diafores(&$tre, &$pro, $proigoumeno) {
 	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί
 	// να παρουσιάζουν διαφορές.
 
@@ -163,7 +162,26 @@ function oxi_diafores(&$tre, &$pro) {
 	return FALSE;
 
 	// Δεν έχουν μείνει εγγραφές, πράγμα που σημαίνει ότι όλες οι
-	// εγγραφές ήταν ίδιες, οπότε επιστρέφουμε true;
+	// εγγραφές ήταν ίδιες, οπότε επιχειρούμε να επιστρέφουμε json
+	// data που δείχνουν ότι δεν υπάρχουν διαφορές.
+
+	$query = "SELECT `imerominia` FROM `letrak`.`deltio`" .
+		" WHERE `kodikos` = " . $proigoumeno;
+	$deltio = pandora::first_row($query, MYSQLI_NUM);
+
+	if (!$deltio)
+	letrak::fatal_error_json("Αδυναμία ανάκτησης προηγούμενου παρουσιολογίου");
+
+	$imerominia = pandora::date2date($deltio[0], "Y-m-d", "Y-m-d");
+
+	if (!$imerominia)
+	letrak::fatal_error_json("Αδυναμία ανάκτησης ημερομηνίας προηγούμενου παρουσιολογίου");
+
+	print '{';
+	print '"nodif":1,';
+	print '"proigoumeno":' . $proigoumeno . ',';
+	print '"imerominia":' . pandora::json_string($imerominia);
+	print '}';
 
 	return TRUE;
 }
