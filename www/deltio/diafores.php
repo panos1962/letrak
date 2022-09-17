@@ -31,6 +31,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-17
 // Updated: 2022-09-14
 // Created: 2022-09-13
 // @HISTORY END
@@ -99,7 +100,7 @@ function entopismos_proigoumenou($deltio) {
 
 function select_parousia($deltio, &$pinakas) {
 	$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
-		"`adidos`, `adapo`, `adeos`, `excuse` " .
+		"`adidos`, `adapo`, `adeos`, `excuse`, `info` " .
 		"FROM `letrak`.`parousia` " .
 		"WHERE `deltio` = " . $deltio;
 
@@ -112,14 +113,17 @@ function select_parousia($deltio, &$pinakas) {
 }
 
 function oxi_diafores(&$tre, &$pro) {
+	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί
+	// να παρουσιάζουν διαφορές.
+
 	$columns = [
 		"orario",
 		"karta",
-		"meraora",
 		"adidos",
 		"adapo",
 		"adeos",
 		"excuse",
+		"info",
 	];
 
 	foreach ($tre as $ipalilos => $parousia) {
@@ -165,7 +169,6 @@ function oxi_diafores(&$tre, &$pro) {
 }
 
 function adikeologiti_apousia($parousia) {
-var_dump($parousia);
 	if ($parousia["meraora"])
 	return FALSE;
 
