@@ -1359,7 +1359,7 @@ deltio.oxiDiafores = (data, trexonHTML) => {
 	let proImera = pnd.dowLongGet(proDate);
 
 	return pnd.fyiMessage('<b>' + treImera + '</b>, <b>' +
-		treImerominia + '</b>: δεν εντοπίστηκαν διαφορές με ' +
+		treImerominia + '</b>: δεν εντοπίστηκαν διαφορές από ' +
 		'<b>' + proImera + '</b>, <b>' + proImerominia + '</b>');
 };
 
