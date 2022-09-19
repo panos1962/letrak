@@ -69,7 +69,6 @@ diafores.selidaSetup = () => {
 	toolbarTitlosSetup('<b>Διαφορές Παρουσιολογίων</b>').
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
-console.log('sdasdasd');
 
 	if (letrak.noXristis())
 	return pnd.fyiError('Διαπιστώθηκε ανώνυμη χρήση');

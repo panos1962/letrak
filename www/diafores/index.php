@@ -43,7 +43,6 @@ document_head([
 ])::
 document_body();
 ?>
-Hello!
 <?php
 pandora::
 document_close();
