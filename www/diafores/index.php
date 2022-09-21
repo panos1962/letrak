@@ -44,7 +44,6 @@ document_head([
 		"main",
 	],
 ])::
-document_body();
-pandora::
+document_body()::
 document_close();
 ?>

@@ -106,8 +106,10 @@ function select_parousia($deltio, &$pinakas) {
 	$result = pandora::query($query);
 
 	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-		$pinakas[$row["ipalilos"]] = $row;
+		$ipalilos = $row["ipalilos"];
 		unset($row["ipalilos"]);
+
+		$pinakas[$ipalilos] = $row;
 	}
 }
 

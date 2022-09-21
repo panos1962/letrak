@@ -16,6 +16,11 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα οδηγεί τη σελίδα παρουσίασης διαφορών τρέχοντος
+// παρουσιολογίου με αντίστοιχο προηγούμενο παρουσιπολόγιο. Ο κωδικός
+// του τρέχοντος παρουσιολογίου έχει περαστεί ως παράμετρος "tre", ενώ
+// ο κωδικός του αντίστοιχου προηγούμενου παρουσιολογίου έχει περαστεί
+// ως παράμετρος "pro".
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -38,13 +43,6 @@ require('../lib/letrak.js');
 const diafores = {};
 const ektiposi =
 require('./ektiposi.js')(pnd, letrak, diafores);
-
-(() => {
-	if (!self.opener)
-	return diafores;
-
-	return diafores;
-})();
 
 pnd.domInit(() => {
 	pnd.
@@ -101,5 +99,74 @@ diafores.selidaSetup = () => {
 };
 
 diafores.diaforesProcess = (rsp) => {
-console.log(rsp);
+	let tre = new diafores.deltio(rsp.tre);
+	let pro = new diafores.deltio(rsp.pro);
+
+	pnd.ofelimoDOM.
+	empty().
+	append(tre.deltioDomGet()).
+	append(pro.deltioDomGet());
+
+	for (let ipalilos in rsp.tre.parousia) {
+		let p1 = new diafores.parousia(ipalilos, rsp.tre.parousia[ipalilos]);
+		let p2 = new diafores.parousia(ipalilos, rsp.pro.parousia[ipalilos]);
+
+		pnd.ofelimoDOM.
+		append(p1.parousiaDomGet());
+	}
+
+	return diafores;
 };
+
+///////////////////////////////////////////////////////////////////////////////@
+
+diafores.deltio = function(deltio) {
+	this.kodikos = deltio.kodikos;
+	this.imerominia = deltio.imerominia;
+};
+
+diafores.deltio.prototype.deltioDomGet = function() {
+	if (this.hasOwnProperty('DOM'))
+	return this.DOM;
+
+	this.DOM = $('<div>').
+	append($('<div>').addClass('deltio').
+	append($('<div>').addClass('deltioKodikos').text(this.kodikos)).
+	append($('<div>').addClass('deltioImerominia').text(this.imerominia)));
+
+	return this.DOM;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+diafores.parousia = function(ipalilos, parousia) {
+	if (!parousia)
+	return;
+
+	this.ipalilos = ipalilos;
+	this.orario = parousia.orario;
+	this.karta = parousia.karta;
+	this.adidos = parousia.adidos;
+	this.adapo = parousia.adapo;
+	this.adeos = parousia.adeos;
+	this.excuse = parousia.excuse;
+	this.info = parousia.info;
+};
+
+diafores.parousia.prototype.isParousia = function() {
+	return this.ipalilos;
+};
+
+diafores.parousia.prototype.parousiaDomGet = function() {
+	if (this.hasOwnProperty('DOM'))
+	return this.DOM;
+
+	this.DOM = $('<div>').addClass('parousia').
+	append($('<div>').addClass('parousiaIpalilos').text(this.ipalilos)).
+	append($('<div>').addClass('parousiaOrario').text(this.orario)).
+	append($('<div>').addClass('parousiaKarta').text(this.karta));
+
+	return this.DOM;
+};
+
+///////////////////////////////////////////////////////////////////////////////@

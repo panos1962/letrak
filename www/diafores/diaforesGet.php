@@ -65,10 +65,14 @@ $pro = Diafores::deltio_get($pro);
 if (!$pro)
 letrak::fatal_error_json("Αδυναμία εντοπισμού προηγούμενου παρουσιολογίου");
 
-Diafores::parousia_get($tre);
-Diafores::parousia_get($pro);
+$ipalilos = [];
 
-Diafores::diafores_fix($tre, $pro);
+Diafores::
+parousia_get($tre)::
+parousia_get($pro)::
+diafores_fix($tre, $pro)::
+ipalilos_get($tre, $pro, $ipalilos);
+
 print '{' .
 	'"tre":' . pandora::json_string($tre) . ',' .
 	'"pro":' . pandora::json_string($pro) .
@@ -99,6 +103,8 @@ class Diafores {
 		}
 
 		$deltio["parousia"] = $plist;
+
+		return __CLASS__;
 	}
 
 	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί
@@ -144,6 +150,8 @@ class Diafores {
 
 		$tre["parousia"] = $tre_parousia;
 		$pro["parousia"] = $pro_parousia;
+
+		return __CLASS__;
 	}
 
 	private static function adikeologiti_apousia($parousia) {
@@ -157,6 +165,25 @@ class Diafores {
 		return FALSE;
 
 		return TRUE;
+	}
+
+	public static function ipalilos_get($tre, $pro, &$ilist) {
+		foreach ($tre["parousia"] as $ipalilos => $parousia)
+		$ilist[$ipalilos] = $ipalilos;
+
+		foreach ($pro["parousia"] as $ipalilos => $parousia)
+		$ilist[$ipalilos] = $ipalilos;
+
+		foreach ($ilist as $ipalilos)
+		$ilist[$ipalilos] = self::ipalilos_fetch($ipalilos);
+
+		return __CLASS__;
+	}
+
+	private static function ipalilos_fetch($ipalilos) {
+		$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
+			"FROM " . letrak::erpota12("ipalilos") . " " .
+			"WHERE `kodikos` = " . $ipalilos;
 	}
 }
 ?>
