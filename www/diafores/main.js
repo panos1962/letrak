@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-21
 // Created: 2022-09-17
 // @HISTORY END
 //
@@ -76,5 +77,29 @@ diafores.selidaSetup = () => {
 	pnd.
 	keepAlive('../mnt/pandora');
 
+	if (!(diafores.tre = php.getGet("tre")))
+	return pnd.fyiError('Ακαθόριστο τρέχον παρουσιολόγιο');
+
+	if (!(diafores.pro = php.getGet("pro")))
+	return pnd.fyiError('Ακαθόριστο προηγούμενο παρουσιολόγιο');
+
+	$.post({
+		'url': 'diaforesGet.php',
+		'data': {
+			"tre": diafores.tre,
+			"pro": diafores.pro,
+		},
+		'dataType': 'json',
+		'success': (rsp) => diafores.diaforesProcess(rsp),
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα ανίχνευσης διαφορών');
+			console.error(e);
+		},
+	});
+
 	return diafores;
+};
+
+diafores.diaforesProcess = (rsp) => {
+console.log(rsp);
 };

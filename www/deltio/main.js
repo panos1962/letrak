@@ -1341,7 +1341,7 @@ deltio.diaforesProcess = (data, trexonHTML, trexon) => {
 
 	pnd.fyiMessage('Εντοπίστηκαν διαφορές!');
 
-	let url = '../diafores?tre=' + data.tre + '&' + data.pro;
+	let url = '../diafores?tre=' + data.tre + '&pro=' + data.pro;
 	deltio.prosopaWindows.push(window.open(url, '_blank'));
 };
 
