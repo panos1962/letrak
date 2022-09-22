@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-22
 // Updated: 2022-09-21
 // Created: 2022-09-17
 // @HISTORY END
@@ -105,14 +106,30 @@ diafores.diaforesProcess = (rsp) => {
 	pnd.ofelimoDOM.
 	empty().
 	append(tre.deltioDomGet()).
+	append($('<div>').addClass('deltioVs').html('&#9775;')).
 	append(pro.deltioDomGet());
 
-	for (let ipalilos in rsp.tre.parousia) {
-		let p1 = new diafores.parousia(ipalilos, rsp.tre.parousia[ipalilos]);
-		let p2 = new diafores.parousia(ipalilos, rsp.pro.parousia[ipalilos]);
+	for (let ipalilos in rsp.ipl) {
+console.log(ipalilos);
+		ipalilos = new diafores.ipalilos(ipalilos, rsp.ipl[ipalilos]);
 
 		pnd.ofelimoDOM.
-		append(p1.parousiaDomGet());
+		append(ipalilos.ipalilosDomGet());
+
+		let t = tre.parousia.hasOwnProperty(ipalilos.kodikos) ?
+			new diafores.parousia(ipalilos,
+				tre.parousia[ipalilos.kodikos]) : undefined;
+		let p = pro.parousia.hasOwnProperty(ipalilos.kodikos) ?
+			new diafores.parousia(ipalilos,
+				tre.parousia[ipalilos.kodikos]) : undefined;
+
+		if (t)
+		pnd.ofelimoDOM.
+		append(t.parousiaDomGet());
+
+		if (p)
+		pnd.ofelimoDOM.
+		append(p.parousiaDomGet());
 	}
 
 	return diafores;
@@ -123,16 +140,43 @@ diafores.diaforesProcess = (rsp) => {
 diafores.deltio = function(deltio) {
 	this.kodikos = deltio.kodikos;
 	this.imerominia = deltio.imerominia;
+	this.parousia = deltio.parousia;
 };
 
 diafores.deltio.prototype.deltioDomGet = function() {
 	if (this.hasOwnProperty('DOM'))
 	return this.DOM;
 
-	this.DOM = $('<div>').
-	append($('<div>').addClass('deltio').
+	let date = new Date(this.imerominia);
+	let dmy = pnd.date2date(date, 'YMD', '%D-%M-%Y');
+	let imera = pnd.dowLongGet(date);
+
+	this.DOM = $('<div>').addClass('deltio').
 	append($('<div>').addClass('deltioKodikos').text(this.kodikos)).
-	append($('<div>').addClass('deltioImerominia').text(this.imerominia)));
+	append($('<div>').addClass('deltioImera').text(imera)).
+	append($('<div>').addClass('deltioImerominia').text(dmy));
+
+	return this.DOM;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+diafores.ipalilos = function(ipalilos, props) {
+	this.ipalilos = ipalilos;
+
+	for (let i in props)
+	this[i] = props[i];
+};
+
+diafores.ipalilos.prototype.ipalilosDomGet = function() {
+	if (this.hasOwnProperty('DOM'))
+	return this.DOM;
+
+	this.DOM = $('<div>').addClass('ipalilos').
+	append($('<div>').addClass('ipalilosKodikos').text(this.ipalilos)).
+	append($('<div>').addClass('ipalilosEponimo').text(this.eponimo)).
+	append($('<div>').addClass('deltioOnoma').text(this.onoma)).
+	append($('<div>').addClass('deltioOnoma').text(this.patronimo.substr(0, 3)));
 
 	return this.DOM;
 };
@@ -163,6 +207,10 @@ diafores.parousia.prototype.parousiaDomGet = function() {
 
 	this.DOM = $('<div>').addClass('parousia').
 	append($('<div>').addClass('parousiaIpalilos').text(this.ipalilos)).
+	append($('<div>').addClass('parousiaEponimo').
+		text(diafores.ipalilos[this.ipalilos].onoma)).
+	append($('<div>').addClass('parousiaEponimo').
+		text(diafores.ipalilos[this.ipalilos].eponimo)).
 	append($('<div>').addClass('parousiaOrario').text(this.orario)).
 	append($('<div>').addClass('parousiaKarta').text(this.karta));
 

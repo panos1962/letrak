@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-22
 // Created: 2022-09-21
 // @HISTORY END
 //
@@ -40,10 +41,9 @@ header_json()::
 session_init()::
 database();
 
-$prosvasi = letrak::prosvasi_get();
-
-if ($prosvasi->oxi_ipalilos())
-letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
+Diafores::
+init()::
+prosvasi_check();
 
 $tre = pandora::parameter_get("tre");
 
@@ -55,40 +55,61 @@ $pro = pandora::parameter_get("pro");
 if (letrak::deltio_invalid_kodikos($pro))
 letrak::fatal_error_json("Ακαθόριστος κωδικός προηγούμενου παρουσιολογίου");
 
-$tre = Diafores::deltio_get($tre);
+Diafores::$tre = Diafores::deltio_fetch($tre);
 
-if (!$tre)
+if (!Diafores::$tre)
 letrak::fatal_error_json("Αδυναμία εντοπισμού τρέχοντος παρουσιολογίου");
 
-$pro = Diafores::deltio_get($pro);
+Diafores::$pro = Diafores::deltio_fetch($pro);
 
-if (!$pro)
+if (!Diafores::$pro)
 letrak::fatal_error_json("Αδυναμία εντοπισμού προηγούμενου παρουσιολογίου");
 
-$ipalilos = [];
-
 Diafores::
-parousia_get($tre)::
-parousia_get($pro)::
-diafores_fix($tre, $pro)::
-ipalilos_get($tre, $pro, $ipalilos);
+parousia_fetch(Diafores::$tre)::
+parousia_fetch(Diafores::$pro)::
+adiafora_delete()::
+ipalilos_fetch();
 
 print '{' .
-	'"tre":' . pandora::json_string($tre) . ',' .
-	'"pro":' . pandora::json_string($pro) .
+	'"tre":' . pandora::json_string(Diafores::$tre) . ',' .
+	'"pro":' . pandora::json_string(Diafores::$pro) . ',' .
+	'"ipl":' . pandora::json_string(Diafores::$ilist) .
 '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 class Diafores {
-	public static function deltio_get($deltio) {
+	public static $tre;
+	public static $pro;
+	public static $ilist;
+
+	public static function init() {
+		self::$tre = NULL;
+		self::$pro = NULL;
+		self::$ilist = [];
+
+		return __CLASS__;
+	}
+
+	public static function prosvasi_check() {
+		$prosvasi = letrak::prosvasi_get();
+
+		if ($prosvasi->oxi_ipalilos())
+		letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
+
+		return __CLASS__;
+	}
+
+
+	public static function deltio_fetch($deltio) {
 		$query = "SELECT `kodikos`, `imerominia` " .
 			"FROM `letrak`.`deltio` " .
 			"WHERE `kodikos` = " . $deltio;
 		return pandora::first_row($query, MYSQLI_ASSOC);
 	}
 
-	public static function parousia_get(&$deltio) {
+	public static function parousia_fetch(&$deltio) {
 		$plist = [];
 		$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
 			"`adidos`, `adapo`, `adeos`, `excuse`, `info` " .
@@ -120,12 +141,12 @@ class Diafores {
 		"info",
 	];
 
-	public static function diafores_fix(&$tre, &$pro) {
-		$tre_parousia = $tre["parousia"];
-		$pro_parousia = $pro["parousia"];
+	public static function adiafora_delete() {
+		$tre = self::$tre["parousia"];
+		$pro = self::$pro["parousia"];
 
-		foreach ($tre_parousia as $ipalilos => $parousia) {
-			if (!array_key_exists($ipalilos, $pro_parousia))
+		foreach ($tre as $ipalilos => $parousia) {
+			if (!array_key_exists($ipalilos, $pro))
 			continue;
 
 			if (self::adikeologiti_apousia($parousia))
@@ -134,7 +155,7 @@ class Diafores {
 			$dif = FALSE;
 
 			foreach (self::$columns as $column) {
-				if ($parousia[$column] === $pro_parousia[$ipalilos][$column])
+				if ($parousia[$column] === $pro[$ipalilos][$column])
 				continue;
 
 				$dif = TRUE;
@@ -144,12 +165,12 @@ class Diafores {
 			if ($dif)
 			continue;
 
-			unset($tre_parousia[$ipalilos]);
-			unset($pro_parousia[$ipalilos]);
+			unset($tre[$ipalilos]);
+			unset($pro[$ipalilos]);
 		}
 
-		$tre["parousia"] = $tre_parousia;
-		$pro["parousia"] = $pro_parousia;
+		self::$tre["parousia"] = $tre;
+		self::$pro["parousia"] = $pro;
 
 		return __CLASS__;
 	}
@@ -167,23 +188,21 @@ class Diafores {
 		return TRUE;
 	}
 
-	public static function ipalilos_get($tre, $pro, &$ilist) {
-		foreach ($tre["parousia"] as $ipalilos => $parousia)
-		$ilist[$ipalilos] = $ipalilos;
+	public static function ipalilos_fetch() {
+		foreach (self::$tre["parousia"] as $ipalilos => $parousia)
+		self::$ilist[$ipalilos] = $ipalilos;
 
-		foreach ($pro["parousia"] as $ipalilos => $parousia)
-		$ilist[$ipalilos] = $ipalilos;
+		foreach (self::$pro["parousia"] as $ipalilos => $parousia)
+		self::$ilist[$ipalilos] = $ipalilos;
 
-		foreach ($ilist as $ipalilos)
-		$ilist[$ipalilos] = self::ipalilos_fetch($ipalilos);
+		foreach (self::$ilist as $ipalilos) {
+			$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
+				"FROM " . letrak::erpota12("ipalilos") . " " .
+				"WHERE `kodikos` = " . $ipalilos;
+			self::$ilist[$ipalilos] = pandora::first_row($query, MYSQLI_ASSOC);
+		}
 
 		return __CLASS__;
-	}
-
-	private static function ipalilos_fetch($ipalilos) {
-		$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
-			"FROM " . letrak::erpota12("ipalilos") . " " .
-			"WHERE `kodikos` = " . $ipalilos;
 	}
 }
 ?>
