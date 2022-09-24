@@ -137,7 +137,6 @@ class Diafores {
 		"adidos",
 		"adapo",
 		"adeos",
-		"excuse",
 		"info",
 	];
 
@@ -147,6 +146,9 @@ class Diafores {
 
 		foreach ($tre as $ipalilos => $parousia) {
 			if (!array_key_exists($ipalilos, $pro))
+			continue;
+
+			if ($parousia["excuse"])
 			continue;
 
 			if (self::adikeologiti_apousia($parousia))
@@ -180,9 +182,6 @@ class Diafores {
 		return FALSE;
 
 		if ($parousia["adidos"])
-		return FALSE;
-
-		if ($parousia["excuse"])
 		return FALSE;
 
 		return TRUE;
