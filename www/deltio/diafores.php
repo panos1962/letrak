@@ -119,7 +119,6 @@ function oxi_diafores(&$tre, &$pro, $proigoumeno) {
 	// να παρουσιάζουν διαφορές.
 
 	$columns = [
-		"orario",
 		"karta",
 		"adidos",
 		"adapo",
