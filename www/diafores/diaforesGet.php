@@ -132,7 +132,6 @@ class Diafores {
 	// να παρουσιάζουν διαφορές.
 
 	private static $columns = [
-		"orario",
 		"karta",
 		"adidos",
 		"adapo",
