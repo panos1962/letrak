@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-24
 // Updated: 2022-09-22
 // Updated: 2022-09-21
 // Created: 2022-09-17
@@ -82,6 +83,11 @@ diafores.selidaSetup = () => {
 	if (!(diafores.pro = php.getGet("pro")))
 	return pnd.fyiError('Ακαθόριστο προηγούμενο παρουσιολόγιο');
 
+	pnd.ofelimoDOM.
+	on('click', '.ipalilosArea', function(e) {
+		diafores.ipalilosDoneToggle(e, $(this));
+	});
+
 	$.post({
 		'url': 'diaforesGet.php',
 		'data': {
@@ -99,21 +105,35 @@ diafores.selidaSetup = () => {
 	return diafores;
 };
 
+diafores.ipalilosDoneToggle = function(e, dom) {
+	e.stopPropagation();
+	e.preventDefault();
+
+	if (dom.hasClass('ipalilosAreaDone'))
+	dom.removeClass('ipalilosAreaDone');
+
+	else
+	dom.addClass('ipalilosAreaDone');
+};
+
 diafores.diaforesProcess = (rsp) => {
 	let tre = new diafores.deltio(rsp.tre);
 	let pro = new diafores.deltio(rsp.pro);
 
 	pnd.ofelimoDOM.
 	empty().
+	append($('<div>').attr('id', 'deltioArea').
 	append(tre.deltioDomGet()).
-	append($('<div>').addClass('deltioVs').html('&#9775;')).
-	append(pro.deltioDomGet());
+	append($('<div>').html('&#9775;')).
+	append(pro.deltioDomGet()));
 
 	for (let ipalilos in rsp.ipl) {
-console.log(ipalilos);
 		ipalilos = new diafores.ipalilos(ipalilos, rsp.ipl[ipalilos]);
 
-		pnd.ofelimoDOM.
+		let dom = $('<div>').addClass('ipalilosArea').
+			appendTo(pnd.ofelimoDOM);
+
+		dom.
 		append(ipalilos.ipalilosDomGet());
 
 		let t = tre.parousia.hasOwnProperty(ipalilos.kodikos) ?
@@ -121,17 +141,152 @@ console.log(ipalilos);
 				tre.parousia[ipalilos.kodikos]) : undefined;
 		let p = pro.parousia.hasOwnProperty(ipalilos.kodikos) ?
 			new diafores.parousia(ipalilos,
-				tre.parousia[ipalilos.kodikos]) : undefined;
+				pro.parousia[ipalilos.kodikos]) : undefined;
 
-		if (t)
-		pnd.ofelimoDOM.
-		append(t.parousiaDomGet());
+		if ((!p) && (!t))
+		continue;
 
-		if (p)
-		pnd.ofelimoDOM.
-		append(p.parousiaDomGet());
+		if ((!p) && t) {
+			diafores.ipalilosProsthiki(dom, t);
+			continue;
+		}
+
+		if (!(t) && p) {
+			diafores.ipalilosAferesi(dom, p);
+			continue;
+		}
+
+		diafores.
+		kartaAlagi(dom, t, p).
+		adiaAlagi(dom, t, p).
+		exeresiCheck(dom, t).
+		infoAlagi(dom, t, p);
 	}
 
+	return diafores;
+};
+
+diafores.ipalilosProsthiki = (dom, parousia) => {
+	let msg = 'Προστέθηκε υπάλληλος';
+
+	msg += parousia.orario ?
+		', ωράριο: <b>' + parousia.orario + '</b>'
+	:
+		', <b>χωρίς ωράριο</b>';
+
+	msg += parousia.karta ?
+		', κάρτα: <b>' + parousia.karta + '</b>'
+	:
+		', <b>χωρίς κάρτα</b>';
+
+	if (parousia.adidos)
+	msg += ', <b>αδειούχος</b>';
+
+	if (parousia.excuse)
+	msg += ', <b>δικαιολογημένος</b>';
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+};
+
+diafores.ipalilosAferesi = (dom, parousia) => {
+	let msg = 'Αφαιρέθηκε υπάλληλος';
+
+	if (parousia.adidos)
+	msg += ', <b>αδειούχος ών</b>';
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+};
+
+diafores.kartaAlagi = (dom, t, p) => {
+	if (t.karta === p.karta)
+	return diafores;
+
+	let msg = 'Αλλαγή κάρτας';
+
+	if (p.karta)
+	msg += ' από <b>' + p.karta + '</b>';
+
+	if (t.karta)
+	msg += ' σε <b>' + t.karta + '</b>';
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+};
+
+diafores.adiaAlagi = (dom, t, p) => {
+	let nodif = true;
+
+	if (t.adidos !== p.adidos)
+	nodif = false;
+
+	else if (t.adapo !== p.adapo)
+	nodif = false;
+
+	else if (t.adeos !== p.adeos)
+	nodif = false;
+
+	if (nodif)
+	return diafores;
+
+	if ((!p.adidos) && t.adidos) {
+		let msg = 'Εκκίνηση αδείας, είδος <b>' + t.adidos + '</b>';
+
+		if (t.adapo)
+		msg += ', από <b>' + t.adapo + '</b>';
+
+		if (t.adeos)
+		msg += ', έως <b>' + t.adeos + '</b>';
+
+		dom.append($('<div>').html(msg));
+		return diafores;
+	}
+
+	if (p.adidos && (!t.adidos)) {
+		let msg = 'Λήξη αδείας, είδος <b>' + p.adidos + '</b>';
+
+		if (p.adapo)
+		msg += ', από <b>' + p.adapo + '</b>';
+
+		if (p.adeos)
+		msg += ', έως <b>' + p.adeos + '</b>';
+
+		dom.append($('<div>').html(msg));
+		return diafores;
+	}
+
+	let msg = 'Αλλαγή αδείας' +
+		' από <b>' + p.adidos + ' ' + p.adapo + ' &#8212; ' + p.adeos + '</b>' +
+		' σε <b>' + t.adidos + ' ' + t.adapo + ' &#8212; ' + t.adeos + '</b>';
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+};
+
+diafores.exeresiCheck = (dom, t) => {
+	if (!t.excuse)
+	return diafores;
+
+	let msg = 'Εξαίρεση <b>' + t.excuse + '</b>';
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+
+	dom.append($('<div>').html(msg));
+	return diafores;
+};
+
+diafores.infoAlagi = (dom, t, p) => {
+	if (!t.info)
+	return diafores;
+
+	if (t.info === p.info)
+	return diafores;
+
+	let msg = 'Παρατήρηση: <b>' + t.info + '</b>';
+
+	dom.append($('<div>').html(msg));
 	return diafores;
 };
 
@@ -162,7 +317,7 @@ diafores.deltio.prototype.deltioDomGet = function() {
 ///////////////////////////////////////////////////////////////////////////////@
 
 diafores.ipalilos = function(ipalilos, props) {
-	this.ipalilos = ipalilos;
+	this.kodikos = ipalilos;
 
 	for (let i in props)
 	this[i] = props[i];
@@ -173,7 +328,7 @@ diafores.ipalilos.prototype.ipalilosDomGet = function() {
 	return this.DOM;
 
 	this.DOM = $('<div>').addClass('ipalilos').
-	append($('<div>').addClass('ipalilosKodikos').text(this.ipalilos)).
+	append($('<div>').addClass('ipalilosKodikos').text(this.kodikos)).
 	append($('<div>').addClass('ipalilosEponimo').text(this.eponimo)).
 	append($('<div>').addClass('deltioOnoma').text(this.onoma)).
 	append($('<div>').addClass('deltioOnoma').text(this.patronimo.substr(0, 3)));
@@ -191,8 +346,8 @@ diafores.parousia = function(ipalilos, parousia) {
 	this.orario = parousia.orario;
 	this.karta = parousia.karta;
 	this.adidos = parousia.adidos;
-	this.adapo = parousia.adapo;
-	this.adeos = parousia.adeos;
+	this.adapo = pnd.date2date(parousia.adapo, 'YMD', '%D-%M-%Y');
+	this.adeos = pnd.date2date(parousia.adeos, 'YMD', '%D-%M-%Y');
 	this.excuse = parousia.excuse;
 	this.info = parousia.info;
 };
@@ -206,11 +361,6 @@ diafores.parousia.prototype.parousiaDomGet = function() {
 	return this.DOM;
 
 	this.DOM = $('<div>').addClass('parousia').
-	append($('<div>').addClass('parousiaIpalilos').text(this.ipalilos)).
-	append($('<div>').addClass('parousiaEponimo').
-		text(diafores.ipalilos[this.ipalilos].onoma)).
-	append($('<div>').addClass('parousiaEponimo').
-		text(diafores.ipalilos[this.ipalilos].eponimo)).
 	append($('<div>').addClass('parousiaOrario').text(this.orario)).
 	append($('<div>').addClass('parousiaKarta').text(this.karta));
 

@@ -31,6 +31,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-24
 // Updated: 2022-09-17
 // Updated: 2022-09-14
 // Created: 2022-09-13
@@ -123,12 +124,18 @@ function oxi_diafores(&$tre, &$pro, $proigoumeno) {
 		"adidos",
 		"adapo",
 		"adeos",
-		"excuse",
 		"info",
 	];
 
 	foreach ($tre as $ipalilos => $parousia) {
 		if (!array_key_exists($ipalilos, $pro))
+		continue;
+
+		if ($parousia["excuse"])
+		continue;
+
+		if ($parousia["info"] &&
+			($parousia["info"] !== $pro[$ipalilos]["info"]))
 		continue;
 
 		if (adikeologiti_apousia($parousia))
@@ -193,9 +200,6 @@ function adikeologiti_apousia($parousia) {
 	return FALSE;
 
 	if ($parousia["adidos"])
-	return FALSE;
-
-	if ($parousia["excuse"])
 	return FALSE;
 
 	return TRUE;
