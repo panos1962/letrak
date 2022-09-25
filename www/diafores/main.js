@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-25
 // Updated: 2022-09-24
 // Updated: 2022-09-22
 // Updated: 2022-09-21
@@ -74,14 +75,19 @@ diafores.selidaSetup = () => {
 	if (letrak.noXristis())
 	return pnd.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
+	if (!self.opener)
+	return pnd.fyiError('Ακαθόριστη γονική σελίδα');
+
+	try {
+		diafores.tre = self.opener.LETRAK.trexon.kodikosGet();
+	}
+
+	catch (e) {
+		return pnd.fyiError('Απροσδιόριστο τρέχον παρουσιολόγιο');
+	}
+
 	pnd.
 	keepAlive('../mnt/pandora');
-
-	if (!(diafores.tre = php.getGet("tre")))
-	return pnd.fyiError('Ακαθόριστο τρέχον παρουσιολόγιο');
-
-	if (!(diafores.pro = php.getGet("pro")))
-	return pnd.fyiError('Ακαθόριστο προηγούμενο παρουσιολόγιο');
 
 	pnd.ofelimoDOM.
 	on('click', '.ipalilosArea', function(e) {
@@ -92,7 +98,6 @@ diafores.selidaSetup = () => {
 		'url': 'diaforesGet.php',
 		'data': {
 			"tre": diafores.tre,
-			"pro": diafores.pro,
 		},
 		'dataType': 'json',
 		'success': (rsp) => diafores.diaforesProcess(rsp),

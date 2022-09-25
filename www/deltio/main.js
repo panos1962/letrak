@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-25
 // Updated: 2022-09-17
 // Updated: 2022-09-14
 // Updated: 2022-09-07
@@ -688,19 +689,14 @@ deltio.candiTabsShow = () => {
 	// Διασφαλίζουμε το γεγονός ότι υπάρχει πράγματι επιλεγμένο
 	// παρουσιολόγιο.
 
-	let x = $('.deltioCandi').first();
+	let candi = deltio.isCandi();
 
-	if (!x.length)
+	if (!candi)
 	return deltio;
 
-	x = x.data('deltio');
-
-	if (!x)
-	return deltio;
-
-	let katastasi = x.katastasiGet();
-	let klisto = x.isKlisto();
-	let ipiresia = x.ipiresiaGet();
+	let katastasi = candi.katastasiGet();
+	let klisto = candi.isKlisto();
+	let ipiresia = candi.ipiresiaGet();
 	let update = letrak.prosvasiIsUpdate(ipiresia);
 
 	pnd.toolbarDOM.
@@ -1266,101 +1262,16 @@ deltio.prosopa = (opts) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// Η function "diafores" καλείται όταν ο χρήστης κάνει κλικ στο πλήκτρο
-// εντοπισμού διαφορών μεταξύ του επιλεγμένου δελτίου και του αντίστοιχου
-// προηγούμενου δελτίου. Με άλλα λόγια, αν ο χρήστης έχει επιλεγμένο το
-// δελτίο προσέλευσης της Τρίτης, 13 Σεπτεμβρίου 2022, τότε με το πλήκτρο
-// εντοπισμού διαφορών θα πρέπει να βρεθεί το δελτίο προσέλευσης της
-// Δευτέρας, 12 Σεπτεμβρίου 2022 και να εντοπιστούν οι διαφορές μεταξύ
-// των δύο δελτίων. Οι διαφορές θα επιστραφούν ως json object και, εφόσον
-// υπάρχουν διαφορές, θα πρέπει να εμφανιστούν σε νέα καρτέλα.
-
 deltio.diafores = (e) => {
 	e.stopPropagation();
-	pnd.fyiMessage('Εντοπισμός διαφορών…');
 
-	let trexonHTML = $('.deltioCandi').first();
-	let trexon = trexonHTML.data('deltio');
+	let trexon = deltio.candiGet();
 
-	if (deltio.diaforesAnte(trexon))
-	return pnd.fyiError('Ακαθόριστο δελτίο');
+	if (!trexon)
+	return;
 
-	$.post({
-		'url': 'diafores.php',
-		'data': {
-			"trexon": trexon.kodikos,
-			"protipo": trexon.protipo,
-		},
-		'dataType': 'json',
-		'success': (rsp) => deltio.diaforesProcess(rsp,
-			trexonHTML, trexon),
-		'error': (e) => {
-			pnd.fyiError('Σφάλμα εντοπισμού διαφορών');
-			console.error(e);
-		},
-	});
-};
-
-// Η function "diaforesAnte" δέχεται το τρέχον δελτίο και ελέγχει την
-// εγκυρότητα του εν λόγω δελτίου, δηλαδή αν όντως υπάρχει τρέχον (επιλεγμένο)
-// δελτίο, και αν αυτό το δελτίο έχει συμπληρωμένο πρότυπο, καθώς η έρευνα για
-// τον εντοπισμό των διαφορών θα εκκινήσει από το πρότυπο δελτίο. Η function
-// επιστρέφει true αν υπάρχει πρόβλημα, αλλιώς επιστρέφει false.
-
-deltio.diaforesAnte = (deltio) => {
-	if (!deltio)
-	return true;
-
-	if (!deltio.hasOwnProperty('kodikos'))
-	return true;
-
-	if (!deltio.kodikos)
-	return true;
-
-	if (!deltio.hasOwnProperty('protipo'))
-	return true;
-
-	if (!deltio.protipo)
-	return true;
-
-	return false;
-};
-
-deltio.diaforesProcess = (data, trexonHTML, trexon) => {
-	if (data.hasOwnProperty('error'))
-	return pnd.fyiError(data.error);
-
-	if (data.hasOwnProperty('nodif'))
-	return deltio.oxiDiafores(data, trexonHTML);
-
-	if (!data.hasOwnProperty('tre'))
-	return pnd.fyiError('Δεν εντοπίστηκε τρέχον παρουσιολόγιο');
-
-	if (!data.hasOwnProperty('pro'))
-	return pnd.fyiError('Δεν εντοπίστηκε προηγούμενο παρουσιολόγιο');
-
-	pnd.fyiMessage('Εντοπίστηκαν διαφορές!');
-
-	let url = '../diafores?tre=' + data.tre + '&pro=' + data.pro;
-	deltio.prosopaWindows.push(window.open(url, '_blank'));
-};
-
-// Η function "oxiDiafores" καλείται στην περίπτωση που δεν έχουν εντοπιστεί
-// διαφορές με το προηγούμενο παρουσιολόγιο. Σ' αυτή την περίπτωση εμφανίζουμε
-// σχετικό ενημερωτικό μήνυμα στο οποίο αναφέρουμε και τις ημερομηνίες του
-// τρέχοντος και του προηγούμενου παρουσιολογίου.
-
-deltio.oxiDiafores = (data, trexonHTML) => {
-	let treImera = trexonHTML.children('.deltioImera').text();
-	let treImerominia = trexonHTML.children('.deltioImerominia').text();
-
-	let proDate = new Date(data.imerominia);
-	let proImerominia = pnd.date2date(proDate, 'YMD', '%D-%M-%Y');
-	let proImera = pnd.dowLongGet(proDate);
-
-	return pnd.fyiMessage('<b>' + treImera + '</b>, <b>' +
-		treImerominia + '</b>: δεν εντοπίστηκαν διαφορές από ' +
-		'<b>' + proImera + '</b>, <b>' + proImerominia + '</b>');
+	LETRAK.trexon = trexon;
+	deltio.prosopaWindows.push(window.open('../diafores', '_blank'));
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -1648,6 +1559,49 @@ letrak.deltio.prototype.domGet = function() {
 	html('&#x2605;'));
 
 	return dom;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+deltio.isCandi = () => {
+	let candi = $('.deltioCandi').first();
+
+	if (!candi.length)
+	return false;
+
+	candi = candi.data('deltio');
+
+	// Αν φαίνεται να υπάρχει τρέχον δελτίο, και είναι πράγματι δελτίο,
+	// και μπορώ να πάρω τον κωδικό του, και ο κωδικός αυτός δεν είναι
+	// ακαθόριστος ή μηδενικός, τότε θεωρώ ότι υπάρχει πράγματι τρέχον
+	// δελτίο και σ' αυτήν την περίπτωση το επιστρέφω.
+
+	try {
+		if (candi.kodikosGet())
+		return candi;
+	}
+
+	// Αν κάτι πήγε στραβά στη διαδικασία του παραπάνω ελέγχου, τότε
+	// θεωρώ ότι δεν υπάρχει τρέχον δελτίο.
+
+	catch (e) {
+		return false;
+	}
+
+	// Η διαδικασία ελέγχου περατώθηκε χωρίς προβλήματα, αλλά το
+	// αποτέλεσμα του ελέγχου ήταν αρνητικό.
+
+	return false;
+};
+
+deltio.candiGet = () => {
+	let candi = deltio.isCandi();
+
+	if (candi)
+	return candi;
+
+	pnd.fyiError('Ακαθόριστο τρέχον παρουσιολόγιο');
+	return undefined;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
