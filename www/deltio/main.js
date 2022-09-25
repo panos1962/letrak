@@ -103,6 +103,7 @@ deltio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'reportsTabLabel': 'Εκτυπώσεις',
+
 	'diaforesTabLabel': '&#9775;',
 	'diaforesTitle': 'Εντοπισμός διαφορών με προηγούμενο παρουσιολόγιο',
 

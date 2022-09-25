@@ -125,12 +125,24 @@ diafores.diaforesProcess = (rsp) => {
 	let tre = new diafores.deltio(rsp.tre);
 	let pro = new diafores.deltio(rsp.pro);
 
+	document.title = tre.kodikos + ' <> ' + pro.kodikos;
+
+	let nodif = true;
+
+	for (let ipalilos in rsp.ipl) {
+		nodif = false;
+		break;
+	}
+
 	pnd.ofelimoDOM.
 	empty().
 	append($('<div>').attr('id', 'deltioArea').
 	append(tre.deltioDomGet()).
-	append($('<div>').html('&#9775;')).
+	append($('<div>').html(nodif ? '&#9776' : '&#9775')).
 	append(pro.deltioDomGet()));
+
+	if (nodif)
+	return diafores;
 
 	for (let ipalilos in rsp.ipl) {
 		ipalilos = new diafores.ipalilos(ipalilos, rsp.ipl[ipalilos]);

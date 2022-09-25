@@ -92,6 +92,18 @@ const prosopa = {};
 const ektiposi =
 require('./ektiposi.js')(pnd, letrak, prosopa);
 
+self.LETRAK = {
+	"exodosTabDOM": false,
+};
+
+prosopa.wlist = [];
+
+$(window).
+on('beforeunload', () => {
+	while (prosopa.wlist.length)
+	prosopa.wlist.pop().close();
+});
+
 prosopa.minima = {
 	'ipografiCheckSymbol': '&#x2714;',
 
@@ -132,6 +144,9 @@ prosopa.minima = {
 
 	'filtraTabLabel': 'Φίλτρα',
 	'oxiDikaiomaIpovolis': 'Δεν έχετε δικαίωμα υποβολής',
+
+	'diaforesTabLabel': '&#9775;',
+	'diaforesTitle': 'Εντοπισμός διαφορών με προηγούμενο παρουσιολόγιο',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -240,7 +255,12 @@ prosopa.selidaSetup = () => {
 	addClass('prosopaPliktro').
 	addClass('prosopaPliktroUpdate').
 	html(prosopa.minima.winpakTabLabel).
-	on('click', (e) => prosopa.winpak(e)));
+	on('click', (e) => prosopa.winpak(e))).
+
+	append(letrak.tabDOM().
+	attr('title', prosopa.minima.diaforesTitle).
+	html(prosopa.minima.diaforesTabLabel).
+	on('click', (e) => prosopa.diafores(e)));
 
 	prosopa.ananeosi();
 	return prosopa;
@@ -3231,6 +3251,15 @@ letrak.ipografi.prototype.domGet = function() {
 	html(checkok ? prosopa.minima.ipografiCheckSymbol : ''));
 
 	return dom;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.diafores = (e) => {
+	e.stopPropagation();
+
+	self.LETRAK.trexon = prosopa.deltio;
+	prosopa.wlist.push(window.open('../diafores', '_blank'));
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
