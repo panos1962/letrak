@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-26
 // Updated: 2022-09-25
 // Updated: 2022-09-24
 // Updated: 2022-09-22
@@ -142,7 +143,7 @@ diafores.diaforesProcess = (rsp) => {
 	append(pro.deltioDomGet()));
 
 	if (nodif)
-	return diafores;
+	return diafores.oxiAlages();
 
 	for (let ipalilos in rsp.ipl) {
 		ipalilos = new diafores.ipalilos(ipalilos, rsp.ipl[ipalilos]);
@@ -181,6 +182,23 @@ diafores.diaforesProcess = (rsp) => {
 	}
 
 	return diafores;
+};
+
+diafores.oxiAlages = function() {
+	pnd.ofelimoDOM.
+	append($('<div>').addClass('diaforesNoDif').
+	text('Δεν παρουσιάστηκαν διαφορές. Κάντε κλικ, ' +
+		'ή πατήστε οποιοδήποτε πλήκτρο για επιστροφή.'));
+	pnd.bodyDOM.
+	on('click', (e) => diafores.oxiAlagesClose(e)).
+	on('keyup', (e) => diafores.oxiAlagesClose(e));
+
+	return diafores;
+};
+
+diafores.oxiAlagesClose = function(e) {
+	e.stopPropagation();
+	self.close();
 };
 
 diafores.ipalilosProsthiki = (dom, parousia) => {
