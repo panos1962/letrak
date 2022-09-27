@@ -670,7 +670,6 @@ deltio.candiTabsSetup = () => {
 
 	append(deltio.diaforesTabDOM = letrak.tabDOM().
 	addClass('candiTab').
-	addClass('adminTab').
 	attr('title', deltio.minima.diaforesTitle).
 	html(deltio.minima.diaforesTabLabel).
 	on('click', (e) => deltio.diafores(e)));
