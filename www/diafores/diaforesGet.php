@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-28
 // Updated: 2022-09-25
 // Updated: 2022-09-24
 // Updated: 2022-09-22
@@ -62,11 +63,13 @@ print '{' .
 ///////////////////////////////////////////////////////////////////////////////@
 
 class Diafores {
+	public static $prosvasi;
 	public static $tre;
 	public static $pro;
 	public static $ilist;
 
 	public static function init() {
+		self::$prosvasi = NULL;
 		self::$tre = NULL;
 		self::$pro = NULL;
 		self::$ilist = [];
@@ -84,59 +87,56 @@ class Diafores {
 	}
 
 	public static function trexon_check() {
-		self::$tre = pandora::parameter_get("tre");
+		$tre = pandora::parameter_get("tre");
 
-		if (letrak::deltio_invalid_kodikos(self::$tre))
+		if (letrak::deltio_invalid_kodikos($tre))
 		letrak::fatal_error_json("Απροσδιόριστο τρέχον παρουσιολόγιο");
 
-		self::$tre = self::deltio_fetch(self::$tre);
+		self::$tre = (new Deltio())->from_database($tre);
 
-		if (!self::$tre)
+		if (self::$tre->oxi_kodikos())
 		letrak::fatal_error_json("Ακαθόριστο τρέχον παρουσιολόγιο");
+
+		self::$tre->imerominia = self::$tre->imerominia->format("Y-m-d");
 
 		return __CLASS__;
 	}
 
 	public static function proigoumeno_check() {
 		$query = "SELECT `protipo` FROM `letrak`.`deltio`" .
-			" WHERE `kodikos` = " . self::$tre["kodikos"];
+			" WHERE `kodikos` = " . self::$tre->kodikos;
 
-		self::$pro = pandora::first_row($query, MYSQLI_NUM);
+		$pro = pandora::first_row($query, MYSQLI_NUM);
 
-		if (!self::$pro)
+		if (!$pro)
 		letrak::fatal_error_json("Δεν υπάρχει πρότυπο παρουσιολόγιο");
 
-		self::$pro = self::$pro[0];
+		$pro = $pro[0];
 
-		if (letrak::deltio_invalid_kodikos(self::$pro))
+		if (letrak::deltio_invalid_kodikos($pro))
 		letrak::fatal_error_json("Ακαθόριστο πρότυπο παρουσιολόγιο");
 
 		$query = "SELECT `protipo` FROM `letrak`.`deltio`" .
-			" WHERE `kodikos` = " . self::$pro;
+			" WHERE `kodikos` = " . $pro;
 
-		self::$pro = pandora::first_row($query, MYSQLI_NUM);
+		$pro = pandora::first_row($query, MYSQLI_NUM);
 
-		if (!self::$pro)
+		if (!$pro)
 		letrak::fatal_error_json("Δεν υπάρχει προηγούμενο παρουσιολόγιο");
 
-		self::$pro = self::$pro[0];
+		$pro = $pro[0];
 
-		if (letrak::deltio_invalid_kodikos(self::$pro))
+		if (letrak::deltio_invalid_kodikos($pro))
 		letrak::fatal_error_json("Ακαθόριστο προηγούμενο παρουσιολόγιο");
 
-		self::$pro = self::deltio_fetch(self::$pro);
+		self::$pro = (new Deltio())->from_database($pro);
 
-		if (!self::$pro)
+		if (self::$pro->oxi_kodikos())
 		letrak::fatal_error_json("Απροσδιόριστο προηγούμενο παρουσιολόγιο");
 
-		return __CLASS__;
-	}
+		self::$pro->imerominia = self::$pro->imerominia->format("Y-m-d");
 
-	private static function deltio_fetch($deltio) {
-		$query = "SELECT `kodikos`, `imerominia` " .
-			"FROM `letrak`.`deltio` " .
-			"WHERE `kodikos` = " . $deltio;
-		return pandora::first_row($query, MYSQLI_ASSOC);
+		return __CLASS__;
 	}
 
 	public static function parousia_fetch(&$deltio) {
@@ -144,7 +144,7 @@ class Diafores {
 		$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
 			"`adidos`, `adapo`, `adeos`, `excuse`, `info` " .
 			"FROM `letrak`.`parousia` " .
-			"WHERE `deltio` = " . $deltio["kodikos"];
+			"WHERE `deltio` = " . $deltio->kodikos;
 
 		$result = pandora::query($query);
 
@@ -153,7 +153,7 @@ class Diafores {
 			unset($row["ipalilos"]);
 		}
 
-		$deltio["parousia"] = $plist;
+		$deltio->parousia = $plist;
 
 		return __CLASS__;
 	}
@@ -170,8 +170,8 @@ class Diafores {
 	];
 
 	public static function adiafora_delete() {
-		$tre = self::$tre["parousia"];
-		$pro = self::$pro["parousia"];
+		$tre = self::$tre->parousia;
+		$pro = self::$pro->parousia;
 
 		foreach ($tre as $ipalilos => $parousia) {
 			if (!array_key_exists($ipalilos, $pro))
@@ -200,8 +200,8 @@ class Diafores {
 			unset($pro[$ipalilos]);
 		}
 
-		self::$tre["parousia"] = $tre;
-		self::$pro["parousia"] = $pro;
+		self::$tre->parousia = $tre;
+		self::$pro->parousia = $pro;
 
 		return __CLASS__;
 	}
@@ -217,10 +217,10 @@ class Diafores {
 	}
 
 	public static function ipalilos_fetch() {
-		foreach (self::$tre["parousia"] as $ipalilos => $parousia)
+		foreach (self::$tre->parousia as $ipalilos => $parousia)
 		self::$ilist[$ipalilos] = $ipalilos;
 
-		foreach (self::$pro["parousia"] as $ipalilos => $parousia)
+		foreach (self::$pro->parousia as $ipalilos => $parousia)
 		self::$ilist[$ipalilos] = $ipalilos;
 
 		foreach (self::$ilist as $ipalilos) {
