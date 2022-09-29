@@ -65,11 +65,36 @@ print '{' .
 ///////////////////////////////////////////////////////////////////////////////@
 
 class Diafores {
+	// Το πεδίο "prosvasi" περιέχει τα στοιχεία πρόσβασης του χρήστη
+	// που τρέχει την εφαρμογή.
+
 	public static $prosvasi;
+
+	// Το πεδίο "mask" χρησιμοποιείται για φιλτράρισμα των στοιχείων
+	// προκειμένου να μην φανερωθούν στοιχεία σε χρήστες που δεν έχουν
+	// πρόσβαση. Αν είναι null τότε δεν γίνεται κάποιο φιλτράρισμα,
+	// αλλιώς περιέχει τον κωδικό του υπαλλήλου που τρέχει την εφαρμογή
+	// και τα δεδομένα περιορίζονται σε αυτόν τον υπάλληλο μόνο.
+
 	public static $mask;
+
+	// Το πεδίο "tre" περιέχει το «τρέχον» παρουσιολόγιο, δηλαδή το
+	// παρουσιολόγιο από το οποίο εκκίνησε ο εντοπισμός διαφορών.
+
 	public static $tre;
+
+	// Το πεδίο "pro" περιέχει το «προηγούμενο» παρουσιολόγιο, δηλαδή
+	// αυτό με το οποίο θα γίνει η σύγκριση.
+
 	public static $pro;
+
+	// Το πεδίο "ilist" περιέχει λίστα υπαλλήλων οι οποίοι παρουσιάζουν
+	// διαφορές μεταξύ τρέχοντος και προηγούμενου παρουσιολογίου.
+
 	public static $ilist;
+
+	// Η μέθοδος "init" επιτελεί αρχικοποίηση τιμών του singleton
+	// "Diafores".
 
 	public static function init() {
 		self::$prosvasi = NULL;
@@ -81,6 +106,9 @@ class Diafores {
 		return __CLASS__;
 	}
 
+	// Η μέθοδος "prosvasi_check" ελέγχει αν η εφαρμογή τρέχει από
+	// επώνυμο χρήστη. Σε αντίθετη περίπτωση ακυρώνεται η διαδικασία.
+
 	public static function prosvasi_fetch() {
 		self::$prosvasi = letrak::prosvasi_get();
 
@@ -90,6 +118,9 @@ class Diafores {
 		return __CLASS__;
 	}
 
+	// Η μέθοδος "trexon_fetch" επιχειρεί να προσπελάσει το τρέχον
+	// παρουσιολόγιο από την database.
+
 	public static function trexon_fetch() {
 		$tre = pandora::parameter_get("tre");
 		self::$tre = self::deltio_fetch($tre, "τρέχον");
@@ -98,13 +129,26 @@ class Diafores {
 		return __CLASS__;
 	}
 
+	// Η μέθοδος "proigoumeno_fetch" επιχειρεί να προσπελάσει το
+	// προηγούμενο παρουσιολόγιο από την database.
+
 	public static function proigoumeno_fetch() {
+		// Παίρνουμε πρώτα το πρότυπο του τρέχοντος παρουσιολογίου,
+		// έστω αυτό το παρουσιολόγιο "Π", και μετά παίρνουμε το
+		//  πρότυπο του "Π".
+
 		$pro = self::deltio_fetch(self::$tre->protipo, "πρότυπο");
 		self::$pro = self::deltio_fetch($pro->protipo, "προηγούμενο");
 		self::imerominia_fix(self::$pro);
 
 		return __CLASS__;
 	}
+
+	// Η μέθοδος "deltio_fetch" είναι εσωτερική και σκοπό έχει να
+	// προσπελάσει ένα παρουσιολόγιο στην database και να το επισρέψει.
+	// Σε περίπτωση που δεν βρεθεί το παρουσιολόγιο, ακυρώνεται η όλη
+	// διαδικασία. Ως παραμέτρους δέχεται τον κωδικό παρουσιολογίου
+	// και μια περιγραφή («τρέχον», «πρότυπο», «προηγούμενο»).
 
 	private static function deltio_fetch($deltio, $spec = "") {
 		$spec = " " . $spec . " παρουσιολόγιο";
@@ -120,10 +164,19 @@ class Diafores {
 		return $deltio;
 	}
 
+	// Η μέθοδος "imerominia_fix" είναι εσωτερική και σκοπό έχει τη
+	// μετατροπή της ημερομηνίας του παρουσιολογίου από date/time σε
+	// string. Ως παράμετρο δέχεται το ίδιο το παρουσιολόγιο.
+
 	private static function imerominia_fix($deltio) {
 		$deltio->imerominia = $deltio->imerominia->format("Y-m-d");
 		return __CLASS__;
 	}
+
+	// Η μέθοδος "prosvasi_check" ελέγχει τις προσβάσεις του χρήστη που
+	// τρέχει την εφαρμογή και θέτει το πεδίο "mask" στον κωδικό του
+	// υπαλλήλου εφόσον ο χρήστης δεν έχει δικαιώματα στις υπηρεσίες
+	// που αφορούν τόσο το τρέχον όσο και το προηγούμενο παρουσιολόγιο.
 
 	public static function prosvasi_check() {
 		$ipalilos = self::$prosvasi->ipalilos_get();
@@ -143,10 +196,17 @@ class Diafores {
 		return __CLASS__;
 	}
 
+	// Η μέθοδος "set_mask" είναι εσωτερική και σκοπό έχει να θέσει το
+	// πεδίο "mask" στον κωδικό του υπαλλήλου που τρέχει την εφαρμογή.
+
 	private static function set_mask($ipalilos) {
 		self::$mask = $ipalilos;
 		return __CLASS__;
 	}
+
+	// Η μέθοδος "parousia_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
+	// και θέτει το πεδίο "plist" του παρουσιολογίου να δείχενει στις
+	// παρουσίες που περιλαμβάνει το παρουσιολόγιο.
 
 	public static function parousia_fetch($deltio) {
 		$plist = [];
@@ -154,6 +214,10 @@ class Diafores {
 			"`adidos`, `adapo`, `adeos`, `excuse`, `info` " .
 			"FROM `letrak`.`parousia` " .
 			"WHERE (`deltio` = " . $deltio->kodikos . ")";
+
+		// Αν ο υπάλληλος που τρέχει την εφαρμογή δεν έχει πρόσβαση
+		// στα προς σύγριση παρουσιολόγια, τότε οι περιορίζονται οι
+		// παρουσίες μόνο σε αυτές που αφορούν τον ίδιο.
 
 		if (self::$mask)
 		$query .= " AND (`parousia`.`ipalilos` = " . self::$mask . ")";
@@ -170,8 +234,8 @@ class Diafores {
 		return __CLASS__;
 	}
 
-	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί
-	// να παρουσιάζουν διαφορές.
+	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί να παρουσιάζουν
+	// διαφορές.
 
 	private static $columns = [
 		"karta",
@@ -180,6 +244,9 @@ class Diafores {
 		"adeos",
 		"info",
 	];
+
+	// Η μέθοδος "adiafora_delete" διαγράφει από τα προς σύγκριση
+	// παρουσιολόγια τις παρουσίες που δεν παρουσιάζουν διαφορές.
 
 	public static function adiafora_delete() {
 		$tre = self::$tre->parousia;
@@ -218,9 +285,18 @@ class Diafores {
 		return __CLASS__;
 	}
 
+	// Η μέθοδος "adikeologiti_apousia" είναι εσωτερική και ελέγχει αν
+	// μια εγγραφή παρουσίας υποδηλώνει αδικαιολόγητη απουσία.
+
 	private static function adikeologiti_apousia($parousia) {
+		// Αν υπάρχει μέρα και ώρα συμπληρωμένη, τότε δεν έχουμε
+		// αδικαιολόγητη απουσία.
+
 		if ($parousia["meraora"])
 		return FALSE;
+
+		// Αν de
+		// αδικαιολόγητη απουσία.
 
 		if ($parousia["adidos"])
 		return FALSE;
