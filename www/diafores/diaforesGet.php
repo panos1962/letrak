@@ -259,7 +259,7 @@ class Diafores {
 			if ($parousia["excuse"])
 			continue;
 
-			if (self::adikeologiti_apousia($parousia))
+			if (self::pithani_apousia($parousia))
 			continue;
 
 			$dif = FALSE;
@@ -285,21 +285,25 @@ class Diafores {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "adikeologiti_apousia" είναι εσωτερική και ελέγχει αν
+	// Η μέθοδος "pithani_apousia" είναι εσωτερική και ελέγχει αν
 	// μια εγγραφή παρουσίας υποδηλώνει αδικαιολόγητη απουσία.
 
-	private static function adikeologiti_apousia($parousia) {
+	private static function pithani_apousia($parousia) {
 		// Αν υπάρχει μέρα και ώρα συμπληρωμένη, τότε δεν έχουμε
-		// αδικαιολόγητη απουσία.
+		// απουσία.
 
 		if ($parousia["meraora"])
 		return FALSE;
 
-		// Αν de
-		// αδικαιολόγητη απουσία.
+		// Δεν υπάρχει μέρα και ώρα συμπληρωμένη. Αν υπάρχει κωδικός
+		// αδείας, τότε δεν έχουμε απουσία.
 
 		if ($parousia["adidos"])
 		return FALSE;
+
+		// Δεν υπάρχει μέρα και ώρα. Δεν υπάρχει κωδικός αδείας.
+		// Προς το παρόν Θεωρούμε ότι έχουμε απουσία, αλλά αυτό
+		// θα ελεγθεί περαιτέρω με την εξαίρεση.
 
 		return TRUE;
 	}
