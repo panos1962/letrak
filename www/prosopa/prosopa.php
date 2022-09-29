@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-29
 // Updated: 2020-05-06
 // Updated: 2020-05-03
 // Updated: 2020-04-26
@@ -75,7 +76,7 @@ $ipiresia = $deltio->ipiresia_get();
 
 if ($deltio->oxi_ipografon($ipalilos) &&
 	$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
-$query .= " AND (`parousia`.`ipalilos` = " . $prosvasi->ipalilos_get() . ")";
+$query .= " AND (`parousia`.`ipalilos` = " . $ipalilos . ")";
 
 $query .= " ORDER BY `l`, `f`, `r`, `i`";
 

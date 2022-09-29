@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-29
 // Updated: 2022-09-26
 // Updated: 2022-09-25
 // Updated: 2022-09-24
@@ -123,6 +124,9 @@ diafores.ipalilosDoneToggle = function(e, dom) {
 };
 
 diafores.diaforesProcess = (rsp) => {
+	if (rsp.error)
+	return pnd.fyiError(rsp.error);
+
 	let tre = new diafores.deltio(rsp.tre);
 	let pro = new diafores.deltio(rsp.pro);
 
