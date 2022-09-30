@@ -271,39 +271,50 @@ diafores.adiaAlagi = (dom, t, p) => {
 	return diafores;
 
 	if ((!p.adidos) && t.adidos) {
-		let msg = 'Εκκίνηση αδείας, είδος <b>' + t.adidos + '</b>';
-
-		if (t.adapo)
-		msg += ', από <b>' + t.adapo + '</b>';
-
-		if (t.adeos)
-		msg += ', έως <b>' + t.adeos + '</b>';
+		let msg = 'Εκκίνηση αδείας, ' +
+			diafores.adiaIdos(t) +
+			diafores.adiaDiastima(t);
 
 		dom.append($('<div>').html(msg));
 		return diafores;
 	}
 
 	if (p.adidos && (!t.adidos)) {
-		let msg = 'Λήξη αδείας, είδος <b>' + p.adidos + '</b>';
-
-		if (p.adapo)
-		msg += ', από <b>' + p.adapo + '</b>';
-
-		if (p.adeos)
-		msg += ', έως <b>' + p.adeos + '</b>';
+		let msg = 'Λήξη αδείας, ' +
+			diafores.adiaIdos(p) +
+			diafores.adiaDiastima(p);
 
 		dom.append($('<div>').html(msg));
 		return diafores;
 	}
 
 	let msg = 'Αλλαγή αδείας' +
-		' από <b>' + p.adidos + '</b> [ <b>' +
-		p.adapo + '</b> &#8212; <b>' + p.adeos + '</b> ]' +
-		' σε <b>' + t.adidos + '</b> [ <b>' +
-		t.adapo + '</b> &#8212; <b>' + t.adeos + '</b> ]';
+		' από ' + diafores.adiaIdos(p) + diafores.adiaDiastima(p) +
+		' σε ' + diafores.adiaIdos(t) + diafores.adiaDiastima(t);
 
 	dom.append($('<div>').html(msg));
 	return diafores;
+};
+
+diafores.adiaIdos = (parousia) => {
+	let s = 'είδος <b>' + parousia.adidos + '</b>';
+	return s;
+};
+
+diafores.adiaDiastima = (parousia) => {
+	let s = '&nbsp;&#10098;';
+
+	if (parousia.adapo)
+	s += '<b>' + parousia.adapo + '</b>&nbsp;';
+
+	s += '&#8212;';
+
+	if (parousia.adeos)
+	s += '&nbsp;<b>' + parousia.adeos + '</b>';
+
+	s += '&#10099';
+
+	return s;
 };
 
 diafores.exeresiCheck = (dom, t) => {
