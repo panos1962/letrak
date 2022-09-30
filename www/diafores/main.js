@@ -297,8 +297,10 @@ diafores.adiaAlagi = (dom, t, p) => {
 	}
 
 	let msg = 'Αλλαγή αδείας' +
-		' από <b>' + p.adidos + ' ' + p.adapo + ' &#8212; ' + p.adeos + '</b>' +
-		' σε <b>' + t.adidos + ' ' + t.adapo + ' &#8212; ' + t.adeos + '</b>';
+		' από <b>' + p.adidos + '</b> [ <b>' +
+		p.adapo + '</b> &#8212; <b>' + p.adeos + '</b> ]' +
+		' σε <b>' + t.adidos + '</b> [ <b>' +
+		t.adapo + '</b> &#8212; <b>' + t.adeos + '</b> ]';
 
 	dom.append($('<div>').html(msg));
 	return diafores;
@@ -380,8 +382,10 @@ diafores.parousia = function(ipalilos, parousia) {
 	this.orario = parousia.orario;
 	this.karta = parousia.karta;
 	this.adidos = parousia.adidos;
-	this.adapo = pnd.date2date(parousia.adapo, 'YMD', '%D-%M-%Y');
-	this.adeos = pnd.date2date(parousia.adeos, 'YMD', '%D-%M-%Y');
+	this.adapo = parousia.adapo ?
+		pnd.date2date(parousia.adapo, 'YMD', '%D-%M-%Y') : '';
+	this.adeos = parousia.adeos ?
+		pnd.date2date(parousia.adeos, 'YMD', '%D-%M-%Y') : '';
 	this.excuse = parousia.excuse;
 	this.info = parousia.info;
 };
