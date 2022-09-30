@@ -271,7 +271,7 @@ diafores.adiaAlagi = (dom, t, p) => {
 	return diafores;
 
 	if ((!p.adidos) && t.adidos) {
-		let msg = 'Εκκίνηση αδείας, ' +
+		let msg = 'Εκκίνηση αδείας,' +
 			diafores.adiaIdos(t) +
 			diafores.adiaDiastima(t);
 
@@ -280,7 +280,7 @@ diafores.adiaAlagi = (dom, t, p) => {
 	}
 
 	if (p.adidos && (!t.adidos)) {
-		let msg = 'Λήξη αδείας, ' +
+		let msg = 'Λήξη αδείας,' +
 			diafores.adiaIdos(p) +
 			diafores.adiaDiastima(p);
 
@@ -289,28 +289,28 @@ diafores.adiaAlagi = (dom, t, p) => {
 	}
 
 	let msg = 'Αλλαγή αδείας' +
-		' από ' + diafores.adiaIdos(p) + diafores.adiaDiastima(p) +
-		' σε ' + diafores.adiaIdos(t) + diafores.adiaDiastima(t);
+		' από' + diafores.adiaIdos(p) + diafores.adiaDiastima(p) +
+		' σε' + diafores.adiaIdos(t) + diafores.adiaDiastima(t);
 
 	dom.append($('<div>').html(msg));
 	return diafores;
 };
 
 diafores.adiaIdos = (parousia) => {
-	let s = 'είδος <b>' + parousia.adidos + '</b>';
+	let s = ' <b>' + parousia.adidos + '</b>';
 	return s;
 };
 
 diafores.adiaDiastima = (parousia) => {
-	let s = '&nbsp;&#10098;';
+	let s = ' &#10098;';
 
 	if (parousia.adapo)
-	s += '<b>' + parousia.adapo + '</b>&nbsp;';
+	s += '<b>' + parousia.adapo + '</b>';
 
-	s += '&#8212;';
+	s += '&nbsp;&#8212;&nbsp;';
 
 	if (parousia.adeos)
-	s += '&nbsp;<b>' + parousia.adeos + '</b>';
+	s += '<b>' + parousia.adeos + '</b>';
 
 	s += '&#10099';
 
