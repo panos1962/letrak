@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-30
 // Updated: 2022-09-29
 // Updated: 2022-09-26
 // Updated: 2022-09-25
@@ -182,7 +183,7 @@ diafores.diaforesProcess = (rsp) => {
 		kartaAlagi(dom, t, p).
 		adiaAlagi(dom, t, p).
 		exeresiCheck(dom, t).
-		infoAlagi(dom, t, p);
+		infoCheck(dom, t, p);
 	}
 
 	return diafores;
@@ -311,16 +312,10 @@ diafores.exeresiCheck = (dom, t) => {
 
 	dom.append($('<div>').html(msg));
 	return diafores;
-
-	dom.append($('<div>').html(msg));
-	return diafores;
 };
 
-diafores.infoAlagi = (dom, t, p) => {
+diafores.infoCheck = (dom, t, p) => {
 	if (!t.info)
-	return diafores;
-
-	if (t.info === p.info)
 	return diafores;
 
 	let msg = 'Παρατήρηση: <b>' + t.info + '</b>';

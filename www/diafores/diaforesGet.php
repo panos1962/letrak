@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-09-30
 // Updated: 2022-09-29
 // Updated: 2022-09-28
 // Updated: 2022-09-25
@@ -234,79 +235,101 @@ class Diafores {
 		return __CLASS__;
 	}
 
-	// Στον πίνακα "columns" έχουμε τα πεδία που μπορεί να παρουσιάζουν
-	// διαφορές.
-
-	private static $columns = [
-		"karta",
-		"adidos",
-		"adapo",
-		"adeos",
-		"info",
-	];
-
 	// Η μέθοδος "adiafora_delete" διαγράφει από τα προς σύγκριση
 	// παρουσιολόγια τις παρουσίες που δεν παρουσιάζουν διαφορές.
 
 	public static function adiafora_delete() {
-		$tre = self::$tre->parousia;
-		$pro = self::$pro->parousia;
+		// Εκκινούμε τον έλεγχο διατρέχοντας τις παρουσίες του
+		// τρέχοντος παρουσιολογίου. Ωστόσο, θα μπορούσαμε να
+		// εκκινήσουμε τον έλεγχο διατρέχοντας τις παρουσίες
+		// του προηγούμενου παρουσιολογίου.
 
-		foreach ($tre as $ipalilos => $parousia) {
-			if (!array_key_exists($ipalilos, $pro))
+		foreach (self::$tre->parousia as $ipalilos => $trepar) {
+			// Αν δεν υπάρχει εγγραφή για τον ανά χείρας υπάλληλο
+			// στο προηγούμενο παρουσιολόγιο, τότε η εγγραφή
+			// θεωρείται ύποπτη.
+
+			if (!array_key_exists($ipalilos, self::$pro->parousia))
 			continue;
 
-			if ($parousia["excuse"])
+			if (self::pithani_apousia($trepar))
 			continue;
 
-			if (self::pithani_apousia($parousia))
+			// Στο σημείο αυτό έχουμε ήδη ελέγξει τα βασικά
+			// στοιχεία της ανά χείρας παρουσίας και τα βρήκαμε
+			// κανονικά, οπότε θα ελέγξουμε αν υπάρχει διαφορά
+			// στα βασικά στοιχεία παρουσίας με την αντίστοιχη
+			// παρουσία στο προηγούμενο παρουσιολόγιο.
+
+			if (self::is_diafora($trepar, self::$pro->parousia[$ipalilos]))
 			continue;
 
-			$dif = FALSE;
+			// Στο σημείο αυτό φαίνεται να μην υπάρχουν διαφορές
+			// μεταξύ των δύο παρουσιολογίων για τον υπάλληλο
+			// της ανά χείρας παρουσίας, επομένως απαλείφουμε
+			// τις εγγραφές παρουσίας τόσο από το τρέχον όσο
+			// και από το προηγούμενο παρουσιολόγιο για τον
+			// ανά χείρας υπάλληλο.
 
-			foreach (self::$columns as $column) {
-				if ($parousia[$column] === $pro[$ipalilos][$column])
-				continue;
-
-				$dif = TRUE;
-				break;
-			}
-
-			if ($dif)
-			continue;
-
-			unset($tre[$ipalilos]);
-			unset($pro[$ipalilos]);
+			unset(self::$tre->parousia[$ipalilos]);
+			unset(self::$pro->parousia[$ipalilos]);
 		}
-
-		self::$tre->parousia = $tre;
-		self::$pro->parousia = $pro;
 
 		return __CLASS__;
 	}
 
 	// Η μέθοδος "pithani_apousia" είναι εσωτερική και ελέγχει αν
-	// μια εγγραφή παρουσίας υποδηλώνει αδικαιολόγητη απουσία.
+	// μια εγγραφή παρουσίας υποδηλώνει απουσία.
 
 	private static function pithani_apousia($parousia) {
-		// Αν υπάρχει μέρα και ώρα συμπληρωμένη, τότε δεν έχουμε
-		// απουσία.
+		// Αν υπάρχει λόγος εξαίρεσης, τότε η εγγραφή θεωρείται
+		// ύποπτη.
+
+		if ($parousia["excuse"])
+		return TRUE;
+
+		// Αν υπάρχει παρατήρηση, τότε η εγγραφή θεωρείται ύποπτη.
+
+		if ($parousia["info"])
+		return TRUE;
+
+		// Αν υπάρχει μέρα και ώρα συμπληρωμένη, η εγγραφή θεωρείται
+		// κανονική.
 
 		if ($parousia["meraora"])
 		return FALSE;
 
 		// Δεν υπάρχει μέρα και ώρα συμπληρωμένη. Αν υπάρχει κωδικός
-		// αδείας, τότε δεν έχουμε απουσία.
+		// αδείας, τότε η εγγραφή θεωρείται κανονική.
 
 		if ($parousia["adidos"])
 		return FALSE;
 
-		// Δεν υπάρχει μέρα και ώρα. Δεν υπάρχει κωδικός αδείας.
-		// Προς το παρόν Θεωρούμε ότι έχουμε απουσία, αλλά αυτό
-		// θα ελεγθεί περαιτέρω με την εξαίρεση.
+		// Δεν υπάρχει εξαίρεση. Δεν υπάρχει μέρα και ώρα. Δεν
+		// υπάρχει κωδικός αδείας. Η εγγραφή θεωρείται ύποπτη.
 
 		return TRUE;
 	}
+
+	// Η μέθοδος "is_diafora" είναι εσωτερική και ελέγχει δύο εγγραφές
+	// παρουσίας όσον αφορά κάποια συγκεκριμένα πεδία.
+
+	private static function is_diafora($trepar, $propar) {
+		foreach ([
+			"karta",
+			"adidos",
+			"adapo",
+			"adeos",
+		] as $col) {
+			if ($trepar[$col] !== $propar[$col])
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	// Η μέθοδος "ipalilos_fetch" θέτει το πεδίο "ilist" να δείχνει σε
+	// λίστα με τους υπαλλήλους που παρουσιάζουν διαφορές.
 
 	public static function ipalilos_fetch() {
 		foreach (self::$tre->parousia as $ipalilos => $parousia)
@@ -314,6 +337,9 @@ class Diafores {
 
 		foreach (self::$pro->parousia as $ipalilos => $parousia)
 		self::$ilist[$ipalilos] = $ipalilos;
+
+		// Εμπλουτίζουμε τη λίστα με στοιχεία των υπαλλήλων που
+		// θα χρειαστούν κατά την εμφάνιση των διαφορών.
 
 		foreach (self::$ilist as $ipalilos) {
 			$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
