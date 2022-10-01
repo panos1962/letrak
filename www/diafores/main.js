@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-01
 // Updated: 2022-09-30
 // Updated: 2022-09-29
 // Updated: 2022-09-26
@@ -113,16 +114,7 @@ diafores.selidaSetup = () => {
 	return diafores;
 };
 
-diafores.ipalilosDoneToggle = function(e, dom) {
-	e.stopPropagation();
-	e.preventDefault();
-
-	if (dom.hasClass('ipalilosAreaDone'))
-	dom.removeClass('ipalilosAreaDone');
-
-	else
-	dom.addClass('ipalilosAreaDone');
-};
+///////////////////////////////////////////////////////////////////////////////@
 
 diafores.diaforesProcess = (rsp) => {
 	if (rsp.error)
@@ -335,6 +327,24 @@ diafores.infoCheck = (dom, t, p) => {
 
 	dom.append($('<div>').html(msg));
 	return diafores;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "ipalilosDoneToggle" καλείται όταν γίνεται κλικ σε κάποια
+// εγγραφή διαφοράς παρουσίας και σκοπό έχει να μαρκάρει με αλλαγή χρώματος
+// τη συγκεκριμένη διαφφορά προκειμένου να γνωρίζει ο χρήστης ποιες διαφορές
+// έχει ήδη επεξεργαστεί.
+
+diafores.ipalilosDoneToggle = function(e, dom) {
+	e.stopPropagation();
+	e.preventDefault();
+
+	if (dom.hasClass('ipalilosAreaDone'))
+	dom.removeClass('ipalilosAreaDone');
+
+	else
+	dom.addClass('ipalilosAreaDone');
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
