@@ -156,7 +156,8 @@ diafores.diaforesProcess = (rsp) => {
 	append(pro.deltioDomGet());
 
 	if (self.LETRAK.hasOwnProperty('klisimoTabDOM'))
-	deltioAreaDOM.append(self.LETRAK.klisimoTabDOM);
+	deltioAreaDOM.
+	append(self.LETRAK.klisimoTabDOM.addClass('diaforesKlisimoTab'));
 
 	pnd.ofelimoDOM.
 	empty().
