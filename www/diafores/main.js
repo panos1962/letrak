@@ -49,8 +49,6 @@ const letrak =
 require('../lib/letrak.js');
 
 const diafores = {};
-const ektiposi =
-require('./ektiposi.js')(pnd, letrak, diafores);
 
 pnd.domInit(() => {
 	pnd.
@@ -63,15 +61,11 @@ pnd.domInit(() => {
 
 	diafores.
 	selidaSetup();
-
-	window.onbeforeprint = ektiposi.before;
-	window.onafterprint = ektiposi.after;
 });
 
 ///////////////////////////////////////////////////////////////////////////////@
 
 diafores.selidaSetup = () => {
-	ektiposi.setup();
 	letrak.
 	toolbarTitlosSetup('<b>Διαφορές Παρουσιολογίων</b>').
 	toolbarXristisSetup().
