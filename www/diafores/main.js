@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-02
 // Updated: 2022-10-01
 // Updated: 2022-09-30
 // Updated: 2022-09-29
@@ -77,18 +78,9 @@ diafores.selidaSetup = () => {
 	ribbonCopyrightSetup();
 
 	if (letrak.noXristis())
-	return pnd.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
+	return diafores.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	if (!self.opener)
-	return pnd.fyiError('Ακαθόριστη γονική σελίδα');
-
-	try {
-		diafores.tre = self.opener.LETRAK.trexon.kodikosGet();
-	}
-
-	catch (e) {
-		return pnd.fyiError('Απροσδιόριστο τρέχον παρουσιολόγιο');
-	}
+	diafores.treproPinpoint();
 
 	pnd.
 	keepAlive('../mnt/pandora');
@@ -102,6 +94,7 @@ diafores.selidaSetup = () => {
 		'url': 'diaforesGet.php',
 		'data': {
 			"tre": diafores.tre,
+			"pro": diafores.pro,
 		},
 		'dataType': 'json',
 		'success': (rsp) => diafores.diaforesProcess(rsp),
@@ -114,11 +107,40 @@ diafores.selidaSetup = () => {
 	return diafores;
 };
 
+// Το προς έλεγχο παρουσιολόγιο (τρέχον) μπορεί να καθοριστεί με την παράμετρο
+// "tre", ενώ το αντίστοιχο προηγούμενο παρουσιολόγιο μπορεί να καθοριστεί με
+// την παράμετρο "pro". Αν δεν έχει καθοριστεί προηγούμενο παρουσιολόγιο, τότε
+// το πρόγραμμα θα επιχειρήσει να το εντοπίσει από το τρέχον παρουσιολόγιο.
+// Αν δεν έχει καθοριστεί ούτε τρέχον παρουσιολόγιο, τότε το πρόγραμμα θα
+// επιχειρήσει να το εντοπίσει από την γονική σελίδα.
+
+diafores.treproPinpoint = () => {
+	if (php.isRequest('tre')) {
+		diafores.tre = php.requestGet('tre');
+		diafores.pro = php.requestGet('pro');
+		return diafores;
+	}
+
+	if (!self.opener)
+	diafores.fatalError('Ακαθόριστη γονική σελίδα');
+
+	try {
+		diafores.tre = self.opener.LETRAK.trexon.kodikosGet();
+	}
+
+	catch (e) {
+		console.error(e);
+		diafores.fatalError('Απροσδιόριστο τρέχον παρουσιολόγιο');
+	}
+
+	return diafores;
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 diafores.diaforesProcess = (rsp) => {
 	if (rsp.error)
-	return pnd.fyiError(rsp.error);
+	return diafores.fyiError(rsp.error);
 
 	let tre = new diafores.deltio(rsp.tre);
 	let pro = new diafores.deltio(rsp.pro);
@@ -424,6 +446,18 @@ diafores.parousia.prototype.parousiaDomGet = function() {
 	append($('<div>').addClass('parousiaKarta').text(this.karta));
 
 	return this.DOM;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+diafores.fyiError = (s) => {
+	pnd.fyiError(s);
+	return diafores;
+};
+
+diafores.fatalError = (s) => {
+	pnd.fyiError(s);
+	throw s;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

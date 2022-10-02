@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-02
 // Updated: 2022-10-01
 // Updated: 2022-09-30
 // Updated: 2022-09-29
@@ -135,12 +136,14 @@ class Diafores {
 	// προηγούμενο παρουσιολόγιο από την database.
 
 	public static function proigoumeno_fetch() {
-		// Παίρνουμε πρώτα το πρότυπο του τρέχοντος παρουσιολογίου,
-		// έστω αυτό το παρουσιολόγιο "Π", και μετά παίρνουμε το
-		//  πρότυπο του "Π".
+		$pro = pandora::parameter_get("pro");
 
-		$pro = self::deltio_fetch(self::$tre->protipo, "πρότυπο");
-		self::$pro = self::deltio_fetch($pro->protipo, "προηγούμενο");
+		if (!isset($pro)) {
+			$pro = self::deltio_fetch(self::$tre->protipo, "πρότυπο");
+			$pro = $pro->protipo;
+		}
+
+		self::$pro = self::deltio_fetch($pro, "προηγούμενο");
 		self::imerominia_fix(self::$pro);
 
 		return __CLASS__;
