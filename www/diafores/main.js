@@ -148,12 +148,19 @@ diafores.diaforesProcess = (rsp) => {
 		break;
 	}
 
-	pnd.ofelimoDOM.
-	empty().
-	append($('<div>').attr('id', 'deltioArea').
+	let deltioAreaDOM = $('<div>').attr('id', 'deltioArea');
+
+	deltioAreaDOM.
 	append(tre.deltioDomGet()).
 	append($('<div>').html(nodif ? '&#9776' : '&#9775')).
-	append(pro.deltioDomGet()));
+	append(pro.deltioDomGet());
+
+	if (self.LETRAK.hasOwnProperty('klisimoTabDOM'))
+	deltioAreaDOM.append(self.LETRAK.klisimoTabDOM);
+
+	pnd.ofelimoDOM.
+	empty().
+	append(deltioAreaDOM);
 
 	if (nodif)
 	return diafores.oxiAlages();
