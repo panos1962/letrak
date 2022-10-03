@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-03
 // Updated: 2022-10-02
 // Updated: 2022-10-01
 // Updated: 2022-09-30
@@ -49,6 +50,11 @@ const letrak =
 require('../lib/letrak.js');
 
 const diafores = {};
+
+diafores.minima = {
+	'nodif': 'Δεν παρουσιάστηκαν διαφορές. Κάντε κλικ, ' +
+		'ή πατήστε οποιοδήποτε πλήκτρο για επιστροφή&#8230;',
+};
 
 pnd.domInit(() => {
 	pnd.
@@ -208,8 +214,7 @@ diafores.diaforesProcess = (rsp) => {
 diafores.oxiAlages = function() {
 	pnd.ofelimoDOM.
 	append($('<div>').addClass('diaforesNoDif').
-	text('Δεν παρουσιάστηκαν διαφορές. Κάντε κλικ, ' +
-		'ή πατήστε οποιοδήποτε πλήκτρο για επιστροφή.'));
+	html(diafores.minima.nodif));
 	pnd.bodyDOM.
 	on('click', (e) => diafores.oxiAlagesClose(e)).
 	on('keyup', (e) => diafores.oxiAlagesClose(e));
