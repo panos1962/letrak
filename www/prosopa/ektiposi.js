@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-04
 // Updated: 2022-03-31
 // Updated: 2020-10-19
 // Updated: 2020-08-08
@@ -695,7 +696,8 @@ ektiposi.imerisioError = (err) => {
 // Είδος αδείας		  ai		adidos			String
 // Έναρξη αδείας	  aa		adapo			String
 // Λήξη αδείας		  ae		adeos			String
-// Παρατηρήσεις		  f		info			String
+// Info προσέλευσης	  pf		proselefsiInfo		String
+// Info αποχώρησης	  af		apoxorisiInfo		String
 
 ektiposi.parousia = function(i, x) {
 	this.ipalilos = parseInt(i);
@@ -722,8 +724,13 @@ ektiposi.parousia = function(i, x) {
 		this.adidos = x.ai;
 		this.adapo = x.aa;
 		this.adeos = x.ae;
-		this.info = x.f;
 	}
+
+	if (x.pf)
+	this.proselefsiInfo = x.pf;
+
+	if (x.af)
+	this.apoxorisiInfo = x.af;
 
 	return this;
 };
@@ -768,20 +775,24 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	// στη στήλη λεπτών περικοπής.
 
 	if (this.adidos) {
-		let x = this.adidos;
+		let s = this.adidos;
 
 		if (this.adapo)
-		x = pnd.strPush(x, 'από ' + this.adapo);
+		s = pnd.strPush(s, 'από ' + this.adapo);
 
 		if (this.adeos)
-		x = pnd.strPush(x, 'έως ' + this.adeos);
+		s = pnd.strPush(s, 'έως ' + this.adeos);
 
-		if (this.info)
-		x = pnd.strPush(x, this.info);
+		if (this.proselefsiInfo)
+		s += '\n' + this.proselefsiInfo;
+
+		if (this.apoxorisiInfo &&
+			(this.apoxorisiInfo !== this.proselefsiInfo))
+		s += '\n' + this.apoxorisiInfo;
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioAdia').
-		text(x).
+		html(s.replace(/\n+/, '<br>', 'g')).
 		appendTo(dom);
 
 		$('<div>').
@@ -799,12 +810,17 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	let adif = 0;
 
 	if (this.proselefsi) {
+		let s = pnd.date(this.proselefsi, '%D-%M-%Y %h:%m');
+
+		if (this.proselefsiInfo)
+		s += '\n' + this.proselefsiInfo;
+
 		pdif =  letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
 			"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
-		text(pnd.date(this.proselefsi, '%D-%M-%Y %h:%m')).
+		html(s.replace(/\n+/, '<br>', 'g')).
 		appendTo(dom);
 
 		$('<div>').
@@ -813,19 +829,30 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 		appendTo(dom);
 	}
 
-	else
-	$('<div>').
-	addClass('ektiposi-parousiaImerisioExcuse').
-	html(this.proselefsiExcuse).
-	appendTo(dom);
+	else {
+		let s = this.proselefsiExcuse ? this.proselefsiExcuse : '';
+
+		if (this.proselefsiInfo)
+		s += '\n' + this.proselefsiInfo;
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioExcuse').
+		html(s.replace(/\n+/, '<br>', 'g')).
+		appendTo(dom);
+	}
 
 	if (this.apoxorisi) {
+		let s = pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m');
+
+		if (this.apoxorisiInfo)
+		s += '\n' + this.apoxorisiInfo;
+
 		adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
 			"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
-		text(pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m')).
+		html(s.replace(/\n+/, '<br>', 'g')).
 		appendTo(dom);
 
 		$('<div>').
@@ -834,11 +861,17 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 		appendTo(dom);
 	}
 
-	else
-	$('<div>').
-	addClass('ektiposi-parousiaImerisioExcuse').
-	html(this.apoxorisiExcuse).
-	appendTo(dom);
+	else {
+		let s = this.apoxorisiExcuse ? this.apoxorisiExcuse : '';
+
+		if (this.apoxorisiInfo)
+		s += '\n' + this.apoxorisiInfo;
+
+		$('<div>').
+		addClass('ektiposi-parousiaImerisioExcuse').
+		html(s.replace(/\n+/, '<br>', 'g')).
+		appendTo(dom);
+	}
 
 	$('<div>').
 	addClass('ektiposi-parousiaImerisioIsozigio').

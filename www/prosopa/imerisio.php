@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-04
 // Updated: 2022-03-31
 // Updated: 2020-08-25
 // Updated: 2020-08-08
@@ -209,12 +210,12 @@ function parousia_get($deltio, $prosapo) {
 			$parousia[$ipalilos]["ai"] = $p->adidos_get();
 			$parousia[$ipalilos]["aa"] = $p->adapo_get();
 			$parousia[$ipalilos]["ae"] = $p->adeos_get();
-			$parousia[$ipalilos]["f"] = $p->info_get();
 		}
 
 		$parousia[$ipalilos][$prosapo] = $p->meraora_get();
 		$parousia[$ipalilos] = $parousia[$ipalilos];
 		$parousia[$ipalilos][$prosapo . "x"] = $p->excuse_get();
+		$parousia[$ipalilos][$prosapo . "f"] = $p->info_get();
 	}
 }
 
@@ -258,11 +259,14 @@ function parousia_fix() {
 		if (array_key_exists("ax", $data) && $data["ax"])
 		unset($data["a"]);
 
-		// Αν δεν υπάρχουν παρατηρήσεις, διαγράφουμε το αντίστοιχο
-		// στοιχείο από το array.
+		// Αν δεν υπάρχουν παρατηρήσεις, διαγράφουμε τα αντίστοιχα
+		// στοιχεία από το array.
 
-		if (array_key_exists("f", $data) && (!$data["f"]))
-		unset($data["f"]);
+		if (array_key_exists("pf", $data) && (!$data["pf"]))
+		unset($data["pf"]);
+
+		if (array_key_exists("af", $data) && (!$data["af"]))
+		unset($data["af"]);
 
 		$parousia[$ipalilos] = $data;
 	}
