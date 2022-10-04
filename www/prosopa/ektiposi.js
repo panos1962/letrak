@@ -812,21 +812,20 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	if (this.proselefsi) {
 		let s = pnd.date(this.proselefsi, '%D-%M-%Y %h:%m');
 
-		if (this.proselefsiInfo)
-		s += '\n' + this.proselefsiInfo;
-
 		pdif =  letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
 			"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
+
+		if (pdif)
+		s += '&nbsp;&nbsp;(' + letrak.isozigio2hm(pdif, false) + ')';
+
+		if (this.proselefsiInfo)
+		s += '\n' + this.proselefsiInfo;
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
 		html(s.replace(/\n+/, '<br>', 'g')).
 		appendTo(dom);
 
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioIsozigio').
-		html(letrak.isozigio2hm(pdif, true)).
-		appendTo(dom);
 	}
 
 	else {
@@ -844,21 +843,20 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	if (this.apoxorisi) {
 		let s = pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m');
 
-		if (this.apoxorisiInfo)
-		s += '\n' + this.apoxorisiInfo;
-
 		adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
 			"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
+
+		if (adif)
+		s += '&nbsp;&nbsp;(' + letrak.isozigio2hm(adif, false) + ')';
+
+		if (this.apoxorisiInfo)
+		s += '\n' + this.apoxorisiInfo;
 
 		$('<div>').
 		addClass('ektiposi-parousiaImerisioProsapo').
 		html(s.replace(/\n+/, '<br>', 'g')).
 		appendTo(dom);
 
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioIsozigio').
-		html(letrak.isozigio2hm(adif, true)).
-		appendTo(dom);
 	}
 
 	else {
