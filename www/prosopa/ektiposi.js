@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-05
 // Updated: 2022-10-04
 // Updated: 2022-03-31
 // Updated: 2020-10-19
@@ -504,13 +505,12 @@ ektiposi.parousiaDOM = (deltioDOM, aa) => {
 
 	x = deltioDOM.
 	children('.parousiaInfo').
-	text().
-	replace(/\n+/, '<br>', 'g');
+	text();
 
 	$('<div>').
 	addClass('ektiposi-parousiaInfo').
 	addClass('ektiposi-parousiaInfo' + ektiposi.ektipotiko).
-	html(x).
+	html(ektiposi.nl2br(x)).
 	appendTo(dom);
 
 	return dom;
@@ -770,105 +770,28 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	text(this.karta).
 	appendTo(dom);
 
-	// Αν υπάρχει άδεια του υπαλλήλου στη συγκεκριμένη ημερομηνία,
-	// τότε εκτυπώνουμε τα στοιχεία αδείας και κλείνουμε με κενό
-	// στη στήλη λεπτών περικοπής.
-
-	if (this.adidos) {
-		let s = this.adidos;
-
-		if (this.adapo)
-		s = pnd.strPush(s, 'από ' + this.adapo);
-
-		if (this.adeos)
-		s = pnd.strPush(s, 'έως ' + this.adeos);
-
-		if (this.proselefsiInfo)
-		s += '\n' + this.proselefsiInfo;
-
-		if (this.apoxorisiInfo &&
-			(this.apoxorisiInfo !== this.proselefsiInfo))
-		s += '\n' + this.apoxorisiInfo;
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioAdia').
-		html(s.replace(/\n+/, '<br>', 'g')).
-		appendTo(dom);
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioIsozigio').
-		appendTo(dom);
-
-		return dom;
-	}
-
-	// Ο υπάλληλος δεν είχε άδεια, επομένως πρέπει να έχει συμπληρωμένη
-	// ημερομηνία και ώρα προσέλευσης/αποχώρησης, αλλιώς πρέπει να έχει
-	// σχετική αιτιολογία.
-
 	let pdif = 0;
 	let adif = 0;
 
-	if (this.proselefsi) {
-		let s = pnd.date(this.proselefsi, '%D-%M-%Y %h:%m');
+	// Αν υπάρχει άδεια του υπαλλήλου στη συγκεκριμένη ημερομηνία,
+	// τότε εκτυπώνουμε τα στοιχεία αδείας.
 
-		pdif =  letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
-			"ΠΡΟΣΕΛΕΥΣΗ", this.orario, this.proselefsi);
+	if (this.adidos)
+	ektiposi.adidos(this.adidos, this.adapo, this.adeos,
+		this.proselefsiInfo, this.apoxorisiInfo, dom);
 
-		if (pdif)
-		s += '&nbsp;&nbsp;(' + letrak.isozigio2hm(pdif, false) + ')';
-
-		if (this.proselefsiInfo)
-		s += '\n' + this.proselefsiInfo;
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioProsapo').
-		html(s.replace(/\n+/, '<br>', 'g')).
-		appendTo(dom);
-
-	}
+	// Αν ο υπάλληλος δεν είχε άδεια, τότε πρέπει να έχει συμπληρωμένες
+	// ημερομηνίες και ώρες προσέλευσης/αποχώρησης, ή θα πρέπει να είναι
+	// ευμπληρωμένες σχετικές εξαιρέσεις.
 
 	else {
-		let s = this.proselefsiExcuse ? this.proselefsiExcuse : '';
+		pdif = ektiposi.prosapo("ΠΡΟΣΕΛΕΥΣΗ", this.orario,
+			this.proselefsi, this.proselefsiExcuse,
+			this.proselefsiInfo, dom);
 
-		if (this.proselefsiInfo)
-		s += '\n' + this.proselefsiInfo;
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioExcuse').
-		html(s.replace(/\n+/, '<br>', 'g')).
-		appendTo(dom);
-	}
-
-	if (this.apoxorisi) {
-		let s = pnd.date(this.apoxorisi, '%D-%M-%Y %h:%m');
-
-		adif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
-			"ΑΠΟΧΩΡΗΣΗ", this.orario, this.apoxorisi);
-
-		if (adif)
-		s += '&nbsp;&nbsp;(' + letrak.isozigio2hm(adif, false) + ')';
-
-		if (this.apoxorisiInfo)
-		s += '\n' + this.apoxorisiInfo;
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioProsapo').
-		html(s.replace(/\n+/, '<br>', 'g')).
-		appendTo(dom);
-
-	}
-
-	else {
-		let s = this.apoxorisiExcuse ? this.apoxorisiExcuse : '';
-
-		if (this.apoxorisiInfo)
-		s += '\n' + this.apoxorisiInfo;
-
-		$('<div>').
-		addClass('ektiposi-parousiaImerisioExcuse').
-		html(s.replace(/\n+/, '<br>', 'g')).
-		appendTo(dom);
+		adif = ektiposi.prosapo("ΑΠΟΧΩΡΗΣΗ", this.orario,
+			this.apoxorisi, this.apoxorisiExcuse,
+			this.apoxorisiInfo, dom);
 	}
 
 	$('<div>').
@@ -877,6 +800,67 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 	appendTo(dom);
 
 	return dom;
+};
+
+// Η function "adidos" καλείται όταν υπάρχει συμπληρωμένο είδος αδείας και
+// σκοπό έχει την εκτύπωση της αδείας με τα χαρακτηριστικά της. Αν υπάρχουν
+// σχόλια προσέλευσης/αποχώρησης, τότε εκτυπώνονται και αυτά (αν είναι ίδια,
+// τότε εκτυπώνεται μόνο το σχόλιο προσέλευσης).
+
+ektiposi.adidos = function(adidos, adapo, adeos, pinfo, ainfo, dom) {
+	let s = adidos;
+
+	if (adapo)
+	s = pnd.strPush(s, 'από ' + adapo);
+
+	if (adeos)
+	s = pnd.strPush(s, 'έως ' + adeos);
+
+	if (pinfo)
+	s += '\n<i>' + pinfo + '</i>';
+
+	if (ainfo && (ainfo !== pinfo))
+	s += '\n<i>' + ainfo + '</i>';
+
+	$('<div>').
+	addClass('ektiposi-parousiaImerisioAdia').
+	html(ektiposi.nl2br(s)).
+	appendTo(dom);
+};
+
+// Η function "prosapo" καλείται για την εκτύπωση της μέρας και ώρας
+// προσέλευσης/αποχώρησης. Αν υπάρχει εξαίρεση, τότε εκτυπώνεται και
+// η εξαίρεση. Το ίδιο συμβαίνει και με τα σχόλια.
+
+ektiposi.prosapo = function(prosapo, orario, meraora, exeresi, info, dom) {
+	let dif = 0;
+	let s = '';
+
+	if (meraora) {
+		s = pnd.date(meraora, '%D-%M-%Y %h:%m');
+
+		dif = letrak.isozigioCalc(prosopa.deltio.imerominiaGet(),
+			prosapo, orario, meraora);
+
+		if (dif)
+		s += '&nbsp;&nbsp;(' + letrak.isozigio2hm(dif, false) + ')';
+	}
+
+	if (exeresi)
+	s = pnd.strPush(s, exeresi, '\n');
+
+	if (!s)
+	s = '???';
+
+	if (info)
+	s += '\n<i>' + info + '</i>';
+
+	$('<div>').
+	addClass('ektiposi-parousiaImerisioProsapo').
+	html(ektiposi.nl2br(s)).
+	appendTo(dom);
+
+	return dif;
 };
 
 // Η μέθοδος "isozigio" δέχεται τα χρονικά ελλείμματα/πλεονάσματα των
@@ -888,16 +872,19 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 // αφορά στα λεπτά περικοπής.
 
 ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
-	let err = '';
+	let s = '';
+
+	if (this.adidos)
+	return s;
 
 	if ((!this.proselefsi) && (!this.proselefsiExcuse))
-	err = '???';
+	s = '???';
 
 	if ((!this.apoxorisi) && (!this.apoxorisiExcuse))
-	err = pnd.strPush(err, '???', '-');
+	s = pnd.strPush(s, '???', '-');
 
-	if (err)
-	return err;
+	if (s)
+	return s;
 
 	// Ο υπάλληλος έχει το δικαίωμα να συμπληρώσει τυχόν έλλειμμα χρόνου
 	// προσέλευσης, παρατείνοντας την αποχώρησή του. Ωστόσο, αυτή η ανοχή
@@ -913,6 +900,12 @@ ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
 	return letrak.isozigio2hm(pdif, true);
 
 	return '';
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+ektiposi.nl2br = function(s) {
+	return s.replace(/\n+/, '<br>', 'g');
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
