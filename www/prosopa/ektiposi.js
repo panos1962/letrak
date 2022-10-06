@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-06
 // Updated: 2022-10-05
 // Updated: 2022-10-04
 // Updated: 2022-03-31
@@ -119,7 +120,7 @@ ektiposi.after = () => {
 
 // Σε γενικές γραμμές τα διάφορα εκτυπωτικά του δελτίου μοιάζουν μεταξύ τους.
 // Ωστόσο σε αρκετά σημεία υπάρχουν διαφοροποιήσεις οι οποίες έχουν απομονωθεί
-// σε functions (dirvers) που τίθενται κατά τη διαδικασία επιλογής εκτύπωσης
+// σε functions (drivers) που τίθενται κατά τη διαδικασία επιλογής εκτύπωσης
 // από τον χρήστη. Η function "reset" θέτει ή επαναφέρει τους drivers στους
 // default drivers εκτύπωσης δελτίου.
 
@@ -156,8 +157,8 @@ ektiposi.deltio = () => {
 	append($('<div>').
 	addClass('ektiposi-deltioDimos').
 	text(letrak.minima.organismos)).
-	// Χρειάζεται line break γιατί αλλιώς μπορεί να «κολλήσει»
-	// δίπλα η περιγραφή της διεύθυνσης.
+	// Χρειάζεται line break γιατί αλλιώς μπορεί να «κολλήσει» δίπλα
+	// η περιγραφή της διεύθυνσης.
 	append($('<br>'));
 
 	let ipiresia = prosopa.deltio.ipiresiaGet();
