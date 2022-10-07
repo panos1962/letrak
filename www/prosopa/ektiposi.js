@@ -111,6 +111,10 @@ ektiposi.before = () => {
 // διαδικασίες εκτύπωσης στις default διαδικασίες εκτύπωσης δελτίου.
 
 ektiposi.after = () => {
+/*
+$('[media="print"]').removeAttr('media');
+return ektiposi;
+*/
 	ektiposi.bodyDOM.
 	empty();
 
@@ -367,8 +371,8 @@ ektiposi.prosopaImerisio = (plist) => {
 		let i1 = (p1.ipalilos);
 		let i2 = (p2.ipalilos);
 
-		let o1 = prosopa.goniki.ipalilosList[i1].oe;
-		let o2 = prosopa.goniki.ipalilosList[i2].oe;
+		let o1 = ektiposi.onomateponimo(i1);
+		let o2 = ektiposi.onomateponimo(i2);
 
 		let cmp = o1.localeCompare(o2);
 
@@ -755,7 +759,7 @@ ektiposi.parousia.prototype.domGet = function(aa) {
 
 	$('<div>').
 	addClass('ektiposi-parousiaImerisioOnomateponimo').
-	text(prosopa.goniki.ipalilosList[this.ipalilos].oe).
+	text(ektiposi.onomateponimo(this.ipalilos)).
 	appendTo(dom);
 
 	let x = this.orario;
@@ -904,6 +908,14 @@ ektiposi.parousia.prototype.isozigio = function(pdif, adif) {
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+ektiposi.onomateponimo = function(ipalilos) {
+	try {
+		return prosopa.goniki.ipalilosList[ipalilos].oe;
+	} catch (e) {
+		return '???';
+	}
+};
 
 ektiposi.nl2br = function(s) {
 	return s.replace(/\n+/, '<br>', 'g');
