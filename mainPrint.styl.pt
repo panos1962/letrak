@@ -16,7 +16,6 @@
 * @FILE END
 *
 * @HISTORY BEGIN
-* Updated: 2022-10-09
 * Updated: 2022-10-04
 * Updated: 2022-03-31
 * Updated: 2021-02-25
@@ -148,14 +147,14 @@ hard_width(args)
 .parousiaMeraoraImerisio
 
 .parousiaImerisioProsapo
-	hard_width(242.5px)
+	hard_width(243.5px)
 
 .parousiaImerisioExcuse
 	hard_width(220px)
 	text-align left
 
 .parousiaImerisioAdia
-	hard_width(498.5px);
+	hard_width(500px);
 	text-align left
 
 .parousiaImerisioIsozigio
