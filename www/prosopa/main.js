@@ -3299,6 +3299,8 @@ prosopa.fyiError = (s) => {
 	return prosopa;
 };
 
+// SOTP //
+
 prosopa.fyiClear = (s) => {
 	pnd.fyiClear();
 	return prosopa;

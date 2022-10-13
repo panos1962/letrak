@@ -1649,6 +1649,7 @@ deltio.fyiMessage = (s) => {
 	return deltio;
 };
 
+// TODO //
 deltio.fyiError = (s) => {
 	pnd.fyiError(s);
 	return deltio;
