@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-15
 // Updated: 2022-09-25
 // Updated: 2022-09-17
 // Updated: 2022-09-14
@@ -766,9 +767,35 @@ deltio.clearCandi = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Το πρόγραμμα επιτελεί αυτόματες ανανεώσεις σε τακτά χρονικά διαστήματα.
+// Για τον έλεγχο των αυτόματων ανανεώσεων χρησιμοποιούμε σχετικό timer.
+
+deltio.ananeosiTimer = undefined;
+deltio.ananeosiInterval = 5000;
+
 deltio.ananeosi = (e) => {
 	if (e)
 	e.stopPropagation();
+
+	// Κάθε φορά που επιτελείται ανανέωση, ελέγχουμε αν υπάρχει ήδη
+	// δρομολογημένη ανανέωση και αν ναι την ακυρώνουμε, καθώς θα
+	// τρέξει άμεσα η ανανέωση που έχουμε ζητήσει.
+
+	if (deltio.ananeosiTimer) {
+		clearTimeout(deltio.ananeosiTimer);
+		deltio.ananeosiTimer = undefined;
+	}
+
+	// Δημιουργούμε λίστα των δελτίων της σελίδας προκειμένου να την
+	// αποστείλουμε στο πρόγραμμα ανανέωσης.
+
+	let dlist = deltio.dlistCreate();
+
+	// Αν η λίστα δελτίων της σελίδας είναι κενή, σημαίνει ότι δεν
+	// δεν υπάρχουν δελτία στη σελίδα και η ανανέωση ακυρώενεται.
+
+	if (!dlist.length)
+	return deltio;
 
 	$.post({
 		'url': 'ananeosi.php',
@@ -786,7 +813,22 @@ deltio.ananeosi = (e) => {
 	return deltio;
 };
 
+deltio.endixiIpografiTitle = {
+	1: 'Είναι η σειρά σας να κυρώσετε το δελτίο',
+	2: 'Έχετε ήδη κυρώσει το δελτίο',
+	3: 'Προηγείται άλλος στην κύρωση του δελτίου',
+};
+
 deltio.ananeosiProcess = (rsp) => {
+	// Έχουμε ήδη παραλάβει τα ανανεωμένα δεδομένα των δελτίων της
+	// σελίδας, τα οποία με τη σειρά τους θα ανανεώσουν το περιεχόμενο
+	// της σελίδας. Εν τω μεταξύ δρομολογούμε την επόμενη (αυτόματη)
+	// ανανέωση.
+
+	deltio.ananeosiTimer = setTimeout(function() {
+		deltio.ananeosi();
+	}, deltio.ananeosiInterval);
+
 	if (rsp.error)
 	return deltio.fyiError(rsp.error);
 
@@ -817,7 +859,15 @@ deltio.ananeosiProcess = (rsp) => {
 		if (!rsp.dlist.hasOwnProperty(kodikos))
 		return;
 
-		let katastasi = rsp.dlist[kodikos];
+		let x = (rsp.dlist[kodikos]).split(':');
+
+		let katastasi = x[0];
+		let ipografi = x[1];
+
+		// Αφαιρούμε τυχόν ένδειξη υπογράφοντος για τον υπάλληλο
+		// που τρέχει την εφαρμογή.
+
+		$(this).children('.deltioIpografi').remove();
 
 		if (!letrak.deltio.katastasiEnglishMap.
 			hasOwnProperty(katastasi))
@@ -827,14 +877,31 @@ deltio.ananeosiProcess = (rsp) => {
 		let katastasiEnglish = letrak.deltio.
 			katastasi2english(katastasi);
 
-		$(this).
-		children('.deltioKatastasi').
+		let katastasiDOM = $(this).children('.deltioKatastasi');
+
+		katastasiDOM.
 		removeClass('letrak-deltioKatastasiEKREMES').
 		removeClass('letrak-deltioKatastasiANIPOGRAFO').
 		removeClass('letrak-deltioKatastasiKIROMENO').
 		removeClass('letrak-deltioKatastasiEPIKIROMENO').
 		addClass('letrak-deltioKatastasi' + katastasiEnglish).
 		html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
+
+		// Προσθέτουμε τυχόν ένδειξη υπογραφής που να αφορά τον
+		// υπάλληλο που τρέχει την εφαρμογή.
+
+		switch (parseInt(ipografi)) {
+		case 1:
+		case 2:
+		case 3:
+			$(this).append($('<img>').
+			addClass('deltioIpografi').
+			attr({
+				'src': '../images/ipografiEndixi/' +
+					ipografi + '.png',
+				'title': deltio.endixiIpografiTitle[ipografi],
+			}));
+		}
 	});
 
 	if (candi)
@@ -1443,6 +1510,10 @@ deltio.deltioProcess = (rsp, opts) => {
 	opts.onEmpty();
 
 	deltio.clearCandi();
+
+	if (count)
+	deltio.ananeosi();
+
 	return deltio;
 };
 
