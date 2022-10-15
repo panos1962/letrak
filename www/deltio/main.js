@@ -771,7 +771,8 @@ deltio.clearCandi = () => {
 // Για τον έλεγχο των αυτόματων ανανεώσεων χρησιμοποιούμε σχετικό timer.
 
 deltio.ananeosiTimer = undefined;
-deltio.ananeosiInterval = 5000;
+deltio.ananeosiInterval = 0;		// αν δεν θέλουμε αυτόματη ανανέωση
+deltio.ananeosiInterval = 5000;		// αυτόματη ανανέωση κάθε 5 sec
 
 deltio.ananeosi = (e) => {
 	if (e)
@@ -825,6 +826,7 @@ deltio.ananeosiProcess = (rsp) => {
 	// της σελίδας. Εν τω μεταξύ δρομολογούμε την επόμενη (αυτόματη)
 	// ανανέωση.
 
+	if (deltio.ananeosiInterval)
 	deltio.ananeosiTimer = setTimeout(function() {
 		deltio.ananeosi();
 	}, deltio.ananeosiInterval);
@@ -894,13 +896,11 @@ deltio.ananeosiProcess = (rsp) => {
 		case 1:
 		case 2:
 		case 3:
-			$(this).append($('<img>').
+			$(this).append($('<div>').
 			addClass('deltioIpografi').
-			attr({
-				'src': '../images/ipografiEndixi/' +
-					ipografi + '.png',
-				'title': deltio.endixiIpografiTitle[ipografi],
-			}));
+			addClass('deltioIpografi' + ipografi).
+			attr('title', deltio.endixiIpografiTitle[ipografi]).
+			html('&bull;'));
 		}
 	});
 
