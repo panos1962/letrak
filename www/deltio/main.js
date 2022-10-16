@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-16
 // Updated: 2022-10-15
 // Updated: 2022-09-25
 // Updated: 2022-09-17
@@ -814,10 +815,17 @@ deltio.ananeosi = (e) => {
 	return deltio;
 };
 
+deltio.katastasiTitle = {
+	"EKREMES": 'Το δελτίο δεν έχει κυρωθεί',
+	"ANIPOGRAFO": 'Απαιτούνται κυρώσεις',
+	"KIROMENO": 'Το δελτίο έχει κυρωθεί',
+	"EPIKIROMENO": 'Το δελτίο έχει κλείσει',
+};
+
 deltio.endixiIpografiTitle = {
-	1: 'Είναι η σειρά σας να κυρώσετε το δελτίο',
-	2: 'Έχετε ήδη κυρώσει το δελτίο',
-	3: 'Προηγείται άλλος στην κύρωση του δελτίου',
+	"1": 'Είναι η σειρά σας να κυρώσετε το δελτίο',
+	"2": 'Έχετε ήδη κυρώσει το δελτίο',
+	"3": 'Προηγείται άλλος στην κύρωση του δελτίου',
 };
 
 deltio.ananeosiProcess = (rsp) => {
@@ -871,23 +879,7 @@ deltio.ananeosiProcess = (rsp) => {
 
 		$(this).children('.deltioIpografi').remove();
 
-		if (!letrak.deltio.katastasiEnglishMap.
-			hasOwnProperty(katastasi))
-		return;
-
-		dlt.katastasiSet(katastasi);
-		let katastasiEnglish = letrak.deltio.
-			katastasi2english(katastasi);
-
-		let katastasiDOM = $(this).children('.deltioKatastasi');
-
-		katastasiDOM.
-		removeClass('letrak-deltioKatastasiEKREMES').
-		removeClass('letrak-deltioKatastasiANIPOGRAFO').
-		removeClass('letrak-deltioKatastasiKIROMENO').
-		removeClass('letrak-deltioKatastasiEPIKIROMENO').
-		addClass('letrak-deltioKatastasi' + katastasiEnglish).
-		html(deltio.minima['deltioKatastasi' + katastasi + 'Symbol']);
+		deltio.katastasiAlagi(dlt, $(this), katastasi);
 
 		// Προσθέτουμε τυχόν ένδειξη υπογραφής που να αφορά τον
 		// υπάλληλο που τρέχει την εφαρμογή.
@@ -1068,18 +1060,44 @@ deltio.klisimoProcess = (msg, dlt, dom) => {
 	if (msg)
 	return deltio.fyiError(msg);
 
-
 	pnd.fyiClear();
-	dlt.katastasiSet('ΕΠΙΚΥΡΩΜΕΝΟ');
+	deltio.katastasiAlagi(dlt, dom, 'ΕΠΙΚΥΡΩΜΕΝΟ');
+	deltio.candiTabsShow();
+
+	return deltio;
+};
+
+// Η function "katastasiAlagi" δέχεται ως παρμέτρους ένα δελτίο, το DOM
+// element του δελτίου και την κατάσταση του δελτίου (στα ελληνικά), και
+// θέτει την κατάσταση του δελτίου διαμορφώνοντας ανάλογα το DOM element
+// της κατάστασης του δελτίου.
+
+deltio.katastasiAlagi = (dlt, dom, katastasi) => {
+	dlt.katastasiSet(katastasi);
+
+	let katastasiEnglish = letrak.deltio.katastasi2english(katastasi);
+
+	if (!katastasiEnglish)
+	katastasiEnglish = '';
+
+	let titlos = deltio.katastasiTitle[katastasi];
+
+	if (!titlos)
+	titlos = 'Προβληματική κατάσταση δελτίου';
+
+	let simvolo = deltio.minima['deltioKatastasi' + katastasi + 'Symbol'];
+
+	if (!simvolo)
+	simvolo = '&quest;';
+
 	dom.children('.deltioKatastasi').
 	removeClass('letrak-deltioKatastasiEKREMES').
 	removeClass('letrak-deltioKatastasiANIPOGRAFO').
 	removeClass('letrak-deltioKatastasiKIROMENO').
-	addClass('letrak-deltioKatastasiEPIKIROMENO').
-	html(deltio.minima['deltioKatastasiΕΠΙΚΥΡΩΜΕΝΟSymbol']);
-	deltio.candiTabsShow();
-
-	return deltio;
+	removeClass('letrak-deltioKatastasiEPIKIROMENO').
+	addClass('letrak-deltioKatastasi' + katastasiEnglish).
+	attr('title', titlos).
+	html(simvolo);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -1123,13 +1141,7 @@ deltio.anigmaProcess = (msg, dlt, dom) => {
 	return deltio.fyiError(msg);
 
 	pnd.fyiClear();
-	dlt.katastasiSet('ΚΥΡΩΜΕΝΟ');
-	dom.children('.deltioKatastasi').
-	removeClass('letrak-deltioKatastasiEKREMES').
-	removeClass('letrak-deltioKatastasiANIPOGRAFO').
-	addClass('letrak-deltioKatastasiKIROMENO').
-	removeClass('letrak-deltioKatastasiEPIKIROMENO').
-	html(deltio.minima['deltioKatastasiΚΥΡΩΜΕΝΟSymbol']);
+	deltio.katastasiAlagi(dlt, dom, 'ΚΥΡΩΜΕΝΟ');
 	deltio.candiTabsShow();
 
 	return deltio;

@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2020-10-16
 * Updated: 2020-10-15
 * Updated: 2020-08-02
 * Updated: 2020-05-23
@@ -91,30 +92,38 @@
 // τρέχει την εφαρμογή. Αυτές οι ενδείξεις εμφανίζονται ως bullets διαφόρων
 // χρωμάτων στο αριστερό μέρος της γραμμής του δελτίου.
 
+$ipografiSkiaXroma1 = #e5e5e5
+$ipografiSkiaXroma2 = #9b9b9b
+$ipografiSkiaPaxos = 2px
+
 .deltioIpografi
 	position absolute
 	left 0px
 	bottom 5px
-	font-size: 28px;
-	text-shadow: 1px 1px 1px #c1c1c1;
+	font-size 28px
+	text-shadow 1px 1px $ipografiSkiaPaxos $ipografiSkiaXroma2,
+		-1px -1px $ipografiSkiaPaxos $ipografiSkiaXroma1,
+		1px -1px $ipografiSkiaPaxos $ipografiSkiaXroma2,
+		-1px 1px $ipografiSkiaPaxos $ipografiSkiaXroma1
 
 // Αν είναι η σειρά του υπαλλήλου που τρέχει την εφαρμογή να υπογράψει, τότε
 // εμφανίζεται κόκκινο bullet.
 
 .deltioIpografi1
-	color: #a50404;
+	font-weight bold
+	color #a50404	// κόκκινο
 
 // Αν ο υπάλληλος που τρέχει την εφαρμογή έχει ήδη υπογράψει, τότε εμφανίζεται
 // πράσινο bullet.
 
 .deltioIpografi2
-	color: #439943;
+	color #75d575	// πράσινο
 
 // Αν ο υπάλληλος που τρέχει την εφαρμογή είναι υπογράφων, αλλά δεν είναι
 // ακόμη η σειρά του να υπογράψει, τότε εμφανίζεται κυανό bullet.
 
 .deltioIpografi3
-	color: #1d6bff;
+	color #2758e7	// κυανό
 
 ///////////////////////////////////////////////////////////////////////////////@
 
