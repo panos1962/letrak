@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-18
 // Updated: 2022-10-16
 // Updated: 2022-10-15
 // Updated: 2022-09-25
@@ -883,26 +884,7 @@ deltio.ananeosiProcess = (rsp) => {
 		let katastasi = x[0];
 		let ipografi = x[1];
 
-		// Αφαιρούμε τυχόν ένδειξη υπογράφοντος για τον υπάλληλο
-		// που τρέχει την εφαρμογή.
-
-		$(this).children('.deltioIpografi').remove();
-
-		deltio.katastasiAlagi(dlt, $(this), katastasi);
-
-		// Προσθέτουμε τυχόν ένδειξη υπογραφής που να αφορά τον
-		// υπάλληλο που τρέχει την εφαρμογή.
-
-		switch (parseInt(ipografi)) {
-		case 1:
-		case 2:
-		case 3:
-			$(this).append($('<div>').
-			addClass('deltioIpografi').
-			addClass('deltioIpografi' + ipografi).
-			attr('title', deltio.endixiIpografiTitle[ipografi]).
-			html('&bull;'));
-		}
+		deltio.katastasiAlagi(dlt, $(this), katastasi, ipografi);
 	});
 
 	if (candi)
@@ -1076,41 +1058,6 @@ deltio.klisimoProcess = (msg, dlt, dom) => {
 	return deltio;
 };
 
-// Η function "katastasiAlagi" δέχεται ως παρμέτρους ένα δελτίο, το DOM
-// element του δελτίου και την κατάσταση του δελτίου (στα ελληνικά), και
-// θέτει την κατάσταση του δελτίου διαμορφώνοντας ανάλογα το DOM element
-// της κατάστασης του δελτίου.
-
-deltio.katastasiAlagi = (dlt, dom, katastasi) => {
-	dlt.katastasiSet(katastasi);
-
-	let katastasiEnglish = letrak.deltio.katastasi2english(katastasi);
-
-	if (!katastasiEnglish)
-	katastasiEnglish = '';
-
-	let titlos = deltio.katastasiTitle[katastasi];
-
-	if (!titlos)
-	titlos = 'Προβληματική κατάσταση δελτίου';
-
-	let simvolo = deltio.minima['deltioKatastasi' + katastasi + 'Symbol'];
-
-	if (!simvolo)
-	simvolo = '&quest;';
-
-	dom.children('.deltioKatastasi').
-	removeClass('letrak-deltioKatastasiEKREMES').
-	removeClass('letrak-deltioKatastasiANIPOGRAFO').
-	removeClass('letrak-deltioKatastasiKIROMENO').
-	removeClass('letrak-deltioKatastasiEPIKIROMENO').
-	addClass('letrak-deltioKatastasi' + katastasiEnglish).
-	attr('title', titlos).
-	html(simvolo);
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
 deltio.anigma = (e) => {
 	if (e)
 	e.stopPropagation();
@@ -1152,6 +1099,72 @@ deltio.anigmaProcess = (msg, dlt, dom) => {
 	pnd.fyiClear();
 	deltio.katastasiAlagi(dlt, dom, 'ΚΥΡΩΜΕΝΟ');
 	deltio.candiTabsShow();
+
+	return deltio;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "katastasiAlagi" δέχεται ως παραμέτρους ένα δελτίο, το DOM
+// element του δελτίου, την κατάσταση του δελτίου (στα ελληνικά), και
+// τον κωδικό υπογραφής για τον υπάλληλο που τρέχει την εφαρμογή. Θέτει
+// την κατάσταση του δελτίου και την ένδειξη υπογράφοντος, διαμορφώνοντας
+// ανάλογα τα αντίστοιχα DOM elements του δελτίου.
+
+deltio.katastasiAlagi = (dlt, dom, katastasi, ipografi) => {
+	dlt.katastasiSet(katastasi);
+
+	let katastasiEnglish = letrak.deltio.katastasi2english(katastasi);
+
+	if (!katastasiEnglish)
+	katastasiEnglish = '';
+
+	let titlos = deltio.katastasiTitle[katastasi];
+
+	if (!titlos)
+	titlos = 'Προβληματική κατάσταση δελτίου';
+
+	let simvolo = deltio.minima['deltioKatastasi' + katastasi + 'Symbol'];
+
+	if (!simvolo)
+	simvolo = '&quest;';
+
+	dom.children('.deltioKatastasi').
+	removeClass('letrak-deltioKatastasiEKREMES').
+	removeClass('letrak-deltioKatastasiANIPOGRAFO').
+	removeClass('letrak-deltioKatastasiKIROMENO').
+	removeClass('letrak-deltioKatastasiEPIKIROMENO').
+	addClass('letrak-deltioKatastasi' + katastasiEnglish).
+	attr('title', titlos).
+	html(simvolo);
+
+	deltio.ipografiEndixiAlagi(dom, ipografi);
+
+	return deltio;
+};
+
+deltio.ipografiEndixiAlagi = function(dom, ipografi) {
+	// Αφαιρούμε τυχόν ένδειξη υπογράφοντος για τον υπάλληλο
+	// που τρέχει την εφαρμογή.
+
+	dom.children('.deltioIpografi').remove();
+
+	if (!ipografi)
+	return deltio;
+
+	// Προσθέτουμε τυχόν ένδειξη υπογραφής που να αφορά τον
+	// υπάλληλο που τρέχει την εφαρμογή.
+
+	switch (parseInt(ipografi)) {
+	case 1:	// ο υπάλληλος/χρήστης έχει σειρά να κυρώσει
+	case 2:	// ο υπάλληλος/χρήστης έχει ήδη κυρώσει
+	case 3:	// ο υπάλληλος/χρήστης θα πρέπει να κυρώσει αργότερα
+		dom.append($('<div>').
+		addClass('deltioIpografi').
+		addClass('deltioIpografi' + ipografi).
+		attr('title', deltio.endixiIpografiTitle[ipografi]).
+		html('&bull;'));
+	}
 
 	return deltio;
 };
