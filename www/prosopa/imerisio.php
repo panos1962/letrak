@@ -51,11 +51,7 @@ header_json()::
 session_init()::
 database();
 
-$prosvasi = letrak::prosvasi_get();
-
-if ($prosvasi->oxi_ipalilos())
-letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
-
+$prosvasi = letrak::prosvasi_check();
 $kodikos = pandora::parameter_get("deltio");
 
 if (letrak::deltio_invalid_kodikos($kodikos))
