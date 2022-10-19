@@ -34,10 +34,7 @@ header_json()::
 session_init()::
 database();
 
-$prosvasi = letrak::prosvasi_get();
-
-if ($prosvasi->oxi_ipalilos())
-lathos("Διαπιστώθηκε ανώνυμη χρήση");
+$prosvasi = letrak::prosvasi_check();
 
 if ($prosvasi->ipiresia_oxi_admin(""))
 lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση");

@@ -101,6 +101,15 @@ class letrak extends letrakCore {
 		return $prosvasi->fromdb();
 	}
 
+	public static function prosvasi_check() {
+		$prosvasi = letrak::prosvasi_get();
+
+		if ($prosvasi->oxi_ipalilos())
+		letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
+
+		return $prosvasi;
+	}
+
 	public function xparam_get($param) {
 		$ipalilos = pandora::session_get(LETRAK_SESSION_IPALILOS);
 

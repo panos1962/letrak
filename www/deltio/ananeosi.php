@@ -74,11 +74,7 @@ header_data()::
 session_init()::
 database();
 
-$prosvasi = letrak::prosvasi_get();
-
-if ($prosvasi->oxi_ipalilos())
-letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
-
+$prosvasi = letrak::prosvasi_check();
 $dlist = pandora::parameter_get("dlist");
 
 if (!is_array($dlist))

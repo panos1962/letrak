@@ -109,15 +109,12 @@ class Diafores {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "prosvasi_check" ελέγχει αν η εφαρμογή τρέχει από
-	// επώνυμο χρήστη. Σε αντίθετη περίπτωση ακυρώνεται η διαδικασία.
+	// Η μέθοδος "prosvasi_fetch" ελέγχει αν η εφαρμογή τρέχει από
+	// επώνυμο χρήστη και θέτει ανάλογα το πεδίο "prosvasi". Σε αντίθετη
+	// περίπτωση ακυρώνεται η διαδικασία.
 
 	public static function prosvasi_fetch() {
-		self::$prosvasi = letrak::prosvasi_get();
-
-		if (self::$prosvasi->oxi_ipalilos())
-		letrak::fatal_error_json("Διαπιστώθηκε ανώνυμη χρήση");
-
+		self::$prosvasi = letrak::prosvasi_check();
 		return __CLASS__;
 	}
 
