@@ -42,11 +42,7 @@ header_data()::
 session_init()::
 database();
 
-$prosvasi = letrak::prosvasi_get();
-
-if ($prosvasi->oxi_ipalilos())
-letrak::fatal_error("Διαπιστώθηκε ανώνυμη χρήση");
-
+$prosvasi = letrak::prosvasi_check();
 $kodikos = pandora::parameter_get("kodikos");
 
 if (pandora::not_integer($kodikos, 1, LETRAK_DELTIO_KODIKOS_MAX))
