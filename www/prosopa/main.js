@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-24
 // Updated: 2022-03-13
 // Updated: 2022-03-11
 // Updated: 2021-05-28
@@ -1741,13 +1742,17 @@ prosopa.editorSetup = () => {
 	prosopa.vardiaPliktroDOM = $('#peVardiaPliktro').
 	text(prosopa.minima.vardiaFast).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, 'editorExcuseDOM',
-		'ΒΑΡΔΙΑ'));
+	on('click', (e) => prosopa.amesiIpovoli(e, [
+		{ "fld": 'editorExcuseDOM', "val": 'ΒΑΡΔΙΑ' }
+	]));
 
 	prosopa.clearExeresiPliktroDOM = $('#peClearExeresiPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, 'editorExcuseDOM'));
+	on('click', (e) => prosopa.amesiIpovoli(e, [
+		{ "fld": 'editorExcuseDOM' },
+		{ "fld": 'editorInfoDOM' }
+	]));
 
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
@@ -1812,14 +1817,25 @@ prosopa.ipovoliDisabled = (e) => {
 	return true;
 }
 
-prosopa.amesiIpovoli = function(e, fld, val) {
+prosopa.amesiIpovoli = function(e, flist) {
 	if (prosopa.ipovoliDisabled(e))
 	return prosopa;
 
-	if (val === undefined)
-	val = '';
+	for (let i = 0; i < flist.length; i++) {
+		let val;
 
-	prosopa[fld].val(val);
+		if (!(flist[i].hasOwnProperty('val')))
+		val = '';
+
+		else if (flist[i].val === undefined)
+		val = '';
+
+		else
+		val = flist[i].val;
+
+		prosopa[flist[i].fld].val(val);
+	}
+
 	prosopa.editorIpovoliDOM.trigger('click');
 
 	return prosopa;
@@ -2474,13 +2490,16 @@ prosopa.katagrafiSetup = () => {
 	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
 	text(prosopa.minima.katagrafiOrario).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, 'editorMeraoraDOM',
-		prosopa.katagrafiApoOrarioGet()));
+	on('click', (e) => prosopa.amesiIpovoli(e, [
+		{ "fld": 'editorMeraoraDOM', "val": prosopa.katagrafiApoOrarioGet() }
+	]));
 
 	prosopa.katharismosPliktroDOM = $('#peKatharismosPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, 'editorMeraoraDOM'));
+	on('click', (e) => prosopa.amesiIpovoli(e, [
+		{ "fld": 'editorMeraoraDOM' }
+	]));
 
 	prosopa.ipoptoPliktroDOM = $('#peIpoptoPliktro').
 	text(prosopa.minima.ipopto).
