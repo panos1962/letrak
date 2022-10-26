@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-10-26
 // Updated: 2022-10-24
 // Updated: 2022-03-13
 // Updated: 2022-03-11
@@ -1742,17 +1743,17 @@ prosopa.editorSetup = () => {
 	prosopa.vardiaPliktroDOM = $('#peVardiaPliktro').
 	text(prosopa.minima.vardiaFast).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, [
-		{ "fld": 'editorExcuseDOM', "val": 'ΒΑΡΔΙΑ' }
-	]));
+	on('click', (e) => prosopa.amesiIpovoli(e, {
+		'editorExcuseDOM': 'ΒΑΡΔΙΑ',
+	}));
 
 	prosopa.clearExeresiPliktroDOM = $('#peClearExeresiPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, [
-		{ "fld": 'editorExcuseDOM' },
-		{ "fld": 'editorInfoDOM' }
-	]));
+	on('click', (e) => prosopa.amesiIpovoli(e, {
+		'editorExcuseDOM': '',
+		'editorInfoDOM': '',
+	}));
 
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
@@ -1817,23 +1818,18 @@ prosopa.ipovoliDisabled = (e) => {
 	return true;
 }
 
+// Η function "amesiIpovoli" καλείται συνήθως με το πάτημα κάποιου πλήκτρου
+// προκειμένου να τεθούν συγκεκριμένες τιμές σε διάφορα πεδία της φόρμας και
+// να γίνει αυτόματα υποβολή. Ως πρώτη παράμετρο περνάμε το click event στο
+// πλήκτρο, ενώ ως δεύτερη παράμετρο περνάμε μια λίστα δεικτοδοτημένη με τα
+// ονόματα των πεδίων και τιμές τις επιθυμητές τιμές των πεδίων αυτών.
+
 prosopa.amesiIpovoli = function(e, flist) {
 	if (prosopa.ipovoliDisabled(e))
 	return prosopa;
 
-	for (let i = 0; i < flist.length; i++) {
-		let val;
-
-		if (!(flist[i].hasOwnProperty('val')))
-		val = '';
-
-		else if (flist[i].val === undefined)
-		val = '';
-
-		else
-		val = flist[i].val;
-
-		prosopa[flist[i].fld].val(val);
+	for (let fld in flist) {
+		prosopa[fld].val(flist[fld]);
 	}
 
 	prosopa.editorIpovoliDOM.trigger('click');
@@ -2490,16 +2486,16 @@ prosopa.katagrafiSetup = () => {
 	prosopa.apoOrarioPliktroDOM = $('#peApoOrarioPliktro').
 	text(prosopa.minima.katagrafiOrario).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, [
-		{ "fld": 'editorMeraoraDOM', "val": prosopa.katagrafiApoOrarioGet() }
-	]));
+	on('click', (e) => prosopa.amesiIpovoli(e, {
+		'editorMeraoraDOM': prosopa.katagrafiApoOrarioGet(),
+	}));
 
 	prosopa.katharismosPliktroDOM = $('#peKatharismosPliktro').
 	text(prosopa.minima.katharismos).
 	addClass('prosopaPliktro').
-	on('click', (e) => prosopa.amesiIpovoli(e, [
-		{ "fld": 'editorMeraoraDOM' }
-	]));
+	on('click', (e) => prosopa.amesiIpovoli(e, {
+		'editorMeraoraDOM': '',
+	}));
 
 	prosopa.ipoptoPliktroDOM = $('#peIpoptoPliktro').
 	text(prosopa.minima.ipopto).
