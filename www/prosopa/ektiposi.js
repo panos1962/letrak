@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2022-12-14
 // Updated: 2022-10-06
 // Updated: 2022-10-05
 // Updated: 2022-10-04
@@ -111,7 +112,7 @@ ektiposi.before = () => {
 // διαδικασίες εκτύπωσης στις default διαδικασίες εκτύπωσης δελτίου.
 
 ektiposi.after = () => {
-/*
+/* XXX
 $('[media="print"]').removeAttr('media');
 return ektiposi;
 */
