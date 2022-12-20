@@ -82,8 +82,10 @@ admin.selidaSetup = () => {
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
+/*
 	pnd.
 	keepAlive('../mnt/pandora');
+*/
 
 	admin.
 	kritiriaSetup().

@@ -82,8 +82,10 @@ diafores.selidaSetup = () => {
 
 	diafores.treproPinpoint();
 
+/*
 	pnd.
 	keepAlive('../mnt/pandora');
+*/
 
 	pnd.ofelimoDOM.
 	on('click', '.ipalilosArea', function(e) {

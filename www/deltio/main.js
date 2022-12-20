@@ -138,8 +138,10 @@ deltio.selidaSetup = () => {
 	if (letrak.noXristis())
 	return letrak.arxikiSelida(deltio);
 
+/*
 	pnd.
 	keepAlive('../mnt/pandora');
+*/
 
 	letrak.
 	toolbarArxikiSetup();
