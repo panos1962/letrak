@@ -2867,11 +2867,21 @@ prosopa.editorDiagrafi = (e, sure) => {
 	if (e)
 	e.stopPropagation();
 
+	let deltio = prosopa.editorDeltioKodikosDOM.val();
+
+	if (!deltio)
+	return prosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
+
+	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
+
+	if (!ipalilos)
+	return prosopa.fyiError('Απροσδιόριστος υπάλληλος');
+
 	if (!sure) {
 		let dialogDOM = $('<div>').
 		attr('title', 'Διαγραφή υπαλλήλου').
 		append($('<div>').
-		html('Να διαγραφεί ο υπάλληλος;')).
+		html('Να διαγραφεί ο υπάλληλος <b>' + ipalilos + '</b>;')).
 		dialog({
 			'resizable': false,
 			'height': 'auto',
@@ -2898,16 +2908,6 @@ prosopa.editorDiagrafi = (e, sure) => {
 
 		return prosopa;
 	}
-
-	let deltio = prosopa.editorDeltioKodikosDOM.val();
-
-	if (!deltio)
-	return prosopa.fyiError('Απροσδιόριστο παρουσιολόγιο');
-
-	let ipalilos = prosopa.editorIpalilosKodikosDOM.val();
-
-	if (!ipalilos)
-	return prosopa.fyiError('Απροσδιόριστος υπάλληλος');
 
 	$.post({
 		'url': 'parousiaDiagrafi.php',
