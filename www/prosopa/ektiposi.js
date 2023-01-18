@@ -100,6 +100,9 @@ ektiposi.setup = () => {
 // απαραίτητες εργασίες προετοιμασίας.
 
 ektiposi.before = () => {
+	ektiposi.bodyDOM.
+	empty();
+
 	ektiposi.
 	deltio().
 	prosopa();
