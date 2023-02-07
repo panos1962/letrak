@@ -301,6 +301,12 @@ ektiposi.prosopaApontes = () => {
 		appendTo(parea);
 	});
 
+	if (!aa)
+	$('<div>').
+	addClass('ektiposi-apartia').
+	text('ΑΠΑΝΤΕΣ ΠΑΡΟΝΤΕΣ').
+	appendTo(ektiposi.bodyDOM);
+
 	parea.
 	append(ektiposi.ipografesDOM());
 
