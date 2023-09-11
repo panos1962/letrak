@@ -1254,6 +1254,9 @@ prosopa.ergaliaSetup = () => {
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
+	prosopa.apoOrarioOlaDOM = $('#apoOrarioOla').
+	on('click', (e) => prosopa.apoOrarioOla(e));
+
 	$('#deltioPlires').
 	on('click', (e) => ektiposi.deltioPlires(e));
 
@@ -3054,6 +3057,123 @@ prosopa.winpak = () => {
 };
 
 prosopa.winpakProcess = (rsp) => {
+	if (rsp.error)
+	pnd.fyiError(rsp.error);
+
+	pnd.fyiClear();
+
+	if (!rsp.hasOwnProperty('data'))
+	return prosopa;
+
+	let data = rsp.data;
+
+	prosopa.browserDOM.
+	children('.parousia').
+	each(function() {
+		let parousia = $(this).data('parousia');
+
+		if (!parousia)
+		return;
+
+		if (parousia.meraora)
+		return;
+
+		let ipalilos = parousia.ipalilosGet();
+
+		if (!ipalilos)
+		return;
+
+		if (!data.hasOwnProperty(ipalilos))
+		return;
+
+		let ordinal = $(this).children('.parousiaOrdinal').text();
+		parousia.meraora = new Date(data[ipalilos] + ':00');
+		$(this).after(parousia.domGet(ordinal));
+		$(this).remove();
+	});
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "apoOrarioOla" συμπληρώνει αυτόματα (με βάση τα καταχωρημένα
+// ωράρια) τις ώρες προσέλευσης και αποχώρησης στους υπαλλήλους που αυτά τα
+// στοιχεία παραμένουν κενά.
+
+prosopa.apoOrarioOla = () => {
+	let plist = {};
+	let count = 0;
+
+	// Ετοιμάζουμε λίστα με τα ωράρια και τους αριθμούς καρτών για τους
+	// υπαλλήλους του παρουσιολογίου, δεικτοδοτημένη με τους αρ. μητρώου
+	// των υπαλλήλων. Αν κάποιος υπάλληλος έχει ήδη συμπληρωμένη ώρα
+	// συμβάντος, ή έχει καταχωρημένη άδεια ή εξαίρεση, τότε αυτός δεν
+	// θα περιληφθεί. Δεν περιλαμβάνονται, επίσης, υπάλληλοι που δεν έχουν
+	// συμπληρωμένο ωράριο.
+
+	prosopa.browserDOM.
+	children('.parousia').
+	each(function() {
+		let parousia = $(this).data('parousia');
+
+		if (!parousia)
+		return;
+
+		if (parousia.meraora)
+		return;
+
+		if (parousia.adiaGet())
+		return;
+
+		if (parousia.excuseGet())
+		return;
+
+		let ipalilos = parousia.ipalilosGet();
+
+		if (!ipalilos)
+		return;
+
+		let orario = parousia.orarioGet();
+
+		if (!orario)
+		return;
+
+		orario = orario.toString();
+
+		if (!orario)
+		return;
+
+		count++;
+		plist[ipalilos] = {
+			'o': orario,
+		};
+	});
+
+	if (!count)
+	return prosopa.fyiError('Δεν υπάρχουν ασυμπλήρωτες καταγραφές');
+// XXX
+return prosopa;
+
+	pnd.fyiMessage('Αναζήτηση καταγραφών…');
+	$.post({
+		'url': 'winpak.php',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+			'plist': plist,
+		},
+		'dataType': 'json',
+		'success': (rsp) => prosopa.winpakProcess(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα λήψης καταγραφών');
+			console.error(err);
+		},
+	});
+
+	return prosopa;
+};
+
+prosopa.apoOrarioOla = (rsp) => {
 	if (rsp.error)
 	pnd.fyiError(rsp.error);
 

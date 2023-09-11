@@ -259,6 +259,9 @@ document_body();
 	<div class="ergalioTab prosopaPliktroUpdate" id="orariaDiagrafi">
 		Διαγραφή ωραρίων
 	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="apoOrarioOla">
+		Από ωράριο
+	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="protipoMetatropi">
 		Μετατροπή σε πρότυπο
 	</div>
