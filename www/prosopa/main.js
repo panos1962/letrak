@@ -1871,12 +1871,10 @@ prosopa.orarioEdit = (e, fld) => {
 		prosimo = 1;
 		break;
 	case 33:	// page Up
-	case 65:	// key 'A'
 		step = oktaoro;
 		prosimo = -1;
 		break;
 	case 34:	// page Down
-	case 90:	// key 'Z'
 		step = oktaoro;
 		prosimo = 1;
 		break;
