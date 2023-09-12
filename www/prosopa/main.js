@@ -3152,6 +3152,7 @@ prosopa.apoOrarioOla = () => {
 
 	if (!count)
 	return prosopa.fyiError('Δεν υπάρχουν ασυμπλήρωτες καταγραφές');
+console.log(plist);
 // XXX
 return prosopa;
 
@@ -3163,7 +3164,7 @@ return prosopa;
 			'plist': plist,
 		},
 		'dataType': 'json',
-		'success': (rsp) => prosopa.winpakProcess(rsp),
+		'success': (rsp) => prosopa.apoOrarioOlaProcess(rsp),
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα λήψης καταγραφών');
 			console.error(err);
@@ -3173,7 +3174,7 @@ return prosopa;
 	return prosopa;
 };
 
-prosopa.apoOrarioOla = (rsp) => {
+prosopa.apoOrarioOlaProcess = (rsp) => {
 	if (rsp.error)
 	pnd.fyiError(rsp.error);
 
