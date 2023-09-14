@@ -69,7 +69,7 @@ print '"data":{';
 
 $s = "";
 foreach ($plist as $ipalilos => $data)
-apoOrario($ipalilos, $data["o"], $s);
+apoOrario($ipalilos, $data, $s);
 
 print '}';
 
@@ -89,21 +89,25 @@ function apoOrario($ipalilos, $orario, &$s) {
 
 	switch ($prosapo) {
 	case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
-		$exact = $orario->proselefsi_diastima($imerominia, $apo, $eos);
-		if (!$exact) return;
-		$meraora = $apo->format("Y-m-d H:i");
+		$meraora = $orario->apo_get($imerominia);
+		$invert = 1;
 		break;
 	case LETRAK_DELTIO_PROSAPO_APOXORISI:
-		$exact = $orario->apoxorisi_diastima($imerominia, $apo, $eos);
-		if (!$exact) return;
-		$meraora = $eos->format("Y-m-d H:i");
+		$meraora = $orario->eos_get($imerominia);
+		$invert = 0;
 		break;
 	default:
 		return;
 	}
 
-	if ($meraora === FALSE)
+	if ($meraora === NULL)
 	return;
+
+	$sinplin = random_int(0, 7);
+	$sinplin = new DateInterval("PT" . $sinplin . "M");
+	$sinplin->invert = $invert;
+	$meraora->add($sinplin);
+	$meraora = $meraora->format("Y-m-d H:i:00");
 
 	// Εφόσον τα στοιχεία ημερομηνίας και ώρας προσέλευσης/αποχώρησης
 	// προκύπτουν από το σύστημα καταγραφής, θέτουμε ανάλογα και την
@@ -112,7 +116,7 @@ function apoOrario($ipalilos, $orario, &$s) {
 	$kataxorisi = pandora::sql_string(LETRAK_PAROUSIA_KATAXORISI_SINTAKTIS);
 
 	$query = "UPDATE `letrak`.`parousia` SET" .
-		" `meraora` = '" . $meraora . ":00'," .
+		" `meraora` = '" . $meraora . "'," .
 		" `kataxorisi` = " . $kataxorisi .
 		" WHERE (`deltio` = " . $kodikos . ")" .
 		" AND (`ipalilos` = " . $ipalilos . ")";

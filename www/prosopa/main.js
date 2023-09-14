@@ -2722,21 +2722,10 @@ prosopa.katagrafiGet = (e, dom) => {
 	else if (x === prosopa.minima.katagrafiNoEvent)
 	x = '';
 
-	// Θέτουμε την τιμή του πεδίου καταγραφής και εφαρμόζουμε λίγο
-	// animation με τα χρώματα του πεδίου καταγραφής προκειμένου να
-	// γίνει σαφής η αλλαγή της τιμής του πεδίου.
+	// Θέτουμε την τιμή του πεδίου καταγραφής.
 
 	prosopa.editorMeraoraDOM.
-	val(x).
-	css({
-		'color': 'midnightblue',
-		'background-color': 'yellow',
-	}).
-	finish().
-	animate({
-		'color': '#000000',
-		'background-color': '#ffffff',
-	}, 1000);
+	val(x);
 
 	return prosopa;
 };
@@ -3144,9 +3133,7 @@ prosopa.apoOrarioOla = () => {
 		return;
 
 		count++;
-		plist[ipalilos] = {
-			'o': orario,
-		};
+		plist[ipalilos] = orario;
 	});
 
 	if (!count)
@@ -3202,6 +3189,7 @@ prosopa.apoOrarioOlaProcess = (rsp) => {
 
 		let ordinal = $(this).children('.parousiaOrdinal').text();
 		parousia.meraora = new Date(data[ipalilos] + ':00');
+		parousia.kataxorisi = 'ΣΥΝΤΑΚΤΗΣ';
 		$(this).after(parousia.domGet(ordinal));
 		$(this).remove();
 	});
