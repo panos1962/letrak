@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2023-10-13
 // Updated: 2022-09-29
 // Updated: 2020-05-06
 // Updated: 2020-05-03
@@ -76,7 +77,9 @@ $query .= " AND (`parousia`.`ipalilos` = " . $ipalilos . ")";
 
 $query .= " ORDER BY `l`, `f`, `r`, `i`";
 
+/* debug
 print '"query":' . pandora::json_string($query) . ',';
+*/
 
 print '"prosopa":[';
 $enotiko = "";
@@ -88,6 +91,45 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 }
 
 print '],';
+
+///////////////////////////////////////////////////////////////////////////////@
+
+$query = "SELECT `ipalilos`, `orario`" .
+" FROM `letrak`.`orario`" .
+" WHERE `ipalilos` IN (".
+" SELECT `ipalilos`" .
+" FROM `letrak`.`parousia`" .
+" WHERE `deltio` = " . $kodikos . ")" .
+" ORDER BY `ipalilos`, `orario`";
+$ipalilos = NULL;
+$result = pandora::query($query);
+
+while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	if ($row["ipalilos"] !== $ipalilos) {
+		if (is_null($ipalilos)) {
+			/* debug
+			print '"queryOrario":' . pandora::json_string($query) . ',';
+			*/
+			print '"orario":{';
+		}
+
+		else
+		print "],";
+
+		$ipalilos = $row["ipalilos"];
+
+		print '"' . $ipalilos . '":[';
+		$enotiko = "";
+	}
+
+	print $enotiko . '"' . $row["orario"] . '"';
+	$enotiko = ",";
+}
+
+if (!is_null($ipalilos)) {
+	print "]";
+	print '},';
+}
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -104,7 +146,9 @@ $query = "SELECT " .
 " WHERE (`ipografi`.`deltio` = " . $kodikos . ")" .
 " ORDER BY `x`";
 
+/* debug
 print '"queryIpografi":' . pandora::json_string($query) . ',';
+*/
 
 print '"ipografes":[';
 $enotiko = "";
