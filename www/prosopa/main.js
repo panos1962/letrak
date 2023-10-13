@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2023-10-13
 // Updated: 2022-10-26
 // Updated: 2022-10-24
 // Updated: 2022-03-13
@@ -1617,7 +1618,7 @@ prosopa.prosopaUpdateTabsRefresh = () => {
 
 	prosopa.ergaliaDOM.dialog('close');
 	return prosopa;
-}
+};
 
 // Η function "prosopaUpdateAllow" ελέγχει αν ο χρήστης έχει πρόσβαση να
 // αλλοιώσει καθ' οιονδήποτε τρόπο το περιεχόμενο του παρουσιολογίου.
@@ -1685,24 +1686,13 @@ prosopa.editorSetup = () => {
 	prosopa.editorIpalilosKodikosDOM = $('#peIpalilosKodikos');
 	prosopa.editorIpalilosOnomateponimoDOM = $('#peIpalilosOnomateponimo');
 	prosopa.editorIpalilosOrarioDOM = $('#peIpalilosOrario');
-
-	pnd.bodyDOM.
-	on('keydown', '.orarioPedio', function(e){
-		prosopa.orarioEdit(e, $(this));
-	}).
-	on('change', '.orarioPedio', function() {
-		let val = $(this).val();
-		let orario = new letrak.orario(val);
-
-		if (orario.isOrario())
-		$(this).val(orario.toString());
-	});
-
 	prosopa.editorIpalilosKartaDOM = $('#peIpalilosKarta');
-	prosopa.katagrafiSetup();
 	prosopa.editorMeraoraLabelDOM = $('#peMeraoraLabel');
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorIsozigioDOM = $('#peIsozigio');
+	prosopa.orarioSetup();
+	prosopa.katagrafiSetup();
+
 	prosopa.editorAdidosDOM = $('#peAdidos').
 	on('change', () => {
 		const adidos = prosopa.editorAdidosDOM.val();
@@ -1816,7 +1806,7 @@ prosopa.ipovoliDisabled = (e) => {
 
 	pnd.fyiError(prosopa.minima.oxiDikaiomaIpovolis);
 	return true;
-}
+};
 
 // Η function "amesiIpovoli" καλείται συνήθως με το πάτημα κάποιου πλήκτρου
 // προκειμένου να τεθούν συγκεκριμένες τιμές σε διάφορα πεδία της φόρμας και
@@ -1835,7 +1825,35 @@ prosopa.amesiIpovoli = function(e, flist) {
 	prosopa.editorIpovoliDOM.trigger('click');
 
 	return prosopa;
-}
+};
+
+prosopa.orarioSetup = function() {
+	prosopa.orarioEpilogiDOM = $('#orarioEpilogi');
+
+	pnd.bodyDOM.
+	on('keydown', '.orarioPedio', function(e){
+		prosopa.orarioEdit(e, $(this));
+	}).
+	on('change', '.orarioPedio', function() {
+		let val = $(this).val();
+		let orario = new letrak.orario(val);
+
+		if (orario.isOrario())
+		$(this).val(orario.toString());
+	});
+
+	prosopa.editorIpalilosOrarioDOM.
+	on('focus', function(e) {
+		prosopa.orarioEpilogiDOM.css('display', 'inline');
+	}).
+	on('blur', function(e) {
+		prosopa.orarioEpilogiDOM.css('display', '');
+// XXX
+prosopa.orarioEpilogiDOM.css('display', 'inline');
+	});
+
+	return prosopa;
+};
 
 // Η function "orarioEdit" καλείται on keydown στο πεδίο του ωραρίου με σκοπό
 // να διευκολύνει τον χρήστη κατά την καταχώρηση του ωραρίου. Πιο συγκεκριμένα,
@@ -2579,7 +2597,7 @@ prosopa.isIpopto = function(parousia) {
 	return true;
 
 	return false;
-}
+};
 
 // Η function "katagrafiToggle" καλείται όποτε ο χρήστης κάνει κλικ στο
 // πλήκτρο [WIN-PAK]. Αν το πλήκτρο έχει ήδη πατηθεί και το χωρίο είναι ήδη
@@ -2765,7 +2783,7 @@ prosopa.katagrafiApoOrarioGet = () => {
 	}
 
 	return '';
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////@
 
