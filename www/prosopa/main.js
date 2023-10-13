@@ -227,11 +227,6 @@ prosopa.selidaSetup = () => {
 		(prosopa.goniki.deltio.kodikosGet() != prosopa.deltioKodikos))
 	return prosopa.fyiError('Πρόβλημα σύνδεσης με την γονική σελίδα');
 
-/*
-	pnd.
-	keepAlive('../mnt/pandora');
-*/
-
 	///////////////////////////////////////////////////////////////////////@
 
 	pnd.ofelimoDOM.
