@@ -1555,6 +1555,7 @@ prosopa.prosopaSetup = () => {
 	on('click', '.parousia', function(e) {
 		prosopa.parousiaTargetClear();
 		$(this).addClass('parousiaTarget');
+		prosopa.orarioEpilogiActive = true;
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
 
@@ -1680,6 +1681,9 @@ prosopa.editorSetup = () => {
 	});
 
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
+	on('click', function(e) {
+		prosopa.orarioEpilogiActive = false;
+	}).
 	on('submit', (e) => prosopa.editorIpovoli(e));
 
 	prosopa.parousiaEditorDOM.find('.peDeltioPedio').
@@ -1873,24 +1877,22 @@ prosopa.orarioSetup = function() {
 	prosopa.editorIpalilosOrarioDOM.
 	on('focus', function(e) {
 		e.stopPropagation();
-
-		if (prosopa.orarioEpilogiDOM.children().length)
 		prosopa.orarioEpilogiOn();
-
-		else
-		prosopa.orarioEpilogiOff();
 	}).
 	on('blur', function(e) {
 		e.stopPropagation();
-
-		prosopa.orarioEpilogiOff();
+		setTimeout(function() {
+			prosopa.orarioEpilogiOff();
+		}, 100);
 	});
 
 	return prosopa;
 };
 
 prosopa.orarioEpilogiOn = function() {
-	prosopa.orarioEpilogiDOM.css('display', 'inline');
+	let count = prosopa.orarioEpilogiDOM.children().length;
+	prosopa.orarioEpilogiDOM.css('display', count ? 'inline' : '');
+
 	return prosopa;
 };
 
@@ -2130,6 +2132,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 		val(parousia.onomateponimo);
 
 		prosopa.orarioEpilogiDOM.empty();
+
 		if (prosopa.oraria.hasOwnProperty(parousia.ipalilos)) {
 			pnd.arrayWalk(prosopa.oraria[parousia.ipalilos], (x) => {
 				prosopa.orarioEpilogiItemAdd(parousia.ipalilos, x);
