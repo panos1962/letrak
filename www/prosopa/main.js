@@ -1839,6 +1839,7 @@ prosopa.amesiIpovoli = function(e, flist) {
 
 prosopa.orarioSetup = function() {
 	prosopa.orarioEpilogiDOM = $('#orarioEpilogi');
+	prosopa.orarioEpilogiActive = false;
 
 	pnd.bodyDOM.
 	on('keydown', '.orarioPedio', function(e){
@@ -1851,6 +1852,14 @@ prosopa.orarioSetup = function() {
 		if (orario.isOrario())
 		$(this).val(orario.toString());
 	}).
+	on('mouseenter', '#orarioEpilogi', function(e) {
+		e.stopPropagation();
+		prosopa.orarioEpilogiActive = true;
+	}).
+	on('mouseleave', '#orarioEpilogi', function(e) {
+		e.stopPropagation();
+		prosopa.orarioEpilogiActive = false;
+	}).
 	on('click', '.orarioItem', function(e) {
 		let orario = $(this).data('orario');
 		prosopa.amesiIpovoli(e, {
@@ -1862,7 +1871,9 @@ prosopa.orarioSetup = function() {
 	});
 
 	prosopa.editorIpalilosOrarioDOM.
-	on('click', function(e) {
+	on('focus', function(e) {
+		e.stopPropagation();
+
 		if (prosopa.orarioEpilogiDOM.children().length)
 		prosopa.orarioEpilogiOn();
 
@@ -1870,23 +1881,21 @@ prosopa.orarioSetup = function() {
 		prosopa.orarioEpilogiOff();
 	}).
 	on('blur', function(e) {
-		setTimeout(function() {
-			prosopa.orarioEpilogiOff();
-		}, 100);
+		e.stopPropagation();
+
+		prosopa.orarioEpilogiOff();
 	});
 
 	return prosopa;
 };
 
 prosopa.orarioEpilogiOn = function() {
-	prosopa.orarioEpilogiActive = true;
 	prosopa.orarioEpilogiDOM.css('display', 'inline');
-
 	return prosopa;
 };
 
 prosopa.orarioEpilogiOff = function() {
-	prosopa.orarioEpilogiActive = false;
+	if (!prosopa.orarioEpilogiActive)
 	prosopa.orarioEpilogiDOM.css('display', '');
 
 	return prosopa;
@@ -2068,9 +2077,6 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
 
-	prosopa.orarioEpilogiDOM.
-	empty();
-
 	let update = prosopa.prosopaUpdateAllow();
 
 	if (update)
@@ -2123,10 +2129,12 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val(parousia.onomateponimo);
 
-		if (prosopa.oraria.hasOwnProperty(parousia.ipalilos))
-		pnd.arrayWalk(prosopa.oraria[parousia.ipalilos], (x) => {
-			prosopa.orarioEpilogiItemAdd(parousia.ipalilos, x);
-		});
+		prosopa.orarioEpilogiDOM.empty();
+		if (prosopa.oraria.hasOwnProperty(parousia.ipalilos)) {
+			pnd.arrayWalk(prosopa.oraria[parousia.ipalilos], (x) => {
+				prosopa.orarioEpilogiItemAdd(parousia.ipalilos, x);
+			});
+		}
 	}
 
 	else {
@@ -2206,7 +2214,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 		prosopa.editorIpalilosKodikosDOM.focus();
 
 		else
-		prosopa.editorIpalilosOrarioDOM.trigger('click');
+		prosopa.editorIpalilosOrarioDOM.focus();
 	}
 
 	else
