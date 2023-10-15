@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2023-10-15
 // Updated: 2021-05-27
 // Updated: 2020-06-26
 // Updated: 2020-06-24
@@ -177,6 +178,11 @@ pandora::query($query);
 
 if (pandora::affected_rows() < 1)
 lathos("Αστοχία υποβολής στοιχείων παρουσίας");
+
+$query = "INSERT INTO `letrak`.`orario` " .
+	"(`ipalilos`, `orario`) VALUES " .
+	"(" . $ipalilos_kodikos . ", " . $orario . ")";
+pandora::query($query);
 
 exit(0);
 

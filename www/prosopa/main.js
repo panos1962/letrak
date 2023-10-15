@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2023-10-15
 // Updated: 2023-10-13
 // Updated: 2022-10-26
 // Updated: 2022-10-24
@@ -1849,10 +1850,13 @@ prosopa.orarioSetup = function() {
 
 		if (orario.isOrario())
 		$(this).val(orario.toString());
+	}).
+	on('click', '.orarioItemDelete', function(e) {
+		prosopa.orarioItemDelete(e, $(this).parent());
 	});
 
 	prosopa.editorIpalilosOrarioDOM.
-	on('focus', function(e) {
+	on('click', function(e) {
 		if (prosopa.orarioEpilogiDOM.children().length)
 		prosopa.orarioEpilogiOn();
 
@@ -1860,7 +1864,9 @@ prosopa.orarioSetup = function() {
 		prosopa.orarioEpilogiOff();
 	}).
 	on('blur', function(e) {
-		prosopa.orarioEpilogiOff();
+		setTimeout(function() {
+			prosopa.orarioEpilogiOff();
+		}, 100);
 	});
 
 	return prosopa;
@@ -1882,12 +1888,12 @@ prosopa.orarioEpilogiOff = function() {
 
 prosopa.orarioEpilogiItemAdd = function(ipalilos, orario) {
 	prosopa.orarioEpilogiDOM.
+	append($('<div>').
+	addClass('orarioItem').
 
 	data('ipalilos', ipalilos).
 	data('orario', orario).
 
-	append($('<div>').
-	addClass('orarioItem').
 	append($('<div>').
 	addClass('orarioItemOrario').
 	text(orario)).
@@ -1902,9 +1908,31 @@ prosopa.orarioEpilogiItemAdd = function(ipalilos, orario) {
 	return prosopa;
 };
 
-prosopa.orarioItemDelete = function(e, orarioItemDOM) {
+prosopa.orarioItemDelete = function(e, dom) {
 	e.stopPropagation();
 
+	let ipalilos = dom.data('ipalilos');
+	let orario = dom.data('orario');
+
+	$.post({
+		'url': 'orarioItemDiagrafi.php',
+		'dataType': 'text',
+		'data': {
+			'ipalilos': ipalilos,
+			'orario': orario,
+		},
+		'success': (rsp) => {
+			if (rsp)
+			pnd.fyiError(rsp);
+
+			setTimeout(function() {
+				prosopa.editorIpalilosOrarioDOM.focus();
+			}, 100);
+		},
+		'error': (err) => pnd.fyiError('Απέτυχε η απαλοιφή ωραρίου'),
+	});
+
+	dom.remove();
 	return prosopa;
 };
 
