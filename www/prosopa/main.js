@@ -2203,11 +2203,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 		if (prosthiki)
 		prosopa.editorIpalilosKodikosDOM.focus();
 
-		else if (prosopa.editorIpalilosOrarioDOM.val())
-		prosopa.editorMeraoraDOM.focus();
-
 		else
-		prosopa.editorIpalilosOrarioDOM.focus();
+		prosopa.editorIpalilosOrarioDOM.trigger('click');
 	}
 
 	else
