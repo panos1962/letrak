@@ -1851,6 +1851,10 @@ prosopa.orarioSetup = function() {
 		if (orario.isOrario())
 		$(this).val(orario.toString());
 	}).
+	on('click', '.orarioItem', function(e) {
+		e.stopPropagation();
+		prosopa.editorIpalilosOrarioDOM.val($(this).data('orario'));
+	}).
 	on('click', '.orarioItemDelete', function(e) {
 		prosopa.orarioItemDelete(e, $(this).parent());
 	});
