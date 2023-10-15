@@ -239,12 +239,6 @@ document_body();
 	</div>
 
 	<div id="orarioEpilogi">
-		<div class="orarioItem">
-			07:00-15:00
-		</div>
-		<div class="orarioItem">
-			08:00-16:00
-		</div>
 	</div>
 </form>
 

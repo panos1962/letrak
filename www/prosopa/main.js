@@ -290,6 +290,7 @@ prosopa.ananeosi = (e) => {
 			fyiClear().
 			deltioProcess(rsp.deltio).
 			ipografesProcess(rsp.ipografes).
+			orariaProcess(rsp.oraria).
 			prosopaProcess(rsp.prosopa, target);
 
 			// Η property "prosopa.goniki.klonos" είναι true εφόσον
@@ -398,6 +399,14 @@ prosopa.ipografesProcess = (ipografes) => {
 	});
 
 	prosopa.prosvasiRefresh();
+	return prosopa;
+};
+
+prosopa.orariaProcess = (oraria) => {
+	if (!oraria)
+	oraria = [];
+
+	prosopa.oraria = oraria;
 	return prosopa;
 };
 
@@ -1844,13 +1853,41 @@ prosopa.orarioSetup = function() {
 
 	prosopa.editorIpalilosOrarioDOM.
 	on('focus', function(e) {
-		prosopa.orarioEpilogiDOM.css('display', 'inline');
+		if (prosopa.orarioEpilogiDOM.children().length)
+		prosopa.orarioEpilogiOn();
+
+		else
+		prosopa.orarioEpilogiOff();
 	}).
 	on('blur', function(e) {
-		prosopa.orarioEpilogiDOM.css('display', '');
-// XXX
-prosopa.orarioEpilogiDOM.css('display', 'inline');
+		prosopa.orarioEpilogiOff();
 	});
+
+	return prosopa;
+};
+
+prosopa.orarioEpilogiOn = function() {
+	prosopa.orarioEpilogiActive = true;
+	prosopa.orarioEpilogiDOM.css('display', 'inline');
+
+	return prosopa;
+};
+
+prosopa.orarioEpilogiOff = function() {
+	prosopa.orarioEpilogiActive = false;
+	prosopa.orarioEpilogiDOM.css('display', '');
+
+	return prosopa;
+};
+
+prosopa.orarioItemDelete = function(e, orarioItemDOM) {
+	e.stopPropagation();
+
+	switch (e.which) {
+	case 46:	/* Delete key */
+		orarioItemDOM.remove();
+		break;
+	}
 
 	return prosopa;
 };
@@ -2023,6 +2060,8 @@ prosopa.parousiaEdit = (e, parousia) => {
 		return prosopa;
 	}
 
+	prosopa.orarioEpilogiDOM.empty();
+
 	let enimerosi = !prosthiki;
 
 	if (enimerosi) {
@@ -2032,6 +2071,24 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 		prosopa.editorIpalilosOnomateponimoDOM.
 		val(parousia.onomateponimo);
+
+		if (prosopa.oraria.hasOwnProperty(parousia.ipalilos))
+		pnd.arrayWalk(prosopa.oraria[parousia.ipalilos], (x) => {
+			$('<div>').
+			addClass('orarioItem').
+			append($('<div>').
+			addClass('orarioItemOrario').
+			text(x)).
+			append($('<img>').
+			addClass('orarioItemDelete').
+			attr({
+				"src": "../images/delete.png",
+				"title": "Απαλοιφή αυτού του ωραρίου",
+			})).
+			data('ipalilos', parousia.ipalilos).
+			data('orario', x).
+			appendTo(prosopa.orarioEpilogiDOM);
+		});
 	}
 
 	else {
@@ -2049,8 +2106,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 			setTimeout(() => prosopa.ipalilosZoomClose(), 100);
 		});
 
-		prosopa.editorIpalilosOnomateponimoDOM.
-		val('');
+		prosopa.editorIpalilosOnomateponimoDOM.val('');
 	}
 
 	// Ωράριο

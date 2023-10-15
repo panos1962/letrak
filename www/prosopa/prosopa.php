@@ -110,7 +110,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 			/* debug
 			print '"queryOrario":' . pandora::json_string($query) . ',';
 			*/
-			print '"orario":{';
+			print '"oraria":{';
 		}
 
 		else

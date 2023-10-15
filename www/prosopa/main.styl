@@ -655,6 +655,17 @@ $ordinalWidth = 2.2em
 .mazi
 	display inline-block
 	white-space nowrap
+/*
+Ακολουθούν προδιαγραφές για το σκέλος επιλογής ωραρίου. Η προσθήκη έγινε με
+αφορμή την ένταξη των ΚΕΠ στο σύστημα ηλεκτρονικών παρουσιολογίων. Πράγματι,
+στα ΚΕΠ οι περισσότεροι υπάλληλοι αλλάζουν ωράριο σχεδόν καθημερινά. Αυτό έχει
+ως αποτέλεσμα την επιβάρυνση του χρήστη με επιπλέον επίπονη πληκτρολόγηση
+ωραρίων. Οι παρακάτω δομές διευκολύνουν τον χρήστη στην επιλογή ωραρίου για
+κάθε υπάλληλο, προτείνοντας ωράρια που έχουν πληκτρολογηθεί για τον υπάλληλο
+στο παρελθόν.
+
+[ Πάνος Παπαδόπουλος, Οκτώβριος 2023 ]
+*/
 
 #orarioEpilogi {
 	display: none;
@@ -664,9 +675,6 @@ $ordinalWidth = 2.2em
 	left: 266px;
 
 	padding: 4px;
-	width: 11em;
-	height: 6ex;
-	max-height: 20ex;
 
 	border-style: solid;
 	border-color: #000000;
@@ -680,10 +688,29 @@ $ordinalWidth = 2.2em
 .orarioItem {
 	margin: 2px 1px;
 	padding: 2px;
-	cursor: pointer;
 }
 
 .orarioItem:hover {
 	background-color: #dfe7c0;
 	text-shadow: 0px 1px 0px #000000;
+}
+
+.orarioItemOrario {
+	display: inline;
+}
+
+.orarioItemOrario:hover {
+	cursor: pointer;
+}
+
+.orarioItemDelete {
+	display: inline;
+	margin: 0 0 0 1em;
+	width: 1em;
+	opacity: 0.2;
+}
+
+.orarioItemDelete:hover {
+	opacity: 1;
+	cursor: pointer;
 }
