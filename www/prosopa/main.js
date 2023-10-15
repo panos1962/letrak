@@ -1880,14 +1880,30 @@ prosopa.orarioEpilogiOff = function() {
 	return prosopa;
 };
 
+prosopa.orarioEpilogiItemAdd = function(ipalilos, orario) {
+	prosopa.orarioEpilogiDOM.
+
+	data('ipalilos', ipalilos).
+	data('orario', orario).
+
+	append($('<div>').
+	addClass('orarioItem').
+	append($('<div>').
+	addClass('orarioItemOrario').
+	text(orario)).
+
+	append($('<img>').
+	addClass('orarioItemDelete').
+	attr({
+		"src": "../images/delete.png",
+		"title": "Απαλοιφή αυτού του ωραρίου",
+	})));
+
+	return prosopa;
+};
+
 prosopa.orarioItemDelete = function(e, orarioItemDOM) {
 	e.stopPropagation();
-
-	switch (e.which) {
-	case 46:	/* Delete key */
-		orarioItemDOM.remove();
-		break;
-	}
 
 	return prosopa;
 };
@@ -2018,6 +2034,9 @@ prosopa.parousiaEdit = (e, parousia) => {
 	prosopa.parousiaEditorDOM.
 	removeData('parousia');
 
+	prosopa.orarioEpilogiDOM.
+	empty();
+
 	let update = prosopa.prosopaUpdateAllow();
 
 	if (update)
@@ -2060,8 +2079,6 @@ prosopa.parousiaEdit = (e, parousia) => {
 		return prosopa;
 	}
 
-	prosopa.orarioEpilogiDOM.empty();
-
 	let enimerosi = !prosthiki;
 
 	if (enimerosi) {
@@ -2074,20 +2091,7 @@ prosopa.parousiaEdit = (e, parousia) => {
 
 		if (prosopa.oraria.hasOwnProperty(parousia.ipalilos))
 		pnd.arrayWalk(prosopa.oraria[parousia.ipalilos], (x) => {
-			$('<div>').
-			addClass('orarioItem').
-			append($('<div>').
-			addClass('orarioItemOrario').
-			text(x)).
-			append($('<img>').
-			addClass('orarioItemDelete').
-			attr({
-				"src": "../images/delete.png",
-				"title": "Απαλοιφή αυτού του ωραρίου",
-			})).
-			data('ipalilos', parousia.ipalilos).
-			data('orario', x).
-			appendTo(prosopa.orarioEpilogiDOM);
+			prosopa.orarioEpilogiItemAdd(parousia.ipalilos, x);
 		});
 	}
 
