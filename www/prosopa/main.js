@@ -1552,10 +1552,12 @@ prosopa.filtroParontesMatch = (parousia) => {
 
 prosopa.prosopaSetup = () => {
 	prosopa.browserDOM.
-	on('click', '.parousia', function(e) {
+	on('mousedown', '.parousia', function(e) {
+		prosopa.orarioEpilogiActive = true;
+	}).
+	on('mouseup', '.parousia', function(e) {
 		prosopa.parousiaTargetClear();
 		$(this).addClass('parousiaTarget');
-		prosopa.orarioEpilogiActive = true;
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
 
@@ -1681,7 +1683,7 @@ prosopa.editorSetup = () => {
 	});
 
 	prosopa.parousiaEditorDOM = $('#parousiaEditor').
-	on('click', function(e) {
+	on('mousedown', function(e) {
 		prosopa.orarioEpilogiActive = false;
 	}).
 	on('submit', (e) => prosopa.editorIpovoli(e));
@@ -1881,9 +1883,7 @@ prosopa.orarioSetup = function() {
 	}).
 	on('blur', function(e) {
 		e.stopPropagation();
-		setTimeout(function() {
-			prosopa.orarioEpilogiOff();
-		}, 100);
+		prosopa.orarioEpilogiOff();
 	});
 
 	return prosopa;
@@ -2213,8 +2213,12 @@ prosopa.parousiaEdit = (e, parousia) => {
 	dialog('open');
 
 	if (update) {
-		if (prosthiki)
-		prosopa.editorIpalilosKodikosDOM.focus();
+		if (prosthiki) {
+			prosopa.orarioEpilogiActive = false;
+			prosopa.orarioEpilogiOff();
+			prosopa.orarioEpilogiDOM.empty();
+			prosopa.editorIpalilosKodikosDOM.focus();
+		}
 
 		else
 		prosopa.editorIpalilosOrarioDOM.focus();
