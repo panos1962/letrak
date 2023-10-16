@@ -1858,6 +1858,20 @@ prosopa.orarioSetup = function() {
 		if (orario.isOrario())
 		$(this).val(orario.toString());
 	}).
+	on('change', '#peIpalilosOrario', function(e) {
+		e.stopPropagation();
+
+		let val = $(this).val();
+		let orario = new letrak.orario(val);
+
+		if (!orario.isOrario())
+		return;
+
+		orario = orario.toString();
+
+		let data = prosopa.parousiaEditorDOM.data('parousia');
+		data.orario = orario;
+	}).
 	on('mouseenter', '#orarioEpilogi', function(e) {
 		e.stopPropagation();
 		prosopa.orarioEpilogiActive = true;
@@ -2064,6 +2078,7 @@ prosopa.orarioEdit = (e, fld) => {
 	step *= prosimo;
 	orario = new letrak.orario(apo.leptaAdd(step), eos.leptaAdd(step));
 	fld.val(orario.toString());
+	fld.trigger('change');
 };
 
 prosopa.editorClose = (e) => {
