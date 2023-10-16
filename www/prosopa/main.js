@@ -1868,6 +1868,9 @@ prosopa.orarioSetup = function() {
 	}).
 	on('mousedown', '.orarioItem', function(e) {
 		let orario = $(this).data('orario');
+		let data = prosopa.parousiaEditorDOM.data('parousia');
+
+		data.orario = orario;
 		prosopa.amesiIpovoli(e, {
 			'editorIpalilosOrarioDOM': orario,
 		});
