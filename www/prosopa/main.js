@@ -1940,11 +1940,10 @@ prosopa.orarioItemDelete = function(e, dom) {
 		},
 		'success': (rsp) => {
 			if (rsp)
-			pnd.fyiError(rsp);
+			return pnd.fyiError(rsp);
 
-			setTimeout(function() {
-				prosopa.editorIpalilosOrarioDOM.focus();
-			}, 100);
+			dom.remove();
+			prosopa.editorIpalilosOrarioDOM.focus();
 		},
 		'error': (err) => pnd.fyiError('Απέτυχε η απαλοιφή ωραρίου'),
 	});
