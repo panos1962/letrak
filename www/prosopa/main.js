@@ -1866,13 +1866,13 @@ prosopa.orarioSetup = function() {
 		e.stopPropagation();
 		prosopa.orarioEpilogiActive = false;
 	}).
-	on('click', '.orarioItem', function(e) {
+	on('mousedown', '.orarioItem', function(e) {
 		let orario = $(this).data('orario');
 		prosopa.amesiIpovoli(e, {
 			'editorIpalilosOrarioDOM': orario,
 		});
 	}).
-	on('click', '.orarioItemDelete', function(e) {
+	on('mousedown', '.orarioItemDelete', function(e) {
 		prosopa.orarioItemDelete(e, $(this).parent());
 	});
 
