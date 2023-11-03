@@ -187,7 +187,7 @@ lathos("Αστοχία υποβολής στοιχείων παρουσίας");
 // Αυτή η ανάγκη προέκυψε τον Οκτώβριο του 2023, με την ένταξη των ΚΕΠ στο
 // σύστημα των ηλεκτρονικών παρουσιολογίων.
 
-if ($orario) {
+if ($orario !== "NULL") {
 	$query = "REPLACE INTO `letrak`.`orario` " .
 		"(`ipalilos`, `orario`) VALUES " .
 		"(" . $ipalilos_kodikos . ", " . $orario . ")";
