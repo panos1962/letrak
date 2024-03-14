@@ -48,6 +48,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-03-14
 // Updated: 2022-12-14
 // Updated: 2022-10-06
 // Updated: 2022-10-05
@@ -516,9 +517,14 @@ ektiposi.parousiaDOM = (deltioDOM, aa) => {
 	text(x).
 	appendTo(dom);
 
+	// Φροντίζουμε να απαλείψουμε τη σήμανση πειραγμένης εγγραφής
+	// καθώς αυτό δεν μπορεί να γίνει μέσω του styling λόγω κακού
+	// σχεδιασμού.
+
 	x = deltioDOM.
 	children('.parousiaMeraora').
-	text();
+	text().
+	replace(/[^0-9: -]/g, '')
 
 	$('<div>').
 	addClass('ektiposi-parousiaMeraora').
