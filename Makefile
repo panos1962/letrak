@@ -39,6 +39,7 @@ all:
 	(cd www/adiarpt && make)
 	(cd www/admin && make)
 	(cd www/diafores && make)
+	(cd www/checkin && make)
 
 test:
 	make all

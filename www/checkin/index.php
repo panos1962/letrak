@@ -51,10 +51,10 @@ document_body();
 ?>
 <div id="kritiriaForma">
 	<div class="letrak-inputLine">
-		<label for="klonismosFormaImerominia">
+		<label for="kritiriaFormaImerominia">
 			Ημερομηνία
 		</label>
-		<input id="klonismosFormaImerominia" tabindex="-1">
+		<input id="kritiriaFormaImerominia" tabindex="-1">
 	</div>
 </div>
 <?php
