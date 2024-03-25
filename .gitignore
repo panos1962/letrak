@@ -17,6 +17,7 @@
 *~
 *.sw?
 *.sv
+*.xlsx
 panos[0-9]*
 test[0-9]*
 bundle.js
