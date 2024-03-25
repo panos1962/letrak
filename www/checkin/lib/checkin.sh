@@ -3,7 +3,13 @@
 progname="$(basename $0)"
 
 usage() {
-	echo "usage: ${progname} [-x filename] [-c] [-d date] [-f from] [-t to]" >&2
+	echo "usage: ${progname} \
+[-x filename] \
+[-c] \
+[-d date] \
+[-s site] \
+[-f from] \
+[-t to]" >&2
 	exit 1
 }
 
@@ -11,10 +17,11 @@ errs=
 post="cat"
 count=
 date="$(date +'%Y-%m-%d')"
+site="NDM"
 apo="05:00:00"
 eos="11:00:00"
 
-while getopts ":x:cd:f:t:" opt
+while getopts ":x:cd:s:f:t:" opt
 do
 	case "${opt}" in
 	x)
@@ -28,6 +35,9 @@ fd://0 ${OPTARG}.xlsx"
 		;;
 	d)
 		date="${OPTARG}"
+		;;
+	s)
+		site="${OPTARG}"
 		;;
 	f)
 		apo="${OPTARG}"
@@ -81,6 +91,7 @@ etad="$(echo "SELECT DATE_SUB('${date}', INTERVAL 30 DAY)" | sqlrun)" || exit 2
 sqledit() {
 	sed "s;_DATE_;${date};g
 s;_ETAD_;${etad};g
+s;_SITE_;${site};g
 s;_APO_;${apo};g
 s;_EOS_;${eos};g" $1
 }

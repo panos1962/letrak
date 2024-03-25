@@ -73,15 +73,18 @@ $eos = pandora::parameter_get("eos");
 if (!$eos)
 $eos = "23:59:59";
 
+$filename = $checker . "_" . rand();
 $cmd = "lib/checkin.sh";
-$cmd .= " -x 'tmp/" . $checker . "'";
-$cmd .= " -d '" . $imerominia . "'";
-$cmd .= " -f '" . $apo . "'";
-$cmd .= " -t '" . $eos . "'";
+$cmd .= " -x tmp/" . $filename . "";
+$cmd .= " -d " . $imerominia . "";
+$cmd .= " -s " . $ktirio . "";
+$cmd .= " -f " . $apo . "";
+$cmd .= " -t " . $eos . "";
 
+print "<p>" . $cmd . "</p>";
 system($cmd);
-header("Location: tmp/" . $checker . ".xlsx");
-
+print '<p>Κάντε κλικ <a href="tmp/' . $filename . '.xlsx" target="_blank">' .
+	'εδώ</a> για να κατεβάσετε τα στοιχεία</p>';
 
 function anonimo() {
 	global $checker;
