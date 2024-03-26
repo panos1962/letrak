@@ -3,7 +3,7 @@
 progname="$(basename $0)"
 
 usage() {
-	echo "usage: ${progname} [-r]" >&2
+	echo "usage: ${progname} [-r] [-a]" >&2
 	exit 1
 }
 
@@ -11,9 +11,12 @@ errs=
 proc="ls -ld"
 age=5
 
-while getopts ":r" opt
+while getopts ":ra" opt
 do
 	case "${opt}" in
+	a)
+		age=0
+		;;
 	r)
 		proc="rm -f"
 		;;
