@@ -68,7 +68,11 @@ pandora::
 session_init();
 
 $checker = onoma_xristi();
-if (!$checker) header("Location: ../isodos");
+
+if (!$checker) {
+	header("Location: ../isodos/index.php");
+	exit(0);
+}
 
 pandora::
 document_head([
@@ -108,6 +112,12 @@ print '<p>Κάντε κλικ <a href="tmp/' . $filename . '.xlsx" target="_blan
 	'εδώ</a> για να κατεβάσετε τα στοιχεία</p>';
 
 function onoma_xristi() {
+	if (!isset($_SESSION))
+	return FALSE;
+
+	if (!is_array($_SESSION))
+	return FALSE;
+
 	if (!array_key_exists("letrak_session_ipalilos", $_SESSION))
 	return FALSE;
 
