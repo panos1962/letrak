@@ -16,13 +16,44 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
-// Σελίδα αναζήτησης συμβάντων (χτυπημάτων καρτών). Σε αυτήν τη σελίδα ο χρήστης
-// καθορίζει κριτήρια αναζήτησης συμβάντων (ημερομηνία, διάστημα ωρών, υπηρεσίες
-// κλπ) και το πρόγραμμα συλλέγει όλα τα σχετικά συμβάντα, τα οποία παρουσιάζει
-// με τη μορφή λογιστικού φύλλου.
+// Σελίδα αναζήτησης συμβάντων (χτυπήματα καρτών). Σε αυτήν τη σελίδα ο χρήστης
+// καθορίζει κριτήρια αναζήτησης συμβάντων (ημερομηνία, διάστημα ωρών, κτίριο,
+// υπηρεσίες κλπ) και το πρόγραμμα συλλέγει όλα τα σχετικά συμβάντα, τα οποία
+// παρουσιάζει με τη μορφή λογιστικού φύλλου.
+//
+// Τα κριτήρια αναζήτησης καθορίζονται στο url με τις εξής παραμέτρους:
+//
+//	imerominia	Ημερομηνία με τη μορφή YYYY-MM-DD
+//			(default τρέχουσα ημερομηνία)
+//
+//	apo		Κάτω χρονικό όριο ώρας (default 00:00:00)
+//
+//	eos		Άνω χρονικό όριο ώρας (default 23:59:59)
+//
+//	ktirio		Κωδικός κτιρίου (default NDM)
+//
+// Τα κτίρια είναι τα εξής:
+//
+//	NDM	Δημαρχιακό Μέγαρο
+//	DKA	Α' Δημοτική Κοινότητα
+//	DKB	Β' Δημοτική Κοινότητα
+//	DKC	Γ' Δημοτική Κοινότητα
+//	DKD	Δ' Δημοτική Κοινότητα
+//	DKE	Ε' Δημοτική Κοινότητα
+//	DKT	Κοινότητα Τριανδρίας
+//	ARX	Αρχιτεκτονικό
+//	POL	ΠΟΛΕΟΔΟΜΙΑ
+//	BIB	Κεντρική Βιβλιοθήκη
+//	KIS	Κέντρο Ιστορίας
+//	PRN	Πρόνοια
+//	PRA	Πράσινο
+//	BIO	Βιώσιμη
+//	SMA	Σταθμός Μεταφόρτωσης Απορριμμάτων
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-03-26
+// Updated: 2024-03-25
 // Created: 2024-03-22
 // @HISTORY END
 //
@@ -36,10 +67,8 @@ require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
 pandora::
 session_init();
 
-if (anonimo()) {
-	header("Location: ../isodos");
-	exit(0);
-}
+$checker = onoma_xristi();
+if (!$checker) header("Location: ../isodos");
 
 pandora::
 document_head([
@@ -54,24 +83,16 @@ document_head([
 database();
 
 $imerominia = pandora::parameter_get("imerominia");
-
-if (!$imerominia)
-$imerominia = date("Y-m-d");
-
-$ktirio = pandora::parameter_get("ktirio");
-
-if (!$ktirio)
-$ktirio = "NDM";
+if (!$imerominia) $imerominia = date("Y-m-d");
 
 $apo = pandora::parameter_get("apo");
-
-if (!$apo)
-$apo = "00:00:00";
+if (!$apo) $apo = "00:00:00";
 
 $eos = pandora::parameter_get("eos");
+if (!$eos) $eos = "23:59:59";
 
-if (!$eos)
-$eos = "23:59:59";
+$ktirio = pandora::parameter_get("ktirio");
+if (!$ktirio) $ktirio = "NDM";
 
 $filename = $checker . "_" . rand();
 $cmd = "lib/checkin.sh";
@@ -86,17 +107,15 @@ system($cmd);
 print '<p>Κάντε κλικ <a href="tmp/' . $filename . '.xlsx" target="_blank">' .
 	'εδώ</a> για να κατεβάσετε τα στοιχεία</p>';
 
-function anonimo() {
-	global $checker;
-
+function onoma_xristi() {
 	if (!array_key_exists("letrak_session_ipalilos", $_SESSION))
-	return TRUE;
+	return FALSE;
 
 	$checker = json_decode($_SESSION["letrak_session_ipalilos"]);
 	$checker = $checker->kodikos;
 
 	if (!$checker)
-	return TRUE;
-
 	return FALSE;
+
+	return $checker;
 }
