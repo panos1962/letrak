@@ -3,7 +3,7 @@
 progname="$(basename $0)"
 
 usage() {
-	echo "usage: ${progname} [-r] [-a]" >&2
+	echo "usage: ${progname} [-r] [-a] [-t minutes]" >&2
 	exit 1
 }
 
@@ -11,7 +11,7 @@ errs=
 proc="ls -ld"
 age=5
 
-while getopts ":ra" opt
+while getopts ":rat:" opt
 do
 	case "${opt}" in
 	a)
@@ -19,6 +19,9 @@ do
 		;;
 	r)
 		proc="rm -f"
+		;;
+	t)
+		age="${OPTARG}"
 		;;
 	\:)
 		echo "${progname}: -${OPTARG}: missing argument" >&2
