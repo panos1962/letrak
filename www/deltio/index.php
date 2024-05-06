@@ -53,7 +53,7 @@ document_head([
 // που δείχνει στη νεότερη version των δεδομένων αυτών.
 
 ?>
-<script src="../public/erpotaData.js" async></script>
+<script src="../public/erpotaData.js" defer></script>
 <?php
 
 pandora::
