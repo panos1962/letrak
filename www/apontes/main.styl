@@ -1,0 +1,107 @@
+/*******************************************************************************
+*
+* @BEGIN
+*
+* @COPYRIGHT BEGIN
+* Copyright (C) 2019 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+* @COPYRIGHT END
+*
+* @FILETYPE BEGIN
+* stylus
+* @FILETYPE END
+*
+* @FILE BEGIN
+* www/prosopa/main.styl —— Αρχείο προδιαγραφών CSS για τη σελίδα
+* εμφάνισης διαφορών παρουσιολογίων
+* @FILE END
+*
+* @HISTORY BEGIN
+* Updated: 2022-10-02
+* Updated: 2022-09-26
+* Updated: 2022-09-24
+* Updated: 2022-09-22
+* Created: 2022-09-17
+* @HISTORY END
+*
+* @END
+*
+*******************************************************************************/
+
+@import '../mnt/pandora/lib/common.styl'
+@import '../lib/common.styl'
+
+#ektiposi
+	display none
+
+.pnd-ofelimo
+	padding 0px
+	overflow-x hidden
+
+/******************************************************************************/
+
+#deltioArea
+	display inline-block
+	> div
+		display inline-block
+
+.deltio
+	margin 2px
+	background-color #c4cb9c
+	border-radius 4px
+	> div
+		display inline-block
+		padding 2px
+
+.deltioKodikos
+	&:before
+		content '['
+		padding-right 2px
+	&:after
+		content ']'
+		padding-left 2px
+
+.deltioImera
+	font-weight bold
+	&:after
+		content ','
+		font-weight normal
+
+/******************************************************************************/
+
+.ipalilosArea
+	margin 4px
+	background-color #e5e3b6
+	border-radius 4px
+	cursor crosshair
+
+.ipalilosAreaDone
+	background-color #e3d9c6
+
+.ipalilos
+	margin 4px
+	border-radius 4px
+	> div
+		display inline-block
+		padding 2px
+
+.ipalilosKodikos
+	&:before
+		content '['
+		padding-right 2px
+	&:after
+		content ']'
+		padding-left 2px
+
+/******************************************************************************/
+
+.diaforesNoDif
+	margin 20px 0 0 2px
+	padding 4px
+	width 30em
+	font-style italic
+	cursor pointer
+
+.diaforesKlisimoTab
+	border-width 3px
+	border-style double
+	margin 0 1em;

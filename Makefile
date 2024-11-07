@@ -87,6 +87,8 @@ pull:
 
 .PHONY: cleanup
 cleanup:
+	@(cd www/apontes && make cleanup)
+	@(cd www/diafores && make cleanup)
 	@(cd www/admin && make cleanup)
 	@(cd www/adiarpt && make cleanup)
 	@(cd www/prosopa && make cleanup)
