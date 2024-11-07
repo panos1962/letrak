@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-07
 // Updated: 2022-10-18
 // Updated: 2022-10-16
 // Updated: 2022-10-15
@@ -545,7 +546,40 @@ deltio.adiaReport = (e) => {
 	if (!deltio.hasOwnProperty('ipiresiaList'))
 	deltio.erpotaProcess();
 
-	deltio.prosopaWindows.push(window.open('../adiarpt', '_blank'));
+	deltio.childrenWindows.push(window.open('../adiarpt', '_blank'));
+	return deltio;
+};
+
+deltio.deltioAponton = (e, deltioDOM) => {
+	e.stopPropagation();
+return deltio;
+
+	if (deltioDOM.length !== 1)
+	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
+
+	let x = deltioDOM.data('deltio');
+
+	if (!x)
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
+
+	try {
+		var kodikos = x.kodikosGet();
+	}
+
+	catch (e) {
+		return deltio.fyiError
+			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
+	}
+
+	// Αν έχουμε ήδη διαχειριστεί τα δεδομένα προσωπικού, τότε προχωρούμε
+	// άμεσα στο άνοιγμα της σελίδας επεξεργασίας δελτίου.
+
+	if (!deltio.hasOwnProperty('ipiresiaList'))
+	deltio.erpotaProcess();
+
+	let url = '../apontes?deltio=' + kodikos;
+	deltio.childrenWindows.push(window.open(url, '_blank'));
+
 	return deltio;
 };
 
@@ -600,6 +634,14 @@ deltio.browserSetup = () => {
 			'clickEvent': e,
 			'deltioDOM': $(this).closest('.deltio'),
 		});
+	});
+
+	// Αν ο χρήστης κάνει κλικ στην κατάσταση κύρωσης του δελτίου, τότε
+	// ανοίγει απευθείας νέο παράθυρο εμφάνισης στοιχείων δελτίου απόντων.
+
+	deltio.browserDOM.
+	on('click', '.deltioKatastasi', function(e) {
+		deltio.deltioAponton(e, $(this).closest('.deltio'));
 	});
 
 	return deltio;
@@ -1369,7 +1411,7 @@ deltio.diafores = (e) => {
 	return;
 
 	LETRAK.trexon = trexon;
-	deltio.prosopaWindows.push(window.open('../diafores', '_blank'));
+	deltio.childrenWindows.push(window.open('../diafores', '_blank'));
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -1377,15 +1419,15 @@ deltio.diafores = (e) => {
 // Διατηρούμε array με όλα τα ξεχωριστά παράθυρα επεξεργασίας δελτίων που
 // έχει ανοίγει ο χρήστης κάνοντας κλικ στον κωδικό του δελτίου.
 
-deltio.prosopaWindows = [];
+deltio.childrenWindows = [];
 
 // Κατά το κλείσιμο της αρχικής σελίδας φροντίζουμε να κλείσουμε πρώτα όλα
 // τα ξεχωριστά παράθυρα που ενδεχομένως έχει ανοίξει ο χρήστης.
 
 $(window).
 on('beforeunload', () => {
-	while (deltio.prosopaWindows.length)
-	deltio.prosopaWindows.pop().close();
+	while (deltio.childrenWindows.length)
+	deltio.childrenWindows.pop().close();
 });
 
 // Η function "prosopaOpen" ανοίγει νέα καρτέλα ή νέο παράθυρο επεξεργασίας
@@ -1404,14 +1446,14 @@ deltio.prosopaOpen = (kodikos, amolimeno) => {
 	// επεξεργασίας δελτίου.
 
 	if (!amolimeno) {
-		deltio.prosopaWindows.push(window.open(url, '_blank'));
+		deltio.childrenWindows.push(window.open(url, '_blank'));
 		return deltio;
 	}
 
 	// Αλλιώς ανοίγει νέο παράθυρο επεξεργασίας δελτίου, οπότε
 	// μεριμνούμε, έστω υποτυπωδώς, για τη χωροταξία των παραθύρων.
 
-	let n = (deltio.prosopaWindows.length % 4) + 1;
+	let n = (deltio.childrenWindows.length % 4) + 1;
 
 	let specs = '';
 	specs += 'width=1500,';
@@ -1419,7 +1461,7 @@ deltio.prosopaOpen = (kodikos, amolimeno) => {
 	specs += 'top=' + (n * 100) + ',';
 	specs += 'left=' + (n * 100);
 
-	deltio.prosopaWindows.push(window.open(url, kodikos, specs));
+	deltio.childrenWindows.push(window.open(url, kodikos, specs));
 	return deltio;
 };
 
