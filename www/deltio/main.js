@@ -550,9 +550,8 @@ deltio.adiaReport = (e) => {
 	return deltio;
 };
 
-deltio.deltioAponton = (e, deltioDOM) => {
+deltio.apontes = (e, deltioDOM) => {
 	e.stopPropagation();
-return deltio;
 
 	if (deltioDOM.length !== 1)
 	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
@@ -563,6 +562,9 @@ return deltio;
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
 
 	try {
+		if (x.oxiApoxorisi())
+		return deltio.fyiError('Δεν είναι δελτίο αποχώρησης');
+
 		var kodikos = x.kodikosGet();
 	}
 
@@ -570,12 +572,6 @@ return deltio;
 		return deltio.fyiError
 			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
 	}
-
-	// Αν έχουμε ήδη διαχειριστεί τα δεδομένα προσωπικού, τότε προχωρούμε
-	// άμεσα στο άνοιγμα της σελίδας επεξεργασίας δελτίου.
-
-	if (!deltio.hasOwnProperty('ipiresiaList'))
-	deltio.erpotaProcess();
 
 	let url = '../apontes?deltio=' + kodikos;
 	deltio.childrenWindows.push(window.open(url, '_blank'));
@@ -641,7 +637,7 @@ deltio.browserSetup = () => {
 
 	deltio.browserDOM.
 	on('click', '.deltioKatastasi', function(e) {
-		deltio.deltioAponton(e, $(this).closest('.deltio'));
+		deltio.apontes(e, $(this).closest('.deltio'));
 	});
 
 	return deltio;

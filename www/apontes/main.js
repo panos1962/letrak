@@ -3,7 +3,7 @@
 // @BEGIN
 //
 // @COPYRIGHT BEGIN
-// Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+// Copyright (C) 2024 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
 // @COPYRIGHT END
 //
 // @FILETYPE BEGIN
@@ -16,12 +16,13 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
-// Το παρόν πρόγραμμα οδηγεί τη σελίδα παρουσίασης απόντων ημέρας του
-// δελτίου του οποίου ο κωδικός έχει περαστεί στη σελίδα ως παράμετρος
-// "deltio".
+// Το παρόν πρόγραμμα οδηγεί τη σελίδα παρουσίασης απόντων ημέρας του δελτίου
+// αποχώρησης του οποίου ο κωδικός έχει περαστεί στη σελίδα ως παράμετρος με
+// ονομασία "deltio".
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-08
 // Created: 2024-11-07
 // @HISTORY END
 //
@@ -40,7 +41,7 @@ require('../lib/letrak.js');
 const apontes = {};
 
 apontes.minima = {
-	'nodif': 'Δεν παρουσιάστηκαν διαφορές. Κάντε κλικ, ' +
+	'apantesParontes': 'Άπαντες παρόντες. Κάντε κλικ, ' +
 		'ή πατήστε οποιοδήποτε πλήκτρο για επιστροφή&#8230;',
 };
 
@@ -68,18 +69,24 @@ apontes.selidaSetup = () => {
 	if (letrak.noXristis())
 	return apontes.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
 
-	apontes.proapoPinpoint();
+	if (php.noRequest('deltio'))
+	apontes.fatalError('Απροσδιόριστο παρουσιολόγιο');
+
+	let deltio = php.requestGet('deltio');
+
+	if (!deltio)
+	apontes.fatalError('Ακαθόριστο παρουσιολόγιο');
 
 	pnd.ofelimoDOM.
 	on('click', '.ipalilosArea', function(e) {
 		apontes.ipalilosDoneToggle(e, $(this));
 	});
 
+/*
 	$.post({
 		'url': 'apontesGet.php',
 		'data': {
-			"pro": apontes.pro,
-			"apo": apontes.apo,
+			"deltio": deltio,
 		},
 		'dataType': 'json',
 		'success': (rsp) => apontes.apontesProcess(rsp),
@@ -88,35 +95,14 @@ apontes.selidaSetup = () => {
 			console.error(e);
 		},
 	});
-
-	return apontes;
-};
-
-// Το προς έλεγχο παρουσιολόγιο (τρέχον) μπορεί να καθοριστεί με την παράμετρο
-// "tre", ενώ το αντίστοιχο προηγούμενο παρουσιολόγιο μπορεί να καθοριστεί με
-// την παράμετρο "pro". Αν δεν έχει καθοριστεί προηγούμενο παρουσιολόγιο, τότε
-// το πρόγραμμα θα επιχειρήσει να το εντοπίσει από το τρέχον παρουσιολόγιο.
-// Αν δεν έχει καθοριστεί ούτε τρέχον παρουσιολόγιο, τότε το πρόγραμμα θα
-// επιχειρήσει να το εντοπίσει από την γονική σελίδα.
-
-apontes.treproPinpoint = () => {
-	if (php.isRequest('tre')) {
-		apontes.tre = php.requestGet('tre');
-		apontes.pro = php.requestGet('pro');
-		return apontes;
-	}
-
-	if (!self.opener)
-	apontes.fatalError('Ακαθόριστη γονική σελίδα');
-
-	try {
-		apontes.tre = self.opener.LETRAK.trexon.kodikosGet();
-	}
-
-	catch (e) {
-		console.error(e);
-		apontes.fatalError('Απροσδιόριστο τρέχον παρουσιολόγιο');
-	}
+*/
+apontes.apontesProcess({
+"proselefsi": '123',
+"apoxorisi": '456',
+"ipiresia": "Β10",
+"perigrafi": "asd ahsd kashdkjash dhkajh sdkahkd",
+"ipl": [],
+});
 
 	return apontes;
 };
@@ -127,24 +113,19 @@ apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
 
-	let tre = new apontes.deltio(rsp.tre);
-	let pro = new apontes.deltio(rsp.pro);
+	document.title = rsp.proselefsi + '+' + rsp.apoxorisi;
 
-	document.title = tre.kodikos + ' <> ' + pro.kodikos;
-
-	let nodif = true;
+	let apantesParontes = true;
 
 	for (let ipalilos in rsp.ipl) {
-		nodif = false;
+		apantesParontes = false;
 		break;
 	}
 
 	let deltioAreaDOM = $('<div>').attr('id', 'deltioArea');
 
 	deltioAreaDOM.
-	append(tre.deltioDomGet()).
-	append($('<div>').html(nodif ? '&#9776' : '&#9775')).
-	append(pro.deltioDomGet());
+	append($('<div>').html(rsp.proselefsi + '@' + rsp.apoxorisi));
 
 	if (self.LETRAK.hasOwnProperty('klisimoTabDOM'))
 	deltioAreaDOM.
@@ -154,8 +135,8 @@ apontes.apontesProcess = (rsp) => {
 	empty().
 	append(deltioAreaDOM);
 
-	if (nodif)
-	return apontes.oxiAlages();
+	if (apantesParontes)
+	return apontes.apantesParontes();
 
 	for (let ipalilos in rsp.ipl) {
 		ipalilos = new apontes.ipalilos(ipalilos, rsp.ipl[ipalilos]);
@@ -196,18 +177,18 @@ apontes.apontesProcess = (rsp) => {
 	return apontes;
 };
 
-apontes.oxiAlages = function() {
+apontes.apantesParontes = function() {
 	pnd.ofelimoDOM.
-	append($('<div>').addClass('apontesNoDif').
-	html(apontes.minima.nodif));
+	append($('<div>').addClass('apantesParontes').
+	html(apontes.minima.apantesParontes));
 	pnd.bodyDOM.
-	on('click', (e) => apontes.oxiAlagesClose(e)).
-	on('keyup', (e) => apontes.oxiAlagesClose(e));
+	on('click', (e) => apontes.apantesParontesClose(e)).
+	on('keyup', (e) => apontes.apantesParontesClose(e));
 
 	return apontes;
 };
 
-apontes.oxiAlagesClose = function(e) {
+apontes.apantesParontesClose = function(e) {
 	e.stopPropagation();
 	self.close();
 };

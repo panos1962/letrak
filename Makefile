@@ -40,6 +40,7 @@ all:
 	(cd www/admin && make)
 	(cd www/diafores && make)
 	(cd www/checkin && make)
+	(cd www/apontes && make)
 
 test:
 	make all
