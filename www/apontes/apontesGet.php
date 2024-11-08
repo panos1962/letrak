@@ -18,15 +18,11 @@
 //
 // @DESCRIPTION BEGIN
 // Το παρόν πρόγραμμα καλείται από τη σελίδα παρουσίασης απόντων ημέρας.
-// Ως βασική παράμετρος δίνεται ο κωδικός δελτίου. Το
-// πρόγραμμα ελέγχει το είδος του δελτίου και εντοπίζει το σχετικό δελτίο·
-// αν το δελτίο που δόθηκε είναι δελτίο προσέλευσης, τότε το πρόγραμμα
-// εντοπίζει το αντίστοιχο δελτίο αποχώρησης, και αντιστρόφως. Κατόπιν
-// εντοπίζονται και επιστρέφονται όλοι οι αδειούχοι και οι εξαιρέσεις
-// των δύο δελτίων.
+// Ως παράμετρος δίνεται ο κωδικός παρουσιολογίου αποχώρησης της ημέρας.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Created: 2024-11-08
 // Created: 2024-11-07
 // @HISTORY END
 //
@@ -42,15 +38,13 @@ header_json()::
 session_init()::
 database();
 
-Apousies::
+Apontes::
 init()::
 prosvasi_fetch()::
-ena_fetch()::
-dio_fetch()::
+deltio_fetch()::
 prosvasi_check()::
-parousia_fetch(Diafores::$tre)::
-parousia_fetch(Diafores::$pro)::
-adiafora_delete()::
+parousia_fetch(Apontes::$proselefsi)::
+parousia_fetch(Apontes::$apoxorisi)::
 ipalilos_fetch();
 
 print '{' .
@@ -61,7 +55,7 @@ print '{' .
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-class Apousies {
+class Apontes {
 	// Το πεδίο "prosvasi" περιέχει τα στοιχεία πρόσβασης του χρήστη
 	// που τρέχει την εφαρμογή.
 
