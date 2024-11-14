@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-14
 // Updated: 2024-11-13
 // Updated: 2024-11-08
 // Created: 2024-11-07
@@ -42,13 +43,13 @@ database();
 Apontes::
 init()::
 prosvasi_fetch()::
-deltio_fetch()::
+apoxorisi_fetch()::
+proselefsi_fetch()::
 prosvasi_check()::
 parousia_fetch(Apontes::$pro)::
 parousia_fetch(Apontes::$apo)::
-adiafora_mark(Apontes::$pro, Apontes::$apo)::
-adiafora_mark(Apontes::$apo, Apontes::$pro)::
-adiafora_delete()::
+ipoptos_extract(Apontes::$pro, Apontes::$apo)::
+ipoptos_extract(Apontes::$apo, Apontes::$pro)::
 ipalilos_fetch();
 
 print '{' .
@@ -83,7 +84,7 @@ class Apontes {
 	public static $pro;
 
 	// Το πεδίο "ilist" περιέχει λίστα υπαλλήλων οι οποίοι παρουσιάζουν
-	// απουσία.
+	// ενδιαφέρον.
 
 	public static $ilist;
 
@@ -109,23 +110,23 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "apo_fetch" επιχειρεί να προσπελάσει το παρουσιολόγιο
-	// αποχώρησης από την database.
+	// Η μέθοδος "apoxorisi_fetch" επιχειρεί να προσπελάσει το
+	// παρουσιολόγιο αποχώρησης από την database.
 
-	public static function apo_fetch() {
-		$apo = pandora::parameter_get("apo");
-		self::$apo = self::deltio_fetch($apo, "αποχώρησης");
+	public static function apoxorisi_fetch() {
+		$deltio = pandora::parameter_get("deltio");
+		self::$apo = self::deltio_fetch($deltio, "αποχώρησης");
 		self::imerominia_fix(self::$apo);
 
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "pro_fetch" επιχειρεί να προσπελάσει το  παρουσιολόγιο
-	// προσέλευσης από την database.
+	// Η μέθοδος "proselefsi_fetch" επιχειρεί να προσπελάσει το
+	// παρουσιολόγιο προσέλευσης από την database.
 
-	public static function pro_fetch() {
-		$pro = self::$apo->protipo_get();
-		self::$pro = self::deltio_fetch($pro, "προσέλευσης");
+	public static function proselefsi_fetch() {
+		$deltio = self::$apo->protipo_get();
+		self::$pro = self::deltio_fetch($deltio, "προσέλευσης");
 		self::imerominia_fix(self::$pro);
 
 		return __CLASS__;
@@ -231,51 +232,57 @@ class Apontes {
 
 	///////////////////////////////////////////////////////////////////////@
 
-	// Η μέθοδος "adiafora_mark" διαγράφει από το προς έλεγχο
-	// παρουσιολόγιο τις παρουσίες που δεν παρουσιάζουν ενδιαφέρον.
-	// Το προς έλεγχο παρουσιολόγιο περνιέται ως πρώτη εγγραφή ("deltio"),
-	// ενώ ως δεύτερη παράμετρο περνάμε το συμπληρωματικό του ("oitled").
-	// Με τον όρο "διαγραφή" δεν εννοούμε πραγματική διαγραφή της εγγραφής,
-	// αλλά θέτουμε την εγγραφή σε null.
+	// Η μέθοδος "ipoptos_extract" επιλέγει από το προς έλεγχο
+	// παρουσιολόγιο τις παρουσίες που παρουσιάζουν ενδιαφέρον
+	// και προσθέτει τον υπάλληλο στη λίστα υπόπτων ("ilist").
+	// Ως πρώτη παράμετρος ("deltio") περνάμε το προς έλεγχο
+	// παρουσιολόγιο, ενώ ως δεύτερη παράμετρο ("oitled")
+	// περνάμε το συμπληρωματικό του.
 
-	public static function adiafora_mark($deltio, $oitled) {
-		foreach (self::$deltio->parousia as $ipalilos => $parousia) {
+	public static function ipoptos_extract($deltio, $oitled) {
+		foreach ($deltio->parousia as $ipalilos => $parousia) {
 			// Αν δεν υπάρχει αντίστοιχη εγγραφή παρουσίας για
 			// τον ανά χείρας υπάλληλο στο συμπληρωματικό
 			// παρουσιολόγιο, τότε η εγγραφή θεωρείται ύποπτη.
 
-			if (!array_key_exists($ipalilos, self::$oitled->parousia))
-			continue;
+			if (!array_key_exists($ipalilos, $oitled->parousia)) {
+				self::$ilist[$ipalilos] = TRUE;
+				continue;
+			}
 
 			// Αν υπάρχει είδος αδείας, η εγγραφή θεωρείται
 			// απουσία.
 
-			if ($parousia["adidos"])
-			continue;
+			if ($parousia["adidos"]) {
+				self::$ilist[$ipalilos] = TRUE;
+				continue;
+			}
 
 			// Από τις εξαιρέσεις μάς ενδιαφέρουν μόνο ορισμένα
 			// είδη.
 
-			switch ($parousia["excuse"]) {
-			case 'ΓΟΝΙΚΗ':
-				continue;
-			}
-
-			// Οι υπόλοιπες εξαιρέσεις δεν θεωρούνται απουσίες,
-			// ασχέτως με όλα τα υπόλοιπα στοιχεία της εγγραφής.
-
 			if ($parousia["excuse"]) {
-				$deltio->parousia[$ipalilos] = NULL;
+				switch ($parousia["excuse"]) {
+				case 'ΓΟΝΙΚΗ':
+					self::$ilist[$ipalilos] = TRUE;
+				}
+
+				// Οι υπόλοιπες εξαιρέσεις δεν θεωρούνται
+				// απουσίες, ασχέτως με όλα τα υπόλοιπα
+				// στοιχεία της εγγραφής.
+
 				continue;
 			}
 
 			// Η εγγραφή δεν αφορά ούτε σε άδεια ούτε σε
 			// αιτιολογημένη εξαίρεση, άρα πρέπει να έχει
 			// συμπηρωμένη μέρα/ώρα· αν δεν έχει συμπληρωμένη
-			// μέρα/ώρα, θεωρείται απουσία.
+			// μέρα/ώρα, θεωρείται ύποπτη.
 
-			if (!$parousia["meraora"])
-			continue;
+			if (!$parousia["meraora"]) {
+				self::$ilist[$ipalilos] = TRUE;
+				continue;
+			}
 
 			// Η εγγραφή έχει συμπληρωμένη μέρα/ώρα και το μόνο
 			// που μένει να ελέγξουμε είναι το σχόλιο. Κανονικά
@@ -283,22 +290,16 @@ class Apontes {
 			// αφορούν σε άδεια ή σε εξαίρεση· αν υπάρχει σχόλιο,
 			// η εγγραφή θεωρείται ύποπτη.
 
-			if ($parousia["info"])
-			continue;
-
-			// Σε αυτό το σημείο έχουμε ελέγξει όλα τα στοιχεία
-			// που καθιστούν την εγγραφή ενδιαφέρουσα. Αν δεν
-			// έχουμε εντοπίσει κάποιο σημείο ενδιαφέροντος,
-			// διαγράφουμε την εγγραφή από το προς έλεγχο
-			// παρουσιολόγιο.
-
-			$deltio->parousia[$ipalilos] = NULL;
+			if ($parousia["info"]) {
+				self::$ilist[$ipalilos] = TRUE;
+				continue;
+			}
 		}
 
 		return __CLASS__;
 	}
 
-	public static adiafora_delete() {
+	public static function adiafora_delete() {
 		foreach (self::$pro->parousia as $ipalilos => $propar) {
 			// Αν δεν υπάρχει εγγραφή για τον ανά χείρας υπάλληλο
 			// στο παρουσιολόγιο αποχώρησης, τότε η εγγραφή
@@ -440,13 +441,15 @@ class Apontes {
 	// λίστα με τους υπαλλήλους που παρουσιάζουν διαφορές.
 
 	public static function ipalilos_fetch() {
+/*
 		foreach (self::$tre->parousia as $ipalilos => $parousia)
 		self::$ilist[$ipalilos] = $ipalilos;
 
 		foreach (self::$pro->parousia as $ipalilos => $parousia)
 		self::$ilist[$ipalilos] = $ipalilos;
+*/
 
-		// Εμπλουτίζουμε τη λίστα με ονομαστια στοιχεία των υπαλλήλων
+		// Εμπλουτίζουμε τη λίστα με ονομαστικά στοιχεία των υπαλλήλων
 		// που θα χρειαστούν κατά την εμφάνιση των διαφορών.
 
 		foreach (self::$ilist as $ipalilos) {

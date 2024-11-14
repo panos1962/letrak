@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-14
 // Updated: 2024-11-08
 // Created: 2024-11-07
 // @HISTORY END
@@ -82,7 +83,6 @@ apontes.selidaSetup = () => {
 		apontes.ipalilosDoneToggle(e, $(this));
 	});
 
-/*
 	$.post({
 		'url': 'apontesGet.php',
 		'data': {
@@ -95,7 +95,7 @@ apontes.selidaSetup = () => {
 			console.error(e);
 		},
 	});
-*/
+/*
 apontes.apontesProcess({
 "proselefsi": '123',
 "apoxorisi": '456',
@@ -103,6 +103,7 @@ apontes.apontesProcess({
 "perigrafi": "asd ahsd kashdkjash dhkajh sdkahkd",
 "ipl": [],
 });
+*/
 
 	return apontes;
 };
@@ -112,6 +113,7 @@ apontes.apontesProcess({
 apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
+return apontes;
 
 	document.title = rsp.proselefsi + '+' + rsp.apoxorisi;
 
