@@ -22,6 +22,9 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-17
+// Updated: 2024-11-16
+// Updated: 2024-11-15
 // Updated: 2024-11-14
 // Updated: 2024-11-13
 // Updated: 2024-11-08
@@ -43,18 +46,15 @@ database();
 Apontes::
 init()::
 prosvasi_fetch()::
-apoxorisi_fetch()::
-proselefsi_fetch()::
+deltio_check()::
 prosvasi_check()::
-parousia_fetch(Apontes::$pro)::
-parousia_fetch(Apontes::$apo)::
-ipoptos_extract(Apontes::$pro, Apontes::$apo)::
-ipoptos_extract(Apontes::$apo, Apontes::$pro)::
+deltio_aponton()::
 ipalilos_fetch();
 
 print '{' .
 	'"pro":' . pandora::json_string(Apontes::$pro) . ',' .
-	'"apo":' . pandora::json_string(Apontes::$apo) .
+	'"apo":' . pandora::json_string(Apontes::$apo) . ',' .
+	'"ipo":' . pandora::json_string(Apontes::$ilist) .
 '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -73,15 +73,13 @@ class Apontes {
 
 	public static $mask;
 
-	// Το πεδίο "apo" περιέχει το παρουσιολόγιο αποχώρησης, δηλαδή το
-	// παρουσιολόγιο από το οποίο εκκινεί ο εντοπισμός απουσιών.
-
-	public static $apo;
-
-	// Το πεδίο "pro" περιέχει το παρουσιολόγιο προσέλευσης, το οποίο
-	// αντιστοιχεί στο παρουσιολόγιο αποχώρησης.
+	// Το πεδίο "pro" περιέχει το παρουσιολόγιο προσέλευσης.
 
 	public static $pro;
+
+	// Το πεδίο "apo" περιέχει το παρουσιολόγιο αποχώρησης.
+
+	public static $apo;
 
 	// Το πεδίο "ilist" περιέχει λίστα υπαλλήλων οι οποίοι παρουσιάζουν
 	// ενδιαφέρον.
@@ -110,24 +108,59 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "apoxorisi_fetch" επιχειρεί να προσπελάσει το
-	// παρουσιολόγιο αποχώρησης από την database.
+	// Η μέθοδος "deltio_check" ελέγχει την παράμετρο "deltio" και
+	// επιχειρεί να προσπελάσει το σχετικό παρουσιολόγιο.
 
-	public static function apoxorisi_fetch() {
+	public static function deltio_check() {
 		$deltio = pandora::parameter_get("deltio");
-		self::$apo = self::deltio_fetch($deltio, "αποχώρησης");
-		self::imerominia_fix(self::$apo);
+		$deltio = self::deltio_fetch($deltio, "εκκίνησης");
+
+		switch ($deltio->prosapo) {
+		case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
+			self::$pro = $deltio;
+			self::apoxorisi_fetch($deltio);
+			break;
+		case LETRAK_DELTIO_PROSAPO_APOXORISI:
+			self::$apo = $deltio;
+			self::proselefsi_fetch($deltio);
+			break;
+		default:
+			letrak::fatal_error_json("Απροσδιόριστη προσέλευση/αποχώρηση");
+		}
 
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "proselefsi_fetch" επιχειρεί να προσπελάσει το
-	// παρουσιολόγιο προσέλευσης από την database.
+	// Η μέθοδος "apoxorisi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
+	// προσέλευσης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
+	// αποχώρησης από την database.
 
-	public static function proselefsi_fetch() {
-		$deltio = self::$apo->protipo_get();
-		self::$pro = self::deltio_fetch($deltio, "προσέλευσης");
-		self::imerominia_fix(self::$pro);
+	public static function apoxorisi_fetch($deltio) {
+		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
+			"WHERE `protipo` = " . $deltio->kodikos;
+		self::$apo = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!self::$apo)
+		return __CLASS__;
+
+		self::$apo = self::deltio_fetch(self::$apo[0], "αποχώρησης");
+
+		return __CLASS__;
+	}
+
+	// Η μέθοδος "proselefsi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
+	// αποχώρησης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
+	// προσέλευσης από την database.
+
+	public static function proselefsi_fetch($deltio) {
+		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
+			"WHERE `kodikos` = " . $deltio->protipo;
+		self::$pro = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!self::$pro)
+		return __CLASS__;
+
+		self::$pro = self::deltio_fetch(self::$pro[0], "προσέλευσης");
 
 		return __CLASS__;
 	}
@@ -136,29 +169,26 @@ class Apontes {
 	// προσπελάσει ένα παρουσιολόγιο στην database και να το επιστρέψει.
 	// Σε περίπτωση που δεν βρεθεί το παρουσιολόγιο, ακυρώνεται η όλη
 	// διαδικασία. Ως παραμέτρους δέχεται τον κωδικό παρουσιολογίου
-	// και μια περιγραφή («αποχώρηση», «προσέλευση»).
+	// και μια περιγραφή του είδους του δελτίου στη γενική πτώση:
+	// "εκκίνησης", "αποχώρησης", "προσέλευσης".
 
 	private static function deltio_fetch($deltio, $spec = "") {
-		$spec = " παρουσιολόγιο " . $spec;
+		$spec = " δελτίο " . $spec;
 
 		if (letrak::deltio_invalid_kodikos($deltio))
-		letrak::fatal_error_json("Απροσδόριστο" . $spec);
+		letrak::fatal_error_json("Απροσδιόριστο" . $spec);
 
 		$deltio = (new Deltio())->from_database($deltio);
 
 		if ($deltio->oxi_kodikos())
 		letrak::fatal_error_json("Ακαθόριστο" . $spec);
 
-		return $deltio;
-	}
+		// Μετατρέπουμε την ημερομηνία του παρουσιολογίου από
+		// date/time σε string.
 
-	// Η μέθοδος "imerominia_fix" είναι εσωτερική και σκοπό έχει τη
-	// μετατροπή της ημερομηνίας του παρουσιολογίου από date/time σε
-	// string. Ως παράμετρο δέχεται το ίδιο το παρουσιολόγιο.
-
-	private static function imerominia_fix($deltio) {
 		$deltio->imerominia = $deltio->imerominia->format("Y-m-d");
-		return __CLASS__;
+
+		return $deltio;
 	}
 
 	///////////////////////////////////////////////////////////////////////@
@@ -167,21 +197,26 @@ class Apontes {
 	// τρέχει την εφαρμογή και θέτει το πεδίο "mask" στον κωδικό του
 	// υπαλλήλου εφόσον ο χρήστης δεν έχει δικαιώματα στις υπηρεσίες
 	// που αφορούν τόσο το παρουσιολόγιο αποχώρησης όσο και το
-	// παρουσιλόγιο προσέλευσης.
+	// παρουσιολόγιο προσέλευσης.
 
 	public static function prosvasi_check() {
 		$ipalilos = self::$prosvasi->ipalilos_get();
-		$ipiresia = self::$apo->ipiresia_get();
 
-		if (self::$apo->oxi_ipografon($ipalilos) &&
-			self::$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
-		return self::set_mask($ipalilos);
+		if (self::$pro) {
+			$ipiresia = self::$pro->ipiresia_get();
 
-		$ipiresia = self::$pro->ipiresia_get();
+			if (self::$pro->oxi_ipografon($ipalilos) &&
+				self::$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
+			return self::set_mask($ipalilos);
+		}
 
-		if (self::$pro->oxi_ipografon($ipalilos) &&
-			self::$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
-		return self::set_mask($ipalilos);
+		if (self::$apo) {
+			$ipiresia = self::$apo->ipiresia_get();
+
+			if (self::$apo->oxi_ipografon($ipalilos) &&
+				self::$prosvasi->oxi_prosvasi_ipiresia($ipiresia))
+			return self::set_mask($ipalilos);
+		}
 
 		return __CLASS__;
 	}
@@ -199,11 +234,98 @@ class Apontes {
 
 	///////////////////////////////////////////////////////////////////////@
 
+	public static function deltio_aponton() {
+		if (self::$pro && self::$apo)
+		return self::plires();
+
+		if (self::$pro)
+		return self::ateles(self::$pro);
+
+		if (self::$apo)
+		return self::ateles(self::$apo);
+
+		letrak::fatal_error_json("Απροσδόριστα δελτία προσέλευσης/αποχώρησης");
+	}
+
+	private static function plires() {
+		self::
+		parousia_fetch(self::$pro)::
+		parousia_fetch(self::$apo);
+
+		return __CLASS__;
+	}
+
+	// Η function "ateles" χρησιμοποιείται όταν ελέγχουμε μόνο ένα
+	// παρουσιολόγιο. Συνήθως αυτό γίνεται στα παρουσιολόγια προσέλευσης
+	// για τα οποία λείπει ή δεν έχει κυρωθεί το παρουσιολόγιο αποχώρησης.
+
+	private static function ateles($deltio) {
+		self::parousia_fetch($deltio);
+
+		foreach ($deltio->parousia as $ipalilos => $parousia) {
+			if (self::is_adia($parousia)) {
+				$apoeos = self::adia_diastima($parousia);
+				self::$ilist[$ipalilos] = [
+					"adidos" => $parousia["adidos"],
+					"apoeos" => self::adia_diastima($parousia)
+				];
+
+				if (self::is_info($parousia))
+				self::$ilist[$ipalilos]["info"] = $parousia["info"];
+
+				continue;
+			}
+
+			if (self::is_exeresi($parousia)) {
+				self::$ilist[$ipalilos] = [
+					"adidos" => "ΓΟΝΙΚΗ"
+				];
+
+				if (self::is_info($parousia))
+				self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
+
+				else
+				self::$ilist[$ipalilos]["apoeos"] = "ΑΚΑΘΟΡΙΣΤΟ ΔΙΑΣΤΗΜΑ";
+
+				continue;
+			}
+
+			if (self::is_meraora($parousia))
+			continue;
+
+			self::$ilist[$ipalilos] = [
+				"adidos" => "ΑΔΙΚΑΙΟΛΟΓΗΤΗ"
+			];
+
+			if (self::is_info($parousia))
+			self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
+		}
+
+		unset($deltio->parousia);
+		return __CLASS__;
+	}
+
+	private static function adia_diastima($parousia) {
+		$apo = $parousia["adapo"];
+		$eos = $parousia["adeos"];
+
+		if ($apo)
+		$diastima = "ΑΠΟ " . $apo;
+
+		else
+		$diastima = "";
+
+		if ($eos)
+		$diastima .= " ΕΩΣ " . $eos;
+
+		return $diastima;
+	}
+
 	// Η μέθοδος "parousia_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
 	// και θέτει το πεδίο "plist" του παρουσιολογίου να δείχνει στις
 	// παρουσίες που περιλαμβάνει το παρουσιολόγιο.
 
-	public static function parousia_fetch($deltio) {
+	private static function parousia_fetch($deltio) {
 		$plist = [];
 
 		$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
@@ -221,6 +343,38 @@ class Apontes {
 		$result = pandora::query($query);
 
 		while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+			// Κάποια είδη αδείας δεν περιλαμβάνονται στο
+			// δελτίο αδείας.
+
+			$ignore = FALSE;
+
+			switch ($row["adidos"]) {
+			case "ΕΚΤΟΣ ΕΔΡΑΣ":
+			case "ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ":
+			case "ΤΗΛΕΡΓΑΣΙΑ":
+			case "ΕΚ ΠΕΡΙΤΡΟΠΗΣ":
+				$ignore = TRUE;
+				break;
+			}
+
+			if ($ignore)
+			continue;
+
+			// Οι περισσότερες εξαιρέσεις δεν περιλαμβάνονται
+			// στο δελτίο απόντων.
+
+			$ignore = TRUE;
+
+			switch ($row["excuse"]) {
+			case "":	// δεν υπάρχει εξαίρεση
+			case "ΓΟΝΙΚΗ":
+				$ignore = FALSE;
+				break;
+			}
+
+			if ($ignore)
+			continue;
+
 			$plist[$row["ipalilos"]] = $row;
 			unset($row["ipalilos"]);
 		}
@@ -228,6 +382,26 @@ class Apontes {
 		$deltio->parousia = $plist;
 
 		return __CLASS__;
+	}
+
+	private static function is_adia($parousia) {
+		return $parousia["adidos"];
+	}
+
+	private static function is_exeresi($parousia) {
+		return $parousia["excuse"];
+	}
+
+	private static function is_meraora($parousia) {
+		return $parousia["meraora"];
+	}
+
+	private static function oxi_meraora($parousia) {
+		return !self::is_meraora($parousia);
+	}
+
+	private static function is_info($parousia) {
+		return $parousia["info"];
 	}
 
 	///////////////////////////////////////////////////////////////////////@
@@ -240,21 +414,52 @@ class Apontes {
 	// περνάμε το συμπληρωματικό του.
 
 	public static function ipoptos_extract($deltio, $oitled) {
+return __CLASS__;
 		foreach ($deltio->parousia as $ipalilos => $parousia) {
 			// Αν δεν υπάρχει αντίστοιχη εγγραφή παρουσίας για
 			// τον ανά χείρας υπάλληλο στο συμπληρωματικό
 			// παρουσιολόγιο, τότε η εγγραφή θεωρείται ύποπτη.
 
 			if (!array_key_exists($ipalilos, $oitled->parousia)) {
-				self::$ilist[$ipalilos] = TRUE;
+				self::$ilist[$ipalilos] = [
+					"error" => ("Δεν εμφανίζεται στην " .
+						$oitled->prosapo)
+				];
+				unset($deltio->parousia[$ipalilos]);
 				continue;
 			}
+
+			// Εντοπίζουμε την αντίστοιχη παρουσία στο
+			// συμπληρωματικό παρουσιολόγιο.
+
+			$aisuorap = $oitled->parousia[$ipalilos];
 
 			// Αν υπάρχει είδος αδείας, η εγγραφή θεωρείται
 			// απουσία.
 
 			if ($parousia["adidos"]) {
-				self::$ilist[$ipalilos] = TRUE;
+				if ($aisuorap["adidos"] != $parousia["adidos"]) {
+					self::$ilist[$ipalilos] = [
+						"error" => "Διαφορετικά είδη αδείας"
+					];
+					unset($deltio->parousia[$ipalilos]);
+					unset($oitled->parousia[$ipalilos]);
+					continue;
+				}
+
+				self::$ilist[$ipalilos] = [
+					"a" => [
+						"adidos" => $parousia["adidos"],
+						"adapo" => $parousia["adapo"],
+						"adeos" => $parousia["adeos"]
+					]
+				];
+
+				if ($parousia["info"])
+				self::$ilist[$ipalilos]["s"] = $parousia["info"];
+
+				unset($deltio->parousia[$ipalilos]);
+				unset($oitled->parousia[$ipalilos]);
 				continue;
 			}
 
@@ -264,7 +469,7 @@ class Apontes {
 			if ($parousia["excuse"]) {
 				switch ($parousia["excuse"]) {
 				case 'ΓΟΝΙΚΗ':
-					self::$ilist[$ipalilos] = TRUE;
+					self::$ilist[$ipalilos] = [];
 				}
 
 				// Οι υπόλοιπες εξαιρέσεις δεν θεωρούνται
@@ -280,7 +485,7 @@ class Apontes {
 			// μέρα/ώρα, θεωρείται ύποπτη.
 
 			if (!$parousia["meraora"]) {
-				self::$ilist[$ipalilos] = TRUE;
+				self::$ilist[$ipalilos] = [];
 				continue;
 			}
 
@@ -291,7 +496,7 @@ class Apontes {
 			// η εγγραφή θεωρείται ύποπτη.
 
 			if ($parousia["info"]) {
-				self::$ilist[$ipalilos] = TRUE;
+				self::$ilist[$ipalilos] = [];
 				continue;
 			}
 		}
@@ -441,22 +646,14 @@ class Apontes {
 	// λίστα με τους υπαλλήλους που παρουσιάζουν διαφορές.
 
 	public static function ipalilos_fetch() {
-/*
-		foreach (self::$tre->parousia as $ipalilos => $parousia)
-		self::$ilist[$ipalilos] = $ipalilos;
-
-		foreach (self::$pro->parousia as $ipalilos => $parousia)
-		self::$ilist[$ipalilos] = $ipalilos;
-*/
-
 		// Εμπλουτίζουμε τη λίστα με ονομαστικά στοιχεία των υπαλλήλων
 		// που θα χρειαστούν κατά την εμφάνιση των διαφορών.
 
-		foreach (self::$ilist as $ipalilos) {
+		foreach (self::$ilist as $ipalilos => $apousia) {
 			$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
 				"FROM " . letrak::erpota12("ipalilos") . " " .
 				"WHERE `kodikos` = " . $ipalilos;
-			self::$ilist[$ipalilos] = pandora::first_row($query, MYSQLI_ASSOC);
+			self::$ilist[$ipalilos]["ipalilos"] = pandora::first_row($query, MYSQLI_ASSOC);
 		}
 
 		return __CLASS__;

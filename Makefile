@@ -17,6 +17,7 @@
 # @FILE END
 #
 # @HISTORY BEGIN
+# Updated: 2024-11-17
 # Updated: 2022-03-05
 # Updated: 2021-06-21
 # Updated: 2020-04-12
@@ -43,7 +44,7 @@ all:
 	(cd www/apontes && make)
 
 test:
-	make all
+	make -s all
 	bash local/test.sh
 
 # GIT SECTION

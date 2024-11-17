@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-16
 // Updated: 2024-11-07
 // Updated: 2022-10-18
 // Updated: 2022-10-16
@@ -107,6 +108,7 @@ deltio.minima = {
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'reportsTabLabel': 'Εκτυπώσεις',
+	'klikDeltioAponton': '. Κλικ για δελτίο απόντων',
 
 	'diaforesTabLabel': '&#9775;',
 	'diaforesTitle': 'Εντοπισμός διαφορών με προηγούμενο παρουσιολόγιο',
@@ -558,20 +560,18 @@ deltio.apontes = (e, deltioDOM) => {
 
 	let x = deltioDOM.data('deltio');
 
-	if (!x)
-	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο προς επεξεργασία');
-
 	try {
-		if (x.oxiApoxorisi())
-		return deltio.fyiError('Δεν είναι δελτίο αποχώρησης');
+               var kodikos = x.kodikosGet();
+       }
 
-		var kodikos = x.kodikosGet();
-	}
+       catch (e) {
+               return deltio.fyiError
+                       ('Απροσδιόριστο παρουσιολόγιο δελτίου απόντων');
+       }
 
-	catch (e) {
-		return deltio.fyiError
-			('Απροσδιόριστο παρουσιολόγιο προς επεξεργασία');
-	}
+
+	if (!x)
+	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο δελτίου απόντων');
 
 	let url = '../apontes?deltio=' + kodikos;
 	deltio.childrenWindows.push(window.open(url, '_blank'));
@@ -1154,7 +1154,7 @@ deltio.katastasiAlagi = (dlt, dom, katastasi, ipografi) => {
 	if (!katastasiEnglish)
 	katastasiEnglish = '';
 
-	let titlos = deltio.katastasiTitle[katastasi];
+	let titlos = deltio.katastasiTitle[katastasi] + deltio.minima['klikDeltioAponton'];
 
 	if (!titlos)
 	titlos = 'Προβληματική κατάσταση δελτίου';

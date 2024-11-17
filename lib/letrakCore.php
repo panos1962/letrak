@@ -737,6 +737,18 @@ class Deltio {
 		return $this;
 	}
 
+	public function is_proselefsi() {
+		return ($this->prosapo == LETRAK_DELTIO_PROSAPO_PROSELEFSI);
+	}
+
+	public function is_apoxorisi() {
+		return ($this->prosapo == LETRAK_DELTIO_PROSAPO_APOXORISI);
+	}
+
+	public function is_protipo() {
+		return ($this->prosapo == LETRAK_DELTIO_PROSAPO_PROTIPO);
+	}
+
 	public function perigrafi_set($perigrafi = NULL) {
 		$this->perigrafi = NULL;
 

@@ -20,6 +20,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-16
 // Updated: 2021-03-08
 // Updated: 2020-06-06
 // Updated: 2020-05-06
@@ -110,6 +111,10 @@ class letrak extends letrakCore {
 		return $prosvasi;
 	}
 
+/*
+XXX 2024-11-16
+Μάλλον άχρηστο (και λανθασμένο) κομμάτι κώδικα
+
 	public function xparam_get($param) {
 		$ipalilos = pandora::session_get(LETRAK_SESSION_IPALILOS);
 
@@ -130,6 +135,7 @@ class letrak extends letrakCore {
 		$x->xparam = (array) $ipalilos->xparam;
 		return $x->xparam_get($param);
 	}
+*/
 
 	// Η μέθοδος "ipografes_taxinomisi" επιχειρεί επεναρίθμηση των
 	// υπογραφόντων παρουσιολογίου. Πιο συγκεκριμένα, διατρέχει τις
@@ -217,12 +223,12 @@ class letrak extends letrakCore {
 	// η συνήθης κλήση της function είναι με κάποιο (μη κενό)
 	// μήνυμα.
 
-	public function fatal_error($msg, $stat = 0) {
+	public static function fatal_error($msg, $stat = 0) {
 		print $msg;
 		exit($stat);
 	}
 
-	public function fatal_error_json($msg, $tag = "error") {
+	public static function fatal_error_json($msg, $tag = "error") {
 		print '{"' . $tag . '":' . pandora::json_string($msg) . '}';
 		exit(0);
 	}
