@@ -350,6 +350,7 @@ class Apontes {
 
 			switch ($row["adidos"]) {
 			case "ΕΚΤΟΣ ΕΔΡΑΣ":
+			case "ΑΠΟΣΠΑΣΗ":
 			case "ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ":
 			case "ΤΗΛΕΡΓΑΣΙΑ":
 			case "ΕΚ ΠΕΡΙΤΡΟΠΗΣ":
