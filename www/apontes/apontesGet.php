@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-19
 // Updated: 2024-11-17
 // Updated: 2024-11-16
 // Updated: 2024-11-15
@@ -270,7 +271,7 @@ class Apontes {
 					"apoeos" => self::adia_diastima($parousia)
 				];
 
-				if (self::is_info($parousia))
+				if (self::is_sxolio($parousia))
 				self::$ilist[$ipalilos]["info"] = $parousia["info"];
 
 				continue;
@@ -278,10 +279,10 @@ class Apontes {
 
 			if (self::is_exeresi($parousia)) {
 				self::$ilist[$ipalilos] = [
-					"adidos" => "ΓΟΝΙΚΗ"
+					"adidos" => "ΓΟΝΙΚΗ (ΩΡΕΣ)"
 				];
 
-				if (self::is_info($parousia))
+				if (self::is_sxolio($parousia))
 				self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
 
 				else
@@ -297,7 +298,7 @@ class Apontes {
 				"adidos" => "ΑΔΙΚΑΙΟΛΟΓΗΤΗ"
 			];
 
-			if (self::is_info($parousia))
+			if (self::is_sxolio($parousia))
 			self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
 		}
 
@@ -356,13 +357,21 @@ class Apontes {
 			case "ΕΚ ΠΕΡΙΤΡΟΠΗΣ":
 				$ignore = TRUE;
 				break;
+
+			// Επί τη ευκαιρία τροποποιούμε την περιγραφή της
+			// ημερήσιας γονικής σε αντιδιαστολή με τη γονική
+			// ωρών.
+
+			case "ΓΟΝΙΚΗ":
+				$row["adidos"] = "ΓΟΝΙΚΗ ΑΔΕΙΑ";
+				break;
 			}
 
 			if ($ignore)
 			continue;
 
-			// Οι περισσότερες εξαιρέσεις δεν περιλαμβάνονται
-			// στο δελτίο απόντων.
+			// Σχεδόν όλες οι εξαιρέσεις δεν περιλαμβάνονται στο
+			// δελτίο απόντων.
 
 			$ignore = TRUE;
 
@@ -376,6 +385,13 @@ class Apontes {
 			if ($ignore)
 			continue;
 
+			// Δεν υπάρχει άδεια ή εξαίρεση. Για να μην θεωρηθεί
+			// απουσία πρέπει η εγγραφή να περιλαμβάνει μέρα/ώρα
+			// και να μην περιλαμβάνει σχόλιο.
+
+			if (self::kathari_parousia($row))
+			continue;
+
 			$plist[$row["ipalilos"]] = $row;
 			unset($row["ipalilos"]);
 		}
@@ -383,6 +399,16 @@ class Apontes {
 		$deltio->parousia = $plist;
 
 		return __CLASS__;
+	}
+
+	private static function kathari_parousia($parousia) {
+		if (self::oxi_meraora($parousia))
+		return FALSE;
+
+		if (self::is_sxolio($parousia))
+		return FALSE;
+
+		return TRUE;
 	}
 
 	private static function is_adia($parousia) {
@@ -401,190 +427,11 @@ class Apontes {
 		return !self::is_meraora($parousia);
 	}
 
-	private static function is_info($parousia) {
+	private static function is_sxolio($parousia) {
 		return $parousia["info"];
 	}
 
 	///////////////////////////////////////////////////////////////////////@
-
-	// Η μέθοδος "ipoptos_extract" επιλέγει από το προς έλεγχο
-	// παρουσιολόγιο τις παρουσίες που παρουσιάζουν ενδιαφέρον
-	// και προσθέτει τον υπάλληλο στη λίστα υπόπτων ("ilist").
-	// Ως πρώτη παράμετρος ("deltio") περνάμε το προς έλεγχο
-	// παρουσιολόγιο, ενώ ως δεύτερη παράμετρο ("oitled")
-	// περνάμε το συμπληρωματικό του.
-
-	public static function ipoptos_extract($deltio, $oitled) {
-return __CLASS__;
-		foreach ($deltio->parousia as $ipalilos => $parousia) {
-			// Αν δεν υπάρχει αντίστοιχη εγγραφή παρουσίας για
-			// τον ανά χείρας υπάλληλο στο συμπληρωματικό
-			// παρουσιολόγιο, τότε η εγγραφή θεωρείται ύποπτη.
-
-			if (!array_key_exists($ipalilos, $oitled->parousia)) {
-				self::$ilist[$ipalilos] = [
-					"error" => ("Δεν εμφανίζεται στην " .
-						$oitled->prosapo)
-				];
-				unset($deltio->parousia[$ipalilos]);
-				continue;
-			}
-
-			// Εντοπίζουμε την αντίστοιχη παρουσία στο
-			// συμπληρωματικό παρουσιολόγιο.
-
-			$aisuorap = $oitled->parousia[$ipalilos];
-
-			// Αν υπάρχει είδος αδείας, η εγγραφή θεωρείται
-			// απουσία.
-
-			if ($parousia["adidos"]) {
-				if ($aisuorap["adidos"] != $parousia["adidos"]) {
-					self::$ilist[$ipalilos] = [
-						"error" => "Διαφορετικά είδη αδείας"
-					];
-					unset($deltio->parousia[$ipalilos]);
-					unset($oitled->parousia[$ipalilos]);
-					continue;
-				}
-
-				self::$ilist[$ipalilos] = [
-					"a" => [
-						"adidos" => $parousia["adidos"],
-						"adapo" => $parousia["adapo"],
-						"adeos" => $parousia["adeos"]
-					]
-				];
-
-				if ($parousia["info"])
-				self::$ilist[$ipalilos]["s"] = $parousia["info"];
-
-				unset($deltio->parousia[$ipalilos]);
-				unset($oitled->parousia[$ipalilos]);
-				continue;
-			}
-
-			// Από τις εξαιρέσεις μάς ενδιαφέρουν μόνο ορισμένα
-			// είδη.
-
-			if ($parousia["excuse"]) {
-				switch ($parousia["excuse"]) {
-				case 'ΓΟΝΙΚΗ':
-					self::$ilist[$ipalilos] = [];
-				}
-
-				// Οι υπόλοιπες εξαιρέσεις δεν θεωρούνται
-				// απουσίες, ασχέτως με όλα τα υπόλοιπα
-				// στοιχεία της εγγραφής.
-
-				continue;
-			}
-
-			// Η εγγραφή δεν αφορά ούτε σε άδεια ούτε σε
-			// αιτιολογημένη εξαίρεση, άρα πρέπει να έχει
-			// συμπηρωμένη μέρα/ώρα· αν δεν έχει συμπληρωμένη
-			// μέρα/ώρα, θεωρείται ύποπτη.
-
-			if (!$parousia["meraora"]) {
-				self::$ilist[$ipalilos] = [];
-				continue;
-			}
-
-			// Η εγγραφή έχει συμπληρωμένη μέρα/ώρα και το μόνο
-			// που μένει να ελέγξουμε είναι το σχόλιο. Κανονικά
-			// δεν πρέπει να υπάρχει σχόλιο σε εγγραφές που δεν
-			// αφορούν σε άδεια ή σε εξαίρεση· αν υπάρχει σχόλιο,
-			// η εγγραφή θεωρείται ύποπτη.
-
-			if ($parousia["info"]) {
-				self::$ilist[$ipalilos] = [];
-				continue;
-			}
-		}
-
-		return __CLASS__;
-	}
-
-	public static function adiafora_delete() {
-		foreach (self::$pro->parousia as $ipalilos => $propar) {
-			// Αν δεν υπάρχει εγγραφή για τον ανά χείρας υπάλληλο
-			// στο παρουσιολόγιο αποχώρησης, τότε η εγγραφή
-			// θεωρείται ύποπτη.
-
-			if (!array_key_exists($ipalilos, self::$apo->parousia))
-			continue;
-
-			// Ελέγχουμε αν η παρουσία από μόνη της δείχνει 
-			// ενδεχομένως ύποπτη.
-
-			if (self::pithani_apousia($propar))
-			continue;
-
-			// Στο σημείο αυτό έχουμε ήδη ελέγξει τα βασικά
-			// στοιχεία της ανά χείρας παρουσίας και τα βρήκαμε
-			// κανονικά, οπότε θα ελέγξουμε αν υπάρχει διαφορά
-			// στα βασικά στοιχεία παρουσίας με την αντίστοιχη
-			// παρουσία στο προηγούμενο παρουσιολόγιο.
-
-			if (self::is_diafora($propar, self::$apo->parousia[$ipalilos]))
-			continue;
-
-			// Στο σημείο αυτό θα ελέγξουμε τυχόν παρατηρήσεις
-			// της ανά χείρας παρουσίας. Αν υπάρχουν παρατηρήσεις
-			// χωρίς αντίστοιχες καταχωρήσεις αδείας ή εξαίρεσης,
-			// τότε η εγγραφή θεωρείται ύποπτη.
-
-			if (self::info_check($propar, self::$pro->parousia[$ipalilos]))
-			continue;
-
-			// Στο σημείο αυτό φαίνεται να μην υπάρχουν διαφορές
-			// μεταξύ των δύο παρουσιολογίων για τον υπάλληλο
-			// της ανά χείρας παρουσίας, επομένως απαλείφουμε
-			// τις εγγραφές παρουσίας τόσο από το τρέχον όσο
-			// και από το προηγούμενο παρουσιολόγιο για τον
-			// ανά χείρας υπάλληλο.
-
-			unset(self::$tre->parousia[$ipalilos]);
-			unset(self::$pro->parousia[$ipalilos]);
-		}
-
-		// Έχουμε διατρέξει τις παρουσίες του τρέχοντος παρουσιολογίου
-		// και έχουμε απαλείψει τις εγγραφές που δεν παρουσιάζουν
-		// διαφορές από τις αντίστοιχες εγγραφές του προηγούμενου
-		// παρουσιολογίου. Επισημαίνουμε ότι στο προηγούμενο
-		// παρουσιολόγιο μπορεί να έχουν εναπομείνει εγγραφές
-		// που δεν έχουν αντίστοιχες εγγραφές στο τρέχον παρουσιολόγιο.
-
-		return __CLASS__;
-	}
-
-	// Η μέθοδος "pithani_apousia" είναι εσωτερική και ελέγχει αν
-	// μια εγγραφή παρουσίας υποδηλώνει απουσία.
-
-	private static function pithani_apousia($parousia) {
-		// Αν δεν υπάρχει μέρα και ώρα συμπληρωμένη, η εγγραφή
-		// θεωρείται ύποπτη.
-
-		if (!$parousia["meraora"])
-		return FALSE;
-
-		// Αν υπάρχει κωδικός αδείας, τότε η εγγραφή θεωρείται
-		// ύποπτη.
-
-		if ($parousia["adidos"])
-		return FALSE;
-
-		// Αν υπάρχει λόγος εξαίρεσης, τότε η εγγραφή θεωρείται
-		// ύποπτη.
-
-		if ($parousia["excuse"])
-		return TRUE;
-
-		// Δεν υπάρχει εξαίρεση. Δεν υπάρχει μέρα και ώρα. Δεν
-		// υπάρχει κωδικός αδείας. Η εγγραφή θεωρείται ύποπτη.
-
-		return TRUE;
-	}
 
 	// Η μέθοδος "is_diafora" είναι εσωτερική και ελέγχει δύο εγγραφές
 	// παρουσίας όσον αφορά κάποια συγκεκριμένα πεδία.
