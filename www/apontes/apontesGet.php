@@ -402,8 +402,10 @@ class Apontes {
 	}
 
 	private static function kathari_parousia($parousia) {
-		if (self::oxi_meraora($parousia))
-		return FALSE;
+		if (self::oxi_meraora($parousia)) {
+			$parousia["adidos"] = "ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ";
+			return FALSE;
+		}
 
 		if (self::is_sxolio($parousia))
 		return FALSE;
