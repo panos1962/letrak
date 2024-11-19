@@ -83,7 +83,7 @@ git:
 
 .PHONY: pull
 pull:
-	git pull && make
+	git pull && make -s
 
 # FILE SECTION
 
