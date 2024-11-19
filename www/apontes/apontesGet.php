@@ -53,9 +53,9 @@ deltio_aponton()::
 ipalilos_fetch();
 
 print '{' .
-	'"pro":' . pandora::json_string(Apontes::$pro) . ',' .
-	'"apo":' . pandora::json_string(Apontes::$apo) . ',' .
-	'"ipo":' . pandora::json_string(Apontes::$ilist) .
+	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
+	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
+	'"ipalilos":' . pandora::json_string(Apontes::$ilist) .
 '}';
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -124,9 +124,14 @@ class Apontes {
 		case LETRAK_DELTIO_PROSAPO_APOXORISI:
 			self::$apo = $deltio;
 			self::proselefsi_fetch($deltio);
+
+			if (!self::$pro)
+			letrak::fatal_error_json("Απροσδιόριστο δελτίο προσέλευσης");
+
 			break;
 		default:
 			letrak::fatal_error_json("Απροσδιόριστη προσέλευση/αποχώρηση");
+			break;
 		}
 
 		return __CLASS__;
@@ -189,6 +194,12 @@ class Apontes {
 
 		$deltio->imerominia = $deltio->imerominia->format("Y-m-d");
 
+		// Τα πεδία που ακολουθούν δεν μας ενδιαφέρουν στο δελτίο
+		// απόντων.
+
+		unset($deltio->ipalilos);
+		unset($deltio->alagi);
+
 		return $deltio;
 	}
 
@@ -249,6 +260,29 @@ class Apontes {
 	}
 
 	private static function plires() {
+		if (self::$pro->ipiresia !== self::$apo->ipiresia)
+		letrak::fatal_error_json("Διαφορετική υπηρεσία προσέλευσης/αποχώρησης");
+
+		if (self::$pro->perigrafi !== self::$apo->perigrafi)
+		letrak::fatal_error_json("Διαφορετικός τίτλος προσέλευσης/αποχώρησης");
+
+		if (self::$pro->imerominia !== self::$apo->imerominia)
+		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
+
+		// Έχουμε ελέγξει όλα τα στοιχεία των δελτίων προσέλευσης και
+		// αποχώρησης που μπορεί να παρουσιάσουν ασυμβατότητα και τα
+		// βρήκαμε εντάξει. Προχωράμε, λοιπόν, στην εκκαθάριση όλων
+		// πεδίων που δεν ενδιαφέρουν στο δελτίο απόντων.
+
+		unset(self::$pro->prosapo);
+		unset(self::$pro->protipo);
+
+		unset(self::$apo->prosapo);
+		unset(self::$apo->protipo);
+		unset(self::$apo->imerominia);
+		unset(self::$apo->ipiresia);
+		unset(self::$apo->perigrafi);
+
 		self::
 		parousia_fetch(self::$pro)::
 		parousia_fetch(self::$apo);
@@ -261,48 +295,14 @@ class Apontes {
 	// για τα οποία λείπει ή δεν έχει κυρωθεί το παρουσιολόγιο αποχώρησης.
 
 	private static function ateles($deltio) {
+		// Εκκαθαρίζουμε κάποια πεδία του δελτίου προσέλευσης, τα
+		// οποία δεν ενδιαφέρουν στο δελτίο απόντων.
+
+		unset(self::$pro->prosapo);
+		unset(self::$pro->protipo);
+
 		self::parousia_fetch($deltio);
 
-		foreach ($deltio->parousia as $ipalilos => $parousia) {
-			if (self::is_adia($parousia)) {
-				$apoeos = self::adia_diastima($parousia);
-				self::$ilist[$ipalilos] = [
-					"adidos" => $parousia["adidos"],
-					"apoeos" => self::adia_diastima($parousia)
-				];
-
-				if (self::is_sxolio($parousia))
-				self::$ilist[$ipalilos]["info"] = $parousia["info"];
-
-				continue;
-			}
-
-			if (self::is_exeresi($parousia)) {
-				self::$ilist[$ipalilos] = [
-					"adidos" => "ΓΟΝΙΚΗ (ΩΡΕΣ)"
-				];
-
-				if (self::is_sxolio($parousia))
-				self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
-
-				else
-				self::$ilist[$ipalilos]["apoeos"] = "ΑΚΑΘΟΡΙΣΤΟ ΔΙΑΣΤΗΜΑ";
-
-				continue;
-			}
-
-			if (self::is_meraora($parousia))
-			continue;
-
-			self::$ilist[$ipalilos] = [
-				"adidos" => "ΑΔΙΚΑΙΟΛΟΓΗΤΗ"
-			];
-
-			if (self::is_sxolio($parousia))
-			self::$ilist[$ipalilos]["apoeos"] = $parousia["info"];
-		}
-
-		unset($deltio->parousia);
 		return __CLASS__;
 	}
 
@@ -330,10 +330,11 @@ class Apontes {
 	// με τον κωδικό υπαλλήλου).
 
 	private static function parousia_fetch($deltio) {
-		$plist = [];
+		$deltio->parousia = [];
 
-		$query = "SELECT `ipalilos`, `orario`, `karta`, `meraora`, " .
-			"`adidos`, `adapo`, `adeos`, `excuse`, `info` " .
+		$query = "SELECT `ipalilos`, `meraora`, " .
+			"`adidos`, `adapo`, `adeos`, " .
+			"`excuse`, `info` " .
 			"FROM `letrak`.`parousia` " .
 			"WHERE (`deltio` = " . $deltio->kodikos . ")";
 
@@ -347,12 +348,19 @@ class Apontes {
 		$result = pandora::query($query);
 
 		while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-			// Κάποια είδη αδείας δεν περιλαμβάνονται στο
-			// δελτίο αδείας.
-
-			$ignore = FALSE;
-
 			switch ($row["adidos"]) {
+
+			// Αν ΔΕΝ υπάρχει καταχωρημένη άδεια, προχωρούμε σε
+			// περαιτέρω ελέγχους της εγγραφής.
+
+			case "":
+				$ignore = FALSE;
+				break;
+
+			// Τα παρακάτω είδη αδείας ΔΕΝ συνιστούν απουσία,
+			// οπότε αγνοούμε την ανά χείρας εγγραφή χωρίς να
+			// προβούμε σε περαιτέρω ελέγχους.
+
 			case "ΕΚΤΟΣ ΕΔΡΑΣ":
 			case "ΡΕΠΟ ΔΗΜΑΡΧΟΥ":
 			case "ΑΠΟΣΠΑΣΗ":
@@ -365,45 +373,63 @@ class Apontes {
 			case "ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ":
 				$ignore = TRUE;
 				break;
-			}
 
-			if ($ignore)
-			continue;
+			// Όλα τα υπόλοιπα είδη αδείας συνιστούν απουσία,
+			// οπότε κρατάμε την ανά χείρας εγγραφή ως απουσία
+			// και ΔΕΝ προβαίνουμε σε περαιτέρω ελέγχους της
+			// εγγραφής.
 
-			// Σχεδόν όλες οι εξαιρέσεις δεν περιλαμβάνονται στο
-			// δελτίο απόντων.
-
-			$ignore = TRUE;
-
-			switch ($row["excuse"]) {
-			case "":	// δεν υπάρχει εξαίρεση
-			case "ΓΟΝΙΚΗ":
-				$ignore = FALSE;
+			default:
+				self::parousia_push($row, $deltio);
+				$ignore = TRUE;
 				break;
 			}
 
 			if ($ignore)
 			continue;
 
-			// Δεν υπάρχει άδεια ή εξαίρεση. Για να μην θεωρηθεί
-			// απουσία πρέπει η εγγραφή να περιλαμβάνει μέρα/ώρα
-			// και να μην περιλαμβάνει σχόλιο.
+			// Σχεδόν όλες οι εξαιρέσεις ΔΕΝ περιλαμβάνονται στο
+			// δελτίο απόντων.
 
-			if (self::kathari_parousia($row))
+			switch ($row["excuse"]) {
+			case "":	// δεν υπάρχει εξαίρεση
+				$ignore = FALSE;
+				break;
+
+			case "ΓΟΝΙΚΗ":	// γονική σχολικής ενημέρωσης
+				self::parousia_push($row, $deltio);
+				$ignore = TRUE;
+				break;
+
+			// Όλες οι υπόλοιπες εξαιρέσεις δεν περιλαμβάνονται
+			// στο δελτίο απόντων.
+
+			default:
+				$ignore = TRUE;
+				break;
+			}
+
+			if ($ignore)
 			continue;
 
-			$plist[$row["ipalilos"]] = $row;
-			unset($row["ipalilos"]);
-		}
+			// Δεν υπάρχει άδεια ή εξαίρεση. Για να ΜΗΝ θεωρηθεί
+			// απουσία πρέπει η εγγραφή να περιλαμβάνει μέρα/ώρα
+			// και να ΜΗΝ περιλαμβάνει σχόλιο.
 
-		$deltio->parousia = $plist;
+			if (self::kathari_parousia($row, $deltio))
+			continue;
+
+			self::parousia_push($row, $deltio);
+		}
 
 		return __CLASS__;
 	}
 
-	private static function kathari_parousia($parousia) {
+	private static function kathari_parousia(&$parousia, $deltio) {
 		if (self::oxi_meraora($parousia)) {
 			$parousia["adidos"] = "ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ";
+			$parousia["adapo"] = $deltio->imerominia;
+			$parousia["adeos"] = $deltio->imerominia;
 			return FALSE;
 		}
 
@@ -411,6 +437,17 @@ class Apontes {
 		return FALSE;
 
 		return TRUE;
+	}
+
+	private static function parousia_push($parousia, $deltio) {
+		$ipalilos = $parousia["ipalilos"];
+		unset($parousia["ipalilos"]);
+		unset($parousia["meraora"]);
+
+		$deltio->parousia[$ipalilos] = $parousia;
+		self::$ilist[$ipalilos] = "";
+
+		return __CLASS__;
 	}
 
 	private static function is_adia($parousia) {
@@ -435,75 +472,19 @@ class Apontes {
 
 	///////////////////////////////////////////////////////////////////////@
 
-	// Η μέθοδος "is_diafora" είναι εσωτερική και ελέγχει δύο εγγραφές
-	// παρουσίας όσον αφορά κάποια συγκεκριμένα πεδία.
-
-	private static function is_diafora($trepar, $propar) {
-		foreach ([
-			"adidos",
-			"adapo",
-			"adeos",
-		] as $col) {
-			if ($trepar[$col] !== $propar[$col])
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	// Η μέθοδος "info_check" είναι εσωτερική και ελέγχει το πεδίο
-	// παρατηρήσεων σε κατά τα λοιπά ίδιες παρουσίες.
-
-	private static function info_check($trepar, $propar) {
-		// Αν δεν υπάρχει παρατήρηση, τότε η παρουσία θεωρείται
-		// κανονική.
-
-		if (!$trepar["info"])
-		return FALSE;
-
-		// Αν η παρατήρηση είναι διαφορετική από την παρατήρηση του
-		// προηγούμενου παρουσιολογίου, τότε η παρουσία θεωρείται
-		// ύποπτη.
-
-		if ($trepar["info"] !== $propar["info"])
-		return TRUE;
-
-		// Υπάρχει παρατήρηση και είναι ίδια με την παρατήρηση του
-		// προηγούμενου παρουσιολογίου. Αν δεν υπάρχει είδος αδείας,
-		// τότε η παρουσία θεωρείται ύποπτη.
-
-		if (!$trepar["adidos"])
-		return TRUE;
-
-		// Υπάρχει παρατήρηση και είναι ίδια με την παρατήρηση του
-		// προηγούμενου παρουσιολογίου. Υπάρχει και είδος αδείας.
-		// Αν το είδος αδείας είναι διαφρετικό από το είδος αδείας
-		// του προηγούμενου παρουσιολογίου, τότε η παρουσία θεωρείται
-		// ύποπτη.
-
-		if ($trepar["adidos"] !== $propar["adidos"])
-		return TRUE;
-
-
-		// Υπάρχει παρατήρηση και είδος αδείας που συμπίπτουν με τα
-		// αντίστοιχα στοιχεία του προηγούμενου παρουσιολογίου. Σε
-		// αυτή την περίπτωση η εγγραφή θεωρείται κανονική.
-
-		return FALSE;
-	}
-
-	// Η μέθοδος "ipalilos_fetch" θέτει το πεδίο "ilist" να δείχνει σε
-	// λίστα με τους υπαλλήλους που παρουσιάζουν διαφορές.
-
 	public static function ipalilos_fetch() {
 		// Εμπλουτίζουμε τη λίστα με ονομαστικά στοιχεία των υπαλλήλων
 		// που θα χρειαστούν κατά την εμφάνιση των διαφορών.
 
-		foreach (self::$ilist as $ipalilos => $apousia) {
+		foreach (self::$ilist as $ipalilos => $dummy) {
 			$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
 				"FROM " . letrak::erpota12("ipalilos") . " " .
 				"WHERE `kodikos` = " . $ipalilos;
-			self::$ilist[$ipalilos]["ipalilos"] = pandora::first_row($query, MYSQLI_ASSOC);
+			$row = pandora::first_row($query, MYSQLI_NUM);
+			self::$ilist[$ipalilos] =
+				$row[0] . " " .
+				$row[1] .  " " .
+				mb_substr($row[2], 0, 3);
 		}
 
 		return __CLASS__;
