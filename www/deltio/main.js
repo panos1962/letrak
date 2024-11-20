@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-20
 // Updated: 2024-11-16
 // Updated: 2024-11-07
 // Updated: 2022-10-18
@@ -574,7 +575,7 @@ deltio.apontes = (e, deltioDOM) => {
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο δελτίου απόντων');
 
 	let url = '../apontes?deltio=' + kodikos;
-	deltio.childrenWindows.push(window.open(url, '_blank'));
+	deltio.childrenWindows.push(window.open(url, 'apontes'));
 
 	return deltio;
 };
@@ -636,7 +637,7 @@ deltio.browserSetup = () => {
 	// ανοίγει απευθείας νέο παράθυρο εμφάνισης στοιχείων δελτίου απόντων.
 
 	deltio.browserDOM.
-	on('click', '.deltioKatastasi', function(e) {
+	on('click', '.deltioKatastasi,.deltioIpografi', function(e) {
 		deltio.apontes(e, $(this).closest('.deltio'));
 	});
 

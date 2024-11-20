@@ -80,7 +80,7 @@ apontes.selidaSetup = () => {
 	apontes.fatalError('Ακαθόριστο παρουσιολόγιο');
 
 	pnd.ofelimoDOM.
-	on('click', '.ipalilosArea', function(e) {
+	on('click', '.ipalilos', function(e) {
 		apontes.ipalilosDoneToggle(e, $(this));
 	});
 
@@ -235,12 +235,12 @@ apontes.apousiaProcess = function(rsp) {
 
 apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 	let ipalilosDOM = $('<div>').
-	addClass('ipalilos').
-	addClass('ipalilos' + zebra);
+	addClass('ipalilos');
 
 	ipalilosDOM.
+	append($('<div>').addClass('ipalilosData').
 	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos)).
-	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
+	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma)));
 
 	ipalilos = ipalilos.kodikos;
 
@@ -270,16 +270,37 @@ apontes.apousiaPush = function(dom, apousia, proapo) {
 
 	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
 	let adidos = undefined;
+	let diastima = undefined;
+	let sxolio = undefined;
 
-	if (apousia.adidos)
-	adidos = apousia.adidos;
+	if (apousia.adidos) {
+		adidos = apousia.adidos;
+		diastima = apousia.adapo + ' - ' + apousia.adeos;
+		sxolio = apousia.info;
 
-	if (apousia.excuse) {
-		adidos = apousia.excuse;
-		apousiaDOM.addClass('apousia' + proapo);
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima)).
+		append($('<div>').addClass('sxolio').text(sxolio));
+
+		return apontes;
 	}
 
-	apousiaDOM.text(adidos);
+	if (apousia.excuse) {
+		apousiaDOM.addClass('apousia' + proapo);
+		adidos = apousia.excuse;
+		diastima = apousia.info;
+
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima));
+
+		return apontes;
+	}
+
+	if (apousia.info)
+	apousiaDOM.
+	append($('<div>').addClass('sxolioMono').text(apousia.info));
 
 	return apontes;
 };
@@ -421,18 +442,18 @@ apontes.infoCheck = (dom, t, p) => {
 
 // Η function "ipalilosDoneToggle" καλείται όταν γίνεται κλικ σε κάποια
 // εγγραφή διαφοράς παρουσίας και σκοπό έχει να μαρκάρει με αλλαγή χρώματος
-// τη συγκεκριμένη διαφφορά προκειμένου να γνωρίζει ο χρήστης ποιες διαφορές
-// έχει ήδη επεξεργαστεί.
+// τον συγκεκριμένο υπάλληλο προκειμένου να γνωρίζει ο χρήστης ποιους
+// υπαλλήλους έχει ήδη επεξεργαστεί.
 
 apontes.ipalilosDoneToggle = function(e, dom) {
 	e.stopPropagation();
 	e.preventDefault();
 
-	if (dom.hasClass('ipalilosAreaDone'))
-	dom.removeClass('ipalilosAreaDone');
+	if (dom.hasClass('ipalilosDone'))
+	dom.removeClass('ipalilosDone');
 
 	else
-	dom.addClass('ipalilosAreaDone');
+	dom.addClass('ipalilosDone');
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

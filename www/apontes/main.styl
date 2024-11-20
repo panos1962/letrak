@@ -33,13 +33,14 @@
 .pnd-ofelimo
 	padding 0px
 	overflow-x hidden
+	font-size 120%
 
 /******************************************************************************/
 
 #deltioArea
 	margin-top 2px
 	padding 2px 0px
-	background-color #d9ebf7
+	background-color #e9e8c4
 	border-style none none solid none
 	border-width 1px
 	> div
@@ -102,15 +103,17 @@
 	display block
 	margin-top 6px
 	padding 2px 0px
+	background-color #f5f0da
 	border-style none none solid none
 	border-width 1px
 	cursor crosshair
 
-.ipalilos0
-	background-color #f7e9a0
+.ipalilosDone
+	opacity 0.4
 
-.ipalilos1
-	background-color #e9dda1
+.ipalilosData
+	padding 4px
+	background-color #fffdc7
 
 .ipalilosKodikos
 	display inline-block
@@ -119,11 +122,13 @@
 		content '['
 		padding-right 2px
 		font-weight normal
+		opacity 0.6
 	&:after
 		content ']'
 		margin-right 2px
 		padding-left 2px
 		font-weight normal
+		opacity 0.6
 
 .ipalilosOnoma
 	display inline-block
@@ -133,13 +138,17 @@
 .apousia
 	display block
 	font-weight bold
+	margin-top 4px
 	> div
 		display inline-block
 
 .apousiaProselefsi
 	&:before
 		content 'Προσέλευση:'
+		display inline-block
 		margin-right 4px
+		min-width 6em
+		text-align right
 		color: #283c8a
 		font-style italic
 		font-weight normal
@@ -147,13 +156,30 @@
 .apousiaApoxorisi
 	&:before
 		content 'Αποχώρηση:'
+		display inline-block
 		margin-right 4px
+		min-width 6em
+		text-align right
 		color: #283c8a
 		font-style italic
 		font-weight normal
 
 .adidos
-	font-weight bold
+	padding 2px 4px
+	background-color midnightblue
+	color yellow
+	border-radius 2px
+
+.diastima
+	margin-left 10px
+
+.sxolio
+	margin-left 10px
+	font-weight normal
+	font-style italic
+
+.sxolioMono
+	font-style italic
 
 /******************************************************************************/
 
