@@ -95,15 +95,6 @@ apontes.selidaSetup = () => {
 			console.error(e);
 		},
 	});
-/*
-apontes.apontesProcess({
-"proselefsi": '123',
-"apoxorisi": '456',
-"ipiresia": "Β10",
-"perigrafi": "asd ahsd kashdkjash dhkajh sdkahkd",
-"ipl": [],
-});
-*/
 
 	return apontes;
 };
@@ -113,9 +104,16 @@ apontes.apontesProcess({
 apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
-return apontes;
 
-	document.title = rsp.proselefsi + '+' + rsp.apoxorisi;
+console.log(rsp);
+	document.title = rsp.proselefsi.ipiresia + ' ' + rsp.proselefsi.imerominia;
+	apontes.
+	ipalilosSort(rsp).
+	apousiaApalifi(rsp);
+
+console.log(rsp);
+
+return apontes;
 
 	let apantesParontes = true;
 
@@ -174,6 +172,85 @@ return apontes;
 		adiaAlagi(dom, t, p).
 		exeresiCheck(dom, t).
 		infoCheck(dom, t, p);
+	}
+
+	return apontes;
+};
+
+apontes.ipalilosSort = function(rsp) {
+	let ilist = rsp.ipalilos;
+	let i;
+
+	apontes.ilist = [];
+
+	for (i in rsp.ipalilos)
+	apontes.ilist.push({
+		"kodikos": i,
+		"onoma": ilist[i]
+	});
+
+	delete rsp.ipalilos;
+
+	apontes.ilist.sort(function(i1, i2) {
+		let cmp = i1.onoma.localeCompare(i2.onoma);
+
+		if (cmp)
+		return cmp;
+
+		if (i1 < i2)
+		return -1;
+
+		else if (i1 > i2)
+		return 1;
+
+		return 0;
+	});
+
+	console.log(apontes.ilist);
+	console.log(rsp);
+
+	return apontes;
+};
+
+apontes.apousiaApalifi = function(rsp) {
+	let ateles = 2;
+
+	if (rsp.pro)
+	ateles--;
+
+	if (rsp.apo)
+	ateles--;
+
+	if (ateles)
+	return apontes;
+
+	for (let i in rsp.pro.parousia) {
+		if (!(i in rsp.apo.parousia))
+		continue;
+
+		let dif = false;
+
+		for (let j in rsp.pro.parousia[i]) {
+			if (rsp.apo.parousia[i][j] != rsp.pro.parousia[i][j]) {
+				dif = true;
+				break;
+			}
+		}
+
+		if (dif)
+		continue;
+
+		for (let j in rsp.apo.parousia[i]) {
+			if (rsp.apo.parousia[i][j] != rsp.pro.parousia[i][j]) {
+				dif = true;
+				break;
+			}
+		}
+
+		if (dif)
+		continue;
+
+		delete rsp.apo.parousia[i];
 	}
 
 	return apontes;

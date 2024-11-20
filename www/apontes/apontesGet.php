@@ -18,10 +18,16 @@
 //
 // @DESCRIPTION BEGIN
 // Το παρόν πρόγραμμα καλείται από τη σελίδα παρουσίασης απόντων ημέρας.
-// Ως παράμετρος δίνεται ο κωδικός παρουσιολογίου αποχώρησης της ημέρας.
+// Ως παράμετρος δίνεται ένας κωδικός παρουσιολογίου. Το πρόγραμμα επιλέγει
+// το συμπληρωματικό παρουσιολόγιο και κατόπιν εντοπίζει τους απόντες τής
+// συγκεκριμένης ημέρας. Αν το παρουσιολόγιο είναι παρουσιλόγιο προσέλευσης
+// και δεν έχει εκδοθεί ακόμη το αντίστοιχο παρουσιολόγιο αποχώρησης, τότε
+// οι απόντες αφορούν μόνο στην προσέλευση, επομένως είναι καλό να δίνεται
+// παρουσιολόγιο αποχώρησης.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-20
 // Updated: 2024-11-19
 // Updated: 2024-11-17
 // Updated: 2024-11-16
@@ -64,7 +70,7 @@ class Apontes {
 	// Το πεδίο "prosvasi" περιέχει τα στοιχεία πρόσβασης του χρήστη
 	// που τρέχει την εφαρμογή.
 
-	public static $prosvasi;
+	private static $prosvasi;
 
 	// Το πεδίο "mask" χρησιμοποιείται για φιλτράρισμα των στοιχείων
 	// προκειμένου να μην φανερωθούν στοιχεία σε χρήστες που δεν έχουν
@@ -72,7 +78,7 @@ class Apontes {
 	// αλλιώς περιέχει τον κωδικό του υπαλλήλου που τρέχει την εφαρμογή
 	// και τα δεδομένα περιορίζονται σε αυτόν τον υπάλληλο μόνο.
 
-	public static $mask;
+	private static $mask;
 
 	// Το πεδίο "pro" περιέχει το παρουσιολόγιο προσέλευσης.
 
@@ -137,28 +143,11 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "apoxorisi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
-	// προσέλευσης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
-	// αποχώρησης από την database.
-
-	public static function apoxorisi_fetch($deltio) {
-		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
-			"WHERE `protipo` = " . $deltio->kodikos;
-		self::$apo = pandora::first_row($query, MYSQLI_NUM);
-
-		if (!self::$apo)
-		return __CLASS__;
-
-		self::$apo = self::deltio_fetch(self::$apo[0], "αποχώρησης");
-
-		return __CLASS__;
-	}
-
 	// Η μέθοδος "proselefsi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
 	// αποχώρησης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
 	// προσέλευσης από την database.
 
-	public static function proselefsi_fetch($deltio) {
+	private static function proselefsi_fetch($deltio) {
 		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
 			"WHERE `kodikos` = " . $deltio->protipo;
 		self::$pro = pandora::first_row($query, MYSQLI_NUM);
@@ -167,6 +156,23 @@ class Apontes {
 		return __CLASS__;
 
 		self::$pro = self::deltio_fetch(self::$pro[0], "προσέλευσης");
+
+		return __CLASS__;
+	}
+
+	// Η μέθοδος "apoxorisi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
+	// προσέλευσης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
+	// αποχώρησης από την database.
+
+	private static function apoxorisi_fetch($deltio) {
+		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
+			"WHERE `protipo` = " . $deltio->kodikos;
+		self::$apo = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!self::$apo)
+		return __CLASS__;
+
+		self::$apo = self::deltio_fetch(self::$apo[0], "αποχώρησης");
 
 		return __CLASS__;
 	}
@@ -192,7 +198,7 @@ class Apontes {
 		// Μετατρέπουμε την ημερομηνία του παρουσιολογίου από
 		// date/time σε string.
 
-		$deltio->imerominia = $deltio->imerominia->format("Y-m-d");
+		$deltio->imerominia = $deltio->imerominia->format("d/m/Y");
 
 		// Τα πεδία που ακολουθούν δεν μας ενδιαφέρουν στο δελτίο
 		// απόντων.
@@ -272,7 +278,8 @@ class Apontes {
 		// Έχουμε ελέγξει όλα τα στοιχεία των δελτίων προσέλευσης και
 		// αποχώρησης που μπορεί να παρουσιάσουν ασυμβατότητα και τα
 		// βρήκαμε εντάξει. Προχωράμε, λοιπόν, στην εκκαθάριση όλων
-		// πεδίων που δεν ενδιαφέρουν στο δελτίο απόντων.
+		// βασικών στοιχείων παρουσιολογίου που δεν ενδιαφέρουν στο
+		// δελτίο απόντων.
 
 		unset(self::$pro->prosapo);
 		unset(self::$pro->protipo);
@@ -291,8 +298,8 @@ class Apontes {
 	}
 
 	// Η function "ateles" χρησιμοποιείται όταν ελέγχουμε μόνο ένα
-	// παρουσιολόγιο. Συνήθως αυτό γίνεται στα παρουσιολόγια προσέλευσης
-	// για τα οποία λείπει ή δεν έχει κυρωθεί το παρουσιολόγιο αποχώρησης.
+	// παρουσιολόγιο. Αυτό μπορεί να γίνει μόνο στα παρουσιολόγια
+	// προσέλευσης για τα οποία λείπει το παρουσιολόγιο αποχώρησης.
 
 	private static function ateles($deltio) {
 		// Εκκαθαρίζουμε κάποια πεδία του δελτίου προσέλευσης, τα
@@ -306,34 +313,20 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	private static function adia_diastima($parousia) {
-		$apo = $parousia["adapo"];
-		$eos = $parousia["adeos"];
-
-		if ($apo)
-		$diastima = "ΑΠΟ " . $apo;
-
-		else
-		$diastima = "";
-
-		if ($eos)
-		$diastima .= " ΕΩΣ " . $eos;
-
-		return $diastima;
-	}
-
 	///////////////////////////////////////////////////////////////////////@
 
 	// Η μέθοδος "parousia_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
 	// και θέτει το πεδίο "parousia" του παρουσιολογίου να δείχνει στις
-	// παρουσίες που περιλαμβάνει το παρουσιολόγιο (λίστα δεικτοδοτημένη
-	// με τον κωδικό υπαλλήλου).
+	// παρουσίες που περιλαμβάνει το παρουσιολόγιο και οι οποίες αφορούν
+	// σε απουσία. Πρόκειται για λίστα δεικτοδοτημένη με τον κωδικό
+	// υπαλλήλου.
 
 	private static function parousia_fetch($deltio) {
 		$deltio->parousia = [];
 
-		$query = "SELECT `ipalilos`, `meraora`, " .
-			"`adidos`, `adapo`, `adeos`, " .
+		$query = "SELECT `ipalilos`, `meraora`, `adidos`, " .
+			'DATE_FORMAT(`adapo`, "%d/%m/%Y") AS `adapo`, ' .
+			'DATE_FORMAT(`adeos`, "%d/%m/%Y") AS `adeos`, ' .
 			"`excuse`, `info` " .
 			"FROM `letrak`.`parousia` " .
 			"WHERE (`deltio` = " . $deltio->kodikos . ")";
@@ -380,6 +373,8 @@ class Apontes {
 			// εγγραφής.
 
 			default:
+				if (!$row["adapo"]) $row["adapo"] = "**/**/****";
+				if (!$row["adeos"]) $row["adeos"] = "**/**/****";
 				self::parousia_push($row, $deltio);
 				$ignore = TRUE;
 				break;
@@ -450,14 +445,6 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	private static function is_adia($parousia) {
-		return $parousia["adidos"];
-	}
-
-	private static function is_exeresi($parousia) {
-		return $parousia["excuse"];
-	}
-
 	private static function is_meraora($parousia) {
 		return $parousia["meraora"];
 	}
@@ -472,18 +459,16 @@ class Apontes {
 
 	///////////////////////////////////////////////////////////////////////@
 
-	public static function ipalilos_fetch() {
-		// Εμπλουτίζουμε τη λίστα με ονομαστικά στοιχεία των υπαλλήλων
-		// που θα χρειαστούν κατά την εμφάνιση των διαφορών.
+	// Εμπλουτίζουμε τη λίστα των υπαλλήλων που παρουσιάζουν απουσία με
+	// τα ονομαστικά τους στοιχεία.
 
-		foreach (self::$ilist as $ipalilos => $dummy) {
+	public static function ipalilos_fetch() {
+		foreach (self::$ilist as $ipalilos => &$onoma) {
 			$query = "SELECT `eponimo`, `onoma`, `patronimo` " .
 				"FROM " . letrak::erpota12("ipalilos") . " " .
 				"WHERE `kodikos` = " . $ipalilos;
 			$row = pandora::first_row($query, MYSQLI_NUM);
-			self::$ilist[$ipalilos] =
-				$row[0] . " " .
-				$row[1] .  " " .
+			$onoma = $row[0] . " " .  $row[1] .  " " .
 				mb_substr($row[2], 0, 3);
 		}
 
