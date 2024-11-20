@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2024-11-20
 * Created: 2024-11-08
 * @HISTORY END
 *
@@ -36,9 +37,56 @@
 /******************************************************************************/
 
 #deltioArea
-	display inline-block
+	margin-top 2px
+	padding 2px 0px
+	background-color #d9ebf7
+	border-style none none solid none
+	border-width 1px
 	> div
 		display inline-block
+
+#deltioImerominia
+	&:before
+		content 'Ημερομηνία:'
+		padding-right 2px
+		font-weight normal
+	&:after
+		content ','
+		font-weight normal
+	font-weight bold
+
+#deltioKodikos
+	font-weight bold
+	> div
+		display inline-block
+
+#deltioProselefsi
+	&:before
+		content 'Προσέλευση:'
+		padding-left 2px
+		padding-right 2px
+		font-weight normal
+	&:after
+		content ','
+		font-weight normal
+
+#deltioApoxorisi
+	&:before
+		content 'Αποχώρηση:'
+		padding-left 2px
+		padding-right 2px
+		font-weight normal
+	&:after
+		content ','
+		font-weight normal
+
+#deltioIpiresia
+	&:before
+		content 'Υπηρεσία:'
+		padding-left 2px
+		padding-right 2px
+		font-weight normal
+	font-weight bold
 
 .deltio
 	margin 2px
@@ -48,56 +96,71 @@
 		display inline-block
 		padding 2px
 
-.deltioKodikos
-	&:before
-		content '['
-		padding-right 2px
-	&:after
-		content ']'
-		padding-left 2px
-
-.deltioImera
-	font-weight bold
-	&:after
-		content ','
-		font-weight normal
-
 /******************************************************************************/
-
-.ipalilosArea
-	margin 4px
-	background-color #e5e3b6
-	border-radius 4px
-	cursor crosshair
-
-.ipalilosAreaDone
-	background-color #e3d9c6
 
 .ipalilos
-	margin 4px
-	border-radius 4px
-	> div
-		display inline-block
-		padding 2px
+	display block
+	margin-top 6px
+	padding 2px 0px
+	border-style none none solid none
+	border-width 1px
+	cursor crosshair
+
+.ipalilos0
+	background-color #f7e9a0
+
+.ipalilos1
+	background-color #e9dda1
 
 .ipalilosKodikos
+	display inline-block
+	font-weight bold
 	&:before
 		content '['
 		padding-right 2px
+		font-weight normal
 	&:after
 		content ']'
+		margin-right 2px
 		padding-left 2px
+		font-weight normal
+
+.ipalilosOnoma
+	display inline-block
 
 /******************************************************************************/
 
-.apantesParontes
+.apousia
+	display block
+	font-weight bold
+	> div
+		display inline-block
+
+.apousiaProselefsi
+	&:before
+		content 'Προσέλευση:'
+		margin-right 4px
+		color: #283c8a
+		font-style italic
+		font-weight normal
+
+.apousiaApoxorisi
+	&:before
+		content 'Αποχώρηση:'
+		margin-right 4px
+		color: #283c8a
+		font-style italic
+		font-weight normal
+
+.adidos
+	font-weight bold
+
+/******************************************************************************/
+
+#apantesParontes
 	margin 20px 0 0 2px
 	padding 4px
 	width 30em
+	font-size 120%
 	font-style italic
 	cursor pointer
-
-.diaforesKlisimoTab
-	border-width 3px
-	border-style double
-	margin 0 1em;

@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-20
 // Updated: 2024-11-14
 // Updated: 2024-11-08
 // Created: 2024-11-07
@@ -83,6 +84,10 @@ apontes.selidaSetup = () => {
 		apontes.ipalilosDoneToggle(e, $(this));
 	});
 
+	pnd.ofelimoDOM.
+	append(apontes.deltioAreaDOM = $('<div>').attr('id', 'deltioArea')).
+	append(apontes.apousiaAreaDOM = $('<div>').attr('id', 'apousiaArea'));
+
 	$.post({
 		'url': 'apontesGet.php',
 		'data': {
@@ -105,11 +110,15 @@ apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
 
-console.log(rsp);
-	document.title = rsp.proselefsi.ipiresia + ' ' + rsp.proselefsi.imerominia;
 	apontes.
 	ipalilosSort(rsp).
 	apousiaApalifi(rsp);
+
+	document.title = rsp.proselefsi.ipiresia + ' ' + rsp.proselefsi.imerominia;
+
+	apontes.
+	deltioProcess(rsp).
+	apousiaProcess(rsp);
 
 console.log(rsp);
 
@@ -173,6 +182,104 @@ return apontes;
 		exeresiCheck(dom, t).
 		infoCheck(dom, t, p);
 	}
+
+	return apontes;
+};
+
+apontes.deltioProcess = function(rsp) {
+	let proselefsi = rsp.proselefsi;
+	let apoxorisi = rsp.apoxorisi;
+
+	apontes.deltioAreaDOM.
+	append($('<div>').
+	attr('id', 'deltioImerominia').
+	text(proselefsi.imerominia));
+
+	let kodikosDOM = $('<div>').attr('id', 'deltioKodikos').
+	appendTo(apontes.deltioAreaDOM);
+
+	kodikosDOM.
+	append($('<div>').
+	attr('id', 'deltioProselefsi').
+	text(proselefsi.kodikos));
+
+	if (apoxorisi)
+	kodikosDOM.
+	append($('<div>').
+	attr('id', 'deltioApoxorisi').
+	text(apoxorisi.kodikos));
+
+	apontes.deltioAreaDOM.
+	append($('<div>').
+	attr('id', 'deltioIpiresia').
+	text(proselefsi.ipiresia));
+
+	return apontes;
+};
+
+// Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
+// εμφανίζει τα στοιχεία του κάθε υπαλλήλου και της σχετικής απουσίας.
+
+apontes.apousiaProcess = function(rsp) {
+	if (!apontes.ilist.length)
+	return apontes.apantesParontes();
+
+	for (let i = 0; i < apontes.ilist.length; i++)
+	apontes.ipalilosProcess(apontes.ilist[i], rsp, i % 2);
+
+	return apontes;
+};
+
+// Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
+// παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
+
+apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
+	let ipalilosDOM = $('<div>').
+	addClass('ipalilos').
+	addClass('ipalilos' + zebra);
+
+	ipalilosDOM.
+	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos)).
+	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
+
+	ipalilos = ipalilos.kodikos;
+
+	let proselefsi = undefined;
+
+	if (rsp.proselefsi && rsp.proselefsi.parousia.hasOwnProperty(ipalilos))
+	proselefsi = rsp.proselefsi.parousia[ipalilos];
+
+	let apoxorisi = undefined;
+
+	if (rsp.apoxorisi && rsp.apoxorisi.parousia.hasOwnProperty(ipalilos))
+	apoxorisi = rsp.apoxorisi.parousia[ipalilos];
+
+	apontes.
+	apousiaPush(ipalilosDOM, proselefsi, 'Proselefsi').
+	apousiaPush(ipalilosDOM, apoxorisi, 'Apoxorisi');
+
+	apontes.apousiaAreaDOM.
+	append(ipalilosDOM);
+
+	return apontes;
+};
+
+apontes.apousiaPush = function(dom, apousia, proapo) {
+	if (!apousia)
+	return apontes;
+
+	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
+	let adidos = undefined;
+
+	if (apousia.adidos)
+	adidos = apousia.adidos;
+
+	if (apousia.excuse) {
+		adidos = apousia.excuse;
+		apousiaDOM.addClass('apousia' + proapo);
+	}
+
+	apousiaDOM.text(adidos);
 
 	return apontes;
 };
@@ -257,9 +364,11 @@ apontes.apousiaApalifi = function(rsp) {
 };
 
 apontes.apantesParontes = function() {
-	pnd.ofelimoDOM.
-	append($('<div>').addClass('apantesParontes').
+	apontes.apousiaAreaDOM.
+	append($('<div>').
+	attr('id', 'apantesParontes').
 	html(apontes.minima.apantesParontes));
+
 	pnd.bodyDOM.
 	on('click', (e) => apontes.apantesParontesClose(e)).
 	on('keyup', (e) => apontes.apantesParontesClose(e));
@@ -270,101 +379,6 @@ apontes.apantesParontes = function() {
 apontes.apantesParontesClose = function(e) {
 	e.stopPropagation();
 	self.close();
-};
-
-apontes.ipalilosProsthiki = (dom, parousia) => {
-	let msg = 'Προστέθηκε υπάλληλος';
-
-	msg += parousia.orario ?
-		', ωράριο: <b>' + parousia.orario + '</b>'
-	:
-		', <b>χωρίς ωράριο</b>';
-
-	msg += parousia.karta ?
-		', κάρτα: <b>' + parousia.karta + '</b>'
-	:
-		', <b>χωρίς κάρτα</b>';
-
-	if (parousia.adidos)
-	msg += ', <b>αδειούχος</b>';
-
-	if (parousia.excuse)
-	msg += ', <b>δικαιολογημένος</b>';
-
-	dom.append($('<div>').html(msg));
-	return apontes;
-};
-
-apontes.ipalilosAferesi = (dom, parousia) => {
-	let msg = 'Αφαιρέθηκε υπάλληλος';
-
-	if (parousia.adidos)
-	msg += ', <b>αδειούχος ών</b>';
-
-	dom.append($('<div>').html(msg));
-	return apontes;
-};
-
-apontes.kartaAlagi = (dom, t, p) => {
-	if (t.karta === p.karta)
-	return apontes;
-
-	let msg = 'Αλλαγή κάρτας';
-
-	if (p.karta)
-	msg += ' από <b>' + p.karta + '</b>';
-
-	if (t.karta)
-	msg += ' σε <b>' + t.karta + '</b>';
-
-	dom.append($('<div>').html(msg));
-	return apontes;
-};
-
-apontes.adiaAlagi = (dom, t, p) => {
-	let nodif = true;
-
-	if (t.adidos !== p.adidos)
-	nodif = false;
-
-	else if (t.adapo !== p.adapo)
-	nodif = false;
-
-	else if (t.adeos !== p.adeos)
-	nodif = false;
-
-	if (nodif)
-	return apontes;
-
-	if ((!p.adidos) && t.adidos) {
-		let msg = 'Εκκίνηση αδείας,' +
-			apontes.adiaIdos(t) +
-			apontes.adiaDiastima(t);
-
-		dom.append($('<div>').html(msg));
-		return apontes;
-	}
-
-	if (p.adidos && (!t.adidos)) {
-		let msg = 'Λήξη αδείας,' +
-			apontes.adiaIdos(p) +
-			apontes.adiaDiastima(p);
-
-		dom.append($('<div>').html(msg));
-		return apontes;
-	}
-
-	let msg = 'Αλλαγή αδείας' +
-		' από' + apontes.adiaIdos(p) + apontes.adiaDiastima(p) +
-		' σε' + apontes.adiaIdos(t) + apontes.adiaDiastima(t);
-
-	dom.append($('<div>').html(msg));
-	return apontes;
-};
-
-apontes.adiaIdos = (parousia) => {
-	let s = ' <b>' + parousia.adidos + '</b>';
-	return s;
 };
 
 apontes.adiaDiastima = (parousia) => {
