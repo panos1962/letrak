@@ -57,11 +57,17 @@ prosvasi_fetch()::
 deltio_check()::
 prosvasi_check()::
 deltio_aponton()::
-ipalilos_fetch();
+ipalilos_fetch()::
+metadata_fetch();
 
 print '{' .
 	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
 	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
+	'"imerominia":' . pandora::json_string(Apontes::$imerominia) . ',' .
+	'"ipiresia":' . pandora::json_string(Apontes::$ipiresia) . ',' .
+	'"perigrafi":' . pandora::json_string(Apontes::$perigrafi) . ',' .
+	'"propar":' . pandora::json_string(Apontes::$propar) . ',' .
+	'"apopar":' . pandora::json_string(Apontes::$apopar) . ',' .
 	'"ipalilos":' . pandora::json_string(Apontes::$ilist) .
 '}';
 
@@ -88,6 +94,36 @@ class Apontes {
 	// Το πεδίο "apo" περιέχει το παρουσιολόγιο αποχώρησης.
 
 	public static $apo;
+
+	// Το πεδίο "imerominia" περιέχει την ημερομηνία των παρουσιολογίων.
+
+	public static $imerominia;
+
+	// Το πεδίο "ipiresia" περιέχει την υπηρεσία των παρουσιολογίων.
+
+	public static $ipiresia;
+
+	// Το πεδίο "perigrafi" περιέχει την περιγραφή των παρουσιολογίων.
+
+	public static $perigrafi;
+
+	// Το πεδίο "die" περιέχει τη διεύθυνση των παρουσιολογίων.
+
+	public static $die;
+
+	// Το πεδίο "tmi" περιέχει το τμήμα των παρουσιολογίων.
+
+	public static $tmi;
+
+	// Το πεδίο "propar" περιέχει τις απουσίες του παρουσιολογίου
+	// προσέλευσης.
+
+	public static $propar;
+
+	// Το πεδίο "apopar" περιέχει τις απουσίες του παρουσιολογίου
+	// αποχώρησης.
+
+	public static $apopar;
 
 	// Το πεδίο "ilist" περιέχει λίστα υπαλλήλων οι οποίοι παρουσιάζουν
 	// ενδιαφέρον.
@@ -280,21 +316,6 @@ class Apontes {
 		parousia_fetch(self::$pro)::
 		parousia_fetch(self::$apo);
 
-		// Έχουμε ελέγξει όλα τα στοιχεία των δελτίων προσέλευσης και
-		// αποχώρησης που μπορεί να παρουσιάσουν ασυμβατότητα και τα
-		// βρήκαμε εντάξει. Προχωράμε, λοιπόν, στην εκκαθάριση όλων
-		// βασικών στοιχείων παρουσιολογίου που δεν ενδιαφέρουν στο
-		// δελτίο απόντων.
-
-		unset(self::$pro->prosapo);
-		unset(self::$pro->protipo);
-
-		unset(self::$apo->prosapo);
-		unset(self::$apo->protipo);
-		unset(self::$apo->imerominia);
-		unset(self::$apo->ipiresia);
-		unset(self::$apo->perigrafi);
-
 		return __CLASS__;
 	}
 
@@ -303,15 +324,24 @@ class Apontes {
 	// προσέλευσης για τα οποία λείπει το παρουσιολόγιο αποχώρησης.
 
 	private static function ateles($deltio) {
-		// Εκκαθαρίζουμε κάποια πεδία του δελτίου προσέλευσης, τα
-		// οποία δεν ενδιαφέρουν στο δελτίο απόντων.
-
-		unset(self::$pro->prosapo);
-		unset(self::$pro->protipo);
-
 		self::parousia_fetch($deltio);
 
 		return __CLASS__;
+	}
+
+	public static function metadata_fetch() {
+		self::$imerominia = self::$pro->imerominia;
+		self::$ipiresia = self::$pro->ipiresia;
+		self::$perigrafi = self::$pro->perigrafi;
+
+		self::$propar = self::$pro->parousia;
+		self::$pro = (self::$pro ? self::$pro->kodikos : "");
+
+		if (!self::$apo)
+		return __CLASS__;
+
+		self::$apopar = self::$apo->parousia;
+		self::$apo = (self::$apo ? self::$apo->kodikos : "");
 	}
 
 	///////////////////////////////////////////////////////////////////////@

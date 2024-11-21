@@ -119,7 +119,7 @@ apontes.apontesProcess = (rsp) => {
 	ipalilosSort(rsp).
 	apousiaApalifi(rsp);
 
-	document.title = rsp.proselefsi.ipiresia + ' ' + rsp.proselefsi.imerominia;
+	document.title = rsp.ipiresia + ' ' + rsp.imerominia;
 
 	apontes.
 	deltioProcess(rsp).
@@ -131,11 +131,13 @@ apontes.apontesProcess = (rsp) => {
 apontes.deltioProcess = function(rsp) {
 	let proselefsi = rsp.proselefsi;
 	let apoxorisi = rsp.apoxorisi;
+	let imerominia = rsp.imerominia;
+	let ipiresia = rsp.ipiresia;
 
 	apontes.deltioAreaDOM.
 	append($('<div>').
 	attr('id', 'deltioImerominia').
-	text(proselefsi.imerominia));
+	text(imerominia));
 
 	let kodikosDOM = $('<div>').attr('id', 'deltioKodikos').
 	appendTo(apontes.deltioAreaDOM);
@@ -143,18 +145,18 @@ apontes.deltioProcess = function(rsp) {
 	kodikosDOM.
 	append($('<div>').
 	attr('id', 'deltioProselefsi').
-	text(proselefsi.kodikos));
+	text(proselefsi));
 
 	if (apoxorisi)
 	kodikosDOM.
 	append($('<div>').
 	attr('id', 'deltioApoxorisi').
-	text(apoxorisi.kodikos));
+	text(apoxorisi));
 
 	apontes.deltioAreaDOM.
 	append($('<div>').
 	attr('id', 'deltioIpiresia').
-	text(proselefsi.ipiresia));
+	text(ipiresia));
 
 	return apontes;
 };
@@ -167,7 +169,7 @@ apontes.apousiaProcess = function(rsp) {
 	return apontes.apantesParontes();
 
 	for (let i = 0; i < apontes.ilist.length; i++)
-	apontes.ipalilosProcess(apontes.ilist[i], rsp);
+	apontes.ipalilosProcess(apontes.ilist[i], rsp, i % 2);
 
 	return apontes;
 };
@@ -175,36 +177,40 @@ apontes.apousiaProcess = function(rsp) {
 // Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
 // παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
 
-apontes.ipalilosProcess = function(ipalilos, rsp) {
-	let ipalilosDOM = $('<div>').
-	addClass('ipalilos');
+apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
+	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
+	let ipalilosDOM = $('<div>').addClass('ipalilosData');
+	let apousiaDOM = $('<div>').addClass('apousiaData');
+
+	dom.
+	append(ipalilosDOM).
+	append(apousiaDOM);
 
 	ipalilosDOM.
-	append($('<div>').addClass('ipalilosData').
 	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos)).
-	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma)));
+	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
 
 	ipalilos = ipalilos.kodikos;
 
 	let proselefsi = undefined;
 
-	if (rsp.proselefsi && rsp.proselefsi.parousia.hasOwnProperty(ipalilos))
-	proselefsi = rsp.proselefsi.parousia[ipalilos];
+	if (rsp.proselefsi && rsp.propar.hasOwnProperty(ipalilos))
+	proselefsi = rsp.propar[ipalilos];
 
 	let apoxorisi = undefined;
 
-	if (rsp.apoxorisi && rsp.apoxorisi.parousia.hasOwnProperty(ipalilos))
-	apoxorisi = rsp.apoxorisi.parousia[ipalilos];
+	if (rsp.apoxorisi && rsp.apopar.hasOwnProperty(ipalilos))
+	apoxorisi = rsp.apopar[ipalilos];
 
 	apontes.
-	apousiaPush(ipalilosDOM, proselefsi, 'Proselefsi').
-	apousiaPush(ipalilosDOM, apoxorisi, 'Apoxorisi');
+	apousiaPush(apousiaDOM, proselefsi, 'Proselefsi').
+	apousiaPush(apousiaDOM, apoxorisi, 'Apoxorisi');
 
 	apontes.apousiaAreaDOM.
-	append(ipalilosDOM);
+	append(dom);
 
 	if (apontes.isError(ipalilos))
-	ipalilosDOM.
+	apousiaDOM.
 	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
 
 	return apontes;
@@ -302,8 +308,8 @@ apontes.apousiaApalifi = function(rsp) {
 	if (ateles)
 	return apontes;
 
-	let proselefsi = rsp.proselefsi.parousia;
-	let apoxorisi = rsp.apoxorisi.parousia;
+	let proselefsi = rsp.propar;
+	let apoxorisi = rsp.apopar;
 
 	apontes.
 	adiaCheck(proselefsi, apoxorisi).

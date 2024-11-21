@@ -41,9 +41,9 @@
 	margin-top 2px
 	padding 2px 4px
 	text-align center
-	background-color #e9e8c4
-	border-style none none solid none
-	border-width 1px
+	background-color #d1dbb7
+	border-style none none double none
+	border-width 3px
 	> div
 		display inline-block
 
@@ -102,19 +102,31 @@
 
 .ipalilos
 	display block
-	margin-top 6px
 	padding 2px 4px
 	background-color #f5f0da
 	border-style none none solid none
 	border-width 1px
 	cursor crosshair
 
+.ipalilos0
+	background-color #f5f0da
+
+.ipalilos1
+	background-color #ebe4c2
+
 .ipalilosDone
-	opacity 0.4
+	background-color #cdcdcc
+
+$ipalilosDataWidth = 20em
 
 .ipalilosData
+	display inline-block
+	vertical-align top
 	padding 4px
-	background-color #b2d1df
+	width $ipalilosDataWidth
+	min-width $ipalilosDataWidth
+	max-width $ipalilosDataWidth
+	overflow-x hidden
 
 .ipalilosKodikos
 	display inline-block
@@ -136,10 +148,16 @@
 
 /******************************************************************************/
 
+.apousiaData
+	display inline-block
+	vertical-align top;
+	border-style none none none dotted
+	border-width 1px
+
 .apousia
 	display block
+	padding 4px
 	font-weight bold
-	margin-top 4px
 	> div
 		display inline-block
 
@@ -194,7 +212,7 @@
 
 .error
 	display inline-block
-	margin-top 2px
+	margin 2px 2px 2px 4px
 	padding 2px 4px
 	background-color #a70000
 	color yellow
