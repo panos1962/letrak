@@ -500,6 +500,11 @@ apontes.apantesParontes = function() {
 	return apontes;
 };
 
+apontes.apantesParontesClose = function(e) {
+	e.stopPropagation();
+	self.close();
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 // Η function "ipalilosDoneToggle" καλείται όταν γίνεται κλικ σε κάποια
