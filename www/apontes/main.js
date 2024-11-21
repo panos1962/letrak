@@ -210,6 +210,8 @@ apontes.ipalilosProcess = function(ipalilos, rsp) {
 	return apontes;
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
 apontes.apousiaPush = function(dom, apousia, proapo) {
 	if (!apousia)
 	return apontes;
@@ -283,6 +285,10 @@ apontes.ipalilosSort = function(rsp) {
 
 	return apontes;
 };
+
+// Η function "apousiaApalifi" διατρέχει τις απουσίες και στα δύο δελτία και
+// διαγράφει τις απουσίες που είναι ακριβώς ίδιες στα δύο δελτία από το
+// δελτίο αποχώρησης.
 
 apontes.apousiaApalifi = function(rsp) {
 	let ateles = 2;
