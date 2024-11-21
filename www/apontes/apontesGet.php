@@ -438,7 +438,6 @@ class Apontes {
 	private static function parousia_push($parousia, $deltio) {
 		$ipalilos = $parousia["ipalilos"];
 		unset($parousia["ipalilos"]);
-		unset($parousia["meraora"]);
 
 		$deltio->parousia[$ipalilos] = $parousia;
 		self::$ilist[$ipalilos] = "";

@@ -281,9 +281,6 @@ apontes.ipalilosSort = function(rsp) {
 		return 0;
 	});
 
-	console.log(apontes.ilist);
-	console.log(rsp);
-
 	return apontes;
 };
 
@@ -352,6 +349,13 @@ apontes.adiaCheck = function(proselefsi, apoxorisi) {
 		if (!proselefsi[i].adidos)
 		continue;
 
+		// Υπάρχει άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
+
+		if (proselefsi[i].excuse) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση προσέλευσης");
+			continue;
+		}
+
 		// Πρόκειται για άδεια. Αν υπάρχει ώρα προσέλευσης έχουμε
 		// πρόβλημα.
 
@@ -391,6 +395,13 @@ apontes.adiaCheck = function(proselefsi, apoxorisi) {
 
 		if (!apoxorisi[i].adidos)
 		continue;
+
+		// Εντοπίστηκε άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
+
+		if (apoxorisi[i].excuse) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση αποχώρησης");
+			continue;
+		}
 
 		// Πρόκειται για άδεια. Αν υπάρχει ώρα αποχώρησης έχουμε
 		// πρόβλημα.
