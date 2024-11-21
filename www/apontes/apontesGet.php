@@ -27,6 +27,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-21
 // Updated: 2024-11-20
 // Updated: 2024-11-19
 // Updated: 2024-11-17
@@ -275,6 +276,10 @@ class Apontes {
 		if (self::$pro->imerominia !== self::$apo->imerominia)
 		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
 
+		self::
+		parousia_fetch(self::$pro)::
+		parousia_fetch(self::$apo);
+
 		// Έχουμε ελέγξει όλα τα στοιχεία των δελτίων προσέλευσης και
 		// αποχώρησης που μπορεί να παρουσιάσουν ασυμβατότητα και τα
 		// βρήκαμε εντάξει. Προχωράμε, λοιπόν, στην εκκαθάριση όλων
@@ -289,10 +294,6 @@ class Apontes {
 		unset(self::$apo->imerominia);
 		unset(self::$apo->ipiresia);
 		unset(self::$apo->perigrafi);
-
-		self::
-		parousia_fetch(self::$pro)::
-		parousia_fetch(self::$apo);
 
 		return __CLASS__;
 	}
