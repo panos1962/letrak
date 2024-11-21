@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-21
 // Updated: 2024-11-20
 // Updated: 2024-11-14
 // Updated: 2024-11-08
@@ -67,6 +68,10 @@ apontes.selidaSetup = () => {
 	toolbarTitlosSetup('<b>Δελτίο απόντων</b>').
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
+
+	if (self.LETRAK.hasOwnProperty('klisimoTabDOM'))
+	pnd.toolbarLeftDOM.
+	prepend(self.LETRAK.klisimoTabDOM.addClass('diaforesKlisimoTab'));
 
 	if (letrak.noXristis())
 	return apontes.fyiError('Διαπιστώθηκε ανώνυμη χρήση');
@@ -120,69 +125,6 @@ apontes.apontesProcess = (rsp) => {
 	deltioProcess(rsp).
 	apousiaProcess(rsp);
 
-console.log(rsp);
-
-return apontes;
-
-	let apantesParontes = true;
-
-	for (let ipalilos in rsp.ipl) {
-		apantesParontes = false;
-		break;
-	}
-
-	let deltioAreaDOM = $('<div>').attr('id', 'deltioArea');
-
-	deltioAreaDOM.
-	append($('<div>').html(rsp.proselefsi + '@' + rsp.apoxorisi));
-
-	if (self.LETRAK.hasOwnProperty('klisimoTabDOM'))
-	deltioAreaDOM.
-	append(self.LETRAK.klisimoTabDOM.addClass('apontesKlisimoTab'));
-
-	pnd.ofelimoDOM.
-	empty().
-	append(deltioAreaDOM);
-
-	if (apantesParontes)
-	return apontes.apantesParontes();
-
-	for (let ipalilos in rsp.ipl) {
-		ipalilos = new apontes.ipalilos(ipalilos, rsp.ipl[ipalilos]);
-
-		let dom = $('<div>').addClass('ipalilosArea').
-			appendTo(pnd.ofelimoDOM);
-
-		dom.
-		append(ipalilos.ipalilosDomGet());
-
-		let t = tre.parousia.hasOwnProperty(ipalilos.kodikos) ?
-			new apontes.parousia(ipalilos,
-				tre.parousia[ipalilos.kodikos]) : undefined;
-		let p = pro.parousia.hasOwnProperty(ipalilos.kodikos) ?
-			new apontes.parousia(ipalilos,
-				pro.parousia[ipalilos.kodikos]) : undefined;
-
-		if ((!p) && (!t))
-		continue;
-
-		if ((!p) && t) {
-			apontes.ipalilosProsthiki(dom, t);
-			continue;
-		}
-
-		if (!(t) && p) {
-			apontes.ipalilosAferesi(dom, p);
-			continue;
-		}
-
-		apontes.
-		kartaAlagi(dom, t, p).
-		adiaAlagi(dom, t, p).
-		exeresiCheck(dom, t).
-		infoCheck(dom, t, p);
-	}
-
 	return apontes;
 };
 
@@ -225,7 +167,7 @@ apontes.apousiaProcess = function(rsp) {
 	return apontes.apantesParontes();
 
 	for (let i = 0; i < apontes.ilist.length; i++)
-	apontes.ipalilosProcess(apontes.ilist[i], rsp, i % 2);
+	apontes.ipalilosProcess(apontes.ilist[i], rsp);
 
 	return apontes;
 };
@@ -233,7 +175,7 @@ apontes.apousiaProcess = function(rsp) {
 // Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
 // παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
 
-apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
+apontes.ipalilosProcess = function(ipalilos, rsp) {
 	let ipalilosDOM = $('<div>').
 	addClass('ipalilos');
 
@@ -260,6 +202,10 @@ apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 
 	apontes.apousiaAreaDOM.
 	append(ipalilosDOM);
+
+	if (apontes.isError(ipalilos))
+	ipalilosDOM.
+	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
 
 	return apontes;
 };
@@ -310,6 +256,7 @@ apontes.ipalilosSort = function(rsp) {
 	let i;
 
 	apontes.ilist = [];
+	apontes.error = {};
 
 	for (i in rsp.ipalilos)
 	apontes.ilist.push({
@@ -343,23 +290,30 @@ apontes.ipalilosSort = function(rsp) {
 apontes.apousiaApalifi = function(rsp) {
 	let ateles = 2;
 
-	if (rsp.pro)
+	if (rsp.proselefsi)
 	ateles--;
 
-	if (rsp.apo)
+	if (rsp.apoxorisi)
 	ateles--;
 
 	if (ateles)
 	return apontes;
 
-	for (let i in rsp.pro.parousia) {
-		if (!(i in rsp.apo.parousia))
+	let proselefsi = rsp.proselefsi.parousia;
+	let apoxorisi = rsp.apoxorisi.parousia;
+
+	apontes.
+	adiaCheck(proselefsi, apoxorisi).
+	exeresiCheck(proselefsi, apoxorisi);
+
+	for (let i in proselefsi) {
+		if (!apoxorisi.hasOwnProperty(i))
 		continue;
 
 		let dif = false;
 
-		for (let j in rsp.pro.parousia[i]) {
-			if (rsp.apo.parousia[i][j] != rsp.pro.parousia[i][j]) {
+		for (let j in proselefsi[i]) {
+			if (apoxorisi[i][j] != proselefsi[i][j]) {
 				dif = true;
 				break;
 			}
@@ -368,8 +322,8 @@ apontes.apousiaApalifi = function(rsp) {
 		if (dif)
 		continue;
 
-		for (let j in rsp.apo.parousia[i]) {
-			if (rsp.apo.parousia[i][j] != rsp.pro.parousia[i][j]) {
+		for (let j in apoxorisi[i]) {
+			if (apoxorisi[i][j] != proselefsi[i][j]) {
 				dif = true;
 				break;
 			}
@@ -378,7 +332,145 @@ apontes.apousiaApalifi = function(rsp) {
 		if (dif)
 		continue;
 
-		delete rsp.apo.parousia[i];
+		delete apoxorisi[i];
+	}
+
+	return apontes;
+};
+
+// Ελέγχουμε για τυχόν προβληματικές άδειες που έχουν περαστεί μόνο στο ένα
+// από τα δύο παρουσιολόγια, ή έχουν συμπληρωμένη ώρα προσέλευσης/αποχώρησης
+// κλπ.
+
+apontes.adiaCheck = function(proselefsi, apoxorisi) {
+	// Εκκινούμε τη διαδικασία διατρέχοντας τις απουσίες προσέλευσης.
+
+	for (let i in proselefsi) {
+		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!proselefsi[i].adidos)
+		continue;
+
+		// Πρόκειται για άδεια. Αν υπάρχει ώρα προσέλευσης έχουμε
+		// πρόβλημα.
+
+		if (proselefsi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα προσέλευσης");
+			continue;
+		}
+
+		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο αποχώρησης
+		// έχουμε πρόβλημα.
+
+		if (!apoxorisi.hasOwnProperty(i)) {
+			apontes.setError(i, "Λείπει η άδεια από το δελτίο αποχώρησης");
+			continue;
+		}
+
+		// Αν η άδεια του δελτίου αποχώρησης είναι διαφορετικού είδους
+		// έχουμε πρόβλημα.
+
+		if (apoxorisi[i].adidos !== proselefsi[i].adidos) {
+			apontes.setError(i, "Διαφορετικό είδος αδείας προσέλευσης/αποχώρησης");
+			continue;
+		}
+	}
+
+	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
+
+	for (let i in apoxorisi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
+		continue;
+
+		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!apoxorisi[i].adidos)
+		continue;
+
+		// Πρόκειται για άδεια. Αν υπάρχει ώρα αποχώρησης έχουμε
+		// πρόβλημα.
+
+		if (apoxorisi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα αποχώρησης");
+			continue;
+		}
+
+		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο προσέλευσης
+		// έχουμε πρόβλημα.
+
+		if (!proselefsi.hasOwnProperty(i)) {
+			apontes.setError(i, "Λείπει η άδεια από το δελτίο προσέλευσης");
+			continue;
+		}
+	}
+
+	return apontes;
+};
+
+// Ελέγχουμε για τυχόν προβληματικές εξαιρέσεις. Κυρίως πρόκειται για
+// εξαιρέσεις που δεν συνοδεύονται από σχετικό επεξηγηματικό σχόλιο.
+
+apontes.exeresiCheck = function(proselefsi, apoxorisi) {
+	// Διατρέχουμε πρώτα τις εξαιρέσεις προσέλευσης.
+
+	for (let i in proselefsi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
+		continue;
+
+		// Αν δεν υπάρχει εξαίρεση προχρούμε στην επόμενη απουσία.
+
+		if (!proselefsi[i].excuse)
+		continue;
+
+		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα προσέλευσης έχουμε
+		// πρόβλημα.
+
+		if (proselefsi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα προσέλευσης");
+			continue;
+		}
+
+		if (!proselefsi[i].info) {
+			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης προσέλευσης");
+			continue;
+		}
+	}
+
+	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
+
+	for (let i in apoxorisi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
+		continue;
+
+		// Αν δεν πρόκειται για εξαίρεση προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!apoxorisi[i].excuse)
+		continue;
+
+		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα αποχώρησης έχουμε
+		// πρόβλημα.
+
+		if (apoxorisi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα αποχώρησης");
+			continue;
+		}
+
+		if (!apoxorisi[i].info) {
+			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης αποχώρησης");
+			continue;
+		}
 	}
 
 	return apontes;
@@ -394,47 +486,6 @@ apontes.apantesParontes = function() {
 	on('click', (e) => apontes.apantesParontesClose(e)).
 	on('keyup', (e) => apontes.apantesParontesClose(e));
 
-	return apontes;
-};
-
-apontes.apantesParontesClose = function(e) {
-	e.stopPropagation();
-	self.close();
-};
-
-apontes.adiaDiastima = (parousia) => {
-	let s = ' &#10098;';
-
-	if (parousia.adapo)
-	s += '<b>' + parousia.adapo + '</b>';
-
-	s += '&nbsp;&#8212;&nbsp;';
-
-	if (parousia.adeos)
-	s += '<b>' + parousia.adeos + '</b>';
-
-	s += '&#10099';
-
-	return s;
-};
-
-apontes.exeresiCheck = (dom, t) => {
-	if (!t.excuse)
-	return apontes;
-
-	let msg = 'Εξαίρεση <b>' + t.excuse + '</b>';
-
-	dom.append($('<div>').html(msg));
-	return apontes;
-};
-
-apontes.infoCheck = (dom, t, p) => {
-	if (!t.info)
-	return apontes;
-
-	let msg = 'Παρατήρηση: <b>' + t.info + '</b>';
-
-	dom.append($('<div>').html(msg));
 	return apontes;
 };
 
@@ -458,84 +509,21 @@ apontes.ipalilosDoneToggle = function(e, dom) {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-apontes.deltio = function(deltio) {
-	this.kodikos = deltio.kodikos;
-	this.imerominia = deltio.imerominia;
-	this.parousia = deltio.parousia;
+apontes.setError = function(ipalilos, msg) {
+	apontes.error[ipalilos] = msg;
+	return apontes;
 };
 
-apontes.deltio.prototype.deltioDomGet = function() {
-	if (this.hasOwnProperty('DOM'))
-	return this.DOM;
+apontes.isError = function(ipalilos) {
+	if (!apontes.error.hasOwnProperty(ipalilos))
+	return false;
 
-	let date = new Date(this.imerominia);
-	let dmy = pnd.date2date(date, 'YMD', '%D-%M-%Y');
-	let imera = pnd.dowLongGet(date);
-
-	this.DOM = $('<div>').addClass('deltio').
-	append($('<div>').addClass('deltioKodikos').text(this.kodikos)).
-	append($('<div>').addClass('deltioImera').text(imera)).
-	append($('<div>').addClass('deltioImerominia').text(dmy));
-
-	return this.DOM;
+	return apontes.error[ipalilos];
 };
 
-///////////////////////////////////////////////////////////////////////////////@
-
-apontes.ipalilos = function(ipalilos, props) {
-	this.kodikos = ipalilos;
-
-	for (let i in props)
-	this[i] = props[i];
+apontes.getError = function(ipalilos) {
+	return apontes.error[ipalilos];
 };
-
-apontes.ipalilos.prototype.ipalilosDomGet = function() {
-	if (this.hasOwnProperty('DOM'))
-	return this.DOM;
-
-	this.DOM = $('<div>').addClass('ipalilos').
-	append($('<div>').addClass('ipalilosKodikos').text(this.kodikos)).
-	append($('<div>').addClass('ipalilosEponimo').text(this.eponimo)).
-	append($('<div>').addClass('deltioOnoma').text(this.onoma)).
-	append($('<div>').addClass('deltioOnoma').text(this.patronimo.substr(0, 3)));
-
-	return this.DOM;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-apontes.parousia = function(ipalilos, parousia) {
-	if (!parousia)
-	return;
-
-	this.ipalilos = ipalilos;
-	this.orario = parousia.orario;
-	this.karta = parousia.karta;
-	this.adidos = parousia.adidos;
-	this.adapo = parousia.adapo ?
-		pnd.date2date(parousia.adapo, 'YMD', '%D-%M-%Y') : '';
-	this.adeos = parousia.adeos ?
-		pnd.date2date(parousia.adeos, 'YMD', '%D-%M-%Y') : '';
-	this.excuse = parousia.excuse;
-	this.info = parousia.info;
-};
-
-apontes.parousia.prototype.isParousia = function() {
-	return this.ipalilos;
-};
-
-apontes.parousia.prototype.parousiaDomGet = function() {
-	if (this.hasOwnProperty('DOM'))
-	return this.DOM;
-
-	this.DOM = $('<div>').addClass('parousia').
-	append($('<div>').addClass('parousiaOrario').text(this.orario)).
-	append($('<div>').addClass('parousiaKarta').text(this.karta));
-
-	return this.DOM;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
 
 apontes.fyiError = (s) => {
 	pnd.fyiError(s);
