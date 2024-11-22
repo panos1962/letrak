@@ -398,97 +398,27 @@ class Apontes {
 		$result = pandora::query($query);
 
 		while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-			switch ($row["adidos"]) {
-
-			// Αν ΔΕΝ υπάρχει καταχωρημένη άδεια, προχωρούμε σε
-			// περαιτέρω ελέγχους της εγγραφής.
-
-			case "":
-				$ignore = FALSE;
-				break;
-
-			// Τα παρακάτω είδη αδείας ΔΕΝ συνιστούν απουσία,
-			// οπότε αγνοούμε την ανά χείρας εγγραφή χωρίς να
-			// προβούμε σε περαιτέρω ελέγχους.
-
-			case "ΕΚΤΟΣ ΕΔΡΑΣ":
-			case "ΡΕΠΟ ΔΗΜΑΡΧΟΥ":
-			case "ΑΠΟΣΠΑΣΗ":
-			case "ΜΕΤΑΚΙΝΗΣΗ":
-			case "ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ":
-			case "ΤΗΛΕΡΓΑΣΙΑ":
-			case "ΕΚ ΠΕΡΙΤΡΟΠΗΣ":
-			case "ΑΡΓΙΑ":
-			case "ΔΙΑΘΕΣΙΜΟΤΗΤΑ":
-			case "ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ":
-				$ignore = TRUE;
-				break;
-
-			// Όλα τα υπόλοιπα είδη αδείας συνιστούν απουσία,
-			// οπότε κρατάμε την ανά χείρας εγγραφή ως απουσία
-			// και ΔΕΝ προβαίνουμε σε περαιτέρω ελέγχους της
-			// εγγραφής.
-
-			default:
+			if ($row["adidos"]) {
 				if (!$row["adapo"]) $row["adapo"] = "**/**/****";
 				if (!$row["adeos"]) $row["adeos"] = "**/**/****";
 				self::parousia_push($row, $deltio);
-				$ignore = TRUE;
-				break;
+				continue;
 			}
 
-			if ($ignore)
-			continue;
-
-			// Σχεδόν όλες οι εξαιρέσεις ΔΕΝ περιλαμβάνονται στο
-			// δελτίο απόντων.
-
-			switch ($row["excuse"]) {
-			case "":	// δεν υπάρχει εξαίρεση
-				$ignore = FALSE;
-				break;
-
-			case "ΓΟΝΙΚΗ":	// γονική σχολικής ενημέρωσης
+			if ($row["excuse"]) {
 				self::parousia_push($row, $deltio);
-				$ignore = TRUE;
-				break;
-
-			// Όλες οι υπόλοιπες εξαιρέσεις δεν περιλαμβάνονται
-			// στο δελτίο απόντων.
-
-			default:
-				$ignore = TRUE;
-				break;
+				continue;
 			}
 
-			if ($ignore)
-			continue;
-
-			// Δεν υπάρχει άδεια ή εξαίρεση. Για να ΜΗΝ θεωρηθεί
-			// απουσία πρέπει η εγγραφή να περιλαμβάνει μέρα/ώρα
-			// και να ΜΗΝ περιλαμβάνει σχόλιο.
-
-			if (self::kathari_parousia($row, $deltio))
-			continue;
-
-			self::parousia_push($row, $deltio);
+			if (self::oxi_meraora($row)) {
+				$row["adidos"] = "ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ";
+				$row["adapo"] = $deltio->imerominia;
+				$row["adeos"] = $deltio->imerominia;
+				self::parousia_push($row, $deltio);
+			}
 		}
 
 		return __CLASS__;
-	}
-
-	private static function kathari_parousia(&$parousia, $deltio) {
-		if (self::oxi_meraora($parousia)) {
-			$parousia["adidos"] = "ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ";
-			$parousia["adapo"] = $deltio->imerominia;
-			$parousia["adeos"] = $deltio->imerominia;
-			return FALSE;
-		}
-
-		if (self::is_sxolio($parousia))
-		return FALSE;
-
-		return TRUE;
 	}
 
 	private static function parousia_push($parousia, $deltio) {
