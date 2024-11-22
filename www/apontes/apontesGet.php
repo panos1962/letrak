@@ -27,6 +27,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-22
 // Updated: 2024-11-21
 // Updated: 2024-11-20
 // Updated: 2024-11-19
@@ -65,6 +66,8 @@ print '{' .
 	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
 	'"imerominia":' . pandora::json_string(Apontes::$imerominia) . ',' .
 	'"ipiresia":' . pandora::json_string(Apontes::$ipiresia) . ',' .
+	'"die":' . pandora::json_string(Apontes::$die) . ',' .
+	'"tmi":' . pandora::json_string(Apontes::$tmi) . ',' .
 	'"perigrafi":' . pandora::json_string(Apontes::$perigrafi) . ',' .
 	'"propar":' . pandora::json_string(Apontes::$propar) . ',' .
 	'"apopar":' . pandora::json_string(Apontes::$apopar) . ',' .
@@ -136,9 +139,13 @@ class Apontes {
 	public static function init() {
 		self::$prosvasi = NULL;
 		self::$mask = NULL;
+		self::$imerominia = NULL;
+		self::$ipiresia = "";
 		self::$apo = NULL;
 		self::$pro = NULL;
 		self::$ilist = [];
+		self::$die = "";
+		self::$tmi = "";
 
 		return __CLASS__;
 	}
@@ -303,14 +310,14 @@ class Apontes {
 	}
 
 	private static function plires() {
+		if (self::$pro->imerominia !== self::$apo->imerominia)
+		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
+
 		if (self::$pro->ipiresia !== self::$apo->ipiresia)
 		letrak::fatal_error_json("Διαφορετική υπηρεσία προσέλευσης/αποχώρησης");
 
 		if (self::$pro->perigrafi !== self::$apo->perigrafi)
 		letrak::fatal_error_json("Διαφορετικός τίτλος προσέλευσης/αποχώρησης");
-
-		if (self::$pro->imerominia !== self::$apo->imerominia)
-		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
 
 		self::
 		parousia_fetch(self::$pro)::
@@ -329,10 +336,29 @@ class Apontes {
 		return __CLASS__;
 	}
 
+	// Έχουμε ήδη διασφαλίσει ότι στην περίπτωση πλήρους δελτίου απόντων
+	// τα παρουσιολόγια προσέλευσης και αποχώρησης έχουν τα ίδια βασικά
+	// στοιχεία: ημερομηνία, υπηρεσία και περιγραφή.
+
 	public static function metadata_fetch() {
 		self::$imerominia = self::$pro->imerominia;
 		self::$ipiresia = self::$pro->ipiresia;
 		self::$perigrafi = self::$pro->perigrafi;
+
+		$query = "SELECT `perigrafi` FROM `erpota1`.`ipiresia`" .
+			" WHERE `kodikos` = " .
+			pandora::sql_string(mb_substr(self::$ipiresia, 0, 3));
+		$row = pandora::first_row($query, MYSQLI_NUM);
+		self::$die = ($row ? $row[0] : "");
+
+		$query = "SELECT `perigrafi` FROM `erpota1`.`ipiresia`" .
+			" WHERE `kodikos` = " .
+			pandora::sql_string(mb_substr(self::$ipiresia, 0, 7));
+		$row = pandora::first_row($query, MYSQLI_NUM);
+		self::$tmi = ($row ? $row[0] : "");
+
+		if (self::$tmi == self::$die)
+		self::$tmi = "";
 
 		self::$propar = self::$pro->parousia;
 		self::$pro = (self::$pro ? self::$pro->kodikos : "");

@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-22
 // Updated: 2024-11-21
 // Updated: 2024-11-20
 // Updated: 2024-11-14
@@ -133,30 +134,39 @@ apontes.deltioProcess = function(rsp) {
 	let apoxorisi = rsp.apoxorisi;
 	let imerominia = rsp.imerominia;
 	let ipiresia = rsp.ipiresia;
+	let die = rsp.die;
+	let tmi = rsp.tmi;
+	let perigrafi = rsp.perigrafi;
 
 	apontes.deltioAreaDOM.
-	append($('<div>').
-	attr('id', 'deltioImerominia').
-	text(imerominia));
+	append($('<div>').attr('id', 'ipiresia')).
+	append($('<div>').attr('id', 'ipiresiaKodikos').text(ipiresia)).
+	append($('<div>').attr('id', 'ipiresiaPerigrafi').text(perigrafi));
 
-	let kodikosDOM = $('<div>').attr('id', 'deltioKodikos').
+	if (die && (die != perigrafi))
+	apontes.deltioAreaDOM.
+	append($('<div>').attr('id', 'ipiresiaDie').text(die));
+
+	if (tmi && (tmi != perigrafi))
+	apontes.deltioAreaDOM.
+	append($('<div>').attr('id', 'ipiresiaTmi').text(tmi));
+
+	let deltioDOM = $('<div>').attr('id', 'deltio').
 	appendTo(apontes.deltioAreaDOM);
 
-	kodikosDOM.
+	let dmy = imerominia.split('/');
+	deltioDOM.
 	append($('<div>').
-	attr('id', 'deltioProselefsi').
-	text(proselefsi));
+	attr('id', 'deltioImerominia').
+	text(pnd.imerominia(new Date(dmy[2], dmy[1] - 1, dmy[0]))));
+
+	deltioDOM.
+	append($('<div>').attr('id', 'deltioKodikos')).
+	append($('<div>').attr('id', 'deltioProselefsi').text(proselefsi));
 
 	if (apoxorisi)
-	kodikosDOM.
-	append($('<div>').
-	attr('id', 'deltioApoxorisi').
-	text(apoxorisi));
-
-	apontes.deltioAreaDOM.
-	append($('<div>').
-	attr('id', 'deltioIpiresia').
-	text(ipiresia));
+	deltioDOM.
+	append($('<div>').attr('id', 'deltioApoxorisi').text(apoxorisi));
 
 	return apontes;
 };
@@ -187,7 +197,8 @@ apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 	append(apousiaDOM);
 
 	ipalilosDOM.
-	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos)).
+	append($('<div>').addClass('ipalilosKodikosKelifos').
+	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos))).
 	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
 
 	ipalilos = ipalilos.kodikos;

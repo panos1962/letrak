@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2024-11-22
 * Updated: 2024-11-21
 * Updated: 2024-11-20
 * Created: 2024-11-08
@@ -44,33 +45,29 @@
 	background-color #d1dbb7
 	border-style none none double none
 	border-width 3px
+
+#deltio
+	display block
+	font-weight bold
 	> div
 		display inline-block
 
 #deltioImerominia
+	margin-right 10px
 	&:before
 		content 'Ημερομηνία:'
 		padding-right 2px
 		font-weight normal
-	&:after
-		content ','
-		font-weight normal
-	font-weight bold
-
-#deltioKodikos
-	font-weight bold
-	> div
-		display inline-block
+		font-style italic
 
 #deltioProselefsi
+	margin-right 10px
 	&:before
 		content 'Προσέλευση:'
 		padding-left 2px
 		padding-right 2px
 		font-weight normal
-	&:after
-		content ','
-		font-weight normal
+		font-style italic
 
 #deltioApoxorisi
 	&:before
@@ -78,25 +75,37 @@
 		padding-left 2px
 		padding-right 2px
 		font-weight normal
-	&:after
-		content ','
-		font-weight normal
+		font-style italic
 
-#deltioIpiresia
+/******************************************************************************/
+
+#ipiresia
+	display block
+
+#ipiresiaKodikos
+	display inline-block
+	font-weight bold
 	&:before
-		content 'Υπηρεσία:'
-		padding-left 2px
+		content '['
 		padding-right 2px
 		font-weight normal
+		opacity 0.6
+	&:after
+		content ']'
+		padding-left 2px
+		font-weight normal
+		opacity 0.6
+
+#ipiresiaPerigrafi
+	display inline-block
+	padding-left 10px
 	font-weight bold
 
-.deltio
-	margin 2px
-	background-color #c4cb9c
-	border-radius 4px
-	> div
-		display inline-block
-		padding 2px
+#ipiresiaDie
+	display block
+
+#ipiresiaTmi
+	display block
 
 /******************************************************************************/
 
@@ -131,6 +140,11 @@ $ipalilosDataWidth = 20em
 	min-height 100%
 	overflow-x hidden
 
+.ipalilosKodikosKelifos
+	display inline-block
+	width 4em
+	text-align right
+
 .ipalilosKodikos
 	display inline-block
 	font-weight bold
@@ -148,6 +162,7 @@ $ipalilosDataWidth = 20em
 
 .ipalilosOnoma
 	display inline-block
+	margin-left 4px
 
 /******************************************************************************/
 
