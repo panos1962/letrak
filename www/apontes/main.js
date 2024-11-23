@@ -164,15 +164,43 @@ apontes.deltioProcess = function(rsp) {
 	attr('id', 'deltioImerominia').
 	text(pnd.imerominia(new Date(dmy[2], dmy[1] - 1, dmy[0]))));
 
+	let katastasiClass = apontes.katastasiClass(rsp.prokat);
+
 	deltioDOM.
 	append($('<div>').attr('id', 'deltioKodikos')).
-	append($('<div>').attr('id', 'deltioProselefsi').text(proselefsi));
+	append($('<div>').attr({
+		"id": "deltioProselefsi",
+		"title": rsp.prokat
+	}).addClass(katastasiClass).
+	text(proselefsi));
 
-	if (apoxorisi)
+	if (!apoxorisi)
+	return apontes;
+
+	katastasiClass = apontes.katastasiClass(rsp.apokat);
+
 	deltioDOM.
-	append($('<div>').attr('id', 'deltioApoxorisi').text(apoxorisi));
+	append($('<div>').attr({
+		"id": "deltioApoxorisi",
+		"title": rsp.apokat
+	}).addClass(katastasiClass).
+	text(apoxorisi));
 
 	return apontes;
+};
+
+apontes.katastasiClassMap = {
+	"ΕΚΚΡΕΜΕΣ": "deltioKatastasiEKREMES",
+	"ΑΝΥΠΟΓΡΑΦΟ": "deltioKatastasiANIPOGRAFO",
+	"ΚΥΡΩΜΕΝΟ": "deltioKatastasiKIROMENO",
+	"ΕΠΙΚΥΡΩΜΕΝΟ": "deltioKatastasiEPIKIROMENO",
+};
+
+apontes.katastasiClass = function(katastasi) {
+	if (apontes.katastasiClassMap.hasOwnProperty(katastasi))
+	return apontes.katastasiClassMap[katastasi];
+
+	return 'deltioKatastasiEKREMES';
 };
 
 // Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
