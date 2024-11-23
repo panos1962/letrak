@@ -20,13 +20,14 @@
 // Το παρόν πρόγραμμα καλείται από τη σελίδα παρουσίασης απόντων ημέρας.
 // Ως παράμετρος δίνεται ένας κωδικός παρουσιολογίου. Το πρόγραμμα επιλέγει
 // το συμπληρωματικό παρουσιολόγιο και κατόπιν εντοπίζει τους απόντες τής
-// συγκεκριμένης ημέρας. Αν το παρουσιολόγιο είναι παρουσιλόγιο προσέλευσης
+// συγκεκριμένης ημέρας. Αν το παρουσιολόγιο είναι παρουσιολόγιο προσέλευσης
 // και δεν έχει εκδοθεί ακόμη το αντίστοιχο παρουσιολόγιο αποχώρησης, τότε
 // οι απόντες αφορούν μόνο στην προσέλευση, επομένως είναι καλό να δίνεται
 // παρουσιολόγιο αποχώρησης.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-23
 // Updated: 2024-11-22
 // Updated: 2024-11-21
 // Updated: 2024-11-20
@@ -63,7 +64,9 @@ metadata_fetch();
 
 print '{' .
 	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
+	'"prokat":' . pandora::json_string(Apontes::$prokat) . ',' .
 	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
+	'"apokat":' . pandora::json_string(Apontes::$apokat) . ',' .
 	'"imerominia":' . pandora::json_string(Apontes::$imerominia) . ',' .
 	'"ipiresia":' . pandora::json_string(Apontes::$ipiresia) . ',' .
 	'"die":' . pandora::json_string(Apontes::$die) . ',' .
@@ -118,6 +121,14 @@ class Apontes {
 
 	public static $tmi;
 
+	// Το πεδίο "prokat" περιέχει την κατάσταση του δελτίου προσέλευσης.
+
+	public static $prokat;
+
+	// Το πεδίο "apokat" περιέχει την κατάσταση του δελτίου αποχώρησης.
+
+	public static $apokat;
+
 	// Το πεδίο "propar" περιέχει τις απουσίες του παρουσιολογίου
 	// προσέλευσης.
 
@@ -146,6 +157,8 @@ class Apontes {
 		self::$ilist = [];
 		self::$die = "";
 		self::$tmi = "";
+		self::$prokat = "";
+		self::$apokat = "";
 
 		return __CLASS__;
 	}
@@ -160,7 +173,7 @@ class Apontes {
 	}
 
 	// Η μέθοδος "deltio_check" ελέγχει την παράμετρο "deltio" και
-	// επιχειρεί να προσπελάσει το σχετικό παρουσιολόγιο.
+	// επιχειρεί να προσπελάσει το συμπληρωματικό παρουσιολόγιο.
 
 	public static function deltio_check() {
 		$deltio = pandora::parameter_get("deltio");
@@ -169,11 +182,19 @@ class Apontes {
 		switch ($deltio->prosapo) {
 		case LETRAK_DELTIO_PROSAPO_PROSELEFSI:
 			self::$pro = $deltio;
-			self::apoxorisi_fetch($deltio);
+			self::$apo = self::simpliromatiko_fetch(
+				$deltio,
+				LETRAK_DELTIO_PROSAPO_APOXORISI,
+				"αποχώρησης"
+			);
 			break;
 		case LETRAK_DELTIO_PROSAPO_APOXORISI:
 			self::$apo = $deltio;
-			self::proselefsi_fetch($deltio);
+			self::$pro = self::simpliromatiko_fetch(
+				$deltio,
+				LETRAK_DELTIO_PROSAPO_PROSELEFSI,
+				"προσέλευσης"
+			);
 
 			if (!self::$pro)
 			letrak::fatal_error_json("Απροσδιόριστο δελτίο προσέλευσης");
@@ -187,38 +208,61 @@ class Apontes {
 		return __CLASS__;
 	}
 
-	// Η μέθοδος "proselefsi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
-	// αποχώρησης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
-	// προσέλευσης από την database.
+	// Η μέθοδος "simpliromatiko_fetch" δέχεται ως παράμετρο ένα
+	// παρουσιολόγιο και επιχειρεί να προσπελάσει το συμπληρωματικό.
+	// Ως δεύτερη παράμετρο περνάμε το είδος του συμπληρωματικού
+	// παρουσιολογίου, ενώ ως τρίτη παράμετρο περνάμε πάλι το είδος
+	// ως μήνυμα.
+	//
+	// Για τη διαδικασία εντοπισμού συμπληρωματικού δελτίου θα
+	// μπορούσαμε να χρησιμοποιήσουμε μόνο τα πρότυπα και τους
+	// κωδικούς των δελτίων, ωστόσο αυτό δεν είναι πάντα ασφαλές.
+	// Πράγματι, μετά από εκ παραδρμής διαγραφή δελτίου μπορεί να
+	// ξαναδημιουργήσουμε το δελτίο και η αλυσίδα να «σπάσει».
 
-	private static function proselefsi_fetch($deltio) {
-		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
-			"WHERE `kodikos` = " . $deltio->protipo;
-		self::$pro = pandora::first_row($query, MYSQLI_NUM);
+	private static function simpliromatiko_fetch($deltio, $prosapo, $msg) {
+		$imerominia = pandora::sql_string($deltio->imerominiaYMD);
+		$ipiresia = pandora::sql_string($deltio->ipiresia);
+		$perigrafi = pandora::sql_string($deltio->perigrafi);
+		$prosapo = pandora::sql_string($prosapo);
 
-		if (!self::$pro)
-		return __CLASS__;
+		// Επιλέγουμε το συμπληρωματικό δελτίο με βάση την ημερομηνία,
+		// την υπηρεσία και το ζητούμενο είδος. Κανονικά θα πρέπει να
+		// εντοπίσουμε ένα ή κανένα συμπληρωματικό δελτίο.
 
-		self::$pro = self::deltio_fetch(self::$pro[0], "προσέλευσης");
+		$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
+			" WHERE (`imerominia` = " . $imerominia . ")" .
+			" AND (`ipiresia` = " . $ipiresia . ")" .
+			" AND (`perigrafi` = " . $perigrafi . ")" .
+			" AND (`prosapo` = " . $prosapo . ")";
 
-		return __CLASS__;
-	}
+		$result = pandora::query($query);
 
-	// Η μέθοδος "apoxorisi_fetch" δέχεται ως παράμετρο ένα παρουσιολόγιο
-	// προσέλευσης και επιχειρεί να προσπελάσει το αντίστοιχο παρουσιολόγιο
-	// αποχώρησης από την database.
+		for ($count = 0; $row = $result->fetch_array(MYSQLI_NUM); $count++)
+		$oitled = $row;
 
-	private static function apoxorisi_fetch($deltio) {
-		$query = "SELECT `kodikos` FROM `letrak`.`deltio` " .
-			"WHERE `protipo` = " . $deltio->kodikos;
-		self::$apo = pandora::first_row($query, MYSQLI_NUM);
+		if ($count === 1)
+		return self::deltio_fetch($oitled[0], $msg);
 
-		if (!self::$apo)
-		return __CLASS__;
+		if ($count > 1)
+		letrak::fatal_error_json("Εντοπίστηκαν περισσότερα από ένα δελτία " . $msg);
 
-		self::$apo = self::deltio_fetch(self::$apo[0], "αποχώρησης");
+		// Δεν εντοπίσαμε συμπληρωματικό δελτίο. Αυτό σημαίνει ότι το
+		// ανά χείρας δελτίο είναι το τελευταίο δελτίο τής εν λόγω
+		// υπηρεσίας. Αν δεν είναι, τότε το δελτίο που ψάχνουμε μάλλον
+		// έχει διαγραφεί.
 
-		return __CLASS__;
+		$query = "SELECT `kodikos` FROM `letrak`.`deltio`" .
+			" WHERE (`imerominia` > " . $imerominia . ")" .
+			" AND (`ipiresia` = " . $ipiresia . ")" .
+			" AND (`perigrafi` = " . $perigrafi . ")";
+
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if ($row)
+		letrak::fatal_error_json("Δεν εντοπίστηκε σχετικό δελτίο " . $msg);
+
+		return NULL;
 	}
 
 	// Η μέθοδος "deltio_fetch" είναι εσωτερική και σκοπό έχει να
@@ -242,6 +286,7 @@ class Apontes {
 		// Μετατρέπουμε την ημερομηνία του παρουσιολογίου από
 		// date/time σε string.
 
+		$deltio->imerominiaYMD = $deltio->imerominia->format("Y-m-d");
 		$deltio->imerominia = $deltio->imerominia->format("d/m/Y");
 
 		// Τα πεδία που ακολουθούν δεν μας ενδιαφέρουν στο δελτίο
@@ -306,7 +351,7 @@ class Apontes {
 		if (self::$apo)
 		return self::ateles(self::$apo);
 
-		letrak::fatal_error_json("Απροσδόριστα δελτία προσέλευσης/αποχώρησης");
+		letrak::fatal_error_json("Απροσδιόριστα δελτία προσέλευσης/αποχώρησης");
 	}
 
 	private static function plires() {
@@ -327,7 +372,7 @@ class Apontes {
 	}
 
 	// Η function "ateles" χρησιμοποιείται όταν ελέγχουμε μόνο ένα
-	// παρουσιολόγιο. Αυτό μπορεί να γίνει μόνο στα παρουσιολόγια
+	// παρουσιολόγιο. Αυτό μπορεί να γίνει μόνο στα νέα παρουσιολόγια
 	// προσέλευσης για τα οποία λείπει το παρουσιολόγιο αποχώρησης.
 
 	private static function ateles($deltio) {
@@ -360,12 +405,14 @@ class Apontes {
 		if (self::$tmi == self::$die)
 		self::$tmi = "";
 
+		self::$prokat = self::$pro->katastasi;
 		self::$propar = self::$pro->parousia;
 		self::$pro = (self::$pro ? self::$pro->kodikos : "");
 
 		if (!self::$apo)
 		return __CLASS__;
 
+		self::$apokat = self::$apo->katastasi;
 		self::$apopar = self::$apo->parousia;
 		self::$apo = (self::$apo ? self::$apo->kodikos : "");
 	}
@@ -410,7 +457,7 @@ class Apontes {
 				continue;
 			}
 
-			if (self::oxi_meraora($row)) {
+			if (!$row["meraora"]) {
 				$row["adidos"] = "ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ";
 				$row["adapo"] = $deltio->imerominia;
 				$row["adeos"] = $deltio->imerominia;
@@ -425,22 +472,15 @@ class Apontes {
 		$ipalilos = $parousia["ipalilos"];
 		unset($parousia["ipalilos"]);
 
+		// Προσθέτουμε την παρουσία στη λίστα παρουσιών του δελτίου.
+
 		$deltio->parousia[$ipalilos] = $parousia;
-		self::$ilist[$ipalilos] = "";
+
+		// Προσθέτουμε τον υπάλληλο στη λίστα απόντων.
+
+		self::$ilist[$ipalilos] = TRUE;
 
 		return __CLASS__;
-	}
-
-	private static function is_meraora($parousia) {
-		return $parousia["meraora"];
-	}
-
-	private static function oxi_meraora($parousia) {
-		return !self::is_meraora($parousia);
-	}
-
-	private static function is_sxolio($parousia) {
-		return $parousia["info"];
 	}
 
 	///////////////////////////////////////////////////////////////////////@
