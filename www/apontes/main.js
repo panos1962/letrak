@@ -203,7 +203,12 @@ apontes.epikirosiSetup = function(rsp) {
 	if (letrak.prosvasiOxiAdmin(rsp.ipiresia))
 	return apontes;
 
+	// Θα ελέγξουμε τώρα αν υπάρχουν παρουσιολόγια προς επικύρωση.
+	// Αρχικά θεωρούμε ότι δεν υπάρχουν.
+
 	let prosEpikirosi = false;
+
+	// Ελέγχουμε πρώτα την κατάσταση του παρουσιολογίου προσέλευσης.
 
 	switch (rsp.prokat) {
 	case 'ΚΥΡΩΜΕΝΟ':
@@ -214,6 +219,9 @@ apontes.epikirosiSetup = function(rsp) {
 	default:
 		return apontes;
 	}
+
+	// Κατόπιν ελέγχουμε την κατάσταση του παρουσιολογίου αποχώρησης
+	// εφόσον αυτό υπάρχει.
 
 	if (rsp.apoxorisi) {
 		switch (rsp.apokat) {
@@ -227,8 +235,14 @@ apontes.epikirosiSetup = function(rsp) {
 		}
 	}
 
+	// Αν δεν έχουν εντοπιστεί παρουσιολόγια προς επικύρωση, τότε
+	// δεν εμφανίζουμε πλήκτρο επικύρωσης.
+
 	if (!prosEpikirosi)
 	return apontes;
+
+	// Έχουν εντοπιστεί παρουσιολόγια προς επικύρωση οπότε εμφανίζουμε
+	// πλήκτρο επικύρωσης.
 
 	$('<div>').
 	addClass('letrak-toolbarTab').
@@ -240,15 +254,6 @@ apontes.epikirosiSetup = function(rsp) {
 	appendTo(pnd.toolbarLeftDOM);
 
 	return apontes;
-};
-
-apontes.oxiKiromeno = function(katastasi) {
-	switch (katastasi) {
-	case 'ΚΥΡΩΜΕΝΟ':
-		return false;
-	}
-
-	return true;
 };
 
 apontes.katastasiClassMap = {
@@ -333,7 +338,9 @@ apontes.epikirosi = function(rsp) {
 		},
 		'dataType': 'json',
 		'success': (rsp) => {
-			self.opener.LETRAK.ananeosi();
+			try {
+				self.opener.LETRAK.ananeosi();
+			} catch (e) {}
 			self.close();
 		},
 		'error': (e) => {
