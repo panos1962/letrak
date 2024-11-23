@@ -152,13 +152,13 @@ class Apontes {
 		self::$mask = NULL;
 		self::$imerominia = NULL;
 		self::$ipiresia = "";
-		self::$apo = NULL;
 		self::$pro = NULL;
+		self::$prokat = "";
+		self::$apo = NULL;
+		self::$apokat = "";
 		self::$ilist = [];
 		self::$die = "";
 		self::$tmi = "";
-		self::$prokat = "";
-		self::$apokat = "";
 
 		return __CLASS__;
 	}

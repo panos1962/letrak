@@ -135,12 +135,16 @@ apontes.apontesProcess = (rsp) => {
 
 apontes.deltioProcess = function(rsp) {
 	let proselefsi = rsp.proselefsi;
+	let prokat = rsp.prokat;
 	let apoxorisi = rsp.apoxorisi;
+	let apokat = rsp.apokat;
 	let imerominia = rsp.imerominia;
 	let ipiresia = rsp.ipiresia;
 	let die = rsp.die;
 	let tmi = rsp.tmi;
 	let perigrafi = rsp.perigrafi;
+
+	apontes.epikirosiSetup(rsp);
 
 	apontes.deltioAreaDOM.
 	append($('<div>').attr('id', 'ipiresia')).
@@ -164,29 +168,87 @@ apontes.deltioProcess = function(rsp) {
 	attr('id', 'deltioImerominia').
 	text(pnd.imerominia(new Date(dmy[2], dmy[1] - 1, dmy[0]))));
 
-	let katastasiClass = apontes.katastasiClass(rsp.prokat);
+	let katastasiClass = apontes.katastasiClass(prokat);
 
 	deltioDOM.
 	append($('<div>').attr('id', 'deltioKodikos')).
 	append($('<div>').attr({
 		"id": "deltioProselefsi",
-		"title": rsp.prokat
+		"title": prokat
 	}).addClass(katastasiClass).
 	text(proselefsi));
 
 	if (!apoxorisi)
 	return apontes;
 
-	katastasiClass = apontes.katastasiClass(rsp.apokat);
+	katastasiClass = apontes.katastasiClass(apokat);
 
 	deltioDOM.
 	append($('<div>').attr({
 		"id": "deltioApoxorisi",
-		"title": rsp.apokat
+		"title": apokat
 	}).addClass(katastasiClass).
 	text(apoxorisi));
 
 	return apontes;
+};
+
+// Η funtion "epikirosiSetup" δέχεται ως παράμετρο τα δεδομένα απόντων και
+// ελέγχει στοιχεία πρόσβασης του χρήστη προκειμένου να εμφανίσει πλήκτρο
+// επικύρωσης για τα προς έλεγχο δελτία.
+
+apontes.epikirosiSetup = function(rsp) {
+	// Ο χρήστης πρέπει να έχει δικαιώματα διαχειριστή στην υπηρεσία.
+
+	if (letrak.prosvasiOxiAdmin(rsp.ipiresia))
+	return apontes;
+
+	let prosEpikirosi = false;
+
+	switch (rsp.prokat) {
+	case 'ΚΥΡΩΜΕΝΟ':
+		prosEpikirosi = true;
+		break;
+	case 'ΕΠΙΚΥΡΩΜΕΝΟ':
+		break;
+	default:
+		return apontes;
+	}
+
+	if (rsp.apoxorisi) {
+		switch (rsp.apokat) {
+		case 'ΚΥΡΩΜΕΝΟ':
+			prosEpikirosi = true;
+			break;
+		case 'ΕΠΙΚΥΡΩΜΕΝΟ':
+			break;
+		default:
+			return apontes;
+		}
+	}
+
+	if (!prosEpikirosi)
+	return apontes;
+
+	$('<div>').
+	addClass('letrak-toolbarTab').
+	text('Επικύρωση').
+	on('click', function(e) {
+		e.stopPropagation();
+		apontes.epikirosi(rsp);
+	}).
+	appendTo(pnd.toolbarLeftDOM);
+
+	return apontes;
+};
+
+apontes.oxiKiromeno = function(katastasi) {
+	switch (katastasi) {
+	case 'ΚΥΡΩΜΕΝΟ':
+		return false;
+	}
+
+	return true;
 };
 
 apontes.katastasiClassMap = {
@@ -255,6 +317,30 @@ apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 	if (apontes.isError(ipalilos))
 	apousiaDOM.
 	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
+
+	return apontes;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+apontes.epikirosi = function(rsp) {
+	$.post({
+		'url': 'epikirosi.php',
+		'data': {
+			"ipiresia": rsp.ipiresia,
+			"pro": rsp.proselefsi,
+			"apo": rsp.apoxorisi,
+		},
+		'dataType': 'json',
+		'success': (rsp) => {
+			self.opener.LETRAK.ananeosi();
+			self.close();
+		},
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα επικύρωσης');
+			console.error(e);
+		},
+	});
 
 	return apontes;
 };

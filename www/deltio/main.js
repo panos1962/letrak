@@ -574,6 +574,8 @@ deltio.apontes = (e, deltioDOM) => {
 	if (!x)
 	return deltio.fyiError('Ακαθόριστο παρουσιολόγιο δελτίου απόντων');
 
+	self.LETRAK.ananeosi = deltio.ananeosi;
+
 	let url = '../apontes?deltio=' + kodikos;
 	deltio.childrenWindows.push(window.open(url, 'apontes'));
 
