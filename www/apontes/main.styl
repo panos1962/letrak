@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2024-11-24
 * Updated: 2024-11-22
 * Updated: 2024-11-21
 * Updated: 2024-11-20
@@ -39,8 +40,6 @@
 /******************************************************************************/
 
 #deltioArea
-	margin-top 2px
-	padding 2px 4px
 	text-align center
 	background-color #d1dbb7
 	border-style none none double none
@@ -48,10 +47,10 @@
 
 #deltio
 	display block
+	margin 4px 0
 	font-weight bold
 	> div
 		display inline-block
-		padding 0 2px
 		border-radius 2px
 
 #deltioImerominia
@@ -63,7 +62,8 @@
 		font-style italic
 
 #deltioProselefsi
-	margin-right 10px
+	margin 0 4px
+	padding 0 2px
 	&:before
 		content 'Προσέλευση:'
 		padding-left 2px
@@ -72,6 +72,8 @@
 		font-style italic
 
 #deltioApoxorisi
+	margin 0 4px
+	padding 0 2px
 	&:before
 		content 'Αποχώρηση:'
 		padding-left 2px
@@ -93,10 +95,17 @@
 	color #ffe86f
 	background-color $deltioKatastasiColorEPIKIROMENO
 
+.epikirosiPliktro
+	color #ffe86f
+	background-color $deltioKatastasiColorEPIKIROMENO
+	&:hover
+		color midnightblue
+
 /******************************************************************************/
 
 #ipiresia
 	display block
+	padding 2px 0
 
 #ipiresiaKodikos
 	display inline-block
@@ -119,9 +128,11 @@
 
 #ipiresiaDie
 	display block
+	margin 4px 0
 
 #ipiresiaTmi
 	display block
+	margin 4px 0
 
 /******************************************************************************/
 

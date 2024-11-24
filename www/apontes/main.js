@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-24
 // Updated: 2024-11-23
 // Updated: 2024-11-22
 // Updated: 2024-11-21
@@ -246,6 +247,7 @@ apontes.epikirosiSetup = function(rsp) {
 
 	$('<div>').
 	addClass('letrak-toolbarTab').
+	addClass('epikirosiPliktro').
 	text('Επικύρωση').
 	on('click', function(e) {
 		e.stopPropagation();
@@ -340,7 +342,9 @@ apontes.epikirosi = function(rsp) {
 		'success': (rsp) => {
 			try {
 				self.opener.LETRAK.ananeosi();
-			} catch (e) {}
+			} catch (e) {
+				return pnd.fyiError('Αστοχία ανανέωσης');
+			}
 			self.close();
 		},
 		'error': (e) => {
