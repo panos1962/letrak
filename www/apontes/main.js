@@ -92,14 +92,27 @@ apontes.selidaSetup = () => {
 	if (!deltio)
 	apontes.fatalError('Ακαθόριστο παρουσιολόγιο');
 
+	// Ο χρήστης μπορεί να κάνει κλικ σε κάθε υπάλληλο που έχει ελέγξει
+	// προκειμένου να «γκριζαριστεί» η περιοχή του εν λόγω υπαλλήλου.
+	// Αυτό διευκολύνει τη διαχείριση των απόντων, καθώς γίνεται εμφανές
+	// το ποιος είναι ο επόμενος υπάλληλος που έχει σειρά να ελεγχθεί.
+
 	pnd.ofelimoDOM.
 	on('click', '.ipalilos', function(e) {
 		apontes.ipalilosDoneToggle(e, $(this));
 	});
 
+	// Στο επάνω μέρος της σελίδας εμφανίζουμε τα βασικά στοιχεία των
+	// προς έλεγχο παρουσιολογίων, ενώ αμέσως μετά εμφανίζουμε τους
+	// υπαλλήλους που παρουσιάζουν απουσία.
+
 	pnd.ofelimoDOM.
 	append(apontes.deltioAreaDOM = $('<div>').attr('id', 'deltioArea')).
 	append(apontes.apousiaAreaDOM = $('<div>').attr('id', 'apousiaArea'));
+
+	// Ζητάμε τώρα από τον server να μας επιστρέψει τους απόντες που
+	// αφορούν στο προς έλεγχο δελτίο. Επισημαίνουμε ότι μαζί με το
+	// προς έλεγχο δελτίο θα ελεγχθεί και το συμπληρωματικό δελτίο.
 
 	$.post({
 		'url': 'apontesGet.php',
@@ -119,15 +132,34 @@ apontes.selidaSetup = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Έχουν επιστραφεί τα στοιχεία των προς έλεγχο δελτίων (προσέλευση/αποχώρηση)
+// και οι υπάλληλοι που παρουσίασαν απουσία.
+
 apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
+
+	apontes.ipiresia = rsp.ipiresia;
+	apontes.imerominia = rsp.imerominia;
+	apontes.proselefsi = rsp.proselefsi;
+	apontes.apoxorisi = rsp.apoxorisi;
+
+	// Θέτουμε τον τίτλο της καρτέλας στον browser.
+
+	document.title = apontes.ipiresia + ' ' + apontes.imerominia;
+
+	// Στο σημείο αυτό ταξινομούμε τους υπαλλήλους αλφαβητικά, και αμέσως
+	// μετά απαλείφουμε απουσίες από το δελτίο αποχώρησης όταν τα στοιχεία
+	// της απουσίας είναι ταυτόσημα με τα στοιχεία της αποσυίας στο δελτίο
+	// προσέλευσης.
 
 	apontes.
 	ipalilosSort(rsp).
 	apousiaApalifi(rsp);
 
-	document.title = rsp.ipiresia + ' ' + rsp.imerominia;
+	// Εμφανίζουμε τώρα στο επάνω μέρος της σελίδας τα στοιχεία των
+	// προς έλεγχο δελτίων, ενώ στο κάτω μέρος εμφανίζουμε τις απουσίες
+	// των συγκεκριμένων δελτίων.
 
 	apontes.
 	deltioProcess(rsp).
@@ -137,35 +169,28 @@ apontes.apontesProcess = (rsp) => {
 };
 
 apontes.deltioProcess = function(rsp) {
-	let proselefsi = rsp.proselefsi;
 	let prokat = rsp.prokat;
-	let apoxorisi = rsp.apoxorisi;
 	let apokat = rsp.apokat;
-	let imerominia = rsp.imerominia;
-	let ipiresia = rsp.ipiresia;
-	let die = rsp.die;
-	let tmi = rsp.tmi;
-	let perigrafi = rsp.perigrafi;
 
 	apontes.epikirosiSetup(rsp);
 
 	apontes.deltioAreaDOM.
 	append($('<div>').attr('id', 'ipiresia')).
-	append($('<div>').attr('id', 'ipiresiaKodikos').text(ipiresia)).
-	append($('<div>').attr('id', 'ipiresiaPerigrafi').text(perigrafi));
+	append($('<div>').attr('id', 'ipiresiaKodikos').text(apontes.ipiresia)).
+	append($('<div>').attr('id', 'ipiresiaPerigrafi').text(rsp.perigrafi));
 
-	if (die && (die != perigrafi))
+	if (rsp.die && (rsp.die != rsp.perigrafi))
 	apontes.deltioAreaDOM.
-	append($('<div>').attr('id', 'ipiresiaDie').text(die));
+	append($('<div>').attr('id', 'ipiresiaDie').text(rsp.die));
 
-	if (tmi && (tmi != perigrafi))
+	if (rsp.tmi && (rsp.tmi != rsp.perigrafi))
 	apontes.deltioAreaDOM.
-	append($('<div>').attr('id', 'ipiresiaTmi').text(tmi));
+	append($('<div>').attr('id', 'ipiresiaTmi').text(rsp.tmi));
 
 	let deltioDOM = $('<div>').attr('id', 'deltio').
 	appendTo(apontes.deltioAreaDOM);
 
-	let dmy = imerominia.split('/');
+	let dmy = apontes.imerominia.split('/');
 	deltioDOM.
 	append($('<div>').
 	attr('id', 'deltioImerominia').
@@ -179,9 +204,9 @@ apontes.deltioProcess = function(rsp) {
 		"id": "deltioProselefsi",
 		"title": prokat
 	}).addClass(katastasiClass).
-	text(proselefsi));
+	text(apontes.proselefsi));
 
-	if (!apoxorisi)
+	if (!apontes.apoxorisi)
 	return apontes;
 
 	katastasiClass = apontes.katastasiClass(apokat);
@@ -191,7 +216,7 @@ apontes.deltioProcess = function(rsp) {
 		"id": "deltioApoxorisi",
 		"title": apokat
 	}).addClass(katastasiClass).
-	text(apoxorisi));
+	text(apontes.apoxorisi));
 
 	return apontes;
 };
@@ -203,7 +228,7 @@ apontes.deltioProcess = function(rsp) {
 apontes.epikirosiSetup = function(rsp) {
 	// Ο χρήστης πρέπει να έχει δικαιώματα διαχειριστή στην υπηρεσία.
 
-	if (letrak.prosvasiOxiAdmin(rsp.ipiresia))
+	if (letrak.prosvasiOxiAdmin(apontes.ipiresia))
 	return apontes;
 
 	// Θα ελέγξουμε τώρα αν υπάρχουν παρουσιολόγια προς επικύρωση.
@@ -226,7 +251,7 @@ apontes.epikirosiSetup = function(rsp) {
 	// Κατόπιν ελέγχουμε την κατάσταση του παρουσιολογίου αποχώρησης
 	// εφόσον αυτό υπάρχει.
 
-	if (rsp.apoxorisi) {
+	if (apontes.apoxorisi) {
 		switch (rsp.apokat) {
 		case 'ΚΥΡΩΜΕΝΟ':
 			apontes.prosEpikirosi = true;
@@ -254,7 +279,7 @@ apontes.epikirosiSetup = function(rsp) {
 	text('Επικύρωση').
 	on('click', function(e) {
 		e.stopPropagation();
-		apontes.epikirosi(rsp);
+		apontes.epikirosi();
 	}).
 	appendTo(pnd.toolbarLeftDOM);
 
@@ -309,12 +334,12 @@ apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 
 	let proselefsi = undefined;
 
-	if (rsp.proselefsi && rsp.propar.hasOwnProperty(ipalilos))
+	if (apontes.proselefsi && rsp.propar.hasOwnProperty(ipalilos))
 	proselefsi = rsp.propar[ipalilos];
 
 	let apoxorisi = undefined;
 
-	if (rsp.apoxorisi && rsp.apopar.hasOwnProperty(ipalilos))
+	if (apontes.apoxorisi && rsp.apopar.hasOwnProperty(ipalilos))
 	apoxorisi = rsp.apopar[ipalilos];
 
 	apontes.
@@ -333,13 +358,13 @@ apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-apontes.epikirosi = function(rsp) {
+apontes.epikirosi = function() {
 	$.post({
 		'url': 'epikirosi.php',
 		'data': {
-			"ipiresia": rsp.ipiresia,
-			"pro": rsp.proselefsi,
-			"apo": rsp.apoxorisi,
+			"ipiresia": apontes.ipiresia,
+			"pro": apontes.proselefsi,
+			"apo": apontes.apoxorisi,
 		},
 		'dataType': 'json',
 		'success': (rsp) => {
@@ -442,10 +467,10 @@ apontes.ipalilosSort = function(rsp) {
 apontes.apousiaApalifi = function(rsp) {
 	let ateles = 2;
 
-	if (rsp.proselefsi)
+	if (apontes.proselefsi)
 	ateles--;
 
-	if (rsp.apoxorisi)
+	if (apontes.apoxorisi)
 	ateles--;
 
 	if (ateles)
@@ -662,7 +687,7 @@ apontes.apantesParontesClose = function(e) {
 	e.stopPropagation();
 
 	if (apontes.prosEpikirosi)
-	return apontes.prosEpikirosi.click();
+	return apontes.epikirosi();
 
 	self.close();
 };

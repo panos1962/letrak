@@ -27,11 +27,12 @@
 PANDORA_DIR = ../../mnt/pandora
 
 MAIN_CSS = main.css
+PRINT_CSS = mainPrint.css
 DEBUG_CSS = mainDebug.css
 
 BUNDLE_JS = bundle.js
 
-PARAGOGA = $(MAIN_CSS) $(DEBUG_CSS) $(BUNDLE_JS)
+PARAGOGA = $(MAIN_CSS) $(PRINT_CSS) $(DEBUG_CSS) $(BUNDLE_JS)
 
 BROWSERIFY_OPTS = -t envify -p tinyify
 BROWSERIFY_OPTS = -t envify
@@ -48,6 +49,9 @@ $(MAIN_CSS): \
 	../lib/pandora.css \
 	../mnt/pandora/lib/pandora.css
 	stylus $(STYLUS_OPTS) main.styl >$@
+
+$(PRINT_CSS): mainPrint.styl
+	stylus $(STYLUS_OPTS) --prefix ektiposi- mainPrint.styl >$@
 
 $(DEBUG_CSS): mainDebug.styl
 	stylus $(STYLUS_OPTS) mainDebug.styl >$@
