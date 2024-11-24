@@ -1,0 +1,184 @@
+/*******************************************************************************
+*
+* @BEGIN
+*
+* @COPYRIGHT BEGIN
+* Copyright (C) 2019 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+* @COPYRIGHT END
+*
+* @FILETYPE BEGIN
+* stylus
+* @FILETYPE END
+*
+* @FILE BEGIN
+* www/apontes/mainPrint.styl —— Αρχείο προδιαγραφών CSS για τη σελίδα
+* εκτύπωσης απόντων.
+* @FILE END
+*
+* @HISTORY BEGIN
+* Created: 2024-11-24
+* @HISTORY END
+*
+* @END
+*
+*******************************************************************************/
+
+@page
+	size A4 landscape
+	margin-left 50px
+	margin-right 28px
+
+html
+	background-color #ffffff !important
+
+body
+	font-size 13px
+	background-color #ffffff !important
+
+// Για τους διαλόγους
+
+body > div
+	display none
+
+#ektiposi
+	display block
+	background-color #ffffff !important
+
+.deltio
+	display flex
+	justify-content space-between
+	align-items center
+	padding 13px 0px 13px 0px
+
+.deltioAristera
+	width 33%
+
+.deltioDimos
+	display inline-block
+	border-style none none solid none
+	border-width 1px
+	border-color #000000
+
+.deltioIpiresia
+	display inline-block
+
+.deltioKentro
+	width 33%
+	text-align center
+
+.deltioIdos
+	margin-bottom 3px
+	text-decoration underline
+
+.deltioPerigrafi
+	display inline-block
+	font-weight bold
+
+.deltioDexia
+	width 33%
+	text-align right
+
+.deltioImerominia
+	font-style italic
+	font-weight bold
+
+.parousia
+	page-break-inside avoid
+	border-style none none none solid
+	border-width 1px
+	border-color #000000
+	>div
+		display table-cell
+		vertical-align top
+		padding 0px 6px
+
+		border-style solid solid none none
+		border-width 1px
+		border-color #000000
+
+		&:before
+			content '\200B'
+
+.parousiaLast
+	border-style solid none none solid
+
+hard_width(args)
+	width args
+	min-width args
+	max-width args
+
+.parousiaOrdinal
+	hard_width(28px)
+	text-align right
+
+.parousiaIpalilos
+	hard_width(48px)
+	text-align right
+
+.parousiaOnomateponimo
+	hard_width(223px)
+
+.parousiaImerisioOnomateponimo
+	hard_width(266px)
+
+.parousiaOrario
+	hard_width(77px)
+
+.parousiaKarta
+	hard_width(51px)
+	text-align center
+
+.parousiaMeraora
+	hard_width(111px)
+
+.parousiaMeraoraApontes
+	display none !important
+
+.parousiaImerisioProsapo
+	hard_width(242.5px)
+
+.parousiaImerisioExcuse
+	hard_width(220px)
+	text-align left
+
+.parousiaImerisioAdia
+	hard_width(498px);
+	text-align left
+
+.parousiaImerisioIsozigio
+	hard_width(57px)
+	text-align center
+
+.parousiaExcuse
+	hard_width(128px)
+	text-align center
+	letter-spacing -0.7px
+
+.parousiaInfo
+	hard_width(373px)
+	white-space normal !important
+	text-align left
+	overflow-x visible !important
+	text-overflow initial !important
+
+.parousiaInfoDeltio
+	hard_width(410px !important)
+
+.parousiaInfoApontes
+	hard_width(536px !important)
+
+.parousiaWrapper
+	display inline-block
+
+.parousiaAdiaAndMeraora
+	background-color transparent
+
+.apartia
+	font-size 150%
+	text-align center
+	padding 10px 0px
+
+	border-style solid none none none
+	border-width 1px
+	border-color #000000
+	hard_width(1117px !important)
