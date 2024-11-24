@@ -139,53 +139,154 @@ apontes.apontesProcess = (rsp) => {
 	if (rsp.error)
 	return apontes.fyiError(rsp.error);
 
-	apontes.ipiresia = rsp.ipiresia;
-	apontes.imerominia = rsp.imerominia;
-	apontes.proselefsi = rsp.proselefsi;
-	apontes.apoxorisi = rsp.apoxorisi;
+	// Αναθέτουμε όλα τα στοιχεία της απάντησης σε global μεταβλητές.
 
-	// Θέτουμε τον τίτλο της καρτέλας στον browser.
+	apontes.imerominia = rsp.imerominia;	// ημερομηνία ελέγχου
+	apontes.ipiresia = rsp.ipiresia;	// κωδικός υπηρεσίας
+	apontes.perigrafi = rsp.perigrafi;	// τίτλος παρουσιολογίου
+	apontes.die = rsp.die;			// περιγραφή διεύθυνσης
+	apontes.tmi = rsp.tmi;			// περιγραφή τμήματος
 
-	document.title = apontes.ipiresia + ' ' + apontes.imerominia;
+	apontes.proselefsi = rsp.proselefsi;	// κωδικός δελτίου προσέλευσης
+	apontes.prokat = rsp.prokat;		// κατάσταση δελτίου προσέλευσης
+	apontes.propar = rsp.propar;		// απουσίες δελτίου προσέλευσης
+
+	apontes.apoxorisi = rsp.apoxorisi;	// κωδικός δελτίου αποχώρησης
+	apontes.apokat = rsp.apokat;		// κατάσταση δελτίου αποχώρησης
+	apontes.apopar = rsp.apopar;		// απουσίες δελτίου αποχώρησης
+
+	apontes.ipalilos = rsp.ipalilos;	// λίστα απόντων υπαλλήλων
+
 
 	// Στο σημείο αυτό ταξινομούμε τους υπαλλήλους αλφαβητικά, και αμέσως
 	// μετά απαλείφουμε απουσίες από το δελτίο αποχώρησης όταν τα στοιχεία
 	// της απουσίας είναι ταυτόσημα με τα στοιχεία της αποσυίας στο δελτίο
-	// προσέλευσης.
+	// προσέλευσης. Κατόπιν, εμφανίζουμε τώρα στο επάνω μέρος της σελίδας
+	// τα στοιχεία των προς έλεγχο δελτίων, ενώ στο κάτω μέρος εμφανίζουμε
+	// τις απουσίες των συγκεκριμένων δελτίων.
 
 	apontes.
-	ipalilosSort(rsp).
-	apousiaApalifi(rsp);
-
-	// Εμφανίζουμε τώρα στο επάνω μέρος της σελίδας τα στοιχεία των
-	// προς έλεγχο δελτίων, ενώ στο κάτω μέρος εμφανίζουμε τις απουσίες
-	// των συγκεκριμένων δελτίων.
-
-	apontes.
-	deltioProcess(rsp).
-	apousiaProcess(rsp);
+	titlosSet().
+	ipalilosSort().
+	apousiaApalifi().
+	deltioProcess().
+	apousiaProcess();
 
 	return apontes;
 };
 
-apontes.deltioProcess = function(rsp) {
-	let prokat = rsp.prokat;
-	let apokat = rsp.apokat;
+apontes.titlosSet = function() {
+	document.title = apontes.ipiresia + ' ' + apontes.imerominia;
+	return apontes;
+};
 
-	apontes.epikirosiSetup(rsp);
+apontes.ipalilosSort = function() {
+	let i;
+
+	apontes.ilist = [];
+	apontes.error = {};
+
+	for (i in apontes.ipalilos)
+	apontes.ilist.push({
+		"kodikos": i,
+		"onoma": apontes.ipalilos[i]
+	});
+
+	// Η λίστα "apontes.ipalilos" δεν μας χρειάζεται πια.
+
+	delete apontes.ipalilos;
+
+	apontes.ilist.sort(function(i1, i2) {
+		let cmp = i1.onoma.localeCompare(i2.onoma);
+
+		if (cmp)
+		return cmp;
+
+		if (i1 < i2)
+		return -1;
+
+		else if (i1 > i2)
+		return 1;
+
+		return 0;
+	});
+
+	return apontes;
+};
+
+// Η function "apousiaApalifi" διατρέχει τις απουσίες και στα δύο δελτία και
+// διαγράφει τις απουσίες που είναι ακριβώς ίδιες στα δύο δελτία από το
+// δελτίο αποχώρησης.
+
+apontes.apousiaApalifi = function() {
+	let ateles = 2;
+
+	if (apontes.proselefsi)
+	ateles--;
+
+	if (apontes.apoxorisi)
+	ateles--;
+
+	if (ateles)
+	return apontes;
+
+	let propar = apontes.propar;
+	let apopar = apontes.apopar;
+
+	apontes.
+	adiaCheck(propar, apopar).
+	exeresiCheck(propar, apopar);
+
+	for (let i in propar) {
+		if (!apopar.hasOwnProperty(i))
+		continue;
+
+		let dif = false;
+
+		for (let j in propar[i]) {
+			if (apopar[i][j] != propar[i][j]) {
+				dif = true;
+				break;
+			}
+		}
+
+		if (dif)
+		continue;
+
+		for (let j in apopar[i]) {
+			if (apopar[i][j] != propar[i][j]) {
+				dif = true;
+				break;
+			}
+		}
+
+		if (dif)
+		continue;
+
+		delete apontes.apopar[i];
+	}
+
+	return apontes;
+};
+
+apontes.deltioProcess = function() {
+	let prokat = apontes.prokat;
+	let apokat = apontes.apokat;
+
+	apontes.epikirosiSetup();
 
 	apontes.deltioAreaDOM.
 	append($('<div>').attr('id', 'ipiresia')).
 	append($('<div>').attr('id', 'ipiresiaKodikos').text(apontes.ipiresia)).
-	append($('<div>').attr('id', 'ipiresiaPerigrafi').text(rsp.perigrafi));
+	append($('<div>').attr('id', 'ipiresiaPerigrafi').text(apontes.perigrafi));
 
-	if (rsp.die && (rsp.die != rsp.perigrafi))
+	if (apontes.die && (apontes.die != apontes.perigrafi))
 	apontes.deltioAreaDOM.
-	append($('<div>').attr('id', 'ipiresiaDie').text(rsp.die));
+	append($('<div>').attr('id', 'ipiresiaDie').text(apontes.die));
 
-	if (rsp.tmi && (rsp.tmi != rsp.perigrafi))
+	if (apontes.tmi && (apontes.tmi != apontes.perigrafi))
 	apontes.deltioAreaDOM.
-	append($('<div>').attr('id', 'ipiresiaTmi').text(rsp.tmi));
+	append($('<div>').attr('id', 'ipiresiaTmi').text(apontes.tmi));
 
 	let deltioDOM = $('<div>').attr('id', 'deltio').
 	appendTo(apontes.deltioAreaDOM);
@@ -221,11 +322,81 @@ apontes.deltioProcess = function(rsp) {
 	return apontes;
 };
 
+apontes.katastasiClassMap = {
+	"ΕΚΚΡΕΜΕΣ": "deltioKatastasiEKREMES",
+	"ΑΝΥΠΟΓΡΑΦΟ": "deltioKatastasiANIPOGRAFO",
+	"ΚΥΡΩΜΕΝΟ": "deltioKatastasiKIROMENO",
+	"ΕΠΙΚΥΡΩΜΕΝΟ": "deltioKatastasiEPIKIROMENO",
+};
+
+apontes.katastasiClass = function(katastasi) {
+	if (apontes.katastasiClassMap.hasOwnProperty(katastasi))
+	return apontes.katastasiClassMap[katastasi];
+
+	return 'deltioKatastasiEKREMES';
+};
+
+// Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
+// εμφανίζει τα στοιχεία του κάθε υπαλλήλου και της σχετικής απουσίας.
+
+apontes.apousiaProcess = function() {
+	if (!apontes.ilist.length)
+	return apontes.apantesParontes();
+
+	for (let i = 0; i < apontes.ilist.length; i++)
+	apontes.ipalilosProcess(apontes.ilist[i], i % 2);
+
+	return apontes;
+};
+
+// Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
+// παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
+
+apontes.ipalilosProcess = function(ipalilos, zebra) {
+	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
+	let ipalilosDOM = $('<div>').addClass('ipalilosData');
+	let apousiaDOM = $('<div>').addClass('apousiaData');
+
+	dom.
+	append(ipalilosDOM).
+	append(apousiaDOM);
+
+	ipalilosDOM.
+	append($('<div>').addClass('ipalilosKodikosKelifos').
+	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos))).
+	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
+
+	ipalilos = ipalilos.kodikos;
+
+	let proselefsi = undefined;
+
+	if (apontes.proselefsi && apontes.propar.hasOwnProperty(ipalilos))
+	proselefsi = apontes.propar[ipalilos];
+
+	let apoxorisi = undefined;
+
+	if (apontes.apoxorisi && apontes.apopar.hasOwnProperty(ipalilos))
+	apoxorisi = apontes.apopar[ipalilos];
+
+	apontes.
+	apousiaPush(apousiaDOM, proselefsi, 'Proselefsi').
+	apousiaPush(apousiaDOM, apoxorisi, 'Apoxorisi');
+
+	apontes.apousiaAreaDOM.
+	append(dom);
+
+	if (apontes.isError(ipalilos))
+	apousiaDOM.
+	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
+
+	return apontes;
+};
+
 // Η funtion "epikirosiSetup" δέχεται ως παράμετρο τα δεδομένα απόντων και
 // ελέγχει στοιχεία πρόσβασης του χρήστη προκειμένου να εμφανίσει πλήκτρο
 // επικύρωσης για τα προς έλεγχο δελτία.
 
-apontes.epikirosiSetup = function(rsp) {
+apontes.epikirosiSetup = function() {
 	// Ο χρήστης πρέπει να έχει δικαιώματα διαχειριστή στην υπηρεσία.
 
 	if (letrak.prosvasiOxiAdmin(apontes.ipiresia))
@@ -238,7 +409,7 @@ apontes.epikirosiSetup = function(rsp) {
 
 	// Ελέγχουμε πρώτα την κατάσταση του παρουσιολογίου προσέλευσης.
 
-	switch (rsp.prokat) {
+	switch (apontes.prokat) {
 	case 'ΚΥΡΩΜΕΝΟ':
 		apontes.prosEpikirosi = true;
 		break;
@@ -252,7 +423,7 @@ apontes.epikirosiSetup = function(rsp) {
 	// εφόσον αυτό υπάρχει.
 
 	if (apontes.apoxorisi) {
-		switch (rsp.apokat) {
+		switch (apontes.apokat) {
 		case 'ΚΥΡΩΜΕΝΟ':
 			apontes.prosEpikirosi = true;
 			break;
@@ -285,78 +456,6 @@ apontes.epikirosiSetup = function(rsp) {
 
 	return apontes;
 };
-
-apontes.katastasiClassMap = {
-	"ΕΚΚΡΕΜΕΣ": "deltioKatastasiEKREMES",
-	"ΑΝΥΠΟΓΡΑΦΟ": "deltioKatastasiANIPOGRAFO",
-	"ΚΥΡΩΜΕΝΟ": "deltioKatastasiKIROMENO",
-	"ΕΠΙΚΥΡΩΜΕΝΟ": "deltioKatastasiEPIKIROMENO",
-};
-
-apontes.katastasiClass = function(katastasi) {
-	if (apontes.katastasiClassMap.hasOwnProperty(katastasi))
-	return apontes.katastasiClassMap[katastasi];
-
-	return 'deltioKatastasiEKREMES';
-};
-
-// Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
-// εμφανίζει τα στοιχεία του κάθε υπαλλήλου και της σχετικής απουσίας.
-
-apontes.apousiaProcess = function(rsp) {
-	if (!apontes.ilist.length)
-	return apontes.apantesParontes();
-
-	for (let i = 0; i < apontes.ilist.length; i++)
-	apontes.ipalilosProcess(apontes.ilist[i], rsp, i % 2);
-
-	return apontes;
-};
-
-// Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
-// παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
-
-apontes.ipalilosProcess = function(ipalilos, rsp, zebra) {
-	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
-	let ipalilosDOM = $('<div>').addClass('ipalilosData');
-	let apousiaDOM = $('<div>').addClass('apousiaData');
-
-	dom.
-	append(ipalilosDOM).
-	append(apousiaDOM);
-
-	ipalilosDOM.
-	append($('<div>').addClass('ipalilosKodikosKelifos').
-	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos))).
-	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
-
-	ipalilos = ipalilos.kodikos;
-
-	let proselefsi = undefined;
-
-	if (apontes.proselefsi && rsp.propar.hasOwnProperty(ipalilos))
-	proselefsi = rsp.propar[ipalilos];
-
-	let apoxorisi = undefined;
-
-	if (apontes.apoxorisi && rsp.apopar.hasOwnProperty(ipalilos))
-	apoxorisi = rsp.apopar[ipalilos];
-
-	apontes.
-	apousiaPush(apousiaDOM, proselefsi, 'Proselefsi').
-	apousiaPush(apousiaDOM, apoxorisi, 'Apoxorisi');
-
-	apontes.apousiaAreaDOM.
-	append(dom);
-
-	if (apontes.isError(ipalilos))
-	apousiaDOM.
-	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
-
-	return apontes;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
 
 apontes.epikirosi = function() {
 	$.post({
@@ -423,94 +522,6 @@ apontes.apousiaPush = function(dom, apousia, proapo) {
 	if (apousia.info)
 	apousiaDOM.
 	append($('<div>').addClass('sxolioMono').text(apousia.info));
-
-	return apontes;
-};
-
-apontes.ipalilosSort = function(rsp) {
-	let ilist = rsp.ipalilos;
-	let i;
-
-	apontes.ilist = [];
-	apontes.error = {};
-
-	for (i in rsp.ipalilos)
-	apontes.ilist.push({
-		"kodikos": i,
-		"onoma": ilist[i]
-	});
-
-	delete rsp.ipalilos;
-
-	apontes.ilist.sort(function(i1, i2) {
-		let cmp = i1.onoma.localeCompare(i2.onoma);
-
-		if (cmp)
-		return cmp;
-
-		if (i1 < i2)
-		return -1;
-
-		else if (i1 > i2)
-		return 1;
-
-		return 0;
-	});
-
-	return apontes;
-};
-
-// Η function "apousiaApalifi" διατρέχει τις απουσίες και στα δύο δελτία και
-// διαγράφει τις απουσίες που είναι ακριβώς ίδιες στα δύο δελτία από το
-// δελτίο αποχώρησης.
-
-apontes.apousiaApalifi = function(rsp) {
-	let ateles = 2;
-
-	if (apontes.proselefsi)
-	ateles--;
-
-	if (apontes.apoxorisi)
-	ateles--;
-
-	if (ateles)
-	return apontes;
-
-	let proselefsi = rsp.propar;
-	let apoxorisi = rsp.apopar;
-
-	apontes.
-	adiaCheck(proselefsi, apoxorisi).
-	exeresiCheck(proselefsi, apoxorisi);
-
-	for (let i in proselefsi) {
-		if (!apoxorisi.hasOwnProperty(i))
-		continue;
-
-		let dif = false;
-
-		for (let j in proselefsi[i]) {
-			if (apoxorisi[i][j] != proselefsi[i][j]) {
-				dif = true;
-				break;
-			}
-		}
-
-		if (dif)
-		continue;
-
-		for (let j in apoxorisi[i]) {
-			if (apoxorisi[i][j] != proselefsi[i][j]) {
-				dif = true;
-				break;
-			}
-		}
-
-		if (dif)
-		continue;
-
-		delete apoxorisi[i];
-	}
 
 	return apontes;
 };

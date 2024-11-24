@@ -63,16 +63,16 @@ ipalilos_fetch()::
 metadata_fetch();
 
 print '{' .
-	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
-	'"prokat":' . pandora::json_string(Apontes::$prokat) . ',' .
-	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
-	'"apokat":' . pandora::json_string(Apontes::$apokat) . ',' .
 	'"imerominia":' . pandora::json_string(Apontes::$imerominia) . ',' .
 	'"ipiresia":' . pandora::json_string(Apontes::$ipiresia) . ',' .
+	'"perigrafi":' . pandora::json_string(Apontes::$perigrafi) . ',' .
 	'"die":' . pandora::json_string(Apontes::$die) . ',' .
 	'"tmi":' . pandora::json_string(Apontes::$tmi) . ',' .
-	'"perigrafi":' . pandora::json_string(Apontes::$perigrafi) . ',' .
+	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
+	'"prokat":' . pandora::json_string(Apontes::$prokat) . ',' .
 	'"propar":' . pandora::json_string(Apontes::$propar) . ',' .
+	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
+	'"apokat":' . pandora::json_string(Apontes::$apokat) . ',' .
 	'"apopar":' . pandora::json_string(Apontes::$apopar) . ',' .
 	'"ipalilos":' . pandora::json_string(Apontes::$ilist) .
 '}';
