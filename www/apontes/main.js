@@ -51,7 +51,9 @@ const apontes = {};
 
 apontes.minima = {
 	'apantesParontes': 'Άπαντες παρόντες. Κάντε κλικ, ' +
-		'ή πατήστε οποιοδήποτε πλήκτρο για επιστροφή&#8230;',
+		'ή πατήστε οποιοδήποτε πλήκτρο για ',
+	'apantesParontesKlisimo': 'επιστροφή',
+	'apantesParontesEpikirosi': 'επικύρωση',
 };
 
 pnd.domInit(() => {
@@ -207,13 +209,13 @@ apontes.epikirosiSetup = function(rsp) {
 	// Θα ελέγξουμε τώρα αν υπάρχουν παρουσιολόγια προς επικύρωση.
 	// Αρχικά θεωρούμε ότι δεν υπάρχουν.
 
-	let prosEpikirosi = false;
+	apontes.prosEpikirosi = false;
 
 	// Ελέγχουμε πρώτα την κατάσταση του παρουσιολογίου προσέλευσης.
 
 	switch (rsp.prokat) {
 	case 'ΚΥΡΩΜΕΝΟ':
-		prosEpikirosi = true;
+		apontes.prosEpikirosi = true;
 		break;
 	case 'ΕΠΙΚΥΡΩΜΕΝΟ':
 		break;
@@ -227,7 +229,7 @@ apontes.epikirosiSetup = function(rsp) {
 	if (rsp.apoxorisi) {
 		switch (rsp.apokat) {
 		case 'ΚΥΡΩΜΕΝΟ':
-			prosEpikirosi = true;
+			apontes.prosEpikirosi = true;
 			break;
 		case 'ΕΠΙΚΥΡΩΜΕΝΟ':
 			break;
@@ -239,13 +241,14 @@ apontes.epikirosiSetup = function(rsp) {
 	// Αν δεν έχουν εντοπιστεί παρουσιολόγια προς επικύρωση, τότε
 	// δεν εμφανίζουμε πλήκτρο επικύρωσης.
 
-	if (!prosEpikirosi)
+	if (!apontes.prosEpikirosi)
 	return apontes;
 
 	// Έχουν εντοπιστεί παρουσιολόγια προς επικύρωση οπότε εμφανίζουμε
-	// πλήκτρο επικύρωσης.
+	// πλήκτρο επικύρωσης. Χρησιμοποιούμε το flag "prosEpikirosi" για
+	// να κρατήσουμε το πλήκρρο επικύρωσης.
 
-	$('<div>').
+	apontes.prosEpikirosi = $('<div>').
 	addClass('letrak-toolbarTab').
 	addClass('epikirosiPliktro').
 	text('Επικύρωση').
@@ -640,20 +643,27 @@ apontes.exeresiCheck = function(proselefsi, apoxorisi) {
 };
 
 apontes.apantesParontes = function() {
+	let minima = apontes.minima.apantesParontes + (apontes.prosEpikirosi ?
+		apontes.minima.apantesParontesEpikirosi :
+		apontes.minima.apantesParontesKlisimo);
+
 	apontes.apousiaAreaDOM.
 	append($('<div>').
 	attr('id', 'apantesParontes').
-	html(apontes.minima.apantesParontes));
+	html(minima));
 
 	pnd.bodyDOM.
-	on('click', (e) => apontes.apantesParontesClose(e)).
-	on('keyup', (e) => apontes.apantesParontesClose(e));
+	on('click keyup', (e) => apontes.apantesParontesClose(e));
 
 	return apontes;
 };
 
 apontes.apantesParontesClose = function(e) {
 	e.stopPropagation();
+
+	if (apontes.prosEpikirosi)
+	return apontes.prosEpikirosi.click();
+
 	self.close();
 };
 
