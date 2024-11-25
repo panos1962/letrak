@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-25
 // Updated: 2024-11-24
 // Updated: 2024-11-23
 // Updated: 2024-11-22
@@ -50,8 +51,8 @@ require('../lib/letrak.js');
 const apontes = {};
 
 apontes.minima = {
-	'apantesParontes': 'Άπαντες παρόντες. Κάντε κλικ, ' +
-		'ή πατήστε οποιοδήποτε πλήκτρο για ',
+	'apantesParontes': 'ΑΠΑΝΤΕΣ ΠΑΡΟΝΤΕΣ',
+	'apantesParontesMain': 'Κάντε κλικ, ή πατήστε οποιοδήποτε πλήκτρο για ',
 	'apantesParontesKlisimo': 'επιστροφή',
 	'apantesParontesEpikirosi': 'επικύρωση',
 };
@@ -92,22 +93,24 @@ apontes.selidaSetup = () => {
 	if (!deltio)
 	apontes.fatalError('Ακαθόριστο παρουσιολόγιο');
 
+	pnd.ofelimoDOM.
+
 	// Ο χρήστης μπορεί να κάνει κλικ σε κάθε υπάλληλο που έχει ελέγξει
 	// προκειμένου να «γκριζαριστεί» η περιοχή του εν λόγω υπαλλήλου.
 	// Αυτό διευκολύνει τη διαχείριση των απόντων, καθώς γίνεται εμφανές
 	// το ποιος είναι ο επόμενος υπάλληλος που έχει σειρά να ελεγχθεί.
 
-	pnd.ofelimoDOM.
 	on('click', '.ipalilos', function(e) {
 		apontes.ipalilosDoneToggle(e, $(this));
-	});
+	}).
 
 	// Στο επάνω μέρος της σελίδας εμφανίζουμε τα βασικά στοιχεία των
-	// προς έλεγχο παρουσιολογίων, ενώ αμέσως μετά εμφανίζουμε τους
-	// υπαλλήλους που παρουσιάζουν απουσία.
+	// προς έλεγχο παρουσιολογίων.
 
-	pnd.ofelimoDOM.
 	append(apontes.deltioAreaDOM = $('<div>').attr('id', 'deltioArea')).
+
+	// Αμέσως μετά εμφανίζουμε τους υπαλλήλους που παρουσιάζουν απουσία.
+
 	append(apontes.apousiaAreaDOM = $('<div>').attr('id', 'apousiaArea'));
 
 	// Ζητάμε τώρα από τον server να μας επιστρέψει τους απόντες που
@@ -157,42 +160,71 @@ apontes.apontesProcess = (rsp) => {
 
 	apontes.ipalilos = rsp.ipalilos;	// λίστα απόντων υπαλλήλων
 
+	// Ορίζουμε το global array "ilist" το οποίο θα περιέχει τους
+	// απόντες υπαλλήλους ταξινομημένους αλφαβητικά.
 
-	// Στο σημείο αυτό ταξινομούμε τους υπαλλήλους αλφαβητικά, και αμέσως
-	// μετά απαλείφουμε απουσίες από το δελτίο αποχώρησης όταν τα στοιχεία
-	// της απουσίας είναι ταυτόσημα με τα στοιχεία της αποσυίας στο δελτίο
-	// προσέλευσης. Κατόπιν, εμφανίζουμε τώρα στο επάνω μέρος της σελίδας
-	// τα στοιχεία των προς έλεγχο δελτίων, ενώ στο κάτω μέρος εμφανίζουμε
-	// τις απουσίες των συγκεκριμένων δελτίων.
+	apontes.ilist = [];
+
+	// Ορίζουμε την global λίστα "error" το οποίο θα περιέχει τυχόν
+	// μηνύματα λάθους που αφορούν στις παρουσίες των υπαλλήλων και
+	// είναι δεικτοδοτημένη με τον κωδικό υπαλλήλου.
+
+	apontes.error = {};
+
+	// Έχουμε κάνει την προεργασία μας και προχωρούμε στην επεξεργασία
+	// των στοιχείων που παραλάβαμε.
 
 	apontes.
+
+	// Θέτουμε τον τίτλο της τρέχουσας καρτέλας στον browser.
+
 	titlosSet().
+
+	// Ταξινομούμε τους υπαλλήλους αλφαβητικά.
+
 	ipalilosSort().
+
+	// Διαγράφουμε από το παρουσιολόγιο αποχώρησης τις άδειες που είναι
+	// ταυτόσημες με τις αντίστοιχες άδειες στο παρουσιολόγιο προσέλευσης.
+
 	apousiaApalifi().
+
+	// Εμφανίζουμε τα βασικά στοιχεία των προς έλεγχο παρουσιολογίων στο
+	// επάνω μέρος της σελίδας.
+
 	deltioProcess().
+
+	// Αμέσως μετά εμφανίζουμε τις απουσίες των υπαλλήλων από τα προς
+	// έλεγχο παρουσιολόγια.
+
 	apousiaProcess();
 
 	return apontes;
 };
+
+// Η function "titlosSet" θέτει τον τίτλο της τρέχουσας καρτέλας του browser
+// ώστε να φαίνεται ο κωδικός υπηρεσίας και η ημερομηνία των προς έλεγχο
+// παρουσιολογίων.
 
 apontes.titlosSet = function() {
 	document.title = apontes.ipiresia + ' ' + apontes.imerominia;
 	return apontes;
 };
 
+// Οι υπάλληλοι που παρουσιάζουν απουσία μάς έχουν επιστραφεί ως λίστα
+// "ipalilos" δεικτοδοτημένη με τους κωδικούς υπαλλήλων. Η function
+// "ipalilosSort" δημιουργεί global array "ilist" το οποίο περιέχει
+// τα στοιχεία των υπαλλήλων και είναι ταξινομημένο αλφαβητικά ως
+// προς το όνομα.
+
 apontes.ipalilosSort = function() {
-	let i;
-
-	apontes.ilist = [];
-	apontes.error = {};
-
-	for (i in apontes.ipalilos)
+	for (let i in apontes.ipalilos)
 	apontes.ilist.push({
 		"kodikos": i,
 		"onoma": apontes.ipalilos[i]
 	});
 
-	// Η λίστα "apontes.ipalilos" δεν μας χρειάζεται πια.
+	// Η global λίστα "ipalilos" δεν μας χρειάζεται πια.
 
 	delete apontes.ipalilos;
 
@@ -334,196 +366,6 @@ apontes.katastasiClass = function(katastasi) {
 	return apontes.katastasiClassMap[katastasi];
 
 	return 'deltioKatastasiEKREMES';
-};
-
-// Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
-// εμφανίζει τα στοιχεία του κάθε υπαλλήλου και της σχετικής απουσίας.
-
-apontes.apousiaProcess = function() {
-	if (!apontes.ilist.length)
-	return apontes.apantesParontes();
-
-	for (let i = 0; i < apontes.ilist.length; i++)
-	apontes.ipalilosProcess(apontes.ilist[i], i % 2);
-
-	return apontes;
-};
-
-// Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
-// παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
-
-apontes.ipalilosProcess = function(ipalilos, zebra) {
-	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
-	let ipalilosDOM = $('<div>').addClass('ipalilosData');
-	let apousiaDOM = $('<div>').addClass('apousiaData');
-
-	dom.
-	append(ipalilosDOM).
-	append(apousiaDOM);
-
-	ipalilosDOM.
-	append($('<div>').addClass('ipalilosKodikosKelifos').
-	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos))).
-	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
-
-	ipalilos = ipalilos.kodikos;
-
-	let proselefsi = undefined;
-
-	if (apontes.proselefsi && apontes.propar.hasOwnProperty(ipalilos))
-	proselefsi = apontes.propar[ipalilos];
-
-	let apoxorisi = undefined;
-
-	if (apontes.apoxorisi && apontes.apopar.hasOwnProperty(ipalilos))
-	apoxorisi = apontes.apopar[ipalilos];
-
-	apontes.
-	apousiaPush(apousiaDOM, proselefsi, 'Proselefsi').
-	apousiaPush(apousiaDOM, apoxorisi, 'Apoxorisi');
-
-	apontes.apousiaAreaDOM.
-	append(dom);
-
-	if (apontes.isError(ipalilos))
-	apousiaDOM.
-	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
-
-	return apontes;
-};
-
-// Η funtion "epikirosiSetup" δέχεται ως παράμετρο τα δεδομένα απόντων και
-// ελέγχει στοιχεία πρόσβασης του χρήστη προκειμένου να εμφανίσει πλήκτρο
-// επικύρωσης για τα προς έλεγχο δελτία.
-
-apontes.epikirosiSetup = function() {
-	// Ο χρήστης πρέπει να έχει δικαιώματα διαχειριστή στην υπηρεσία.
-
-	if (letrak.prosvasiOxiAdmin(apontes.ipiresia))
-	return apontes;
-
-	// Θα ελέγξουμε τώρα αν υπάρχουν παρουσιολόγια προς επικύρωση.
-	// Αρχικά θεωρούμε ότι δεν υπάρχουν.
-
-	apontes.prosEpikirosi = false;
-
-	// Ελέγχουμε πρώτα την κατάσταση του παρουσιολογίου προσέλευσης.
-
-	switch (apontes.prokat) {
-	case 'ΚΥΡΩΜΕΝΟ':
-		apontes.prosEpikirosi = true;
-		break;
-	case 'ΕΠΙΚΥΡΩΜΕΝΟ':
-		break;
-	default:
-		return apontes;
-	}
-
-	// Κατόπιν ελέγχουμε την κατάσταση του παρουσιολογίου αποχώρησης
-	// εφόσον αυτό υπάρχει.
-
-	if (apontes.apoxorisi) {
-		switch (apontes.apokat) {
-		case 'ΚΥΡΩΜΕΝΟ':
-			apontes.prosEpikirosi = true;
-			break;
-		case 'ΕΠΙΚΥΡΩΜΕΝΟ':
-			break;
-		default:
-			return apontes;
-		}
-	}
-
-	// Αν δεν έχουν εντοπιστεί παρουσιολόγια προς επικύρωση, τότε
-	// δεν εμφανίζουμε πλήκτρο επικύρωσης.
-
-	if (!apontes.prosEpikirosi)
-	return apontes;
-
-	// Έχουν εντοπιστεί παρουσιολόγια προς επικύρωση οπότε εμφανίζουμε
-	// πλήκτρο επικύρωσης. Χρησιμοποιούμε το flag "prosEpikirosi" για
-	// να κρατήσουμε το πλήκρρο επικύρωσης.
-
-	apontes.prosEpikirosi = $('<div>').
-	addClass('letrak-toolbarTab').
-	addClass('epikirosiPliktro').
-	text('Επικύρωση').
-	on('click', function(e) {
-		e.stopPropagation();
-		apontes.epikirosi();
-	}).
-	appendTo(pnd.toolbarLeftDOM);
-
-	return apontes;
-};
-
-apontes.epikirosi = function() {
-	$.post({
-		'url': 'epikirosi.php',
-		'data': {
-			"ipiresia": apontes.ipiresia,
-			"pro": apontes.proselefsi,
-			"apo": apontes.apoxorisi,
-		},
-		'dataType': 'json',
-		'success': (rsp) => {
-			try {
-				self.opener.LETRAK.ananeosi();
-			} catch (e) {
-				return pnd.fyiError('Αστοχία ανανέωσης');
-			}
-			self.close();
-		},
-		'error': (e) => {
-			pnd.fyiError('Σφάλμα επικύρωσης');
-			console.error(e);
-		},
-	});
-
-	return apontes;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-apontes.apousiaPush = function(dom, apousia, proapo) {
-	if (!apousia)
-	return apontes;
-
-	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
-	let adidos = undefined;
-	let diastima = undefined;
-	let sxolio = undefined;
-
-	if (apousia.adidos) {
-		adidos = apousia.adidos;
-		diastima = apousia.adapo + ' - ' + apousia.adeos;
-		sxolio = apousia.info;
-
-		apousiaDOM.
-		append($('<div>').addClass('adidos').text(adidos)).
-		append($('<div>').addClass('diastima').text(diastima)).
-		append($('<div>').addClass('sxolio').text(sxolio));
-
-		return apontes;
-	}
-
-	if (apousia.excuse) {
-		apousiaDOM.addClass('apousia' + proapo);
-		adidos = apousia.excuse;
-		diastima = apousia.info;
-
-		apousiaDOM.
-		append($('<div>').addClass('adidos').text(adidos)).
-		append($('<div>').addClass('diastima').text(diastima));
-
-		return apontes;
-	}
-
-	if (apousia.info)
-	apousiaDOM.
-	append($('<div>').addClass('sxolioMono').text(apousia.info));
-
-	return apontes;
 };
 
 // Ελέγχουμε για τυχόν προβληματικές άδειες που έχουν περαστεί μόνο στο ένα
@@ -678,17 +520,218 @@ apontes.exeresiCheck = function(proselefsi, apoxorisi) {
 	return apontes;
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "apousiaProcess" διατρέχει τη λίστα των απόντων υπαλλήλων και
+// εμφανίζει τα στοιχεία του κάθε υπαλλήλου και της σχετικής απουσίας.
+
+apontes.apousiaProcess = function() {
+	if (!apontes.ilist.length)
+	return apontes.apantesParontes();
+
+	for (let i = 0; i < apontes.ilist.length; i++)
+	apontes.ipalilosProcess(apontes.ilist[i], i % 2);
+
+	return apontes;
+};
+
+// Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
+// παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
+
+apontes.ipalilosProcess = function(ipalilos, zebra) {
+	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
+	let ipalilosDOM = $('<div>').addClass('ipalilosData');
+	let apousiaDOM = $('<div>').addClass('apousiaData');
+
+	dom.
+	append(ipalilosDOM).
+	append(apousiaDOM);
+
+	ipalilosDOM.
+	append($('<div>').addClass('ipalilosKodikosKelifos').
+	append($('<div>').addClass('ipalilosKodikos').text(ipalilos.kodikos))).
+	append($('<div>').addClass('ipalilosOnoma').text(ipalilos.onoma));
+
+	ipalilos = ipalilos.kodikos;
+
+	let proselefsi = undefined;
+
+	if (apontes.proselefsi && apontes.propar.hasOwnProperty(ipalilos))
+	proselefsi = apontes.propar[ipalilos];
+
+	let apoxorisi = undefined;
+
+	if (apontes.apoxorisi && apontes.apopar.hasOwnProperty(ipalilos))
+	apoxorisi = apontes.apopar[ipalilos];
+
+	apontes.
+	apousiaPush(apousiaDOM, proselefsi, 'Proselefsi').
+	apousiaPush(apousiaDOM, apoxorisi, 'Apoxorisi');
+
+	apontes.apousiaAreaDOM.
+	append(dom);
+
+	if (apontes.isError(ipalilos))
+	apousiaDOM.
+	append($('<div>').addClass('error').text(apontes.getError(ipalilos)));
+
+	return apontes;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Η funtion "epikirosiSetup" δέχεται ως παράμετρο τα δεδομένα απόντων και
+// ελέγχει στοιχεία πρόσβασης του χρήστη προκειμένου να εμφανίσει πλήκτρο
+// επικύρωσης για τα προς έλεγχο δελτία.
+
+apontes.epikirosiSetup = function() {
+	// Ο χρήστης πρέπει να έχει δικαιώματα διαχειριστή στην υπηρεσία.
+
+	if (letrak.prosvasiOxiAdmin(apontes.ipiresia))
+	return apontes;
+
+	// Θα ελέγξουμε τώρα αν υπάρχουν παρουσιολόγια προς επικύρωση.
+	// Αρχικά θεωρούμε ότι δεν υπάρχουν.
+
+	apontes.prosEpikirosi = false;
+
+	// Ελέγχουμε πρώτα την κατάσταση του παρουσιολογίου προσέλευσης.
+
+	switch (apontes.prokat) {
+	case 'ΚΥΡΩΜΕΝΟ':
+		apontes.prosEpikirosi = true;
+		break;
+	case 'ΕΠΙΚΥΡΩΜΕΝΟ':
+		break;
+	default:
+		return apontes;
+	}
+
+	// Κατόπιν ελέγχουμε την κατάσταση του παρουσιολογίου αποχώρησης
+	// εφόσον αυτό υπάρχει.
+
+	if (apontes.apoxorisi) {
+		switch (apontes.apokat) {
+		case 'ΚΥΡΩΜΕΝΟ':
+			apontes.prosEpikirosi = true;
+			break;
+		case 'ΕΠΙΚΥΡΩΜΕΝΟ':
+			break;
+		default:
+			return apontes;
+		}
+	}
+
+	// Αν δεν έχουν εντοπιστεί παρουσιολόγια προς επικύρωση, τότε
+	// δεν εμφανίζουμε πλήκτρο επικύρωσης.
+
+	if (!apontes.prosEpikirosi)
+	return apontes;
+
+	// Έχουν εντοπιστεί παρουσιολόγια προς επικύρωση οπότε εμφανίζουμε
+	// πλήκτρο επικύρωσης. Χρησιμοποιούμε το flag "prosEpikirosi" για
+	// να κρατήσουμε το πλήκρρο επικύρωσης.
+
+	apontes.prosEpikirosi = $('<div>').
+	addClass('letrak-toolbarTab').
+	addClass('epikirosiPliktro').
+	text('Επικύρωση').
+	on('click', function(e) {
+		e.stopPropagation();
+		apontes.epikirosi();
+	}).
+	appendTo(pnd.toolbarLeftDOM);
+
+	return apontes;
+};
+
+apontes.epikirosi = function() {
+	$.post({
+		'url': 'epikirosi.php',
+		'data': {
+			"ipiresia": apontes.ipiresia,
+			"pro": apontes.proselefsi,
+			"apo": apontes.apoxorisi,
+		},
+		'dataType': 'json',
+		'success': (rsp) => {
+			try {
+				self.opener.LETRAK.ananeosi();
+			} catch (e) {
+				return pnd.fyiError('Αστοχία ανανέωσης');
+			}
+			self.close();
+		},
+		'error': (e) => {
+			pnd.fyiError('Σφάλμα επικύρωσης');
+			console.error(e);
+		},
+	});
+
+	return apontes;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+apontes.apousiaPush = function(dom, apousia, proapo) {
+	if (!apousia)
+	return apontes;
+
+	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
+	let adidos = undefined;
+	let diastima = undefined;
+	let sxolio = undefined;
+
+	if (apousia.adidos) {
+		adidos = apousia.adidos;
+		diastima = apousia.adapo + ' - ' + apousia.adeos;
+		sxolio = apousia.info;
+
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima)).
+		append($('<div>').addClass('sxolio').text(sxolio));
+
+		return apontes;
+	}
+
+	if (apousia.excuse) {
+		apousiaDOM.addClass('apousia' + proapo);
+		adidos = apousia.excuse;
+		diastima = apousia.info;
+
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima));
+
+		return apontes;
+	}
+
+	if (apousia.info)
+	apousiaDOM.
+	append($('<div>').addClass('sxolioMono').text(apousia.info));
+
+	return apontes;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
 apontes.apantesParontes = function() {
-	let minima = apontes.minima.apantesParontes + (apontes.prosEpikirosi ?
+	let minima = apontes.minima.apantesParontesMain +
+		(apontes.prosEpikirosi ?
 		apontes.minima.apantesParontesEpikirosi :
 		apontes.minima.apantesParontesKlisimo);
 
 	apontes.apousiaAreaDOM.
 	append($('<div>').
 	attr('id', 'apantesParontes').
-	html(minima));
+	text(apontes.minima.apantesParontes)).
+	append($('<div>').
+	attr('id', 'apantesParontesKlik').
+	text(minima));
 
 	pnd.bodyDOM.
+	css('cursor', 'pointer').
 	on('click keyup', (e) => apontes.apantesParontesClose(e));
 
 	return apontes;

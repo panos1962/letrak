@@ -27,6 +27,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-25
 // Updated: 2024-11-23
 // Updated: 2024-11-22
 // Updated: 2024-11-21
@@ -60,22 +61,8 @@ deltio_check()::
 prosvasi_check()::
 deltio_aponton()::
 ipalilos_fetch()::
-metadata_fetch();
-
-print '{' .
-	'"imerominia":' . pandora::json_string(Apontes::$imerominia) . ',' .
-	'"ipiresia":' . pandora::json_string(Apontes::$ipiresia) . ',' .
-	'"perigrafi":' . pandora::json_string(Apontes::$perigrafi) . ',' .
-	'"die":' . pandora::json_string(Apontes::$die) . ',' .
-	'"tmi":' . pandora::json_string(Apontes::$tmi) . ',' .
-	'"proselefsi":' . pandora::json_string(Apontes::$pro) . ',' .
-	'"prokat":' . pandora::json_string(Apontes::$prokat) . ',' .
-	'"propar":' . pandora::json_string(Apontes::$propar) . ',' .
-	'"apoxorisi":' . pandora::json_string(Apontes::$apo) . ',' .
-	'"apokat":' . pandora::json_string(Apontes::$apokat) . ',' .
-	'"apopar":' . pandora::json_string(Apontes::$apopar) . ',' .
-	'"ipalilos":' . pandora::json_string(Apontes::$ilist) .
-'}';
+metadata_fetch()::
+apontes_print();
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -95,54 +82,54 @@ class Apontes {
 
 	// Το πεδίο "pro" περιέχει το παρουσιολόγιο προσέλευσης.
 
-	public static $pro;
+	private static $pro;
 
 	// Το πεδίο "apo" περιέχει το παρουσιολόγιο αποχώρησης.
 
-	public static $apo;
+	private static $apo;
 
 	// Το πεδίο "imerominia" περιέχει την ημερομηνία των παρουσιολογίων.
 
-	public static $imerominia;
+	private static $imerominia;
 
 	// Το πεδίο "ipiresia" περιέχει την υπηρεσία των παρουσιολογίων.
 
-	public static $ipiresia;
+	private static $ipiresia;
 
 	// Το πεδίο "perigrafi" περιέχει την περιγραφή των παρουσιολογίων.
 
-	public static $perigrafi;
+	private static $perigrafi;
 
 	// Το πεδίο "die" περιέχει τη διεύθυνση των παρουσιολογίων.
 
-	public static $die;
+	private static $die;
 
 	// Το πεδίο "tmi" περιέχει το τμήμα των παρουσιολογίων.
 
-	public static $tmi;
+	private static $tmi;
 
 	// Το πεδίο "prokat" περιέχει την κατάσταση του δελτίου προσέλευσης.
 
-	public static $prokat;
+	private static $prokat;
 
 	// Το πεδίο "apokat" περιέχει την κατάσταση του δελτίου αποχώρησης.
 
-	public static $apokat;
+	private static $apokat;
 
 	// Το πεδίο "propar" περιέχει τις απουσίες του παρουσιολογίου
 	// προσέλευσης.
 
-	public static $propar;
+	private static $propar;
 
 	// Το πεδίο "apopar" περιέχει τις απουσίες του παρουσιολογίου
 	// αποχώρησης.
 
-	public static $apopar;
+	private static $apopar;
 
 	// Το πεδίο "ilist" περιέχει λίστα υπαλλήλων οι οποίοι παρουσιάζουν
 	// ενδιαφέρον.
 
-	public static $ilist;
+	private static $ilist;
 
 	// Η μέθοδος "init" επιτελεί αρχικοποίηση τιμών του singleton
 	// "Apontes".
@@ -415,6 +402,8 @@ class Apontes {
 		self::$apokat = self::$apo->katastasi;
 		self::$apopar = self::$apo->parousia;
 		self::$apo = (self::$apo ? self::$apo->kodikos : "");
+
+		return __CLASS__;
 	}
 
 	///////////////////////////////////////////////////////////////////////@
@@ -497,6 +486,25 @@ class Apontes {
 			$onoma = $row[0] . " " .  $row[1] .  " " .
 				mb_substr($row[2], 0, 3);
 		}
+
+		return __CLASS__;
+	}
+
+	public static function apontes_print() {
+		print '{' .
+		'"imerominia":' . pandora::json_string(self::$imerominia) . ',' .
+		'"ipiresia":' . pandora::json_string(self::$ipiresia) . ',' .
+		'"perigrafi":' . pandora::json_string(self::$perigrafi) . ',' .
+		'"die":' . pandora::json_string(self::$die) . ',' .
+		'"tmi":' . pandora::json_string(self::$tmi) . ',' .
+		'"proselefsi":' . pandora::json_string(self::$pro) . ',' .
+		'"prokat":' . pandora::json_string(self::$prokat) . ',' .
+		'"propar":' . pandora::json_string(self::$propar) . ',' .
+		'"apoxorisi":' . pandora::json_string(self::$apo) . ',' .
+		'"apokat":' . pandora::json_string(self::$apokat) . ',' .
+		'"apopar":' . pandora::json_string(self::$apopar) . ',' .
+		'"ipalilos":' . pandora::json_string(self::$ilist) .
+		'}';
 
 		return __CLASS__;
 	}
