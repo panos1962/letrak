@@ -63,17 +63,17 @@ class Epikirosi {
 		if ($apo)
 		$apo = self::deltio_fetch($apo);
 
-		self::epikirosi($pro);
+		self::epikirosiExec($pro);
 
 		if ($apo)
-		self::epikirosi($apo);
+		self::epikirosiExec($apo);
 
 		print "{}";
 
 		return __CLASS__;
 	}
 
-	private static function epikirosi($deltio) {
+	private static function epikirosiExec($deltio) {
 		if (!$deltio)
 		return __CLASS__;
 
