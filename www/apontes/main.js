@@ -203,6 +203,8 @@ apontes.apontesProcess = (rsp) => {
 	return apontes;
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
 // Η function "titlosSet" θέτει τον τίτλο της τρέχουσας καρτέλας του browser
 // ώστε να φαίνεται ο κωδικός υπηρεσίας και η ημερομηνία των προς έλεγχο
 // παρουσιολογίων.
@@ -211,6 +213,8 @@ apontes.titlosSet = function() {
 	document.title = apontes.ipiresia + ' ' + apontes.imerominia;
 	return apontes;
 };
+
+///////////////////////////////////////////////////////////////////////////////@
 
 // Οι υπάλληλοι που παρουσιάζουν απουσία μάς έχουν επιστραφεί ως λίστα
 // "ipalilos" δεικτοδοτημένη με τους κωδικούς υπαλλήλων. Η function
@@ -563,6 +567,47 @@ apontes.ipalilosProcess = function(ipalilos, zebra) {
 	return apontes;
 };
 
+apontes.apousiaPush = function(dom, apousia, proapo) {
+	if (!apousia)
+	return apontes;
+
+	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
+	let adidos = undefined;
+	let diastima = undefined;
+	let sxolio = undefined;
+
+	if (apousia.adidos) {
+		adidos = apousia.adidos;
+		diastima = apousia.adapo + ' - ' + apousia.adeos;
+		sxolio = apousia.info;
+
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima)).
+		append($('<div>').addClass('sxolio').text(sxolio));
+
+		return apontes;
+	}
+
+	if (apousia.excuse) {
+		apousiaDOM.addClass('apousia' + proapo);
+		adidos = apousia.excuse;
+		diastima = apousia.info;
+
+		apousiaDOM.
+		append($('<div>').addClass('adidos').text(adidos)).
+		append($('<div>').addClass('diastima').text(diastima));
+
+		return apontes;
+	}
+
+	if (apousia.info)
+	apousiaDOM.
+	append($('<div>').addClass('sxolioMono').text(apousia.info));
+
+	return apontes;
+};
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 // Η funtion "epikirosiSetup" δέχεται ως παράμετρο τα δεδομένα απόντων και
@@ -652,49 +697,6 @@ apontes.epikirosi = function() {
 			console.error(e);
 		},
 	});
-
-	return apontes;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-apontes.apousiaPush = function(dom, apousia, proapo) {
-	if (!apousia)
-	return apontes;
-
-	let apousiaDOM = $('<div>').addClass('apousia').appendTo(dom);
-	let adidos = undefined;
-	let diastima = undefined;
-	let sxolio = undefined;
-
-	if (apousia.adidos) {
-		adidos = apousia.adidos;
-		diastima = apousia.adapo + ' - ' + apousia.adeos;
-		sxolio = apousia.info;
-
-		apousiaDOM.
-		append($('<div>').addClass('adidos').text(adidos)).
-		append($('<div>').addClass('diastima').text(diastima)).
-		append($('<div>').addClass('sxolio').text(sxolio));
-
-		return apontes;
-	}
-
-	if (apousia.excuse) {
-		apousiaDOM.addClass('apousia' + proapo);
-		adidos = apousia.excuse;
-		diastima = apousia.info;
-
-		apousiaDOM.
-		append($('<div>').addClass('adidos').text(adidos)).
-		append($('<div>').addClass('diastima').text(diastima));
-
-		return apontes;
-	}
-
-	if (apousia.info)
-	apousiaDOM.
-	append($('<div>').addClass('sxolioMono').text(apousia.info));
 
 	return apontes;
 };
