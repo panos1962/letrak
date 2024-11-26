@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-26
 // Updated: 2024-11-25
 // Updated: 2024-11-24
 // Updated: 2024-11-23
@@ -187,7 +188,7 @@ apontes.apontesProcess = (rsp) => {
 	// Διαγράφουμε από το παρουσιολόγιο αποχώρησης τις άδειες που είναι
 	// ταυτόσημες με τις αντίστοιχες άδειες στο παρουσιολόγιο προσέλευσης.
 
-	apousiaApalifi().
+	apousiaCheck().
 
 	// Εμφανίζουμε τα βασικά στοιχεία των προς έλεγχο παρουσιολογίων στο
 	// επάνω μέρος της σελίδας.
@@ -246,60 +247,196 @@ apontes.ipalilosSort = function() {
 	return apontes;
 };
 
-// Η function "apousiaApalifi" διατρέχει τις απουσίες και στα δύο δελτία και
-// διαγράφει τις απουσίες που είναι ακριβώς ίδιες στα δύο δελτία από το
-// δελτίο αποχώρησης.
+///////////////////////////////////////////////////////////////////////////////@
 
-apontes.apousiaApalifi = function() {
-	let ateles = 2;
+// Η function "apousiaCheck" διατρέχει τις απουσίες και στα δύο δελτία και
+// επιτελεί βασικούς ελέγχους.
 
-	if (apontes.proselefsi)
-	ateles--;
-
-	if (apontes.apoxorisi)
-	ateles--;
-
-	if (ateles)
+apontes.apousiaCheck = function() {
+	if (apontes.isAteles())
 	return apontes;
 
-	let propar = apontes.propar;
-	let apopar = apontes.apopar;
-
 	apontes.
-	adiaCheck(propar, apopar).
-	exeresiCheck(propar, apopar);
+	adiaCheck(apontes.propar, apontes.apopar).
+	exeresiCheck(apontes.propar, apontes.apopar);
 
-	for (let i in propar) {
-		if (!apopar.hasOwnProperty(i))
+	return apontes;
+};
+
+apontes.isAteles = function() {
+	if (!apontes.proselefsi)
+	return true;
+
+	if (!apontes.apoxorisi)
+	return true;
+
+	return false;
+};
+
+// Ελέγχουμε για τυχόν προβληματικές άδειες που έχουν περαστεί μόνο στο ένα
+// από τα δύο παρουσιολόγια, ή έχουν συμπληρωμένη ώρα προσέλευσης/αποχώρησης
+// κλπ.
+
+apontes.adiaCheck = function(proselefsi, apoxorisi) {
+	// Εκκινούμε τη διαδικασία διατρέχοντας τις απουσίες προσέλευσης.
+
+	for (let i in proselefsi) {
+		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!proselefsi[i].adidos)
 		continue;
 
-		let dif = false;
+		// Υπάρχει άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
 
-		for (let j in propar[i]) {
-			if (apopar[i][j] != propar[i][j]) {
-				dif = true;
-				break;
-			}
+		if (proselefsi[i].excuse) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση προσέλευσης");
+			continue;
 		}
 
-		if (dif)
-		continue;
+		// Πρόκειται για άδεια. Αν υπάρχει ΚΑΙ ώρα προσέλευσης έχουμε
+		// πρόβλημα.
 
-		for (let j in apopar[i]) {
-			if (apopar[i][j] != propar[i][j]) {
-				dif = true;
-				break;
-			}
+		if (proselefsi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα προσέλευσης");
+			continue;
 		}
 
-		if (dif)
+		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο αποχώρησης
+		// έχουμε πρόβλημα.
+
+		if (!apoxorisi.hasOwnProperty(i)) {
+			apontes.setError(i, "Λείπει η άδεια από το δελτίο αποχώρησης");
+			continue;
+		}
+
+		// Αν η άδεια του δελτίου αποχώρησης είναι διαφορετικού είδους
+		// έχουμε πρόβλημα.
+
+		if (apoxorisi[i].adidos !== proselefsi[i].adidos) {
+			apontes.setError(i, "Διαφορετικό είδος αδείας προσέλευσης/αποχώρησης");
+			continue;
+		}
+
+		if ((apoxorisi[i].adapo !== proselefsi[i].adapo) ||
+			(apoxorisi[i].adeos !== proselefsi[i].adeos)) {
+			apontes.setError(i, "Διαφορετικό διάστημα αδείας προσέλευσης/αποχώρησης");
+			continue;
+		}
+
+		// Η άδεια είναι ταυτόσημη και στα δύο δελτία, οπότε την
+		// διαγράφουμε από το δελτίο αποχώρησης.
+
+		delete apoxorisi[i];
+	}
+
+	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
+
+	for (let i in apoxorisi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
 		continue;
 
-		delete apontes.apopar[i];
+		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!apoxorisi[i].adidos)
+		continue;
+
+		// Εντοπίστηκε άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
+
+		if (apoxorisi[i].excuse) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση αποχώρησης");
+			continue;
+		}
+
+		// Πρόκειται για άδεια. Αν υπάρχει ώρα αποχώρησης έχουμε
+		// πρόβλημα.
+
+		if (apoxorisi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα αποχώρησης");
+			continue;
+		}
+
+		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο προσέλευσης
+		// έχουμε πρόβλημα.
+
+		if (!proselefsi.hasOwnProperty(i)) {
+			apontes.setError(i, "Λείπει η άδεια από το δελτίο προσέλευσης");
+			continue;
+		}
 	}
 
 	return apontes;
 };
+
+// Ελέγχουμε για τυχόν προβληματικές εξαιρέσεις. Κυρίως πρόκειται για
+// εξαιρέσεις που δεν συνοδεύονται από σχετικό επεξηγηματικό σχόλιο.
+
+apontes.exeresiCheck = function(proselefsi, apoxorisi) {
+	// Διατρέχουμε πρώτα τις εξαιρέσεις προσέλευσης.
+
+	for (let i in proselefsi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
+		continue;
+
+		// Αν δεν υπάρχει εξαίρεση προχωρούμε στην επόμενη απουσία.
+
+		if (!proselefsi[i].excuse)
+		continue;
+
+		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα προσέλευσης έχουμε
+		// πρόβλημα.
+
+		if (proselefsi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα προσέλευσης");
+			continue;
+		}
+
+		if (!proselefsi[i].info) {
+			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης προσέλευσης");
+			continue;
+		}
+	}
+
+	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
+
+	for (let i in apoxorisi) {
+		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
+		// περνάμε στην επόμενη απουσία.
+
+		if (apontes.isError(i))
+		continue;
+
+		// Αν δεν πρόκειται για εξαίρεση προχωρούμε στην επόμενη
+		// απουσία.
+
+		if (!apoxorisi[i].excuse)
+		continue;
+
+		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα αποχώρησης έχουμε
+		// πρόβλημα.
+
+		if (apoxorisi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα αποχώρησης");
+			continue;
+		}
+
+		if (!apoxorisi[i].info) {
+			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης αποχώρησης");
+			continue;
+		}
+	}
+
+	return apontes;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 apontes.deltioProcess = function() {
 	let prokat = apontes.prokat;
@@ -366,158 +503,6 @@ apontes.katastasiClass = function(katastasi) {
 	return apontes.katastasiClassMap[katastasi];
 
 	return 'deltioKatastasiEKREMES';
-};
-
-// Ελέγχουμε για τυχόν προβληματικές άδειες που έχουν περαστεί μόνο στο ένα
-// από τα δύο παρουσιολόγια, ή έχουν συμπληρωμένη ώρα προσέλευσης/αποχώρησης
-// κλπ.
-
-apontes.adiaCheck = function(proselefsi, apoxorisi) {
-	// Εκκινούμε τη διαδικασία διατρέχοντας τις απουσίες προσέλευσης.
-
-	for (let i in proselefsi) {
-		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
-		// απουσία.
-
-		if (!proselefsi[i].adidos)
-		continue;
-
-		// Υπάρχει άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
-
-		if (proselefsi[i].excuse) {
-			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση προσέλευσης");
-			continue;
-		}
-
-		// Πρόκειται για άδεια. Αν υπάρχει ώρα προσέλευσης έχουμε
-		// πρόβλημα.
-
-		if (proselefsi[i].meraora) {
-			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα προσέλευσης");
-			continue;
-		}
-
-		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο αποχώρησης
-		// έχουμε πρόβλημα.
-
-		if (!apoxorisi.hasOwnProperty(i)) {
-			apontes.setError(i, "Λείπει η άδεια από το δελτίο αποχώρησης");
-			continue;
-		}
-
-		// Αν η άδεια του δελτίου αποχώρησης είναι διαφορετικού είδους
-		// έχουμε πρόβλημα.
-
-		if (apoxorisi[i].adidos !== proselefsi[i].adidos) {
-			apontes.setError(i, "Διαφορετικό είδος αδείας προσέλευσης/αποχώρησης");
-			continue;
-		}
-	}
-
-	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
-
-	for (let i in apoxorisi) {
-		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
-		// περνάμε στην επόμενη απουσία.
-
-		if (apontes.isError(i))
-		continue;
-
-		// Αν δεν πρόκειται για άδεια προχωρούμε στην επόμενη
-		// απουσία.
-
-		if (!apoxorisi[i].adidos)
-		continue;
-
-		// Εντοπίστηκε άδεια. Αν υπάρχει ΚΑΙ εξαίρεση έχουμε πρόβλημα.
-
-		if (apoxorisi[i].excuse) {
-			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ εξαίρεση αποχώρησης");
-			continue;
-		}
-
-		// Πρόκειται για άδεια. Αν υπάρχει ώρα αποχώρησης έχουμε
-		// πρόβλημα.
-
-		if (apoxorisi[i].meraora) {
-			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα αποχώρησης");
-			continue;
-		}
-
-		// Αν δεν υπάρχει αντίστοιχη άδεια στο δελτίο προσέλευσης
-		// έχουμε πρόβλημα.
-
-		if (!proselefsi.hasOwnProperty(i)) {
-			apontes.setError(i, "Λείπει η άδεια από το δελτίο προσέλευσης");
-			continue;
-		}
-	}
-
-	return apontes;
-};
-
-// Ελέγχουμε για τυχόν προβληματικές εξαιρέσεις. Κυρίως πρόκειται για
-// εξαιρέσεις που δεν συνοδεύονται από σχετικό επεξηγηματικό σχόλιο.
-
-apontes.exeresiCheck = function(proselefsi, apoxorisi) {
-	// Διατρέχουμε πρώτα τις εξαιρέσεις προσέλευσης.
-
-	for (let i in proselefsi) {
-		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
-		// περνάμε στην επόμενη απουσία.
-
-		if (apontes.isError(i))
-		continue;
-
-		// Αν δεν υπάρχει εξαίρεση προχρούμε στην επόμενη απουσία.
-
-		if (!proselefsi[i].excuse)
-		continue;
-
-		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα προσέλευσης έχουμε
-		// πρόβλημα.
-
-		if (proselefsi[i].meraora) {
-			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα προσέλευσης");
-			continue;
-		}
-
-		if (!proselefsi[i].info) {
-			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης προσέλευσης");
-			continue;
-		}
-	}
-
-	// Τώρα διατρέχουμε τις απουσίες της αποχώρησης.
-
-	for (let i in apoxorisi) {
-		// Αν έχει ήδη παρατηρηθεί σφάλμα για τον ανά χείρας υπάλληλο,
-		// περνάμε στην επόμενη απουσία.
-
-		if (apontes.isError(i))
-		continue;
-
-		// Αν δεν πρόκειται για εξαίρεση προχωρούμε στην επόμενη
-		// απουσία.
-
-		if (!apoxorisi[i].excuse)
-		continue;
-
-		// Πρόκειται για εξαίρεση. Αν υπάρχει ώρα αποχώρησης έχουμε
-		// πρόβλημα.
-
-		if (apoxorisi[i].meraora) {
-			apontes.setError(i, "Εντοπίστηκε εξαίρεση ΚΑΙ ώρα αποχώρησης");
-			continue;
-		}
-
-		if (!apoxorisi[i].info) {
-			apontes.setError(i, "Ελλειπείς πληροφορίες εξαίρεσης αποχώρησης");
-			continue;
-		}
-	}
-
-	return apontes;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
