@@ -119,7 +119,7 @@ apontes.selidaSetup = () => {
 	// προς έλεγχο δελτίο θα ελεγχθεί και το συμπληρωματικό δελτίο.
 
 	$.post({
-		'url': 'apontesGet.php',
+		'url': 'apontes.php',
 		'data': {
 			"deltio": deltio,
 		},
