@@ -27,6 +27,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-28
 // Updated: 2024-11-27
 // Updated: 2024-11-25
 // Updated: 2024-11-23
@@ -452,6 +453,17 @@ class Apontes {
 				$row["adapo"] = $deltio->imerominia;
 				$row["adeos"] = $deltio->imerominia;
 				self::parousia_push($row, $deltio);
+			}
+
+			// ΔΕΝ έχει καθοριστεί άδεια, ΔΕΝ έχει καθοριστεί
+			// εξαίρεση και υπάρχει συμπληρωμένη μέρα και ώρα.
+			// Αν υπάρχει παρατήρηση, τότε αυτή μάλλο αφορά σε
+			// ενδιάμεση απουσία, π.χ. γονική σχολικής επίδοσης
+			// από 10:00 μέχρι 12:00.
+
+			if ($row["info"]) {
+				self::parousia_push($row, $deltio);
+				continue;
 			}
 		}
 
