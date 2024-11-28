@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-28
 // Updated: 2023-10-15
 // Updated: 2023-10-13
 // Updated: 2022-12-13
@@ -80,9 +81,6 @@ document_body();
 				Ημερομηνία
 			</label>
 			<input id="peDeltioImerominia" class="peDeltioPedio">
-			<label for="peDeltioProsapo">
-				Είδος
-			</label>
 			<div id="peDeltioProsapo" class="deltioProsapo">
 			</div>
 		</div>
@@ -91,14 +89,12 @@ document_body();
 				Υπηρεσία
 			</label>
 			<input id="peDeltioIpiresia" class="peDeltioPedio">
-			</textarea>
 		</div>
 		<div class="formaInputLine" id="peDeltioDiefSection">
 			<label for="peDeltioDief">
 				Διεύθυνση
 			</label>
 			<input id="peDeltioDief" class="peDeltioPedio">
-			</textarea>
 		</div>
 	</div>
 

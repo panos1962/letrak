@@ -2941,6 +2941,12 @@ prosopa.editorIpovoli = (e) => {
 		return false;
 	}
 
+	if (prosopa.gonikiCheck()) {
+		pnd.fyiError('Συμπληρώστε παρατήρηση της μορφής: ΑΠΟ ΩΩ:ΛΛ ΜΕΧΡΙ ΩΩ:ΛΛ');
+		prosopa.editorInfoDOM.focus();
+		return false;
+	}
+
 	try {
 	$.post({
 		'url': 'parousiaIpovoli.php',
@@ -2984,6 +2990,34 @@ prosopa.editorIpovoli = (e) => {
 	} catch (e) {
 		console.error(e);
 		return false;
+	}
+
+	return false;
+};
+
+prosopa.gonikiCheck = function() {
+	let exeresi = prosopa.editorExcuseDOM.val();
+
+	if (exeresi !== 'ΓΟΝΙΚΗ')
+	return false;
+
+	let sxolio = prosopa.editorInfoDOM.val();
+
+	let t = sxolio.split(/[ ]+/);
+
+	switch (t[0]) {
+	case 'ΑΠΟ':
+		break;
+	default:
+		return true;
+	}
+
+	switch (t[2]) {
+	case 'ΜΕΧΡΙ':
+	case 'ΕΩΣ':
+		break;
+	default:
+		return true;
 	}
 
 	return false;
