@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-11-30
 // Updated: 2024-11-28
 // Updated: 2023-10-15
 // Updated: 2023-10-13
@@ -152,6 +153,9 @@ prosopa.minima = {
 
 	'diaforesTabLabel': '&#9775;',
 	'diaforesTitle': 'Εντοπισμός διαφορών με προηγούμενο παρουσιολόγιο',
+
+	'diastimaApo': 'ΑΠΟ',
+	'diastimaEos': 'ΜΕΧΡΙ',
 };
 
 // Αν η σελίδα έχει εκκινήσει από τη σελίδα διαχείρισης παρουσιολογίων, τότε
@@ -2943,7 +2947,13 @@ prosopa.editorIpovoli = (e) => {
 	}
 
 	if (prosopa.gonikiCheck()) {
-		pnd.fyiError('Συμπληρώστε παρατήρηση της μορφής: ΑΠΟ ΩΩ:ΛΛ ΜΕΧΡΙ ΩΩ:ΛΛ');
+		pnd.fyiError('Συμπληρώστε παρατήρηση της μορφής: ' +
+			'<span style="color: blue;">' +
+			prosopa.minima['diastimaApo'] + ' ΩΩ:ΛΛ ' +
+			prosopa.minima['diastimaEos'] + ' ΩΩ:ΛΛ' +
+			'</span>, ή πιο απλά: <span style="color: blue;">' +
+			'ΩΩΛΛ ΩΩΛΛ</span>, π.χ. <span style="color: blue;">' +
+			'0730 1000</span>');
 		prosopa.editorInfoDOM.focus();
 		return false;
 	}
@@ -2996,6 +3006,9 @@ prosopa.editorIpovoli = (e) => {
 	return false;
 };
 
+// Η function "gonikiCheck" ελέγχει την καταχώρηση γονικής εξαίρεσης όσον
+// αφορά στο χρονκό διάστημα που ΠΡΕΠΕΙ να τίθεται ως σχόλιο.
+
 prosopa.gonikiCheck = function() {
 	let exeresi = prosopa.editorExcuseDOM.val();
 
@@ -3004,7 +3017,21 @@ prosopa.gonikiCheck = function() {
 
 	let sxolio = prosopa.editorInfoDOM.val();
 
+	// Ελέγχουμε αν δόθηκε σχόλιο σε μορφή ωραρίου, π.χ. "07:30-10:00",
+	// ή "730 1000" κλπ.
+
+	let apoEos = new letrak.orario(sxolio);
+
+	if (apoEos.isOrario())
+	return prosopa.gonikiSxolioFix(apoEos);
+
+	// ΔΕΝ δόθηκε σχόλιο σε μορφή ωραρίου. Ελέγχουμε μήπως έχει δοθεί
+	// το διάστημα αναλυτικά.
+
 	let t = sxolio.split(/[ ]+/);
+
+	if (t.length !== 4)
+	return true;
 
 	switch (t[0]) {
 	case 'ΑΠΟ':
@@ -3020,6 +3047,41 @@ prosopa.gonikiCheck = function() {
 	default:
 		return true;
 	}
+
+	// Φαίνεται να έχει δοθεί το διάστημα αναλυτικά, επομένως πρέπει να
+	// ελέγξουμε τις ώρες αρχής και τέλους του χρονικού  διαστήματος.
+
+	apoEos = new letrak.orario(t[1] + ' ' + t[3]);
+
+	if (apoEos.isOrario())
+	return prosopa.gonikiSxolioFix(apoEos);
+
+	return true;
+};
+
+// Η function "gonikiSxolioFix" δέχεται ως παράμετρο ένα χρονικό διάστημα,
+// και αφού ελέγξει το διάστημα το θέτει ως σχόλιο γονικής εξαίρεσης.
+
+prosopa.gonikiSxolioFix = function(apoEos) {
+	let sapo = apoEos.apoGet();
+	let seos = apoEos.eosGet();
+
+	let apo = new letrak.oralepto(sapo);
+	let eos = new letrak.oralepto(seos);
+
+	let apoOra = apo.oraGet();
+	let eosOra = eos.oraGet();
+
+	if (apoOra > eosOra)
+	return true;
+
+	if ((apoOra === eosOra) && (apo.leptoGet() >= eos.leptoGet()))
+	return true;
+
+	let sxolio =
+		prosopa.minima['diastimaApo'] + ' ' + sapo + ' ' +
+		prosopa.minima['diastimaEos'] + ' ' + seos;
+	prosopa.editorInfoDOM.val(sxolio);
 
 	return false;
 };
