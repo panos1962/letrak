@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2024-12-02
 * Updated: 2024-11-25
 * Updated: 2024-11-24
 * Updated: 2024-11-22
@@ -246,6 +247,30 @@ $ipalilosDataWidth = 20em
 
 .sxolioMono
 	font-style italic
+
+/******************************************************************************/
+
+#sintaktis
+	text-align right
+	font-style italic
+	color: #1010a3
+	> div
+		display inline-block
+		padding-right 8px
+
+#sintaktisOnomateponimo
+	&:before
+		content 'Συντάκτης:'
+		margin-right 4px
+		color #454545
+
+#sintaktisTilefono
+	font-weight bold
+	&:before
+		content 'Τηλέφωνο:'
+		margin-right 4px
+		font-weight normal
+		color #454545
 
 /******************************************************************************/
 

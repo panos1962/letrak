@@ -27,6 +27,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-12-02
 // Updated: 2024-11-28
 // Updated: 2024-11-27
 // Updated: 2024-11-25
@@ -64,6 +65,7 @@ prosvasi_check()::
 deltio_aponton()::
 ipalilos_fetch()::
 metadata_fetch()::
+sintaktis_fetch()::
 apontes_print();
 
 ///////////////////////////////////////////////////////////////////////////////@
@@ -133,6 +135,11 @@ class Apontes {
 
 	private static $ilist;
 
+	// Ακολουθούθν τα στοιχεία του συντάκτη των παρουσιολογίων.
+
+	private static $sintaktis;
+	private static $tilefono;
+
 	// Η μέθοδος "init" επιτελεί αρχικοποίηση τιμών του singleton
 	// "Apontes".
 
@@ -148,6 +155,8 @@ class Apontes {
 		self::$ilist = [];
 		self::$die = "";
 		self::$tmi = "";
+		self::$sintaktis = "";
+		self::$tilefono = "";
 
 		return __CLASS__;
 	}
@@ -487,6 +496,50 @@ class Apontes {
 
 	///////////////////////////////////////////////////////////////////////@
 
+	// Παίρνουμε τα στοιχεία του συντάκτη των παρουσιολογίων με σκοπό να
+	// εμφανίσουμε το τηλέφωνο επικοινωνίας.
+
+	public static function sintaktis_fetch() {
+		if (self::$apo)
+		$deltio = self::$apo;
+
+		else if (self::$pro)
+		$deltio = self::$pro;
+
+		else
+		return __CLASS__;
+
+		$query = "SELECT `armodios` FROM `letrak`.`ipografi`" .
+			" WHERE (`deltio` = " . $deltio . ")" .
+			" AND (`taxinomisi` = 1)";
+
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if (!$row)
+		return __CLASS__;
+
+		$ipalilos = $row[0];
+
+		$query = "SELECT `tilefono` FROM `erpota`.`prosvasi`" .
+			" WHERE `ipalilos` = " . $ipalilos;
+
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if ($row)
+		self::$tilefono = $row[0];
+
+		$query = "SELECT `eponimo`, `onoma`" .
+			" FROM " . letrak::erpota12("ipalilos") .
+			" WHERE `kodikos` = " . $ipalilos;
+
+		$row = pandora::first_row($query, MYSQLI_NUM);
+
+		if ($row)
+		self::$sintaktis = $row[0] . " " . $row[1];
+
+		return __CLASS__;
+	}
+
 	// Εμπλουτίζουμε τη λίστα των υπαλλήλων που παρουσιάζουν απουσία με
 	// τα ονομαστικά τους στοιχεία.
 
@@ -516,6 +569,8 @@ class Apontes {
 		'"apoxorisi":' . pandora::json_string(self::$apo) . ',' .
 		'"apokat":' . pandora::json_string(self::$apokat) . ',' .
 		'"apopar":' . pandora::json_string(self::$apopar) . ',' .
+		'"sintaktis":' . pandora::json_string(self::$sintaktis) . ',' .
+		'"tilefono":' . pandora::json_string(self::$tilefono) . ',' .
 		'"ipalilos":' . pandora::json_string(self::$ilist) .
 		'}';
 

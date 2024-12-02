@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2024-12-02
 // Updated: 2024-11-27
 // Updated: 2024-11-26
 // Updated: 2024-11-25
@@ -159,6 +160,9 @@ apontes.apontesProcess = (rsp) => {
 	apontes.apoxorisi = rsp.apoxorisi;	// κωδικός δελτίου αποχώρησης
 	apontes.apokat = rsp.apokat;		// κατάσταση δελτίου αποχώρησης
 	apontes.apopar = rsp.apopar;		// απουσίες δελτίου αποχώρησης
+
+	apontes.sintaktis = rsp.sintaktis;	// ονοματεπώνυμο συντάκτη
+	apontes.tilefono = rsp.tilefono;	// τηλέφωνο επικοινωνίας
 
 	apontes.ipalilos = rsp.ipalilos;	// λίστα απόντων υπαλλήλων
 
@@ -481,17 +485,32 @@ apontes.deltioProcess = function() {
 	}).addClass(katastasiClass).
 	text(apontes.proselefsi));
 
-	if (!apontes.apoxorisi)
-	return apontes;
+	if (apontes.apoxorisi) {
+		katastasiClass = apontes.katastasiClass(apokat);
 
-	katastasiClass = apontes.katastasiClass(apokat);
+		deltioDOM.
+		append($('<div>').attr({
+			"id": "deltioApoxorisi",
+			"title": apokat
+		}).addClass(katastasiClass).
+		text(apontes.apoxorisi));
+	}
 
-	deltioDOM.
-	append($('<div>').attr({
-		"id": "deltioApoxorisi",
-		"title": apokat
-	}).addClass(katastasiClass).
-	text(apontes.apoxorisi));
+	let sintaktisDOM = $('<div>').
+	attr('id', 'sintaktis').
+	appendTo(apontes.deltioAreaDOM);
+
+	if (apontes.sintaktis)
+	sintaktisDOM.
+	append($('<div>').
+	attr('id', 'sintaktisOnomateponimo').
+	text(apontes.sintaktis));
+
+	if (apontes.tilefono)
+	sintaktisDOM.
+	append($('<div>').
+	attr('id', 'sintaktisTilefono').
+	text(apontes.tilefono));
 
 	return apontes;
 };
