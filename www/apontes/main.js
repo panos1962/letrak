@@ -496,6 +496,16 @@ apontes.deltioProcess = function() {
 		text(apontes.apoxorisi));
 	}
 
+	apontes.sintaktisProcess();
+
+	return apontes;
+};
+
+// Η function "sintaktisProcess" εμφανίζει τα στοιχεία του συντάκτη στο κάτω
+// μέρος της επάνω περιοχής τής σελίδας, όπου εμφανίζουμε τα στοιχεία των
+// παρουσιολογίων ενδιαφέροντος.
+
+apontes.sintaktisProcess = function() {
 	let sintaktisDOM = $('<div>').
 	attr('id', 'sintaktis').
 	appendTo(apontes.deltioAreaDOM);
