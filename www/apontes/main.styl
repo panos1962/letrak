@@ -16,6 +16,7 @@
 * @FILE END
 *
 * @HISTORY BEGIN
+* Updated: 2024-12-03
 * Updated: 2024-12-02
 * Updated: 2024-11-25
 * Updated: 2024-11-24
@@ -42,6 +43,7 @@
 /******************************************************************************/
 
 #deltioArea
+	position relative
 	text-align center
 	background-color #d1dbb7
 	border-style none none double none
@@ -251,27 +253,29 @@ $ipalilosDataWidth = 20em
 /******************************************************************************/
 
 #sintaktis
+	position absolute
+	bottom 0
+	left 0
+	width 10em
+	padding 2px
+	overflow-x hidden
 	text-align left
+	white-space nowrap
 	font-style italic
 	color: #1010a3
+	background-color #f5da76
+	border-style solid
+	border-width 1px
+	border-color #000
+	border-radius 0 8px 0 0
 	> div
-		display inline-block
-		padding-right 8px
-		background-color #f5da76
+		display block
 
 #sintaktisOnomateponimo
-	&:before
-		content 'Συντάκτης:'
-		margin-right 4px
-		color #454545
+	font-size 80%
 
 #sintaktisTilefono
 	font-weight bold
-	&:before
-		content 'Τηλέφωνο:'
-		margin-right 4px
-		font-weight normal
-		color #454545
 
 /******************************************************************************/
 
