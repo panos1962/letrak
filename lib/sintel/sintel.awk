@@ -1,9 +1,56 @@
+#!/usr/bin/env awk -f
+
+###############################################################################@
+#
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2020 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# awk
+# @FILETYPE END
+#
+# @FILE BEGIN
+# lib/sintel.awk —— Εντοπισμός συντακτών χωρίς τηλέφωνο επικοινωνίας
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# Το παρόν πρόγραμμα καλείται μέσω του προγράμματος "sintel.sh" και σκοπό
+# έχει τον εντοπισμό συντακτών δελτίων των τελευταίων ημερών, οι οποίοι
+# δεν έχουν καταχωρημένο τηλέφωνο επικοινωνίας.
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2024-12-04
+# @HISTORY END
+#
+# @END
+#
+###############################################################################@
+
 @load "spawk"
 
 BEGIN {
 	FS = "\t"
 
+	init()
+	select_deltio()
+
+	exit(0)
+}
+
+function init(			serem, nok, err) {
+	serem = meres + 0
+
+	if (serem <= 0) {
+		print progname ": " meres ": invalid days" >"/dev/stderr"
+		exit(1)
+	}
+
 	nok = 1
+
 	while ((err = (getline <sesamidb)) > 0) {
 		spawk_sesami["dbuser"] = $1
 		spawk_sesami["dbpassword"] = $2
@@ -19,22 +66,25 @@ BEGIN {
 	}
 
 	spawk_sesami["charset"] = "utf8"
-
 	select_ipiresia()
-	select_deltio()
-
-	exit(0)
 }
+
+# Η function "select_eltio" επιλέγει όλα τα δελτία των τελευταίων ημερών.
+# Ως τελευταίες ημέρες λογίζονται οι ημέρες με βάση τη σημερινή ημερομηνία
+# και την παράμετερο "meres".
 
 function select_deltio(				query, deltio) {
 	query = "SELECT `kodikos`, `imerominia`, `perigrafi`, `ipiresia` " \
 		"FROM `letrak`.`deltio` " \
-		"WHERE `imerominia` > DATE_SUB(NOW(), INTERVAL 35 DAY)"
+		"WHERE `imerominia` > DATE_SUB(NOW(), INTERVAL " meres " DAY)"
 	spawk_submit(query, "ASSOC")
 
 	while (spawk_fetchrow(deltio))
 	process_deltio(deltio)
 }
+
+# Η function "process_deltio" δέχεται ως παράμετρο μια εγγραφή δελτίου και
+# επιλέγει τον πρώτο υπογράφοντα που είναι και ο συντάκτης του δελτίου.
 
 function process_deltio(deltio,			query, sintaktis) {
 	query = "SELECT `armodios` " \
@@ -47,6 +97,10 @@ function process_deltio(deltio,			query, sintaktis) {
 	process_sintaktis(deltio, sintaktis[1])
 }
 
+# Η function "process_sintaktis" δέχεται ως παραμέτρους μια εγγραφή δελτίου
+# και τον κωδικό του συντάκτη (ως υπαλλήλου) και επιλέγει το τηλέφωνο
+# επικοινωνίας που είναι καταχωρημένο στον πίνακα των προσβάσεων.
+
 function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 	query = "SELECT `tilefono` " \
 		"FROM `erpota`.`prosvasi` " \
@@ -54,12 +108,16 @@ function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 	spawk_submit(query)
 
 	while (spawk_fetchrow(prosvasi)) {
-		if (prosvasi[1])
-		continue
-
+		if (!prosvasi[1])
 		print_sintaktis(deltio, sintaktis)
 	}
 }
+
+# Η function "print_sintaktis" καλείται για τυς συντάκτες που δεν έχουν
+# καταχωρημένο τηλέφωνο επικοινωνίας, και δέχεται ως παραμέτρους μια εγγραφή
+# δελτίου και των κωδικό του συντάκτη, με σκοπό να εκτυπώσει τα στοιχεία τού
+# δελτίου και του συντάκτη ώστε να τον αναζητήσουμε και να καταχωρήσουμε
+# κάποιο τηλέφωνο επικοινωνίας.
 
 function print_sintaktis(deltio, sintaktis,		die, tmi, query, ipalilos) {
 	die = ipiresia[substr(deltio["ipiresia"], 0, 3)]
@@ -83,6 +141,9 @@ function print_sintaktis(deltio, sintaktis,		die, tmi, query, ipalilos) {
 		print ""
 	}
 }
+
+# Η function "select_ipiresia" σαρώνει τον πίνακα υπηρεσιών και δημιουργεί
+# λίστα υπηρεσιών δεικτοδοτημένη με τον κωδικό υπηρεσίας.
 
 function select_ipiresia(			query, row) {
 	query = "SELECT `kodikos`, `perigrafi` FROM `erpota1`.`ipiresia`"
