@@ -20,19 +20,74 @@ BEGIN {
 
 	spawk_sesami["charset"] = "utf8"
 
+	select_ipiresia()
 	select_deltio()
 
 	exit(0)
 }
 
 function select_deltio(				query, deltio) {
-	query = "SELECT `kodikos`, `imerominia` FROM `letrak`.`deltio` " \
+	query = "SELECT `kodikos`, `imerominia`, `perigrafi`, `ipiresia` " \
+		"FROM `letrak`.`deltio` " \
 		"WHERE `imerominia` > DATE_SUB(NOW(), INTERVAL 35 DAY)"
-print query
+	spawk_submit(query, "ASSOC")
+
+	while (spawk_fetchrow(deltio))
+	process_deltio(deltio)
+}
+
+function process_deltio(deltio,			query, sintaktis) {
+	query = "SELECT `armodios` " \
+		"FROM `letrak`.`ipografi` " \
+		"WHERE (`deltio` = " deltio["kodikos"] ") " \
+		"AND (`taxinomisi` = 1)"
+	spawk_submit(query)
+
+	while (spawk_fetchrow(sintaktis))
+	process_sintaktis(deltio, sintaktis[1])
+}
+
+function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
+	query = "SELECT `tilefono` " \
+		"FROM `erpota`.`prosvasi` " \
+		"WHERE `ipalilos` = " sintaktis
+	spawk_submit(query)
+
+	while (spawk_fetchrow(prosvasi)) {
+		if (prosvasi[1])
+		continue
+
+		print_sintaktis(deltio, sintaktis)
+	}
+}
+
+function print_sintaktis(deltio, sintaktis,		die, tmi, query, ipalilos) {
+	die = ipiresia[substr(deltio["ipiresia"], 0, 3)]
+	tmi = ipiresia[substr(deltio["ipiresia"], 0, 7)]
+
+	query = "SELECT `kodikos`, `eponimo`, `onoma`, `patronimo` " \
+		"FROM `erpota1`.`ipalilos` " \
+		"WHERE `kodikos` = " sintaktis
+	spawk_submit(query)
+
+	while (spawk_fetchrow(ipalilos, 0)) {
+		print ipalilos[0]
+		print deltio["perigrafi"]
+
+		if (die)
+		print die
+
+		if ((tmi != die) && (tmi != deltio["perigrafi"]))
+		print tmi
+
+		print ""
+	}
+}
+
+function select_ipiresia(			query, row) {
+	query = "SELECT `kodikos`, `perigrafi` FROM `erpota1`.`ipiresia`"
 	spawk_submit(query)
 
 	while (spawk_fetchrow(row))
-	print row[1], row[2]
-
-	exit(0)
+	ipiresia[row[1]] = row[2]
 }
