@@ -141,7 +141,7 @@ function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
 		if (die)
 		print die
 
-		if ((tmi != die) && (tmi != deltio["perigrafi"]))
+		if (tmi && (tmi != die) && (tmi != deltio["perigrafi"]))
 		print tmi
 
 		print ""
