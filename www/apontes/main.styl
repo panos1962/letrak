@@ -258,7 +258,6 @@ $ipalilosDataWidth = 20em
 	left 0
 	width 10em
 	padding 2px
-	overflow-x hidden
 	text-align left
 	white-space nowrap
 	font-style italic
@@ -269,9 +268,11 @@ $ipalilosDataWidth = 20em
 	border-color #000
 	border-radius 0 8px 0 0
 	&:hover
-		width 20em
+		width auto
 	> div
 		display block
+		overflow-x hidden
+		text-overflow ellipsis
 
 #sintaktisOnomateponimo
 	font-size 80%
