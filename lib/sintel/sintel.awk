@@ -23,6 +23,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2024-12-05
 # Created: 2024-12-04
 # @HISTORY END
 #
@@ -65,7 +66,7 @@ function init(			serem, nok, err) {
 		exit(1)
 	}
 
-	spawk_sesami["charset"] = "utf8"
+	spawk_sesami["dbcharset"] = "utf8"
 	select_ipiresia()
 }
 
