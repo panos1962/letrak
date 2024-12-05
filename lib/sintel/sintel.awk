@@ -103,6 +103,11 @@ function process_deltio(deltio,			query, sintaktis) {
 # επικοινωνίας που είναι καταχωρημένο στον πίνακα των προσβάσεων.
 
 function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
+	sincount[sintaktis]++
+
+	if (sincount[sintaktis] > 1)
+	return
+
 	query = "SELECT `tilefono` " \
 		"FROM `erpota`.`prosvasi` " \
 		"WHERE `ipalilos` = " sintaktis
@@ -110,7 +115,7 @@ function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 
 	while (spawk_fetchrow(prosvasi)) {
 		if (!prosvasi[1])
-		print_sintaktis(deltio, sintaktis)
+		print_sintaktis(sintaktis, deltio)
 	}
 }
 
@@ -120,7 +125,7 @@ function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 # δελτίου και του συντάκτη ώστε να τον αναζητήσουμε και να καταχωρήσουμε
 # κάποιο τηλέφωνο επικοινωνίας.
 
-function print_sintaktis(deltio, sintaktis,		die, tmi, query, ipalilos) {
+function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
 	die = ipiresia[substr(deltio["ipiresia"], 0, 3)]
 	tmi = ipiresia[substr(deltio["ipiresia"], 0, 7)]
 
