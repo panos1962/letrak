@@ -34,8 +34,6 @@
 @load "spawk"
 
 BEGIN {
-	FS = "\t"
-
 	init()
 	select_deltio()
 
@@ -50,6 +48,7 @@ function init(			serem, nok, err) {
 		exit(1)
 	}
 
+	FS = "\t"
 	nok = 1
 
 	while ((err = (getline <sesamidb)) > 0) {
@@ -70,7 +69,7 @@ function init(			serem, nok, err) {
 	select_ipiresia()
 }
 
-# Η function "select_eltio" επιλέγει όλα τα δελτία των τελευταίων ημερών.
+# Η function "select_deltio" επιλέγει όλα τα δελτία των τελευταίων ημερών.
 # Ως τελευταίες ημέρες λογίζονται οι ημέρες με βάση τη σημερινή ημερομηνία
 # και την παράμετερο "meres".
 
@@ -84,7 +83,7 @@ function select_deltio(				query, deltio) {
 	process_deltio(deltio)
 }
 
-# Η function "process_deltio" δέχεται ως παράμετρο μια εγγραφή δελτίου και
+# Η function "process_deltio" δέχεται ως παράμετρο ένα record δελτίου και
 # επιλέγει τον πρώτο υπογράφοντα που είναι και ο συντάκτης του δελτίου.
 
 function process_deltio(deltio,			query, sintaktis) {
@@ -98,12 +97,20 @@ function process_deltio(deltio,			query, sintaktis) {
 	process_sintaktis(deltio, sintaktis[1])
 }
 
-# Η function "process_sintaktis" δέχεται ως παραμέτρους μια εγγραφή δελτίου
+# Η function "process_sintaktis" δέχεται ως παραμέτρους ένα record δελτίου
 # και τον κωδικό του συντάκτη (ως υπαλλήλου) και επιλέγει το τηλέφωνο
-# επικοινωνίας που είναι καταχωρημένο στον πίνακα των προσβάσεων.
+# επικοινωνίας που είναι καταχωρημένο στον πίνακα "prosvasi" της database
+# "erpota".
 
 function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
+	# Η global λίστα "sincount" δεικτοδοτείται με τον κωδικό συντάκτη
+	# και σκοπό έχει την αποφυγή της εκτύπωσης του ιδίου συντάκτη
+	# περισσότερες από μία φορές.
+
 	sincount[sintaktis]++
+
+	# Αν έχουμε ήδη συναντήσει τον ανά χείρας συντάκτη, δεν προχωρούμε
+	# σε εκτύπωση των στοιχείων του καθώς αυτά έχουν ήδη εκτυπωθεί.
 
 	if (sincount[sintaktis] > 1)
 	return
@@ -120,7 +127,7 @@ function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 }
 
 # Η function "print_sintaktis" καλείται για τυς συντάκτες που δεν έχουν
-# καταχωρημένο τηλέφωνο επικοινωνίας, και δέχεται ως παραμέτρους μια εγγραφή
+# καταχωρημένο τηλέφωνο επικοινωνίας, και δέχεται ως παραμέτρους ένα record
 # δελτίου και των κωδικό του συντάκτη, με σκοπό να εκτυπώσει τα στοιχεία τού
 # δελτίου και του συντάκτη ώστε να τον αναζητήσουμε και να καταχωρήσουμε
 # κάποιο τηλέφωνο επικοινωνίας.
@@ -148,8 +155,9 @@ function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
 	}
 }
 
-# Η function "select_ipiresia" σαρώνει τον πίνακα υπηρεσιών και δημιουργεί
-# λίστα υπηρεσιών δεικτοδοτημένη με τον κωδικό υπηρεσίας.
+# Η function "select_ipiresia" καλείται μία φορά στην αρχή του προγράμματος.
+# Η function σαρώνει τον πίνακα υπηρεσιών δημιουργώντας global λίστα υπηρεσιών
+# δεικτοδοτημένη με τον κωδικό υπηρεσίας.
 
 function select_ipiresia(			query, row) {
 	query = "SELECT `kodikos`, `perigrafi` FROM `erpota1`.`ipiresia`"

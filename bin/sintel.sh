@@ -16,11 +16,14 @@
 #
 # @DESCRIPTION BEGIN
 # Το παρόν πρόγραμμα επιλέγει τα νέα παρουσιολόγια (by default επιλέγονται
-# τα παρουσιολόγια των τελευταίων ημερών) και εκτυπώνει τους συντάκτες που
-# δεν έχουν δηλωμένο τηλέφωνο επικοινωνίας.
+# τα παρουσιολόγια των τελευταίων επτά ημερών) και εκτυπώνει τους συντάκτες
+# που δεν έχουν δηλωμένο τηλέφωνο επικοινωνίας. Θυμίζουμε ότι το τηλέφωνο
+# επικοινωνίας δηλώνεται στον πίνακα "prosvasi" της database "erpota" τη
+# στιγμή που καταχωρούμε δικαίωμα ενημέρωσης (update) για κάποιον υπάλληλο.
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2024-12-08
 # Created: 2024-12-04
 # @HISTORY END
 #
@@ -69,10 +72,8 @@ export LETRAK_BASEDIR="/var/opt/letrak"
 
 sesamidb="${PANDORA_BASEDIR}/private/sesamidb"
 
-awk \
+exec awk \
 -v progname="${progname}" \
 -v sesamidb="${sesamidb}" \
 -v meres="${meres}" \
 -f "${LETRAK_BASEDIR}/lib/sintel/sintel.awk"
-
-exit 0
