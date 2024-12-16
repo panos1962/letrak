@@ -23,6 +23,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2024-12-16
 # Updated: 2024-12-05
 # Created: 2024-12-04
 # @HISTORY END
@@ -43,8 +44,21 @@ BEGIN {
 function init(			serem, nok, err) {
 	serem = meres + 0
 
+	# Αν το πρόγραμμα τρέχει με αποδέκτη μέσω email, επανακτευθύνουμε
+	# και τυχόν λάθη στο standard output προκειμένου να παραληφθούν
+	# από τον παραλήπτη.
+
+	if (mail) {
+		errout = "/dev/stdout"
+	}
+
+	else {
+		errout = "/dev/stderr"
+		ORS = "<br>"
+	}
+
 	if (serem <= 0) {
-		print progname ": " meres ": invalid days" >"/dev/stderr"
+		print progname ": " meres ": invalid days" >errout
 		exit(1)
 	}
 
@@ -61,7 +75,7 @@ function init(			serem, nok, err) {
 	close(sesamidb)
 
 	if (nok) {
-		print progname ": " sesamidb ": cannot read file" >"/dev/stderr"
+		print progname ": " sesamidb ": cannot read file" >errout
 		exit(1)
 	}
 

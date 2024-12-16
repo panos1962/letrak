@@ -90,6 +90,7 @@ awk \
 -v progname="${progname}" \
 -v sesamidb="${sesamidb}" \
 -v meres="${meres}" \
+-v mail="${email}" \
 -f "${LETRAK_BASEDIR}/lib/sintel/sintel.awk" >"${tmp1}"
 
 [ -s ${tmp1} ] || cleanup 0
