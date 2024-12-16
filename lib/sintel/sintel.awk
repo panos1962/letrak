@@ -157,6 +157,7 @@ function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
 
 	while (spawk_fetchrow(ipalilos, 0)) {
 		print ipalilos[0]
+		print deltio["ipiresia"]
 		print deltio["perigrafi"]
 
 		if (die)
