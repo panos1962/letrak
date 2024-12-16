@@ -50,11 +50,11 @@ function init(			serem, nok, err) {
 
 	if (mail) {
 		errout = "/dev/stdout"
+		ORS = "<br>"
 	}
 
 	else {
 		errout = "/dev/stderr"
-		ORS = "<br>"
 	}
 
 	if (serem <= 0) {
