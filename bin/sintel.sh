@@ -23,6 +23,7 @@
 # @DESCRIPTION END
 #
 # @HISTORY BEGIN
+# Updated: 2024-12-16
 # Updated: 2024-12-08
 # Created: 2024-12-04
 # @HISTORY END
@@ -38,12 +39,16 @@ usage() {
 
 errs=
 meres=7
+email=
 
-while getopts ":d:" opt
+while getopts ":d:m:" opt
 do
 	case "${opt}" in
 	d)
 		meres="${OPTARG}"
+		;;
+	m)
+		email="${OPTARG}"
 		;;
 	\:)
 		echo "${progname}: -${OPTARG}: missing argument" >&2
@@ -72,8 +77,33 @@ export LETRAK_BASEDIR="/var/opt/letrak"
 
 sesamidb="${PANDORA_BASEDIR}/private/sesamidb"
 
-exec awk \
+tmp1="/tmp/$$st1"
+
+cleanup() {
+	rm -f "${tmp1}"
+	[ $# -gt 0 ] && exit $1
+}
+
+trap "cleanup; exit 2" 1 2 3 15
+
+awk \
 -v progname="${progname}" \
 -v sesamidb="${sesamidb}" \
 -v meres="${meres}" \
--f "${LETRAK_BASEDIR}/lib/sintel/sintel.awk"
+-f "${LETRAK_BASEDIR}/lib/sintel/sintel.awk" >"${tmp1}"
+
+[ -s ${tmp1} ] || cleanup 0
+
+if [ -n "${email}" ]; then
+	pd_sendmail \
+		-f "no-reply@thessaloniki.gr" \
+		-t "${email}" \
+		-s "Συντάκτες παρουσιολογίων χωρίς τηλέφωνα επικοινωνίας" \
+		"${tmp1}"
+	err="${?}"
+	cleanup "${err}"
+fi
+
+cat "${tmp1}"
+err="${?}"
+cleanup "${err}"
