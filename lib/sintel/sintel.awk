@@ -146,7 +146,10 @@ function process_sintaktis(deltio, sintaktis,		query, prosvasi) {
 # δελτίου και του συντάκτη ώστε να τον αναζητήσουμε και να καταχωρήσουμε
 # κάποιο τηλέφωνο επικοινωνίας.
 
-function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
+function print_sintaktis(sintaktis, deltio,		perigrafi, \
+	die, tmi, query, ipalilos) {
+
+	perigrafi = deltio["perigrafi"]
 	die = ipiresia[substr(deltio["ipiresia"], 0, 3)]
 	tmi = ipiresia[substr(deltio["ipiresia"], 0, 7)]
 
@@ -158,12 +161,12 @@ function print_sintaktis(sintaktis, deltio,		die, tmi, query, ipalilos) {
 	while (spawk_fetchrow(ipalilos, 0)) {
 		print ipalilos[0]
 		print deltio["ipiresia"]
-		print deltio["perigrafi"]
+		print perigrafi
 
-		if (die)
+		if (die != perigrafi)
 		print die
 
-		if (tmi && (tmi != die) && (tmi != deltio["perigrafi"]))
+		if (tmi && (tmi != die) && (tmi != perigrafi))
 		print tmi
 
 		print ""
