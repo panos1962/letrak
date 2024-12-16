@@ -160,8 +160,7 @@ function print_sintaktis(sintaktis, deltio,		perigrafi, \
 
 	while (spawk_fetchrow(ipalilos, 0)) {
 		print ipalilos[0]
-		print deltio["ipiresia"]
-		print perigrafi
+		print deltio["ipiresia"], perigrafi
 
 		if (die != perigrafi)
 		print die
