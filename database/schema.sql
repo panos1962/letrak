@@ -66,6 +66,7 @@
 -- @DESCRIPTION END
 --
 -- @HISTORY BEGIN
+-- Updated: 2024-12-18
 -- Updated: 2022-12-13
 -- Updated: 2022-03-31
 -- Updated: 2022-03-18
@@ -244,7 +245,8 @@ CREATE TABLE `parousia` (
 		'ΚΑΝΟΝΙΚΗ',
 		'ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)',
 		'ΤΗΛΕΡΓΑΣΙΑ',
-		'ΕΚ ΠΕΡΙΤΡΟΠΗΣ'
+		'ΕΚ ΠΕΡΙΤΡΟΠΗΣ',
+		'ΑΡΘΡΟ 55',
 
 		'ΑΣΘΕΝΕΙΑ',
 		'ΑΝΑΡΡΩΤΙΚΗ',
@@ -283,7 +285,7 @@ CREATE TABLE `parousia` (
 		'ΔΙΑΘΕΣΙΜΟΤΗΤΑ',
 		'ΑΡΓΙΑ',
 		'ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ',
-		'ΜΕΤΑΚΙΝΗΣΗ',
+		'ΜΕΤΑΚΙΝΗΣΗ'
 	) NULL DEFAULT NULL COMMENT 'Είδος αδείας',
 	`adapo`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία έναρξης αδείας',
 	`adeos`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία λήξης αδείας',
