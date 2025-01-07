@@ -94,7 +94,10 @@ require('../mnt/pandora/lib/pandoraJQueryUI.js')(pnd);
 const letrak =
 require('../lib/letrak.js');
 
-const prosopa = {};
+const prosopa = {
+	"minimaSimptixi": 'Σύμπτυξη',
+	"minimaAnaptixi": 'Ανάπτυξη',
+};
 const ektiposi =
 require('./ektiposi.js')(pnd, letrak, prosopa);
 
@@ -214,6 +217,11 @@ prosopa.selidaSetup = () => {
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
 
+	// Στο αριστερό μέρος του ribbon εμφανίζουμε πλήκτρο σύμπτυξης
+	// ανάπτυξης στηλών σε όφελος της στήλης παρατηρήσεων.
+
+	prosopa.economySetup();
+
 	// Ο κωδικός του προς επεξεργασία παρουσιολογίου δίνεται ως POST
 	// ή GET παράμετρος με το όνομα "deltio".
 
@@ -270,6 +278,60 @@ prosopa.selidaSetup = () => {
 
 	prosopa.ananeosi();
 	return prosopa;
+};
+
+prosopa.economySetup = function() {
+	let dom = $('<input>').
+	attr({
+		"id": 'economy',
+		"type": 'button',
+		"value": prosopa.minimaSimptixi,
+	}).
+	data('miosi', true).
+	addClass('letrak-formaPliktro').
+	on('click', function(e) {
+		prosopa.economyToggle(e, $(this));
+	});
+
+	dom.appendTo(pnd.ribbonLeftDOM);
+
+	return prosopa;
+};
+
+prosopa.economyToggle = function(e, dom) {
+	e.stopPropagation();
+
+	let miosi = dom.data('miosi');
+
+	if (miosi) {
+		$('.parousiaIsozigio').css('width', 0);
+		$('.parousiaMeraora').css('width', 0);
+		$('.parousiaOrario').css('width', 0);
+		$('.parousiaKarta').css('width', 0);
+		$('.parousiaExcuse').addClass('parousiaExcuseEconomy');
+		$('.parousiaOnomateponimo').addClass('parousiaOnomateponimoEconomy');
+		$('.parousiaIpalilos').addClass('parousiaIpalilosEconomy');
+		$('.parousiaOrdinal').addClass('parousiaOrdinalEconomy');
+
+		dom.
+		attr('value', prosopa.minimaAnaptixi).
+		data('miosi', false);
+	}
+
+	else {
+		$('.parousiaIsozigio').css('width', '');
+		$('.parousiaMeraora').css('width', '');
+		$('.parousiaOrario').css('width', '');
+		$('.parousiaKart').css('width', '');
+		$('.parousiaExcuse').removeClass('parousiaExcuseEconomy');
+		$('.parousiaOnomateponimo').removeClass('parousiaOnomateponimoEconomy');
+		$('.parousiaIpalilos').removeClass('parousiaIpalilosEconomy');
+		$('.parousiaOrdinal').removeClass('parousiaOrdinalEconomy');
+
+		dom.
+		attr('value', prosopa.minimaSimptixi).
+		data('miosi', true);
+	}
 };
 
 prosopa.ananeosi = (e) => {
