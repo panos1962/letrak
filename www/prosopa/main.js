@@ -1557,6 +1557,16 @@ prosopa.filtroParontesMatch = (parousia) => {
 
 prosopa.prosopaSetup = () => {
 	prosopa.browserDOM.
+	on('click', '.parousia', function(e) {
+		e.stopPropagation();
+		prosopa.orarioEpilogiActive = true;
+		prosopa.parousiaTargetClear();
+		$(this).addClass('parousiaTarget');
+		prosopa.parousiaEdit(e, $(this).data('parousia'));
+	});
+
+/*
+	prosopa.browserDOM.
 	on('mousedown', '.parousia', function(e) {
 		prosopa.orarioEpilogiActive = true;
 	}).
@@ -1565,6 +1575,7 @@ prosopa.prosopaSetup = () => {
 		$(this).addClass('parousiaTarget');
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
 	});
+*/
 
 	return prosopa;
 };
