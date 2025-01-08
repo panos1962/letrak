@@ -306,6 +306,7 @@ prosopa.economyToggle = function(e, dom) {
 	if (miosi) {
 		$('.parousiaIsozigio').css('width', 0);
 		$('.parousiaMeraora').css('width', 0);
+		$('.parousiaMeraoraPiragmeno').css('display', 'none');
 		$('.parousiaOrario').css('width', 0);
 		$('.parousiaKarta').css('width', 0);
 		$('.parousiaExcuse').addClass('parousiaExcuseEconomy');
@@ -321,6 +322,7 @@ prosopa.economyToggle = function(e, dom) {
 	else {
 		$('.parousiaIsozigio').css('width', '');
 		$('.parousiaMeraora').css('width', '');
+		$('.parousiaMeraoraPiragmeno').css('display', '');
 		$('.parousiaOrario').css('width', '');
 		$('.parousiaKarta').css('width', '');
 		$('.parousiaExcuse').removeClass('parousiaExcuseEconomy');
