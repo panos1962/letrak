@@ -309,10 +309,11 @@ prosopa.economyToggle = function(e, dom) {
 		$('.parousiaMeraoraPiragmeno').css('display', 'none');
 		$('.parousiaOrario').css('width', 0);
 		$('.parousiaKarta').css('width', 0);
+		$('.parousiaOrdinal').css('width', 0);
 		$('.parousiaExcuse').addClass('parousiaExcuseEconomy');
 		$('.parousiaOnomateponimo').addClass('parousiaOnomateponimoEconomy');
 		$('.parousiaIpalilos').addClass('parousiaIpalilosEconomy');
-		$('.parousiaOrdinal').addClass('parousiaOrdinalEconomy');
+		$('.parousiaInfo').addClass('parousiaInfoEconomy');
 
 		dom.
 		attr('value', prosopa.minimaAnaptixi).
@@ -325,10 +326,11 @@ prosopa.economyToggle = function(e, dom) {
 		$('.parousiaMeraoraPiragmeno').css('display', '');
 		$('.parousiaOrario').css('width', '');
 		$('.parousiaKarta').css('width', '');
+		$('.parousiaOrdinal').css('width', '');
 		$('.parousiaExcuse').removeClass('parousiaExcuseEconomy');
 		$('.parousiaOnomateponimo').removeClass('parousiaOnomateponimoEconomy');
 		$('.parousiaIpalilos').removeClass('parousiaIpalilosEconomy');
-		$('.parousiaOrdinal').removeClass('parousiaOrdinalEconomy');
+		$('.parousiaInfo').removeClass('parousiaInfoEconomy');
 
 		dom.
 		attr('value', prosopa.minimaSimptixi).
