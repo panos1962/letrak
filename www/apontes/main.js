@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-08
 // Updated: 2024-12-02
 // Updated: 2024-11-27
 // Updated: 2024-11-26
@@ -549,7 +550,7 @@ apontes.apousiaProcess = function() {
 	return apontes.apantesParontes();
 
 	for (let i = 0; i < apontes.ilist.length; i++)
-	apontes.ipalilosProcess(apontes.ilist[i], i % 2);
+	apontes.ipalilosProcess(apontes.ilist[i], i + 1);
 
 	return apontes;
 };
@@ -557,12 +558,14 @@ apontes.apousiaProcess = function() {
 // Η function "ipalilosProcess" δέχεται ως παράμετρο έναν υπάλληλο και
 // παρουσιάζει τα στοιχεία του υπαλλήλου και της σχετικής απουσίας.
 
-apontes.ipalilosProcess = function(ipalilos, zebra) {
+apontes.ipalilosProcess = function(ipalilos, aa) {
+	let zebra = aa % 2;
 	let dom = $('<div>').addClass('ipalilos ipalilos' + zebra);
 	let ipalilosDOM = $('<div>').addClass('ipalilosData');
 	let apousiaDOM = $('<div>').addClass('apousiaData');
 
 	dom.
+	append($('<div>').addClass('ipalilosOrdinal').text(aa)).
 	append(ipalilosDOM).
 	append(apousiaDOM);
 
