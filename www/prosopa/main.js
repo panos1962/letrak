@@ -322,7 +322,7 @@ prosopa.economyToggle = function(e, dom) {
 		$('.parousiaIsozigio').css('width', '');
 		$('.parousiaMeraora').css('width', '');
 		$('.parousiaOrario').css('width', '');
-		$('.parousiaKart').css('width', '');
+		$('.parousiaKarta').css('width', '');
 		$('.parousiaExcuse').removeClass('parousiaExcuseEconomy');
 		$('.parousiaOnomateponimo').removeClass('parousiaOnomateponimoEconomy');
 		$('.parousiaIpalilos').removeClass('parousiaIpalilosEconomy');
