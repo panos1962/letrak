@@ -298,6 +298,13 @@ admin.kritiriaSetup = () => {
 		admin.kritiriaImerominiaDOM.
 		val($(this).data('d')).
 		trigger('change');
+	}).
+	on('click', '#kritiriaForma', function(e) {
+		e.stopPropagation();
+		admin.
+		elistClear().
+		kritiriaFormaDOM.
+		removeClass('kritiriaFormaEconomy');
 	});
 
 	admin.kritiriaImerominiaDOM.
@@ -365,6 +372,10 @@ admin.kritiriaFormaIpovoli = (e) => {
 admin.kritiriaFormaClear = (e) => {
 	e.stopPropagation();
 
+	admin.
+	elistClear().
+	kritiriaFormaDOM.removeClass('kritiriaFormaEconomy');
+
 	for (let fld in admin.kritiriaFormaFlist)
 	admin['kritiria' + fld + 'DOM'].val('');
 
@@ -399,7 +410,9 @@ admin.elistSettle = () => {
 	let kh = admin.kritiriaFormaDOM.
 		closest('.ui-dialog').outerHeight(true);
 
-	admin.elistDOM.css('max-height', (oh - kh - 35) + 'px');
+	kh -= 100;	// economy
+	admin.elistDOM.css('max-height', (60 + oh - kh - 35) + 'px');
+
 	return admin;
 };
 
@@ -452,6 +465,9 @@ admin.parseEvent = (rsp) => {
 	admin.elistDOM.
 	css('display', 'block').
 	scrollTop(0);
+
+	admin.kritiriaFormaDOM.
+	addClass('kritiriaFormaEconomy');
 
 	return admin;
 }
