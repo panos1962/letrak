@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-10
 // Updated: 2022-03-11
 // Updated: 2022-03-09
 // Updated: 2022-03-08
@@ -81,11 +82,6 @@ admin.selidaSetup = () => {
 	toolbarTitlosSetup().
 	toolbarXristisSetup().
 	ribbonCopyrightSetup();
-
-/*
-	pnd.
-	keepAlive('../mnt/pandora');
-*/
 
 	admin.
 	kritiriaSetup().
