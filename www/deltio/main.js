@@ -546,11 +546,37 @@ deltio.adiaReport = (e) => {
 	self.LETRAK.eos = deltio.filtraEosDOM.val();
 	self.LETRAK.dlist = deltio.dlistCreate();
 
+	// Αν μία από τις δύο ημερομηνίες καθορισμού χρονικού διαστήματος
+	// δεν έχει συμπληρωθεί, τότε το σύστημα θα εντοπίσει το διάστημα
+	// από τα δελτία που έχουν επιλεγεί.
+
+	if ((!self.LETRAK.apo) || (!self.LETRAK.eos)) {
+		self.LETRAK.apo = deltio.date2dmy(deltio.imerominiaApo);
+		self.LETRAK.eos = deltio.date2dmy(deltio.imerominiaEos);
+	}
+
 	if (!deltio.hasOwnProperty('ipiresiaList'))
 	deltio.erpotaProcess();
 
 	deltio.childrenWindows.push(window.open('../adiarpt', '_blank'));
 	return deltio;
+};
+
+deltio.date2dmy = function(date) {
+	if (!date)
+	return '';
+
+	let y = date.getFullYear();
+	let m = date.getMonth() + 1;
+	let d = date.getDate();
+
+	if (m < 10)
+	m = '0' + m;
+
+	if (d < 10)
+	d = '0' + d;
+
+	return d + '-' + m + '-' + y;
 };
 
 deltio.apontes = (e, deltioDOM) => {
@@ -1751,6 +1777,12 @@ deltio.candiGet = () => {
 
 deltio.dlistCreate = () => {
 	let dlist = [];
+	let imerominia = undefined;
+	let apoTime = undefined;
+	let eosTime = undefined;
+
+	deltio.imerominiaApo = undefined;
+	deltio.imerominiaEos = undefined;
 
 	deltio.browserDOM.children('.deltio').each(function() {
 		let deltio = $(this).data('deltio');
@@ -1758,13 +1790,35 @@ deltio.dlistCreate = () => {
 		if (!deltio)
 		return;
 
-		deltio = deltio.kodikosGet();
+		let kodikos = deltio.kodikosGet();
 
-		if (!deltio)
+		if (!kodikos)
 		return;
 
-		dlist.push(deltio);
+		dlist.push(kodikos);
+
+		let date = deltio.imerominiaGet();
+		let time = date.getTime();
+
+		if (imerominia === undefined) {
+			imerominia = date;
+			apoTime = time;
+			eosTime = time;
+			return;
+		}
+
+		if (time < apoTime)
+		apoTime = time;
+
+		else if (time > eosTime)
+		eosTime = time;
 	});
+
+	deltio.imerominiaApo = new Date();
+	deltio.imerominiaApo.setTime(apoTime);
+
+	deltio.imerominiaEos = new Date();
+	deltio.imerominiaEos.setTime(eosTime);
 
 	return dlist;
 };
