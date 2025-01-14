@@ -54,7 +54,7 @@ const adiarpt = {
 	"eos": undefined,
 	"dlist": undefined,
 	"error": undefined,
-	"deltioCountMax": 500,
+	"deltioCountMax": 3000,
 };
 
 adiarpt.minima = {
@@ -176,7 +176,9 @@ adiarpt.kritiriaSetup = () => {
 
 adiarpt.dataGet = () => {
 	if (adiarpt.dlist.length > adiarpt.deltioCountMax) {
-		pnd.fyiError('Μεγάλος πλήθος δελτίων');
+		pnd.fyiError('Μεγάλο πλήθος δελτίων (' +
+			adiarpt.dlist.length + ' > ' +
+			adiarpt.deltioCountMax + ')');
 		return adiarpt;
 	}
 
