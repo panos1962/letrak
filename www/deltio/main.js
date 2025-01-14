@@ -548,8 +548,8 @@ deltio.adiaReport = (e) => {
 	self.LETRAK.dlist = deltio.dlistCreate();
 
 	// Αν μία από τις δύο ημερομηνίες καθορισμού χρονικού διαστήματος
-	// δεν έχει συμπληρωθεί, τότε το σύστημα θα εντοπίσει το διάστημα
-	// από τα δελτία που έχουν επιλεγεί.
+	// δεν έχει συμπληρωθεί στη φόρμα των φίλτρων, τότε το σύστημα θα
+	// καθορίσει το χρονικό διάστημα από τα δελτία που έχουν επιλεγεί.
 
 	if ((!self.LETRAK.apo) || (!self.LETRAK.eos)) {
 		self.LETRAK.apo = deltio.date2dmy(deltio.imerominiaApo);
@@ -1780,6 +1780,9 @@ deltio.candiGet = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+// Η function "dlistCreate" δημιουργεί λίστα κωδικών των επιλεγμένων δελτίων,
+// δηλαδή των δελτίων που ήδη εμφανίζονται στη σελίδα.
+
 deltio.dlistCreate = () => {
 	let dlist = [];
 	let imerominia = undefined;
@@ -1788,6 +1791,8 @@ deltio.dlistCreate = () => {
 
 	deltio.imerominiaApo = undefined;
 	deltio.imerominiaEos = undefined;
+
+	// Διατρέχουμε τη λίστα των δελτίων που υπάρχουν στη σελίδα.
 
 	deltio.browserDOM.children('.deltio').each(function() {
 		let deltio = $(this).data('deltio');
@@ -1800,10 +1805,23 @@ deltio.dlistCreate = () => {
 		if (!kodikos)
 		return;
 
+		// Το δελτίο είναι υπαρκτό οπότε αποσπούμε τον κωδικό
+		// δελτίου και τον προσθέτουμε στη λίστα δελτίων.
+
 		dlist.push(kodikos);
+
+		// Παράλληλα, ελέγχουμε την ημερομηνία του ανά χείρας δελτίου
+		// με σκοπό να αποσπάσουμε τη μικρότερη και τη μεγαλύτερη
+		// ημερομηνία από τα δελτία της λίστας δελτίων.
 
 		let date = deltio.imerominiaGet();
 		let time = date.getTime();
+
+		// Η μεταβλητή "imerominia" χρησμοποιείται ως flag και αρχικά
+		// έχει τεθεί σε undefined. Αυτό σημαίνει ότι πρόκειται για
+		// το πρώτο δελτίο που εισάγεται στη λίστα δελτίων. Παράλληλα,
+		// θέτουμε τη μικρότερη και τη μεγαλύτερη ημερομηνία στην
+		// ημερομηνία αυτού του πρώτου δελτίου.
 
 		if (imerominia === undefined) {
 			imerominia = date;
@@ -1812,12 +1830,20 @@ deltio.dlistCreate = () => {
 			return;
 		}
 
+		// Το ανά χείρας δελτίο δεν είναι το πρώτο από τα δελτία της
+		// λίστας, οπότε επανακαθορίζουμε τη μικρότερη και τη
+		// μεγαλύτερη ημερομηνία δελτίου.
+
 		if (time < apoTime)
 		apoTime = time;
 
 		else if (time > eosTime)
 		eosTime = time;
 	});
+
+	// Η λίστα των επιλεγμένων δελτίων έχει διαμορφωθεί, οπότε
+	// μετατρέπουμε τη μικρότερη και τη μεγαλύτερη ημερομηνία
+	// σε javascript date objects.
 
 	deltio.imerominiaApo = new Date();
 	deltio.imerominiaApo.setTime(apoTime);
