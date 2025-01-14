@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-14
 // Updated: 2024-11-20
 // Updated: 2024-11-16
 // Updated: 2024-11-07
@@ -968,6 +969,9 @@ deltio.paleotera = (e) => {
 	let data = {
 		'ipiresia': deltio.filtraIpiresiaDOM.val(),
 		'imerominia': deltio.imerominiaLast,
+		'prosapo': deltio.filtraProsapoDOM.val(),
+		'katastasi': deltio.filtraKatastasiDOM.val(),
+		'ipalilos': deltio.filtraIpalilosDOM.val(),
 	};
 
 	// Αν δεν έχουμε παραλάβει παρουσιολόγια μέχρι στιγμής, τότε
@@ -986,6 +990,7 @@ deltio.paleotera = (e) => {
 		'onEmpty': () => pnd.fyiMessage
 			('Δεν βρέθηκαν παλαιότερα παρουσιολόγια'),
 	});
+
 	return deltio;
 };
 
