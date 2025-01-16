@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-16
 // Updated: 2025-01-14
 // Updated: 2024-11-20
 // Updated: 2024-11-16
@@ -656,10 +657,15 @@ deltio.browserSetup = () => {
 
 	deltio.browserDOM.
 	on('click', '.deltioKodikos', function(e) {
-		deltio.prosopa({
-			'clickEvent': e,
-			'deltioDOM': $(this).closest('.deltio'),
-		});
+		e.stopPropagation();
+
+		$('.deltioCandi').removeClass('deltioCandi');
+		$(this).closest('.deltio').
+		addClass('deltioCandi').
+		removeClass('deltioCandiCandi');
+		deltio.candiTabsShow();
+
+		deltio.prosopa();
 	});
 
 	// Αν ο χρήστης κάνει κλικ στην κατάσταση κύρωσης του δελτίου, τότε
@@ -1385,21 +1391,15 @@ deltio.klonosProcess = (x, protipo) => {
 ///////////////////////////////////////////////////////////////////////////////@
 
 deltio.prosopa = (opts) => {
+	if (!opts)
+	opts = {};
+
 	if (opts.hasOwnProperty('clickEvent'))
 	opts.clickEvent.stopPropagation();
 
 	let deltioDOM;
-	let amolimeno;
 
-	if (opts.hasOwnProperty('deltioDOM')) {
-		deltioDOM = opts.deltioDOM;
-		amolimeno = true;
-	}
-
-	else {
-		deltioDOM = $('.deltioCandi').first();
-		amolimeno = false;
-	}
+	deltioDOM = $('.deltioCandi').first();
 
 	if (deltioDOM.length !== 1)
 	return pnd.fyiError('Δεν επιλέξατε παρουσιολόγιο προς επεξεργασία');
@@ -1433,7 +1433,7 @@ deltio.prosopa = (opts) => {
 	if (!deltio.hasOwnProperty('ipiresiaList'))
 	deltio.erpotaProcess();
 
-	deltio.prosopaOpen(kodikos, amolimeno);
+	deltio.prosopaOpen(kodikos);
 	return deltio;
 };
 
@@ -1474,31 +1474,13 @@ on('beforeunload', () => {
 // επεξεργασίας δελτίου οπότε το πρόγραμμα ανοίγει νέα καρτέλα επεξεργασίας
 // του συγκεκριμένου δελτίου. Εναλλακτικά ο χρήστης μπορεί να κάνει κλικ
 // στον κωδικό του δελτίου (στο αριστερό μέρος της γραμμής δελτίου), οπότε
-// το πρόγραμμα ανοίγει νέο παράθυρο επεξεργασίας του συγκεκριμένου δελτίου.
+// το πρόγραμμα επιλέγει το δελτίο και ανοίγει νέα καρτέλα επεξεργασίας του
+// συγκεκριμένου δελτίου.
 
-deltio.prosopaOpen = (kodikos, amolimeno) => {
+deltio.prosopaOpen = (kodikos) => {
 	let url = '../prosopa?deltio=' + kodikos;
 
-	// Αν δεν έχει δοθεί δεύτερη παράμετρος, τότε ανοίγει νέα καρτέλα
-	// επεξεργασίας δελτίου.
-
-	if (!amolimeno) {
-		deltio.childrenWindows.push(window.open(url, '_blank'));
-		return deltio;
-	}
-
-	// Αλλιώς ανοίγει νέο παράθυρο επεξεργασίας δελτίου, οπότε
-	// μεριμνούμε, έστω υποτυπωδώς, για τη χωροταξία των παραθύρων.
-
-	let n = (deltio.childrenWindows.length % 4) + 1;
-
-	let specs = '';
-	specs += 'width=1500,';
-	specs += 'height=600,';
-	specs += 'top=' + (n * 100) + ',';
-	specs += 'left=' + (n * 100);
-
-	deltio.childrenWindows.push(window.open(url, kodikos, specs));
+	deltio.childrenWindows.push(window.open(url, '_blank'));
 	return deltio;
 };
 
