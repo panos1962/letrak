@@ -1260,8 +1260,6 @@ deltio.klonismosSetup = () => {
 	datepicker({
 		'autoOpen': false,
 	});
-	deltio.klonismosFormaEnarktirioDOM = deltio.klonismosFormaDOM.
-	find('#klonismosFormaEnarktirio');
 
 	deltio.klonismosFormaDOM.
 	dialog({
@@ -1283,8 +1281,6 @@ deltio.klonismosSetup = () => {
 				$(this).dialog('close');
 			},
 		},
-		'open': () => deltio.klonismosFormaEnarktirioDOM.
-			prop('checked', false),
 	});
 
 	return deltio;
@@ -1333,8 +1329,6 @@ deltio.klonismos = () => {
 		'imerominia': deltio.klonismosFormaImerominiaDOM.val(),
 	};
 
-	if (deltio.klonismosFormaEnarktirioDOM.prop('checked'))
-	data.enarktirio = 1;
 
 	pnd.fyiMessage('Κλωνισμός παρουσιολογίου ' +
 		'<b>' + data.protipo + '</b>…');
