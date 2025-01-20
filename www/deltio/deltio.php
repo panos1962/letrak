@@ -57,6 +57,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-20
 // Updated: 2020-08-01
 // Updated: 2020-06-11
 // Updated: 2020-05-13
@@ -206,8 +207,8 @@ if ($x) {
 $x = pandora::parameter_get("ipiresia");
 
 if ($x) {
-	$query .= $enotiko . " (`ipiresia` LIKE " .
-		pandora::sql_string($x . '%') . ")";
+	$query .= $enotiko . " (`ipiresia` RLIKE " .
+		pandora::sql_string($x) . ")";
 	$enotiko = " AND";
 }
 
