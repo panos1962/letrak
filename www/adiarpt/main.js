@@ -29,6 +29,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-22
 // Updated: 2024-12-18
 // Updated: 2022-12-13
 // Updated: 2022-03-31
@@ -613,6 +614,7 @@ adiarpt.adiaEconomyMap = {
 	'ΑΡΓΙΑ': 'ΑΡ',
 	'ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ': 'ΑΛ',
 	'ΜΕΤΑΚΙΝΗΣΗ': 'ΜΚ',
+	'ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ': 'ΑΔ'
 };
 
 adiarpt.adiaEconomySetup = () => {

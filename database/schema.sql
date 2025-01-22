@@ -66,6 +66,7 @@
 -- @DESCRIPTION END
 --
 -- @HISTORY BEGIN
+-- Updated: 2025-01-22
 -- Updated: 2024-12-18
 -- Updated: 2022-12-13
 -- Updated: 2022-03-31
@@ -285,7 +286,8 @@ CREATE TABLE `parousia` (
 		'ΔΙΑΘΕΣΙΜΟΤΗΤΑ',
 		'ΑΡΓΙΑ',
 		'ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ',
-		'ΜΕΤΑΚΙΝΗΣΗ'
+		'ΜΕΤΑΚΙΝΗΣΗ',
+		'ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ'
 	) NULL DEFAULT NULL COMMENT 'Είδος αδείας',
 	`adapo`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία έναρξης αδείας',
 	`adeos`		DATE NULL DEFAULT NULL COMMENT 'Ημερομηνία λήξης αδείας',

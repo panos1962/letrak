@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-01-22
 // Updated: 2024-12-18
 // Updated: 2024-11-28
 // Updated: 2023-10-15
@@ -181,6 +182,7 @@ document_body();
 			<option value="ΑΡΓΙΑ" class="peAdidosOmadaAtono">ΑΡΓΙΑ</option>
 			<option value="ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ" class="peAdidosOmadaAtono">ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ</option>
 			<option value="ΜΕΤΑΚΙΝΗΣΗ" class="peAdidosOmadaAtono">ΜΕΤΑΚΙΝΗΣΗ</option>
+			<option value="ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ" class="peAdidosOmadaAtono">ΑΔΙΚΑΙΟΛΟΓΗΤΗ ΑΠΟΥΣΙΑ</option>
 			</select>
 
 			<div class="mazi">
