@@ -1,50 +1,17 @@
-USE `letrak`
+CREATE VIEW `erpota`.`poupios` AS
+
+SELECT
+`erpota1`.`ipalilos`.`kodikos`,
+`erpota1`.`ipalilos`.`eponimo`,
+`erpota1`.`ipalilos`.`onoma`,
+`erpota1`.`ipalilos`.`patronimo`,
+`erpota`.`prosvasi`.`tilefono`,
+`erpota`.`prosvasi`.`ipiresia`,
+`erpota`.`prosvasi`.`level`,
+`erpota`.`prosvasi`.`password`
+
+FROM `erpota1`.`ipalilos`, `erpota`.`prosvasi`
+
+WHERE `erpota1`.`ipalilos`.`kodikos` = `erpota`.`prosvasi`.`ipalilos`
+
 ;
-
-ALTER TABLE `parousia`
-MODIFY COLUMN `adidos`	ENUM (
-	'ΚΑΝΟΝΙΚΗ',
-	'ΚΑΝΟΝΙΚΗ (ΜΕΤΑΦΟΡΑ)',
-	'ΤΗΛΕΡΓΑΣΙΑ',
-	'ΕΚ ΠΕΡΙΤΡΟΠΗΣ',
-	'ΑΡΘΡΟ 55',
-
-	'ΑΣΘΕΝΕΙΑ',
-	'ΑΝΑΡΡΩΤΙΚΗ',
-	'ΑΣΘΕΝΕΙΑ ΤΕΚΝΟΥ',
-	'ΑΙΜΟΔΟΣΙΑ',
-	'ΚΑΤ\' ΟΙΚΟΝ ΠΕΡΙΟΡΙΣΜΟΣ',
-	'ΙΑΤΡΙΚΕΣ ΕΞΕΤΑΣΕΙΣ',
-
-	'ΓΟΝΙΚΗ ΣΧΟΛ. ΕΠΙΔ.',
-	'ΓΟΝΙΚΗ ΑΝΑΤΡΟΦΗΣ',
-	'ΚΥΗΣΕΩΣ & ΛΟΧΕΙΑΣ',
-
-	'ΡΕΠΟ ΑΙΜΟΔΟΣΙΑΣ',
-	'ΡΕΠΟ ΥΠΕΡΩΡΙΑΣ',
-	'ΡΕΠΟ ΑΝΑΠΑΥΣΗΣ',
-	'ΡΕΠΟ ΔΗΜΑΡΧΟΥ',
-	'ΡΕΠΟ ΕΦΟΡΕΥΤΙΚΗΣ',
-	'ΣΥΜΠΛΗΡΩΣΗ ΩΡΑΡΙΟΥ',
-
-	'ΕΙΔΙΚΗ ΑΔΕΙΑ',
-	'ΣΕΜΙΝΑΡΙΟ',
-	'ΣΠΟΥΔΑΣΤΙΚΗ',
-	'ΣΥΝΔΙΚΑΛΙΣΤΙΚΗ',
-	'ΓΑΜΟΥ',
-	'ΠΕΝΘΟΥΣ',
-	'ΕΚΛΟΓΙΚΗ',
-	'ΑΘΛΗΤΙΚΗ',
-	'ΔΙΚΑΣΤΗΡΙΟ',
-	'ΣΤΡΑΤΙΩΤΙΚΗ',
-
-	'ΕΚΤΟΣ ΕΔΡΑΣ',
-	'ΕΣΩΤΕΡΙΚΗ ΔΙΑΘΕΣΗ',
-	'ΑΠΕΡΓΙΑ',
-	'ΑΝΕΥ ΑΠΟΔΟΧΩΝ',
-	'ΑΠΟΣΠΑΣΗ',
-	'ΔΙΑΘΕΣΙΜΟΤΗΤΑ',
-	'ΑΡΓΙΑ',
-	'ΛΥΣΗ ΣΧ. ΕΡΓΑΣΙΑΣ',
-	'ΜΕΤΑΚΙΝΗΣΗ'
-) NULL DEFAULT NULL COMMENT 'Είδος αδείας';
