@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-03-24
 // Updated: 2025-01-10
 // Updated: 2022-03-11
 // Updated: 2022-03-09
@@ -60,7 +61,7 @@ pnd.domInit(() => {
 	if (letrak.noXristis())
 	return letrak.arxikiSelida(admin);
 
-	if (letrak.prosvasiOxiAdmin('')) {
+	if (letrak.prosvasiOxiUpdate('')) {
 		self.location = '../mnt/pandora/lib/radioActive.html';
 		return admin;
 	}
