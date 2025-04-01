@@ -16,6 +16,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-01
 // Updated: 2025-03-24
 // Updated: 2025-01-10
 // Updated: 2022-03-11
@@ -61,7 +62,14 @@ pnd.domInit(() => {
 	if (letrak.noXristis())
 	return letrak.arxikiSelida(admin);
 
-	if (letrak.prosvasiOxiUpdate('')) {
+	// Πρόσβαση στο γενικό ευρετήριο προσωπικού έχουν όσοι διαθέτουν
+	// δικαιώματα "UPDATE" και "ADMIN", ασχέτως υπηρεσίας.
+
+	switch (letrak.xristisProsvasiGet()) {
+	case 'UPDATE':
+	case 'ADMIN':
+		break;
+	default:
 		self.location = '../mnt/pandora/lib/radioActive.html';
 		return admin;
 	}
