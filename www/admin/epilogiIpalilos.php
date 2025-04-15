@@ -38,8 +38,13 @@ database();
 
 $prosvasi = letrak::prosvasi_check();
 
-if ($prosvasi->ipiresia_oxi_update(""))
-lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση");
+switch ($prosvasi->epipedo_get()) {
+case 'UPDATE':
+case 'ADMIN':
+	break;
+default:
+	lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση");
+}
 
 $x = pandora::parameter_get("Karta");
 
