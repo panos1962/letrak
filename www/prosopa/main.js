@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-16
 // Updated: 2025-01-08
 // Updated: 2024-11-30
 // Updated: 2024-11-28
@@ -1848,8 +1849,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
 		e.stopPropagation();
-		let x = $(this).val().trim();
-		$(this).val(x);
+		prosopa.infoEdit($(this));
 	});
 
 	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli').
@@ -2663,6 +2663,45 @@ prosopa.ipalilosZoomClose = () => {
 	empty();
 
 	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.infoEdit = function(fld) {
+	let info = fld.val().trim();
+	fld.val(info);
+
+	if (info.match(/^@/))
+	return prosopa.infoErgasiaRepo(fld, info);
+};
+
+prosopa.infoErgasiaRepo = function(fld, info) {
+	let dmy = info.split(/[^0-9]/);
+
+	if (dmy.length !== 4)
+	return;
+
+	if (dmy[1] < 10) dmy[1] = '0' + dmy[1];
+	if (dmy[2] < 10) dmy[2] = '0' + dmy[2];
+
+	let dr = new Date(dmy[3] + '-' + dmy[2] + '-' + dmy[1] + 'T00:00:00');
+
+	if (dr.toString() === 'Invalid Date')
+	return;
+
+	dr = dr.getTime();
+	let dp = prosopa.deltio.imerominia.getTime();
+
+	if (dp < dr)
+	info = 'ΘΑ ΕΡΓΑΣΤΕΙ ' + dmy[1] + '-' + dmy[2] + '-' + dmy[3];
+
+	else if (dp > dr)
+	info = 'ΕΡΓΑΣΤΗΚΕ ' + dmy[1] + '-' + dmy[2] + '-' + dmy[3];
+
+	else
+	return;
+
+	fld.val(info);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
