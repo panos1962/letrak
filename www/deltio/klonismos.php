@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-16
 // Updated: 2022-03-31
 // Updated: 2020-06-11
 // Updated: 2020-05-15
@@ -150,6 +151,14 @@ $query = "UPDATE `letrak`.`parousia`" .
 	" SET `adidos` = NULL, `adapo` = NULL, `adeos` = NULL" .
 	" WHERE (`deltio` = " . $kodikos . ")" .
 	" AND (`adeos` < '" . $imerominia . "')";
+pandora::query($query);
+
+// Διαγράφουμε σχόλια που δεν αφορούν σε άδειες.
+
+$query = "UPDATE `letrak`.`parousia`" .
+	" SET `info` = ''" .
+	" WHERE (`deltio` = " . $kodikos . ")" .
+	" AND (`adidos` IS NULL)";
 pandora::query($query);
 
 pandora::query("SET @tax := 0");
