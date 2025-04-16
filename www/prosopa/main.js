@@ -1790,6 +1790,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorMeraoraDOM = $('#peMeraora');
 	prosopa.editorIsozigioDOM = $('#peIsozigio');
 	prosopa.orarioSetup();
+	prosopa.meraoraSetup();
 	prosopa.katagrafiSetup();
 
 	prosopa.editorAdidosDOM = $('#peAdidos').
@@ -1924,6 +1925,92 @@ prosopa.amesiIpovoli = function(e, flist) {
 	prosopa.editorIpovoliDOM.trigger('click');
 
 	return prosopa;
+};
+
+prosopa.meraoraSetup = function() {
+	pnd.bodyDOM.
+	on('keydown', '#peMeraora', function(e){
+		prosopa.meraoraEdit(e, $(this));
+	});
+
+	return prosopa;
+};
+
+// Η function "mearoraEdit" καλείται on keydown στο πεδίο της ώρας προσέλευσης,
+// ή αποχώρησης προκειμένου να διευκολύνει τον χρήστη κατά την καταχώρηση.
+// Πράγματι, σε αρκετά παρουσιολόγια (κυρίως της Καθαριότητας) πολλές φορές
+// αυξάνουμε την ώρα αποχώρησης κατά κάποιες ώρες, ή μειώνουμε την ώρα
+// προσέλευσης κατά κάποιες ώρες (υπερωριακή απασχόληση). Ο χρήστης μπορεί να
+// χρησιμοποιήσει τα πλήκτρα πάνω και κάτω βέλος, για να αυξάνει ή να μειώνει
+// την ώρα προσέλευσης ή αοχώρησης κατά μία (1) ώρα αντίστοιχα.
+
+prosopa.meraoraEdit = (e, fld) => {
+	let meraora = fld.val();
+
+	if (!meraora)
+	return;
+
+	meraora = meraora.split(' ');
+
+	if (!meraora)
+	return;
+
+	if (meraora.length !== 2)
+	return;
+
+	let dmy = meraora[0].split(/[^0-9]/);
+
+	if (dmy.length !== 3)
+	return;
+
+	let hms = meraora[1].split(/[^0-9]/);
+
+	if (hms.length !== 2)
+	return;
+
+	meraora = new Date(dmy[2] + '-' + dmy[1] + '-' + dmy[0] +
+		'T' + meraora[1] + ':00');
+
+	if (meraora.toString() === 'Invalid Date')
+	return;
+
+	let sinplin = undefined;
+
+	// Με τα βελάκια πάνω/κάτω ή με τα πλήκτρα "+" και "-" αλλάζουμε
+	// ώρες προσέλευσης/αποχώρησης με βήμα μιας ώρας.
+
+	switch (e.which) {
+	case 38:	// Up arrow
+	case 33:	// page Up
+		sinplin = 3600000;
+		break;
+	case 40:	// Down arrow
+	case 34:	// page Down
+		sinplin = -3600000;
+		break;
+	}
+
+	if (!sinplin)
+	return;
+
+	e.stopPropagation();
+	e.preventDefault();
+
+	meraora = new Date(meraora.getTime() + sinplin);
+
+	dmy[0] = meraora.getDate();
+	if (dmy[0] < 10) dmy[0] = '0' + dmy[0];
+	dmy[1] = meraora.getMonth() + 1;
+	if (dmy[1] < 10) dmy[1] = '0' + dmy[1];
+	dmy[2] = meraora.getFullYear();
+
+	hms[0] = meraora.getHours();
+	if (hms[0] < 10) hms[0] = '0' + hms[0];
+	hms[1] = meraora.getMinutes();
+	if (hms[1] < 10) hms[1] = '0' + hms[1];
+
+	fld.val(dmy[0] + '-' + dmy[1] + '-' + dmy[2] +
+		' ' + hms[0] + ':' + hms[1]);
 };
 
 prosopa.orarioSetup = function() {
