@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-17
 // Updated: 2025-04-16
 // Updated: 2025-01-08
 // Updated: 2024-11-30
@@ -1330,6 +1331,68 @@ prosopa.ergaliaSetup = () => {
 		});
 	});
 
+	$('#prosopaDiagrafiEpilegmenon').
+	on('click', (e) => {
+		let dialogDOM = $('<div>').
+		attr('title', 'Διαγραφή επιλεγμένων υπαλλήλων').
+		append($('<div>').
+		html('Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
+		dialog({
+			'resizable': false,
+			'height': 'auto',
+			'width': '350px',
+			'modal': true,
+			'position': {
+				'my': 'left+50 top+50',
+				'at': 'left top',
+			},
+
+			'buttons': {
+				'Διαγραφή': function() {
+					prosopa.diagrafiEpilegmenon(true);
+					$(this).dialog('close');
+				},
+				'Άκυρο': function() {
+					$(this).dialog('close');
+				},
+			},
+			'close': function() {
+				dialogDOM.remove();
+			},
+		});
+	});
+
+	$('#prosopaDiagrafiMiEpilegmenon').
+	on('click', (e) => {
+		let dialogDOM = $('<div>').
+		attr('title', 'Διαγραφή μη επιλεγμένων υπαλλήλων').
+		append($('<div>').
+		html('Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
+		dialog({
+			'resizable': false,
+			'height': 'auto',
+			'width': '350px',
+			'modal': true,
+			'position': {
+				'my': 'left+50 top+50',
+				'at': 'left top',
+			},
+
+			'buttons': {
+				'Διαγραφή': function() {
+					prosopa.diagrafiEpilegmenon(false);
+					$(this).dialog('close');
+				},
+				'Άκυρο': function() {
+					$(this).dialog('close');
+				},
+			},
+			'close': function() {
+				dialogDOM.remove();
+			},
+		});
+	});
+
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
@@ -1420,6 +1483,55 @@ prosopa.prosopaDiagrafi = () => {
 			'deltio': prosopa.deltioKodikos,
 		},
 		'success': (rsp) => prosopa.editorAlagiPost(rsp),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα διαγραφής υπαλλήλων');
+			console.error(err);
+		},
+	});
+};
+
+// Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
+// αύξοντα αριθμό. Πράγματι, μπορούμε να κάνουμε κλικ στον αύξοντα αριθμό
+// προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπαλληλο. Η επιλογή
+// ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό.
+
+prosopa.diagrafiEpilegmenon = (epilegmenoi) => {
+	if (epilegmenoi)
+	pnd.fyiMessage('Διαγραφή επιλεγμένων υπαλλήλων…');
+
+	else
+	pnd.fyiMessage('Διαγραφή μη επιλεγμένων υπαλλήλων…');
+
+	let plist = {};
+
+	prosopa.browserDOM.children('.parousia').each(function() {
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
+		let ipalilos = $(this).children('.parousiaIpalilos').text();
+
+		if (epilegmenoi && epilegmeno)
+		plist[ipalilos] = true;
+
+		else if ((!epilegmenoi) && (!epilegmeno))
+		plist[ipalilos] = true;
+	});
+
+	let tsilp = [];
+
+	for (let i in plist)
+	tsilp.push(i);
+
+	if (!tsilp.length)
+	return pnd.fyiMessage();
+
+	$.post({
+		'url': 'diagrafiEpilegmenon.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+			'plist': tsilp,
+		},
+		'success': (rsp) => prosopa.ananeosi(),
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα διαγραφής υπαλλήλων');
 			console.error(err);
@@ -1631,6 +1743,17 @@ prosopa.prosopaSetup = () => {
 		prosopa.parousiaTargetClear();
 		$(this).addClass('parousiaTarget');
 		prosopa.parousiaEdit(e, $(this).data('parousia'));
+	});
+
+	prosopa.browserDOM.
+	on('click', '.parousiaOrdinal', function(e) {
+		e.stopPropagation();
+
+		if ($(this).hasClass('parousiaEpilogi'))
+		$(this).removeClass('parousiaEpilogi');
+
+		else
+		$(this).addClass('parousiaEpilogi');
 	});
 
 /*

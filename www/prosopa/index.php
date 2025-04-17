@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-17
 // Updated: 2025-01-22
 // Updated: 2024-12-18
 // Updated: 2024-11-28
@@ -260,6 +261,12 @@ document_body();
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafi">
 		Διαγραφή υπαλλήλων
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiEpilegmenon">
+		Διαγραφή επιλεγμένων
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiMiEpilegmenon">
+		Διαγραφή μη επιλεγμένων
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="orariaDiagrafi">
 		Διαγραφή ωραρίων
