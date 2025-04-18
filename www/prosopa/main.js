@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-18
 // Updated: 2025-04-17
 // Updated: 2025-04-16
 // Updated: 2025-01-08
@@ -1747,6 +1748,9 @@ prosopa.prosopaSetup = () => {
 
 	prosopa.browserDOM.
 	on('click', '.parousiaOrdinal', function(e) {
+		if (!prosopa.prosopaUpdateAllow())
+		return;
+
 		e.stopPropagation();
 
 		if ($(this).hasClass('parousiaEpilogi'))
@@ -1755,18 +1759,6 @@ prosopa.prosopaSetup = () => {
 		else
 		$(this).addClass('parousiaEpilogi');
 	});
-
-/*
-	prosopa.browserDOM.
-	on('mousedown', '.parousia', function(e) {
-		prosopa.orarioEpilogiActive = true;
-	}).
-	on('mouseup', '.parousia', function(e) {
-		prosopa.parousiaTargetClear();
-		$(this).addClass('parousiaTarget');
-		prosopa.parousiaEdit(e, $(this).data('parousia'));
-	});
-*/
 
 	return prosopa;
 };
