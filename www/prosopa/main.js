@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-21
 // Updated: 2025-04-18
 // Updated: 2025-04-17
 // Updated: 2025-04-16
@@ -1736,6 +1737,8 @@ prosopa.filtroParontesMatch = (parousia) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+prosopa.telefteaEpilogi = 0;
+
 prosopa.prosopaSetup = () => {
 	prosopa.browserDOM.
 	on('click', '.parousia', function(e) {
@@ -1753,14 +1756,70 @@ prosopa.prosopaSetup = () => {
 
 		e.stopPropagation();
 
-		if ($(this).hasClass('parousiaEpilogi'))
-		$(this).removeClass('parousiaEpilogi');
+		// Με το Control πατημένο, η επιλογή εναλλάσσεται για την
+		// τρέχουσα παρουσία, η οποία μαρκάρεται και ως τελευταία
+		// επιλογή.
 
-		else
-		$(this).addClass('parousiaEpilogi');
+		if (e.ctrlKey) {
+			prosopa.epilogiEnalagi($(this));
+			prosopa.telefteaEpilogi = parseInt($(this).text());
+			return;
+		}
+
+		// Αν δεν είναι πατημένο το Control, τότε ακυρώνονται όλες
+		// οι επιλογές και εναλλάσσεται η επιλογή της τρέχουσας
+		// παρουσίας, η οποία μαρκάρεται και ως τελευταία επιλογή.
+
+		if (!e.shiftKey) {
+			let epilegmeno = $(this).hasClass('parousiaEpilogi');
+
+			prosopa.browserDOM.children().each(function() {
+				$(this).
+				children('.parousiaOrdinal').
+				removeClass('parousiaEpilogi');
+			});
+
+			prosopa.epilogiEnalagi($(this), epilegmeno);
+			prosopa.telefteaEpilogi = parseInt($(this).text());
+			return;
+		}
+
+		// Είναι πατημένο το Shift, οπότε πρέπει να εργαστούμε πάνω
+		// στις παρουσίες που βρίσκονται μεταξύ της τελευταίας
+		// επιλεγμένης και της τρέχουσας παρουσίας.
+
+		let epilogi = parseInt($(this).text());
+
+		prosopa.browserDOM.children().each(function() {
+			let fld = $(this).children('.parousiaOrdinal');
+			let aa = parseInt(fld.text());
+
+			if ((epilogi <= prosopa.telefteaEpilogi) &&
+				(aa < prosopa.telefteaEpilogi) &&
+				(aa >= epilogi))
+				return prosopa.epilogiEnalagi(fld);
+
+			if ((epilogi >= prosopa.telefteaEpilogi) &&
+				(aa > prosopa.telefteaEpilogi) &&
+				(aa <= epilogi))
+				return prosopa.epilogiEnalagi(fld);
+		});
+
+		prosopa.telefteaEpilogi = epilogi;
 	});
 
 	return prosopa;
+};
+
+prosopa.epilogiEnalagi = function(fld, epilegmeno) {
+	if (epilegmeno === undefined)
+	epilegmeno = fld.hasClass('parousiaEpilogi');
+
+	if (epilegmeno)
+	fld.removeClass('parousiaEpilogi');
+
+	else
+	fld.addClass('parousiaEpilogi');
 };
 
 prosopa.parousiaTargetClear = () => {
