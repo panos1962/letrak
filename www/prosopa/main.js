@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-22
 // Updated: 2025-04-21
 // Updated: 2025-04-18
 // Updated: 2025-04-17
@@ -1334,66 +1335,10 @@ prosopa.ergaliaSetup = () => {
 	});
 
 	$('#prosopaDiagrafiEpilegmenon').
-	on('click', (e) => {
-		let dialogDOM = $('<div>').
-		attr('title', 'Διαγραφή επιλεγμένων υπαλλήλων').
-		append($('<div>').
-		html('Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
-		dialog({
-			'resizable': false,
-			'height': 'auto',
-			'width': '350px',
-			'modal': true,
-			'position': {
-				'my': 'left+50 top+50',
-				'at': 'left top',
-			},
-
-			'buttons': {
-				'Διαγραφή': function() {
-					prosopa.diagrafiEpilegmenon(true);
-					$(this).dialog('close');
-				},
-				'Άκυρο': function() {
-					$(this).dialog('close');
-				},
-			},
-			'close': function() {
-				dialogDOM.remove();
-			},
-		});
-	});
+	on('click', (e) => prosopa.diagrafiEpilegmenon(e, true));
 
 	$('#prosopaDiagrafiMiEpilegmenon').
-	on('click', (e) => {
-		let dialogDOM = $('<div>').
-		attr('title', 'Διαγραφή μη επιλεγμένων υπαλλήλων').
-		append($('<div>').
-		html('Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
-		dialog({
-			'resizable': false,
-			'height': 'auto',
-			'width': '350px',
-			'modal': true,
-			'position': {
-				'my': 'left+50 top+50',
-				'at': 'left top',
-			},
-
-			'buttons': {
-				'Διαγραφή': function() {
-					prosopa.diagrafiEpilegmenon(false);
-					$(this).dialog('close');
-				},
-				'Άκυρο': function() {
-					$(this).dialog('close');
-				},
-			},
-			'close': function() {
-				dialogDOM.remove();
-			},
-		});
-	});
+	on('click', (e) => prosopa.diagrafiEpilegmenon(e, false));
 
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
@@ -1492,12 +1437,57 @@ prosopa.prosopaDiagrafi = () => {
 	});
 };
 
+///////////////////////////////////////////////////////////////////////////////@
+
 // Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
 // αύξοντα αριθμό. Πράγματι, μπορούμε να κάνουμε κλικ στον αύξοντα αριθμό
 // προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπαλληλο. Η επιλογή
 // ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό.
+// Η function "diagrafiEpilegmenon" καλείται από τις επιλογές "Διαγραφή
+// επιλεγμένων", ή "Διαγραφή μη επιλεγμένων" του βασικού μενού επεξεργασίας
+// δελτίου. Η πρώτη παράμετρος αφορά στο click event της επιλογής, ενώ η
+// δεύτερη παράμετρος είναι πιο βασική και δείχνει αν επιλέχθηκε η διαγραφή
+// επιλεγμένων (true), ή η διαγραφή μη επιλεγμένων (false).
 
-prosopa.diagrafiEpilegmenon = (epilegmenoi) => {
+prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
+	e.stopPropagation();
+	let who = (epilegmenoi ? ' ' : ' μη ');
+
+	let dialogDOM = $('<div>').
+	attr('title', 'Διαγραφή' + who + 'επιλεγμένων υπαλλήλων').
+	append($('<div>').
+	html('Να διαγραφούν οι' + who + 'επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
+	dialog({
+		'resizable': false,
+		'height': 'auto',
+		'width': '350px',
+		'modal': true,
+		'position': {
+			'my': 'left+50 top+50',
+			'at': 'left top',
+		},
+
+		'buttons': {
+			'Διαγραφή': function() {
+				prosopa.diagrafiEpilegmenonExec(epilegmenoi);
+				$(this).dialog('close');
+			},
+			'Άκυρο': function() {
+				$(this).dialog('close');
+			},
+		},
+		'close': function() {
+			dialogDOM.remove();
+		},
+	});
+};
+
+// Η function "digarafiEpilegmenonExec" είναι ο πυρήνας της διαγραφής
+// επιελεγμένων ή μη επιλεγμένων υπαλλήλων. Έχει προηγηθεί ο διάλογος
+// επιβεβαίωσης διαγραφής και επίκειται η πραγματική διαγραφή και η
+// ανανέωση της σελίδας μετά τη διαγραφή.
+
+prosopa.diagrafiEpilegmenonExec = (epilegmenoi) => {
 	if (epilegmenoi)
 	pnd.fyiMessage('Διαγραφή επιλεγμένων υπαλλήλων…');
 
@@ -1540,6 +1530,98 @@ prosopa.diagrafiEpilegmenon = (epilegmenoi) => {
 		},
 	});
 };
+
+prosopa.telefteaEpilogi = {
+	"aa": 0,
+	"epilogi": true,
+};
+
+prosopa.prosopaSetup = () => {
+	prosopa.browserDOM.
+	on('click', '.parousia', function(e) {
+		e.stopPropagation();
+		prosopa.orarioEpilogiActive = true;
+		prosopa.parousiaTargetClear();
+		$(this).addClass('parousiaTarget');
+		prosopa.parousiaEdit(e, $(this).data('parousia'));
+	});
+
+	prosopa.browserDOM.
+	on('click', '.parousiaOrdinal', function(e) {
+		if (!prosopa.prosopaUpdateAllow())
+		return;
+
+		let fld = $(this);
+
+		e.stopPropagation();
+
+		// Χωρίς το Shift πατημένο, η επιλογή εναλλάσσεται για την
+		// τρέχουσα παρουσία, η οποία μαρκάρεται και ως τελευταία
+		// επιλογή.
+
+		if (!e.shiftKey)
+		return prosopa.
+		epilogiEnalagi(fld).
+		telefteaEpilogiSave(fld);
+
+		// Είναι πατημένο το Shift, οπότε πρέπει να εργαστούμε πάνω
+		// στις παρουσίες που βρίσκονται μεταξύ της τελευταίας
+		// επιλεγμένης και της τρέχουσας παρουσίας.
+
+		let trexon = parseInt($(this).text());
+		let epilogi = prosopa.telefteaEpilogi.epilogi;
+
+		prosopa.browserDOM.children().each(function() {
+			let fld = $(this).children('.parousiaOrdinal');
+			let aa = parseInt(fld.text());
+
+			if ((trexon <= prosopa.telefteaEpilogi.aa) &&
+				(aa < prosopa.telefteaEpilogi.aa) &&
+				(aa >= trexon))
+				return prosopa.epilogiSet(fld, epilogi);
+
+			if ((trexon >= prosopa.telefteaEpilogi.aa) &&
+				(aa > prosopa.telefteaEpilogi.aa) &&
+				(aa <= trexon))
+				return prosopa.epilogiSet(fld, epilogi);
+		});
+
+		prosopa.telefteaEpilogi.aa = trexon;
+	});
+
+	return prosopa;
+};
+
+prosopa.epilogiSet = function(fld, epilogi) {
+	if (epilogi)
+	fld.addClass('parousiaEpilogi');
+
+	else
+	fld.removeClass('parousiaEpilogi');
+
+	return prosopa;
+};
+
+prosopa.isEpilogi = function(fld) {
+	return fld.hasClass('parousiaEpilogi');
+};
+
+prosopa.oxiEpilogi = function(fld) {
+	return !prosopa.isEpilogi(fld);
+};
+
+prosopa.epilogiEnalagi = function(fld) {
+	return prosopa.epilogiSet(fld, prosopa.oxiEpilogi(fld));
+};
+
+prosopa.telefteaEpilogiSave = function(fld) {
+	prosopa.telefteaEpilogi.aa = parseInt(fld.text());
+	prosopa.telefteaEpilogi.epilogi = prosopa.isEpilogi(fld);
+
+	return prosopa;
+};
+
+///////////////////////////////////////////////////////////////////////////////@
 
 prosopa.orariaDiagrafi = (e) => {
 	if (e)
@@ -1733,93 +1815,6 @@ prosopa.filtroParontesMatch = (parousia) => {
 	return true;
 
 	return false;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-prosopa.telefteaEpilogi = 0;
-
-prosopa.prosopaSetup = () => {
-	prosopa.browserDOM.
-	on('click', '.parousia', function(e) {
-		e.stopPropagation();
-		prosopa.orarioEpilogiActive = true;
-		prosopa.parousiaTargetClear();
-		$(this).addClass('parousiaTarget');
-		prosopa.parousiaEdit(e, $(this).data('parousia'));
-	});
-
-	prosopa.browserDOM.
-	on('click', '.parousiaOrdinal', function(e) {
-		if (!prosopa.prosopaUpdateAllow())
-		return;
-
-		e.stopPropagation();
-
-		// Με το Control πατημένο, η επιλογή εναλλάσσεται για την
-		// τρέχουσα παρουσία, η οποία μαρκάρεται και ως τελευταία
-		// επιλογή.
-
-		if (e.ctrlKey) {
-			prosopa.epilogiEnalagi($(this));
-			prosopa.telefteaEpilogi = parseInt($(this).text());
-			return;
-		}
-
-		// Αν δεν είναι πατημένο το Control, τότε ακυρώνονται όλες
-		// οι επιλογές και εναλλάσσεται η επιλογή της τρέχουσας
-		// παρουσίας, η οποία μαρκάρεται και ως τελευταία επιλογή.
-
-		if (!e.shiftKey) {
-			let epilegmeno = $(this).hasClass('parousiaEpilogi');
-
-			prosopa.browserDOM.children().each(function() {
-				$(this).
-				children('.parousiaOrdinal').
-				removeClass('parousiaEpilogi');
-			});
-
-			prosopa.epilogiEnalagi($(this), epilegmeno);
-			prosopa.telefteaEpilogi = parseInt($(this).text());
-			return;
-		}
-
-		// Είναι πατημένο το Shift, οπότε πρέπει να εργαστούμε πάνω
-		// στις παρουσίες που βρίσκονται μεταξύ της τελευταίας
-		// επιλεγμένης και της τρέχουσας παρουσίας.
-
-		let epilogi = parseInt($(this).text());
-
-		prosopa.browserDOM.children().each(function() {
-			let fld = $(this).children('.parousiaOrdinal');
-			let aa = parseInt(fld.text());
-
-			if ((epilogi <= prosopa.telefteaEpilogi) &&
-				(aa < prosopa.telefteaEpilogi) &&
-				(aa >= epilogi))
-				return prosopa.epilogiEnalagi(fld);
-
-			if ((epilogi >= prosopa.telefteaEpilogi) &&
-				(aa > prosopa.telefteaEpilogi) &&
-				(aa <= epilogi))
-				return prosopa.epilogiEnalagi(fld);
-		});
-
-		prosopa.telefteaEpilogi = epilogi;
-	});
-
-	return prosopa;
-};
-
-prosopa.epilogiEnalagi = function(fld, epilegmeno) {
-	if (epilegmeno === undefined)
-	epilegmeno = fld.hasClass('parousiaEpilogi');
-
-	if (epilegmeno)
-	fld.removeClass('parousiaEpilogi');
-
-	else
-	fld.addClass('parousiaEpilogi');
 };
 
 prosopa.parousiaTargetClear = () => {
