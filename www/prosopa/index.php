@@ -259,9 +259,6 @@ document_body();
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopoInsert">
 		Προσθήκη υπαλλήλου
 	</div>
-	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafi">
-		Διαγραφή υπαλλήλων
-	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiEpilegmenon">
 		Διαγραφή επιλεγμένων
 	</div>

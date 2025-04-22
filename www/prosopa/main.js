@@ -1303,37 +1303,6 @@ prosopa.ergaliaSetup = () => {
 		prosopa.parousiaEdit(e);
 	});
 
-	$('#prosopaDiagrafi').
-	on('click', (e) => {
-		let dialogDOM = $('<div>').
-		attr('title', 'Διαγραφή υπαλλήλων').
-		append($('<div>').
-		html('Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;')).
-		dialog({
-			'resizable': false,
-			'height': 'auto',
-			'width': '350px',
-			'modal': true,
-			'position': {
-				'my': 'left+50 top+50',
-				'at': 'left top',
-			},
-
-			'buttons': {
-				'Διαγραφή': function() {
-					prosopa.prosopaDiagrafi();
-					$(this).dialog('close');
-				},
-				'Άκυρο': function() {
-					$(this).dialog('close');
-				},
-			},
-			'close': function() {
-				dialogDOM.remove();
-			},
-		});
-	});
-
 	$('#prosopaDiagrafiEpilegmenon').
 	on('click', (e) => prosopa.diagrafiEpilegmenon(e, true));
 
@@ -1422,21 +1391,6 @@ prosopa.ergaliaHide = () => {
 	return prosopa;
 };
 
-prosopa.prosopaDiagrafi = () => {
-	$.post({
-		'url': 'prosopaDiagrafi.php',
-		'dataType': 'text',
-		'data': {
-			'deltio': prosopa.deltioKodikos,
-		},
-		'success': (rsp) => prosopa.editorAlagiPost(rsp),
-		'error': (err) => {
-			pnd.fyiError('Σφάλμα διαγραφής υπαλλήλων');
-			console.error(err);
-		},
-	});
-};
-
 ///////////////////////////////////////////////////////////////////////////////@
 
 // Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
@@ -1451,12 +1405,43 @@ prosopa.prosopaDiagrafi = () => {
 
 prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 	e.stopPropagation();
-	let who = (epilegmenoi ? ' ' : ' μη ');
+
+	let countOla = 0;
+	let countEpi = 0;
+
+	prosopa.browserDOM.children().each(function() {
+		countOla++;
+
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+
+		if (ordinalDOM.hasClass('parousiaEpilogi'))
+		countEpi++;
+	});
+
+	if (!epilegmenoi)
+	countEpi = countOla - countEpi;
+
+	if (countEpi <= 0)
+	return pnd.fyiError('Δεν υπάρχουν υπάλληλοι προς διαγραφή');
+
+	let msg1;
+	let msg2;
+
+	if (countEpi === countOla) {
+		msg1 = 'Διαγραφή όλων των υπαλλήλων';
+		msg2 = 'Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;';
+	} else if (epilegmenoi) {
+		msg1 = 'Διαγραφή επιλεγμένων υπαλλήλων';
+		msg2 = 'Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
+	} else {
+		msg1 = 'Διαγραφή μη επιλεγμένων υπαλλήλων';
+		msg2 = 'Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
+	}
 
 	let dialogDOM = $('<div>').
-	attr('title', 'Διαγραφή' + who + 'επιλεγμένων υπαλλήλων').
+	attr('title', msg1).
 	append($('<div>').
-	html('Να διαγραφούν οι' + who + 'επιλεγμένοι υπάλληλοι του παρουσιολογίου;')).
+	html(msg2)).
 	dialog({
 		'resizable': false,
 		'height': 'auto',
