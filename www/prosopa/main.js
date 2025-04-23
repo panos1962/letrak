@@ -12,7 +12,7 @@
 //
 // @FILE BEGIN
 // www/prosopa/main.js —— Πρόγραμμα οδήγησης σελίδας επεξεργασίας
-// παρουσιολογίου.
+// παρουσιολογίου
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -1310,6 +1310,14 @@ prosopa.ergaliaSetup = () => {
 	$('#prosopaDiagrafiMiEpilegmenon').
 	on('click', (e) => prosopa.diagrafiEpilegmenon(e, false));
 
+	$('#orarioAlagiEpilegmenon').
+	attr('title', 'Αλλαγή ωραρίου επιλεγμένων').
+	on('click', (e) => prosopa.orarioEpilegmenon(e, true));
+
+	$('#orarioAlagiMiEpilegmenon').
+	attr('title', 'Αλλαγή ωραρίου μη επιλεγμένων').
+	on('click', (e) => prosopa.orarioEpilegmenon(e, false));
+
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
@@ -1324,49 +1332,6 @@ prosopa.ergaliaSetup = () => {
 
 	$('#deltioImerisio').
 	on('click', (e) => ektiposi.deltioImerisio(e));
-
-	///////////////////////////////////////////////////////////////////////@
-
-	prosopa.orarioAlagiOrarioDOM = $('#orarioAlagiOrario');
-	prosopa.orarioAlagiFormaDOM = $('#orarioAlagiForma').
-	on('submit', function(e) {
-		return false;
-	}).
-	dialog({
-		'title': 'Αλλαγή ωραρίων',
-		'autoOpen': false,
-		'position': {
-			'my': 'left top',
-			'at': 'left+120 top+145',
-		},
-		'resizable': false,
-		'height': 'auto',
-		'width': '460px',
-		'modal': true,
-		'open': () => prosopa.orarioAlagiOrarioDOM.val(''),
-	});
-
-	$('#orarioAlagiPanel').
-	find('input').
-	addClass('letrak-formaPliktro').
-	addClass('protipoPliktro');
-
-	$('#orarioAlagiAlagiPliktro').
-	on('click', (e) => prosopa.orarioAlagi(e));
-
-	$('#orarioAlagiAkiroPliktro').
-	on('click', (e) => {
-		e.stopPropagation();
-		prosopa.orarioAlagiFormaDOM.dialog('close');
-	});
-
-	$('#orarioAlagiEpilegmenon').
-	attr('title', 'Αλλαγή ωραρίου επιλεγμένων').
-	on('click', (e) => prosopa.orarioAlagiFormaDOM.dialog('open'));
-
-	$('#orarioAlagiMiEpilegmenon').
-	attr('title', 'Αλλαγή ωραρίου μη επιλεγμένων').
-	on('click', (e) => prosopa.orarioAlagiFormaDOM.dialog('open'));
 
 	///////////////////////////////////////////////////////////////////////@
 
@@ -1555,14 +1520,21 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		erotisi = 'Να αλλάξει το ωράριο στους μη επιλεγμένους υπαλλήλους;';
 	}
 
+
+	let html = '<p>' + erotisi + '</p>' +
+		'<div class="formaInputLine">' +
+		'<label for="orarioAlagiOrario">Ωράριο</label>' +
+		'<input id="orarioAlagiOrario" class="orarioPedio">' +
+		'</div>';
+
 	let dialogDOM = $('<div>').
 	attr('title', titlos).
 	append($('<div>').
-	html(erotisi)).
+	html(html)).
 	dialog({
 		'resizable': false,
 		'height': 'auto',
-		'width': '470px',
+		'width': '540px',
 		'modal': true,
 		'position': {
 			'my': 'left+50 top+50',
@@ -1570,8 +1542,18 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		},
 
 		'buttons': {
-			'Διαγραφή': function() {
-				prosopa.orarioEpilegmenonExec(epilegmenoi, titlos);
+			'Αλλαγή ωραρίου': function() {
+				let orarioDOM = $('#orarioAlagiOrario');
+				let orarioVal = orarioDOM.val();
+				let orario = new letrak.orario(orarioVal);
+
+				if (orario.oxiOrario()) {
+					pnd.fyiError('Λανθασμένο ωράριο');
+					orarioDOM.focus();
+					return;
+				}
+
+				prosopa.orarioEpilegmenonExec(epilegmenoi, orario.toString(), titlos);
 				$(this).dialog('close');
 			},
 			'Άκυρο': function() {
@@ -1584,7 +1566,7 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 	});
 };
 
-prosopa.orarioEpilegmenonExec = (epilegmenoi, msg) => {
+prosopa.orarioEpilegmenonExec = (epilegmenoi, orario, msg) => {
 	pnd.fyiMessage(msg + '…');
 
 	let plist = [];
@@ -1602,11 +1584,12 @@ prosopa.orarioEpilegmenonExec = (epilegmenoi, msg) => {
 	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι για αλλαγή ωραρίου');
 
 	$.post({
-		'url': 'orarioEpilegmenon.php',
+		'url': 'orarioAlagi.php',
 		'dataType': 'text',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
 			'plist': plist,
+			'orario': orario,
 		},
 		'success': (rsp) => prosopa.ananeosi(),
 		'error': (err) => {
@@ -1712,43 +1695,6 @@ prosopa.telefteaEpilogiSave = function(fld) {
 	prosopa.telefteaEpilogi.epilogi = prosopa.isEpilogi(fld);
 
 	return prosopa;
-};
-
-///////////////////////////////////////////////////////////////////////////////@
-
-prosopa.orarioAlagi = (e) => {
-	if (e)
-	e.stopPropagation();
-
-	let data = {
-		'deltio': prosopa.deltioKodikos,
-		'orario': prosopa.orarioAlagiOrarioDOM.val(),
-	};
-
-	let orario = new letrak.orario(data.orario);
-
-	if (orario.oxiOrario())
-	delete data.orario;
-
-	$.post({
-		'url': 'orarioAlagi.php',
-		'dataType': 'text',
-		'data': data,
-		'success': (rsp) => {
-			if (rsp)
-			return prosopa.fyiError(rsp);
-
-			prosopa.orarioAlagiFormaDOM.dialog('close');
-			prosopa.ergaliaDOM.dialog('close');
-			prosopa.ananeosi();
-		},
-		'error': (err) => {
-			pnd.fyiError('Σφάλμα διαγραφής ωραρίων');
-			console.error(err);
-		},
-	});
-
-	return false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@

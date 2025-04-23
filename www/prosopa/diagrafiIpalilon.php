@@ -13,7 +13,7 @@
 //
 // @FILE BEGIN
 // www/prosopa/diagrafiIpalilon.php —— Διαγραφή επιλεγμένων, ή μη επιλεγμένων
-// υπαλλήλων.
+// υπαλλήλων παρουσιολογίου
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -79,8 +79,8 @@ for ($i = 1; $i < $plist_count; $i++)
 $query .= ", " . $plist[$i];
 
 $query .= "))";
-pandora::query($query);
 
+pandora::query($query);
 exit(0);
 
 function lathos($s) {

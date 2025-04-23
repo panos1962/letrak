@@ -335,27 +335,6 @@ document_body();
 		<input id="protipoPliktroAkiro" type="button" value="Άκυρο">
 	</div>
 </form>
-
-<form id="orarioAlagiForma">
-	<p>
-		Να επανακαθοριστούν τα ωράρια όλων των υπαλλήλων;
-	</p>
-
-	<div class="formaInputLine">
-		<label for="orarioAlagiOrario">
-			Ωράριο
-		</label>
-		<input id="orarioAlagiOrario" class="orarioPedio"
-			title="Κοινό ωράριο για όλους τους υπαλλήλους">
-	</div>
-
-	<hr>
-
-	<div id="orarioAlagiPanel">
-		<input id="orarioAlagiAlagiPliktro" type="submit" value="Υποβολή">
-		<input id="orarioAlagiAkiroPliktro" type="button" value="Άκυρο">
-	</div>
-</form>
 <?php
 pandora::
 document_close();

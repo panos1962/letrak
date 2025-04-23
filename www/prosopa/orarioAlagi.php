@@ -12,7 +12,8 @@
 // @FILETYPE END
 //
 // @FILE BEGIN
-// www/prosopa/orarioAlagi.php —— Αλλαγή ωραρίου υπαλλήλων παρουσιολογίου
+// www/prosopa/orarioAlagi.php —— Αλλαγή ωραρίου επιλεγμένων, ή μη
+// επιλεγμένων υπαλλήλων παρουσιολογίου
 // @FILE END
 //
 // @DESCRIPTION BEGIN
@@ -63,6 +64,16 @@ lathos("Access denied");
 $orario = pandora::parameter_get("orario");
 $orario = new Orario($orario);
 
+$plist = pandora::parameter_get("plist");
+
+if (!is_array($plist))
+lathos("Ακαθόριστοι υπάλληλοι για αλλαγή ωραρίου");
+
+$plist_count = count($plist);
+
+if ($plist_count <= 0)
+lathos("Δεν επελέγησαν υπάλληλοι για αλλαγή ωραρίου");
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 $query = "UPDATE `letrak`.`parousia` SET `orario` = ";
@@ -73,13 +84,15 @@ $query .= pandora::sql_string($orario->to_string());
 else
 $query .= "NULL";
 
-$query .= ", `meraora` = NULL WHERE `deltio` = " . $deltio_kodikos;
+$query .= " WHERE (`deltio` = " . $deltio_kodikos . ")" .
+	" AND (`ipalilos` IN (" . $plist[0];
+
+for ($i = 1; $i < $plist_count; $i++)
+$query .= ", " . $plist[$i];
+
+$query .= "))";
+
 pandora::query($query);
-
-if (pandora::affected_rows() > 0)
-exit(0);
-
-lathos("Αστοχία αλλαγής ωραρίου");
 exit(0);
 
 function lathos($s) {
