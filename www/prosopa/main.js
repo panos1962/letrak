@@ -1447,19 +1447,7 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
 	pnd.fyiMessage(msg + '…');
 
-	// Στο array "plist" θα βάλουμε τους κωδικούς των επιλεγμένων
-	// υπαλλήλων.
-
-	let plist = [];
-
-	prosopa.browserDOM.children('.parousia').each(function() {
-		let ordinalDOM = $(this).children('.parousiaOrdinal');
-		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
-		let ipalilos = $(this).children('.parousiaIpalilos').text();
-
-		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
-		plist.push(ipalilos);
-	});
+	let plist = prosopa.epilogiList(epilegmenoi);
 
 	if (!plist.length)
 	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι προς διαγραφή');
@@ -1544,10 +1532,10 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		'buttons': {
 			'Αλλαγή ωραρίου': function() {
 				let orarioDOM = $('#orarioAlagiOrario');
-				let orarioVal = orarioDOM.val();
+				let orarioVal = orarioDOM.val().trim();
 				let orario = new letrak.orario(orarioVal);
 
-				if (orario.oxiOrario()) {
+				if (orarioVal && orario.oxiOrario()) {
 					pnd.fyiError('Λανθασμένο ωράριο');
 					orarioDOM.focus();
 					return;
@@ -1569,16 +1557,7 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 prosopa.orarioEpilegmenonExec = (epilegmenoi, orario, msg) => {
 	pnd.fyiMessage(msg + '…');
 
-	let plist = [];
-
-	prosopa.browserDOM.children('.parousia').each(function() {
-		let ordinalDOM = $(this).children('.parousiaOrdinal');
-		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
-		let ipalilos = $(this).children('.parousiaIpalilos').text();
-
-		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
-		plist.push(ipalilos);
-	});
+	let plist = prosopa.epilogiList(epilegmenoi);
 
 	if (!plist.length)
 	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι για αλλαγή ωραρίου');
@@ -1695,6 +1674,21 @@ prosopa.telefteaEpilogiSave = function(fld) {
 	prosopa.telefteaEpilogi.epilogi = prosopa.isEpilogi(fld);
 
 	return prosopa;
+};
+
+prosopa.epilogiList = function(epilegmenoi) {
+	let plist = [];
+
+	prosopa.browserDOM.children('.parousia').each(function() {
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
+		let ipalilos = $(this).children('.parousiaIpalilos').text();
+
+		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
+		plist.push(ipalilos);
+	});
+
+	return plist;
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
