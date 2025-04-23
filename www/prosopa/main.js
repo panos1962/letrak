@@ -1329,7 +1329,9 @@ prosopa.ergaliaSetup = () => {
 
 	prosopa.orarioAlagiOrarioDOM = $('#orarioAlagiOrario');
 	prosopa.orarioAlagiFormaDOM = $('#orarioAlagiForma').
-	on('submit', (e) => prosopa.orarioAlagi(e)).
+	on('submit', function(e) {
+		return false;
+	}).
 	dialog({
 		'title': 'Αλλαγή ωραρίων',
 		'autoOpen': false,
@@ -1349,7 +1351,7 @@ prosopa.ergaliaSetup = () => {
 	addClass('letrak-formaPliktro').
 	addClass('protipoPliktro');
 
-	$('#orarioAlagiDiagrafiPliktro').
+	$('#orarioAlagiAlagiPliktro').
 	on('click', (e) => prosopa.orarioAlagi(e));
 
 	$('#orarioAlagiAkiroPliktro').
@@ -1398,11 +1400,6 @@ prosopa.ergaliaHide = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-// Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
-// αύξοντα αριθμό. Πράγματι, μπορούμε να κάνουμε κλικ στον αύξοντα αριθμό
-// προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπάλληλο. Η επιλογή
-// ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό, και
-// δεν καταχωρείται στην database, ισχύει απλώς για την τρέχουσα συνεδρία.
 // Η function "diagrafiEpilegmenon" καλείται από τις επιλογές "Διαγραφή
 // επιλεγμένων", ή "Διαγραφή μη επιλεγμένων" του βασικού μενού επεξεργασίας
 // δελτίου. Η πρώτη παράμετρος αφορά στο click event της επιλογής, ενώ η
@@ -1503,7 +1500,7 @@ prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
 	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι προς διαγραφή');
 
 	$.post({
-		'url': 'diagrafiEpilegmenon.php',
+		'url': 'diagrafiIpalilon.php',
 		'dataType': 'text',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
@@ -1516,6 +1513,116 @@ prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
 		},
 	});
 };
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
+	e.stopPropagation();
+
+	let countOla = 0;
+	let countEpi = 0;
+
+	prosopa.browserDOM.children().each(function() {
+		countOla++;
+
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+
+		if (ordinalDOM.hasClass('parousiaEpilogi'))
+		countEpi++;
+	});
+
+	if (!epilegmenoi)
+	countEpi = countOla - countEpi;
+
+	if (countEpi <= 0)
+	return pnd.fyiError('Δεν καθορίστηκαν υπάλληλοι για αλλαγή ωραρίου');
+
+	let titlos;
+	let erotisi;
+
+	if (countEpi === countOla) {
+		titlos = 'Αλλαγή ωραρίου όλων των υπαλλήλων';
+		erotisi = 'Να αλλάξει το ωράριο σε όλους τους υπαλλήλους;';
+	}
+
+	else if (epilegmenoi) {
+		titlos = 'Αλλαγή ωραρίου επιλεγμένων υπαλλήλων';
+		erotisi = 'Να αλλάξει το ωράριο στους επιλεγμένους υπαλλήλους;';
+	}
+
+	else {
+		titlos = 'Αλλαγή ωραρίου μη επιλεγμένων υπαλλήλων';
+		erotisi = 'Να αλλάξει το ωράριο στους μη επιλεγμένους υπαλλήλους;';
+	}
+
+	let dialogDOM = $('<div>').
+	attr('title', titlos).
+	append($('<div>').
+	html(erotisi)).
+	dialog({
+		'resizable': false,
+		'height': 'auto',
+		'width': '470px',
+		'modal': true,
+		'position': {
+			'my': 'left+50 top+50',
+			'at': 'left top',
+		},
+
+		'buttons': {
+			'Διαγραφή': function() {
+				prosopa.orarioEpilegmenonExec(epilegmenoi, titlos);
+				$(this).dialog('close');
+			},
+			'Άκυρο': function() {
+				$(this).dialog('close');
+			},
+		},
+		'close': function() {
+			dialogDOM.remove();
+		},
+	});
+};
+
+prosopa.orarioEpilegmenonExec = (epilegmenoi, msg) => {
+	pnd.fyiMessage(msg + '…');
+
+	let plist = [];
+
+	prosopa.browserDOM.children('.parousia').each(function() {
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
+		let ipalilos = $(this).children('.parousiaIpalilos').text();
+
+		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
+		plist.push(ipalilos);
+	});
+
+	if (!plist.length)
+	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι για αλλαγή ωραρίου');
+
+	$.post({
+		'url': 'orarioEpilegmenon.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+			'plist': plist,
+		},
+		'success': (rsp) => prosopa.ananeosi(),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα αλλαγής ωραρίου υπαλλήλων');
+			console.error(err);
+		},
+	});
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+// Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
+// αύξοντα αριθμό. Πράγματι, μπορούμε να κάνουμε κλικ στον αύξοντα αριθμό
+// προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπάλληλο. Η επιλογή
+// ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό, και
+// δεν καταχωρείται στην database, ισχύει απλώς για την τρέχουσα συνεδρία.
 
 prosopa.telefteaEpilogi = {
 	"aa": 0,

@@ -352,7 +352,7 @@ document_body();
 	<hr>
 
 	<div id="orarioAlagiPanel">
-		<input id="orarioAlagiDiagrafiPliktro" type="submit" value="Υποβολή">
+		<input id="orarioAlagiAlagiPliktro" type="submit" value="Υποβολή">
 		<input id="orarioAlagiAkiroPliktro" type="button" value="Άκυρο">
 	</div>
 </form>
