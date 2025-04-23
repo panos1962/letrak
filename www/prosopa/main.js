@@ -1327,11 +1327,11 @@ prosopa.ergaliaSetup = () => {
 
 	///////////////////////////////////////////////////////////////////////@
 
-	prosopa.orariaDiagrafiOrarioDOM = $('#orariaDiagrafiOrario');
-	prosopa.orariaDiagrafiFormaDOM = $('#orariaDiagrafiForma').
-	on('submit', (e) => prosopa.orariaDiagrafi(e)).
+	prosopa.orarioAlagiOrarioDOM = $('#orarioAlagiOrario');
+	prosopa.orarioAlagiFormaDOM = $('#orarioAlagiForma').
+	on('submit', (e) => prosopa.orarioAlagi(e)).
 	dialog({
-		'title': 'Διαγραφή ωραρίων',
+		'title': 'Αλλαγή ωραρίων',
 		'autoOpen': false,
 		'position': {
 			'my': 'left top',
@@ -1341,26 +1341,30 @@ prosopa.ergaliaSetup = () => {
 		'height': 'auto',
 		'width': '460px',
 		'modal': true,
-		'open': () => prosopa.orariaDiagrafiOrarioDOM.val(''),
+		'open': () => prosopa.orarioAlagiOrarioDOM.val(''),
 	});
 
-	$('#orariaDiagrafiPanel').
+	$('#orarioAlagiPanel').
 	find('input').
 	addClass('letrak-formaPliktro').
 	addClass('protipoPliktro');
 
-	$('#orariaDiagrafiDiagrafiPliktro').
-	on('click', (e) => prosopa.orariaDiagrafi(e));
+	$('#orarioAlagiDiagrafiPliktro').
+	on('click', (e) => prosopa.orarioAlagi(e));
 
-	$('#orariaDiagrafiAkiroPliktro').
+	$('#orarioAlagiAkiroPliktro').
 	on('click', (e) => {
 		e.stopPropagation();
-		prosopa.orariaDiagrafiFormaDOM.dialog('close');
+		prosopa.orarioAlagiFormaDOM.dialog('close');
 	});
 
-	$('#orariaDiagrafi').
-	attr('title', 'Διαγραφή ωραρίων').
-	on('click', (e) => prosopa.orariaDiagrafiFormaDOM.dialog('open'));
+	$('#orarioAlagiEpilegmenon').
+	attr('title', 'Αλλαγή ωραρίου επιλεγμένων').
+	on('click', (e) => prosopa.orarioAlagiFormaDOM.dialog('open'));
+
+	$('#orarioAlagiMiEpilegmenon').
+	attr('title', 'Αλλαγή ωραρίου μη επιλεγμένων').
+	on('click', (e) => prosopa.orarioAlagiFormaDOM.dialog('open'));
 
 	///////////////////////////////////////////////////////////////////////@
 
@@ -1605,13 +1609,13 @@ prosopa.telefteaEpilogiSave = function(fld) {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.orariaDiagrafi = (e) => {
+prosopa.orarioAlagi = (e) => {
 	if (e)
 	e.stopPropagation();
 
 	let data = {
 		'deltio': prosopa.deltioKodikos,
-		'orario': prosopa.orariaDiagrafiOrarioDOM.val(),
+		'orario': prosopa.orarioAlagiOrarioDOM.val(),
 	};
 
 	let orario = new letrak.orario(data.orario);
@@ -1620,14 +1624,14 @@ prosopa.orariaDiagrafi = (e) => {
 	delete data.orario;
 
 	$.post({
-		'url': 'orariaDiagrafi.php',
+		'url': 'orarioAlagi.php',
 		'dataType': 'text',
 		'data': data,
 		'success': (rsp) => {
 			if (rsp)
 			return prosopa.fyiError(rsp);
 
-			prosopa.orariaDiagrafiFormaDOM.dialog('close');
+			prosopa.orarioAlagiFormaDOM.dialog('close');
 			prosopa.ergaliaDOM.dialog('close');
 			prosopa.ananeosi();
 		},
@@ -2000,7 +2004,7 @@ prosopa.editorSetup = () => {
 	prosopa.editorInfoDOM = $('#peInfo').
 	on('change', function(e) {
 		e.stopPropagation();
-		prosopa.infoEdit($(this));
+		prosopa.infoChange($(this));
 	});
 
 	prosopa.editorIpovoliDOM = $('#pePliktroIpovoli').
@@ -2818,7 +2822,7 @@ prosopa.ipalilosZoomClose = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.infoEdit = function(fld) {
+prosopa.infoChange = function(fld) {
 	let info = fld.val().trim();
 	fld.val(info);
 
@@ -2832,8 +2836,12 @@ prosopa.infoErgasiaRepo = function(fld, info) {
 	if (dmy.length !== 4)
 	return;
 
+	for (let i = 1; i < 4; i++)
+	dmy[i] = parseInt(dmy[i]);
+
 	if (dmy[1] < 10) dmy[1] = '0' + dmy[1];
 	if (dmy[2] < 10) dmy[2] = '0' + dmy[2];
+	if (dmy[3] < 100) dmy[3] = '20' + dmy[3];
 
 	let dr = new Date(dmy[3] + '-' + dmy[2] + '-' + dmy[1] + 'T00:00:00');
 
@@ -2843,6 +2851,7 @@ prosopa.infoErgasiaRepo = function(fld, info) {
 	dr = dr.getTime();
 	let dp = prosopa.deltio.imerominia.getTime();
 
+console.log(dp, dr);
 	if (dp < dr)
 	info = 'ΘΑ ΕΡΓΑΣΤΕΙ ' + dmy[1] + '-' + dmy[2] + '-' + dmy[3];
 

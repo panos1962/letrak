@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-23
 // Updated: 2025-04-17
 // Updated: 2025-01-22
 // Updated: 2024-12-18
@@ -265,8 +266,11 @@ document_body();
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiMiEpilegmenon">
 		Διαγραφή μη επιλεγμένων
 	</div>
-	<div class="ergalioTab prosopaPliktroUpdate" id="orariaDiagrafi">
-		Διαγραφή ωραρίων
+	<div class="ergalioTab prosopaPliktroUpdate" id="orarioAlagiEpilegmenon">
+		Ωράριο επιλεγμένων
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="orarioAlagiMiEpilegmenon">
+		Ωράριο μη επιλεγμένων
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="apoOrarioOla">
 		Άντε γειά!
@@ -332,24 +336,24 @@ document_body();
 	</div>
 </form>
 
-<form id="orariaDiagrafiForma">
+<form id="orarioAlagiForma">
 	<p>
 		Να επανακαθοριστούν τα ωράρια όλων των υπαλλήλων;
 	</p>
 
 	<div class="formaInputLine">
-		<label for="orariaDiagrafiOrario">
+		<label for="orarioAlagiOrario">
 			Ωράριο
 		</label>
-		<input id="orariaDiagrafiOrario" class="orarioPedio"
+		<input id="orarioAlagiOrario" class="orarioPedio"
 			title="Κοινό ωράριο για όλους τους υπαλλήλους">
 	</div>
 
 	<hr>
 
-	<div id="orariaDiagrafiPanel">
-		<input id="orariaDiagrafiDiagrafiPliktro" type="submit" value="Υποβολή">
-		<input id="orariaDiagrafiAkiroPliktro" type="button" value="Άκυρο">
+	<div id="orarioAlagiPanel">
+		<input id="orarioAlagiDiagrafiPliktro" type="submit" value="Υποβολή">
+		<input id="orarioAlagiAkiroPliktro" type="button" value="Άκυρο">
 	</div>
 </form>
 <?php
