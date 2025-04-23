@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-23
 // Updated: 2025-04-22
 // Updated: 2025-04-21
 // Updated: 2025-04-18
@@ -1395,13 +1396,14 @@ prosopa.ergaliaHide = () => {
 
 // Επιλεγμένοι υπάλληλοι θεωρούνται αυτοί στους οποίους έχει γίνει κλικ στον
 // αύξοντα αριθμό. Πράγματι, μπορούμε να κάνουμε κλικ στον αύξοντα αριθμό
-// προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπαλληλο. Η επιλογή
-// ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό.
+// προκειμένου να επιλέξουμε, ή να αποεπιλέξουμε κάποιον υπάλληλο. Η επιλογή
+// ενός υπαλλήλου γίνεται εμφανής με κόκκινο χρώμα στον αύξοντα αριθμό, και
+// δεν καταχωρείται στην database, ισχύει απλώς για την τρέχουσα συνεδρία.
 // Η function "diagrafiEpilegmenon" καλείται από τις επιλογές "Διαγραφή
 // επιλεγμένων", ή "Διαγραφή μη επιλεγμένων" του βασικού μενού επεξεργασίας
 // δελτίου. Η πρώτη παράμετρος αφορά στο click event της επιλογής, ενώ η
-// δεύτερη παράμετρος είναι πιο βασική και δείχνει αν επιλέχθηκε η διαγραφή
-// επιλεγμένων (true), ή η διαγραφή μη επιλεγμένων (false).
+// δεύτερη παράμετρος είναι πιο σημαντική και δείχνει αν επιλέχθηκε διαγραφή
+// επιλεγμένων (true), ή διαγραφή μη επιλεγμένων (false).
 
 prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 	e.stopPropagation();
@@ -1424,28 +1426,32 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 	if (countEpi <= 0)
 	return pnd.fyiError('Δεν υπάρχουν υπάλληλοι προς διαγραφή');
 
-	let msg1;
-	let msg2;
+	let titlos;
+	let erotisi;
 
 	if (countEpi === countOla) {
-		msg1 = 'Διαγραφή όλων των υπαλλήλων';
-		msg2 = 'Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;';
-	} else if (epilegmenoi) {
-		msg1 = 'Διαγραφή επιλεγμένων υπαλλήλων';
-		msg2 = 'Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
-	} else {
-		msg1 = 'Διαγραφή μη επιλεγμένων υπαλλήλων';
-		msg2 = 'Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
+		titlos = 'Διαγραφή όλων των υπαλλήλων';
+		erotisi = 'Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;';
+	}
+
+	else if (epilegmenoi) {
+		titlos = 'Διαγραφή επιλεγμένων υπαλλήλων';
+		erotisi = 'Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
+	}
+
+	else {
+		titlos = 'Διαγραφή μη επιλεγμένων υπαλλήλων';
+		erotisi = 'Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
 	}
 
 	let dialogDOM = $('<div>').
-	attr('title', msg1).
+	attr('title', titlos).
 	append($('<div>').
-	html(msg2)).
+	html(erotisi)).
 	dialog({
 		'resizable': false,
 		'height': 'auto',
-		'width': '350px',
+		'width': '470px',
 		'modal': true,
 		'position': {
 			'my': 'left+50 top+50',
@@ -1454,7 +1460,7 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 
 		'buttons': {
 			'Διαγραφή': function() {
-				prosopa.diagrafiEpilegmenonExec(epilegmenoi);
+				prosopa.diagrafiEpilegmenonExec(epilegmenoi, titlos);
 				$(this).dialog('close');
 			},
 			'Άκυρο': function() {
@@ -1468,45 +1474,36 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 };
 
 // Η function "digarafiEpilegmenonExec" είναι ο πυρήνας της διαγραφής
-// επιελεγμένων ή μη επιλεγμένων υπαλλήλων. Έχει προηγηθεί ο διάλογος
-// επιβεβαίωσης διαγραφής και επίκειται η πραγματική διαγραφή και η
-// ανανέωση της σελίδας μετά τη διαγραφή.
+// επιλεγμένων ή μη επιλεγμένων υπαλλήλων. Έχει προηγηθεί ο διάλογος
+// επιβεβαίωσης διαγραφής και επίκειται η πραγματική διαγραφή στην
+// database και η ανανέωση της σελίδας μετά τη διαγραφή.
 
-prosopa.diagrafiEpilegmenonExec = (epilegmenoi) => {
-	if (epilegmenoi)
-	pnd.fyiMessage('Διαγραφή επιλεγμένων υπαλλήλων…');
+prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
+	pnd.fyiMessage(msg + '…');
 
-	else
-	pnd.fyiMessage('Διαγραφή μη επιλεγμένων υπαλλήλων…');
+	// Στο array "plist" θα βάλουμε τους κωδικούς των επιλεγμένων
+	// υπαλλήλων.
 
-	let plist = {};
+	let plist = [];
 
 	prosopa.browserDOM.children('.parousia').each(function() {
 		let ordinalDOM = $(this).children('.parousiaOrdinal');
 		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
 		let ipalilos = $(this).children('.parousiaIpalilos').text();
 
-		if (epilegmenoi && epilegmeno)
-		plist[ipalilos] = true;
-
-		else if ((!epilegmenoi) && (!epilegmeno))
-		plist[ipalilos] = true;
+		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
+		plist.push(ipalilos);
 	});
 
-	let tsilp = [];
-
-	for (let i in plist)
-	tsilp.push(i);
-
-	if (!tsilp.length)
-	return pnd.fyiMessage();
+	if (!plist.length)
+	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι προς διαγραφή');
 
 	$.post({
 		'url': 'diagrafiEpilegmenon.php',
 		'dataType': 'text',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
-			'plist': tsilp,
+			'plist': plist,
 		},
 		'success': (rsp) => prosopa.ananeosi(),
 		'error': (err) => {
