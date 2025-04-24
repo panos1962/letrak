@@ -1375,19 +1375,11 @@ prosopa.ergaliaHide = () => {
 prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 	e.stopPropagation();
 
-	let countOla = 0;
-	let countEpi = 0;
+	let plist = prosopa.epilogiList(epilegmenoi);
 
-	prosopa.browserDOM.children().each(function() {
-		countOla++;
+	let countOla = prosopa.browserDOM.children().length;
+	let countEpi = plist.length;
 
-		let ordinalDOM = $(this).children('.parousiaOrdinal');
-
-		if (ordinalDOM.hasClass('parousiaEpilogi'))
-		countEpi++;
-	});
-
-	if (!epilegmenoi)
 	countEpi = countOla - countEpi;
 
 	if (countEpi <= 0)
@@ -1427,7 +1419,7 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 
 		'buttons': {
 			'Διαγραφή': function() {
-				prosopa.diagrafiEpilegmenonExec(epilegmenoi, titlos);
+				prosopa.diagrafiEpilegmenonExec(plist, titlos);
 				$(this).dialog('close');
 			},
 			'Άκυρο': function() {
@@ -1445,13 +1437,8 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 // επιβεβαίωσης διαγραφής και επίκειται η πραγματική διαγραφή στην
 // database και η ανανέωση της σελίδας μετά τη διαγραφή.
 
-prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
+prosopa.diagrafiEpilegmenonExec = (plist, msg) => {
 	pnd.fyiMessage(msg + '…');
-
-	let plist = prosopa.epilogiList(epilegmenoi);
-
-	if (!plist.length)
-	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι προς διαγραφή');
 
 	$.post({
 		'url': 'diagrafiIpalilon.php',
@@ -1473,19 +1460,11 @@ prosopa.diagrafiEpilegmenonExec = (epilegmenoi, msg) => {
 prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 	e.stopPropagation();
 
-	let countOla = 0;
-	let countEpi = 0;
+	let plist = prosopa.epilogiList(epilegmenoi);
 
-	prosopa.browserDOM.children().each(function() {
-		countOla++;
+	let countOla = prosopa.browserDOM.children().length;
+	let countEpi = plist.length;
 
-		let ordinalDOM = $(this).children('.parousiaOrdinal');
-
-		if (ordinalDOM.hasClass('parousiaEpilogi'))
-		countEpi++;
-	});
-
-	if (!epilegmenoi)
 	countEpi = countOla - countEpi;
 
 	if (countEpi <= 0)
@@ -1542,7 +1521,7 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 					return;
 				}
 
-				prosopa.orarioEpilegmenonExec(epilegmenoi, orario.toString(), titlos);
+				prosopa.orarioEpilegmenonExec(plist, orario.toString(), titlos);
 				$(this).dialog('close');
 			},
 			'Άκυρο': function() {
@@ -1555,13 +1534,8 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 	});
 };
 
-prosopa.orarioEpilegmenonExec = (epilegmenoi, orario, msg) => {
+prosopa.orarioEpilegmenonExec = (plist, orario, msg) => {
 	pnd.fyiMessage(msg + '…');
-
-	let plist = prosopa.epilogiList(epilegmenoi);
-
-	if (!plist.length)
-	return pnd.fyiError('Δεν επιλέχθηκαν υπάλληλοι για αλλαγή ωραρίου');
 
 	$.post({
 		'url': 'orarioAlagi.php',
