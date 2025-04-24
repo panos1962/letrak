@@ -1319,6 +1319,14 @@ prosopa.ergaliaSetup = () => {
 	attr('title', 'Αλλαγή ωραρίου μη επιλεγμένων').
 	on('click', (e) => prosopa.orarioEpilegmenon(e, false));
 
+	$('#iperoriaEpilegmenon').
+	attr('title', 'Υπερωρίες επιλεγμένων').
+	on('click', (e) => prosopa.iperoriaEpilegmenon(e, true));
+
+	$('#iperoriaMiEpilegmenon').
+	attr('title', 'Υπερωρία μη επιλεγμένων').
+	on('click', (e) => prosopa.iperoriaEpilegmenon(e, false));
+
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
 
@@ -1379,8 +1387,6 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 
 	let countOla = prosopa.browserDOM.children().length;
 	let countEpi = plist.length;
-
-	countEpi = countOla - countEpi;
 
 	if (countEpi <= 0)
 	return pnd.fyiError('Δεν υπάρχουν υπάλληλοι προς διαγραφή');
@@ -1471,8 +1477,6 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 	let countOla = prosopa.browserDOM.children().length;
 	let countEpi = plist.length;
 
-	countEpi = countOla - countEpi;
-
 	if (countEpi <= 0)
 	return pnd.fyiError('Δεν καθορίστηκαν υπάλληλοι για αλλαγή ωραρίου');
 
@@ -1493,7 +1497,6 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		titlos = 'Αλλαγή ωραρίου μη επιλεγμένων υπαλλήλων';
 		erotisi = 'Να αλλάξει το ωράριο στους μη επιλεγμένους υπαλλήλους;';
 	}
-
 
 	let html = '<p>' + erotisi + '</p>' +
 		'<div class="formaInputLine">' +
@@ -1559,6 +1562,98 @@ prosopa.orarioEpilegmenonExec = (plist, orario, msg) => {
 		'success': (rsp) => prosopa.ananeosi(),
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα αλλαγής ωραρίου υπαλλήλων');
+			console.error(err);
+		},
+	});
+};
+
+///////////////////////////////////////////////////////////////////////////////@
+
+prosopa.iperoriaEpilegmenon = function(e, epilegmenoi) {
+	e.stopPropagation();
+
+	let plist = prosopa.epilogiList(epilegmenoi);
+
+	let countOla = prosopa.browserDOM.children().length;
+	let countEpi = plist.length;
+
+	if (countEpi <= 0)
+	return pnd.fyiError('Δεν καθορίστηκαν υπάλληλοι για υπερωρίες');
+
+	let titlos;
+	let erotisi;
+
+	if (countEpi === countOla) {
+		titlos = 'Υπερωρίες σε όλους τους υπαλλήλους';
+		erotisi = 'Να δοθούν υπερωρίες σε όλους τους υπαλλήλους;';
+	}
+
+	else if (epilegmenoi) {
+		titlos = 'Υπερωρίες στους επιλεγμένους υπαλλήλους';
+		erotisi = 'Να δοθούν υπερωρίες στους επιλεγμένους υπαλλήλους;';
+	}
+
+	else {
+		titlos = 'Υπερωρίες στους μη επιλεγμένους υπαλλήλους';
+		erotisi = 'Να δοθούν υπερωρίες στους μη επιλεγμένους υπαλλήλους;';
+	}
+
+	let html = '<p>' + erotisi + '</p>' +
+		'<div class="formaInputLine">' +
+		'<label for="iperoriaOres">Ώρες</label>' +
+		'<input id="iperoriaOres" type="number" width="4" ' +
+		'min="0" max="12">' +
+		'</div>';
+
+	let dialogDOM = $('<div>').
+	attr('title', titlos).
+	append($('<div>').
+	html(html)).
+	dialog({
+		'resizable': false,
+		'height': 'auto',
+		'width': '560px',
+		'modal': true,
+		'position': {
+			'my': 'left+50 top+50',
+			'at': 'left top',
+		},
+
+		'buttons': {
+			'Εφαρμογή': function() {
+				let iperoriaDOM = $('#iperoriaOres');
+				let iperoriaVal = parseInt(iperoriaDOM.val());
+
+				if (isNaN(iperoriaVal) || (iperoriaVal < 0))
+				iperoriaVal = 0;
+
+				prosopa.iperoriaEpilegmenonExec(plist, iperoriaVal, titlos);
+				$(this).dialog('close');
+			},
+			'Άκυρο': function() {
+				$(this).dialog('close');
+			},
+		},
+		'close': function() {
+			dialogDOM.remove();
+		},
+	});
+};
+
+prosopa.iperoriaEpilegmenonExec = (plist, ores, msg) => {
+	pnd.fyiMessage(msg + '…');
+
+	$.post({
+		'url': 'iperoria.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': prosopa.deltioKodikos,
+			'plist': plist,
+			'ores': ores,
+		},
+		'success': (rsp) => prosopa.ananeosi(),
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα καθορισμού υπερωριών');
 			console.error(err);
 		},
 	});
