@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-04-24
 // Updated: 2025-04-23
 // Updated: 2025-04-22
 // Updated: 2025-04-21
@@ -1676,19 +1677,37 @@ prosopa.telefteaEpilogiSave = function(fld) {
 	return prosopa;
 };
 
+// Η function "epilogiList" επιστρέφει array με τους κωδικούς των
+// επιλεγμένων υπαλλήλων.
+
 prosopa.epilogiList = function(epilegmenoi) {
-	let plist = [];
+	let plist = {};
+
+	// Αρχικά δημιουργούμε λίστα με properties τους κωδικούς των
+	// επιλεγμένων υπαλλήλων, προκειμένου να αποφύγουμε τυχόν
+	// διπλοεγγραφές (πράγμα αδύνατον, αλλά για ασφάλεια).
 
 	prosopa.browserDOM.children('.parousia').each(function() {
 		let ordinalDOM = $(this).children('.parousiaOrdinal');
 		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
 		let ipalilos = $(this).children('.parousiaIpalilos').text();
 
+		ipalilos = parseInt(ipalilos);
+
+		if (isNaN(ipalilos))
+		return;
+
+		if (ipalilos <= 0)
+		return;
+
 		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
-		plist.push(ipalilos);
+		plist[ipalilos] = true;
 	});
 
-	return plist;
+	// Σ' αυτό το σημείο επιστρέφουμε τα properties του "plist" (που είναι
+	// οι κωδικοί των επιλεγμένων υπαλλήλων) ως array.
+
+	return Object.keys(plist);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
