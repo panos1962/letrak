@@ -1441,7 +1441,7 @@ prosopa.diagrafiEpilegmenonExec = (plist, msg) => {
 	pnd.fyiMessage(msg + '…');
 
 	$.post({
-		'url': 'diagrafiIpalilon.php',
+		'url': 'ipalilosDiagrafi.php',
 		'dataType': 'text',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
@@ -1456,6 +1456,12 @@ prosopa.diagrafiEpilegmenonExec = (plist, msg) => {
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "orarioEpilegmenon" καλείται από τις επιλογές "Ωράριο
+// επιλεγμένων", ή "Ωράριο μη επιλεγμένων" του βασικού μενού επεξεργασίας
+// δελτίου. Η πρώτη παράμετρος αφορά στο click event της επιλογής, ενώ η
+// δεύτερη παράμετρος είναι πιο σημαντική και δείχνει αν επιλέχθηκε αλλαγή
+// ωραρίου επιλεγμένων (true), ή αλλαγή ωραρίου μη επιλεγμένων (false).
 
 prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 	e.stopPropagation();
@@ -1533,6 +1539,11 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		},
 	});
 };
+
+// Η function "orarioEpilegmenonExec" είναι ο πυρήνας της αλλαγής ωραρίου
+// επιλεγμένων ή μη επιλεγμένων υπαλλήλων. Έχει προηγηθεί ο διάλογος
+// επιβεβαίωσης αλλαγής ωραρίου και επίκειται η πραγματική αλλαγή στην
+// database και η ανανέωση της σελίδας μετά την αλλαγή.
 
 prosopa.orarioEpilegmenonExec = (plist, orario, msg) => {
 	pnd.fyiMessage(msg + '…');
