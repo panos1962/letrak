@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-05-16
 // Updated: 2021-05-13
 // Updated: 2020-08-02
 // Updated: 2020-07-07
@@ -53,7 +54,7 @@ document_head([
 // που δείχνει στη νεότερη version των δεδομένων αυτών.
 
 ?>
-<script src="../public/erpotaData.js" defer></script>
+<script src="../public/erpotaData.js?version=20250516" defer></script>
 <?php
 
 pandora::
