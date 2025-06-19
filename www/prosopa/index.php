@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-06-19
 // Updated: 2025-04-24
 // Updated: 2025-04-23
 // Updated: 2025-04-17
@@ -118,9 +119,9 @@ document_body();
 			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate orarioPedio">
 
 			<div class="mazi">
+			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
 			<label for="peIpalilosKarta">Κάρτα</label>
 			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
 			<div id="peIpoptoPliktro" title="Επόμενη ύποπτη εγγραφή"></div>
 			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
 			</div>
