@@ -119,11 +119,11 @@ document_body();
 			<input id="peIpalilosOrario" class="peIpalilosPedio pePedioUpdate orarioPedio">
 
 			<div class="mazi">
-			<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
-			<label for="peIpalilosKarta">Κάρτα</label>
-			<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
-			<div id="peIpoptoPliktro" title="Επόμενη ύποπτη εγγραφή"></div>
-			<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
+				<div id="peKatagrafiPliktro" title="Κλικ για έλεγχο καταγραφών"></div>
+				<label for="peIpalilosKarta">Κάρτα</label>
+				<input id="peIpalilosKarta" class="peIpalilosPedio pePedioUpdate">
+				<div id="peIpoptoPliktro" title="Επόμενη ύποπτη εγγραφή"></div>
+				<div id="peApoOrarioPliktro" title="Αυτόματη συμπλήρωση από ωράριο"></div>
 			</div>
 		</div>
 		<div class="formaInputLine">
@@ -190,10 +190,10 @@ document_body();
 			</select>
 
 			<div class="mazi">
-			<label for="peAdapo">Από</label>
-			<input id="peAdapo" class="peParousiaPedio pePedioUpdate">
-			<label for="peAdeos">Έως</label>
-			<input id="peAdeos" class="peParousiaPedio pePedioUpdate">
+				<label for="peAdapo">Από</label>
+				<input id="peAdapo" class="peParousiaPedio pePedioUpdate">
+				<label for="peAdeos">Έως</label>
+				<input id="peAdeos" class="peParousiaPedio pePedioUpdate">
 			</div>
 		</div>
 	</div>
