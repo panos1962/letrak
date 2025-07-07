@@ -3480,6 +3480,7 @@ prosopa.editorIpovoli = (e) => {
 	let adidos = prosopa.editorAdidosDOM.val();
 	let adapo = prosopa.editorAdapoDOM.val();
 	let adeos = prosopa.editorAdeosDOM.val();
+	let info = prosopa.editorInfoDOM.val();
 
 	$.post({
 		'url': 'parousiaIpovoli.php',
@@ -3494,7 +3495,7 @@ prosopa.editorIpovoli = (e) => {
 			'adapo': adapo,
 			'adeos': adeos,
 			'excuse': prosopa.editorExcuseDOM.val(),
-			'info': prosopa.editorInfoDOM.val(),
+			'info': info,
 		},
 		'success': (rsp) => {
 			// Σε περίπτωση που εισήχθη νέος υπάλληλος πρέπει να
@@ -3516,7 +3517,8 @@ prosopa.editorIpovoli = (e) => {
 			}, 100);
 
 			else
-			prosopa.ipovoliAdiaMulti(ipalilos, adidos, adapo, adeos);
+			prosopa.adiaMultiIpovoli(deltio, ipalilos,
+				adidos, adapo, adeos, info);
 		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα υποβολής στοιχείων παρουσίας');
@@ -3531,14 +3533,41 @@ prosopa.editorIpovoli = (e) => {
 	return false;
 };
 
-// Η function "ipovoliAdiaMulti" καλείται όταν κάνουμε υποβολή στοιχείων
+// Η function "adiaMultiIpovoli" καλείται όταν κάνουμε υποβολή στοιχείων
 // αδείας έχοντας επιλεγμένους υπαλλήλους. Αυτή η ενέργεια έχει ως αποτέλεσμα
 // την υποβολή στοιχείων αδείας του τρέχοντος υπαλλήλου και σε όλους τους
 // επιλεγμένους υπαλλήλους.
 
-prosopa.ipovoliAdiaMulti = function(ipalilos, adidos, adapo, adeos) {
+prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info) {
 	let plist = prosopa.epilogiList(true, ipalilos);
-console.log(plist);
+
+	if (plist.length <= 0)
+	return;
+
+	if (!adidos)
+	return;
+
+	$.post({
+		'url': 'adiaMultiIpovoli.php',
+		'dataType': 'text',
+		'data': {
+			'deltio': deltio,
+			'plist': plist,
+			'adidos': adidos,
+			'adapo': adapo,
+			'adeos': adeos,
+			'info': info,
+		},
+		'success': (rsp) => {
+			setTimeout(function() {
+				prosopa.ananeosi();
+			}, 100);
+		},
+		'error': (err) => {
+			pnd.fyiError('Σφάλμα υποβολής στοιχείων αδείας επιλεγμένων');
+			console.error(err);
+		},
+	});
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
