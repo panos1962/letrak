@@ -1758,9 +1758,10 @@ prosopa.telefteaEpilogiSave = function(fld) {
 };
 
 // Η function "epilogiList" επιστρέφει array με τους κωδικούς των
-// επιλεγμένων υπαλλήλων.
+// επιλεγμένων υπαλλήλων. Αν υπάρχει κωδικός υπαλλήλου ως δεύτερη
+// παράμετρος, τότε αυτός ο υπάλληλος εξαιρείται από τους επιλεγμένους.
 
-prosopa.epilogiList = function(epilegmenoi) {
+prosopa.epilogiList = function(epilegmenoi, exereteos) {
 	let plist = {};
 
 	// Αρχικά δημιουργούμε λίστα με properties τους κωδικούς των
@@ -1778,6 +1779,9 @@ prosopa.epilogiList = function(epilegmenoi) {
 		return;
 
 		if (ipalilos <= 0)
+		return;
+
+		if (ipalilos == exereteos)
 		return;
 
 		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
@@ -3458,7 +3462,7 @@ prosopa.editorIpovoli = (e) => {
 
 	// Ελέγχουμε αν πρόκειται για γονική εξαίρεση. Στην περίπτωση της
 	// εξαίρεσης γονικής αδείας, πρέπει να έχει καταχωρηθεί το χρονικό
-	// διάστημα ωσ σχόλιο της μορφής "ΑΠΟ ΩΩ:ΛΛ ΜΕΧΡΙ ΩΩ:ΛΛ".
+	// διάστημα ως σχόλιο της μορφής "ΑΠΟ ΩΩ:ΛΛ ΜΕΧΡΙ ΩΩ:ΛΛ".
 
 	if (prosopa.gonikiCheck()) {
 		pnd.fyiError('Συμπληρώστε παρατήρηση της μορφής: ' +
@@ -3473,6 +3477,10 @@ prosopa.editorIpovoli = (e) => {
 	}
 
 	try {
+	let adidos = prosopa.editorAdidosDOM.val();
+	let adapo = prosopa.editorAdapoDOM.val();
+	let adeos = prosopa.editorAdeosDOM.val();
+
 	$.post({
 		'url': 'parousiaIpovoli.php',
 		'dataType': 'text',
@@ -3482,9 +3490,9 @@ prosopa.editorIpovoli = (e) => {
 			'orario': prosopa.editorIpalilosOrarioDOM.val(),
 			'karta': prosopa.editorIpalilosKartaDOM.val(),
 			'meraora': prosopa.editorMeraoraDOM.val(),
-			'adidos': prosopa.editorAdidosDOM.val(),
-			'adapo': prosopa.editorAdapoDOM.val(),
-			'adeos': prosopa.editorAdeosDOM.val(),
+			'adidos': adidos,
+			'adapo': adapo,
+			'adeos': adeos,
 			'excuse': prosopa.editorExcuseDOM.val(),
 			'info': prosopa.editorInfoDOM.val(),
 		},
@@ -3506,6 +3514,9 @@ prosopa.editorIpovoli = (e) => {
 			setTimeout(function() {
 				prosopa.editorIpalilosOrarioDOM.focus();
 			}, 100);
+
+			else
+			prosopa.ipovoliAdiaMulti(ipalilos, adidos, adapo, adeos);
 		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα υποβολής στοιχείων παρουσίας');
@@ -3518,6 +3529,16 @@ prosopa.editorIpovoli = (e) => {
 	}
 
 	return false;
+};
+
+// Η function "ipovoliAdiaMulti" καλείται όταν κάνουμε υποβολή στοιχείων
+// αδείας έχοντας επιλεγμένους υπαλλήλους. Αυτή η ενέργεια έχει ως αποτέλεσμα
+// την υποβολή στοιχείων αδείας του τρέχοντος υπαλλήλου και σε όλους τους
+// επιλεγμένους υπαλλήλους.
+
+prosopa.ipovoliAdiaMulti = function(ipalilos, adidos, adapo, adeos) {
+	let plist = prosopa.epilogiList(true, ipalilos);
+console.log(plist);
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
