@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-07-07
 // Updated: 2025-04-24
 // Updated: 2025-04-23
 // Updated: 2025-04-22
@@ -3559,9 +3560,8 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info
 			'info': info,
 		},
 		'success': (rsp) => {
-			setTimeout(function() {
-				prosopa.ananeosi();
-			}, 100);
+			if (parseInt(rsp) == rsp)
+			prosopa.ananeosi();
 		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα υποβολής στοιχείων αδείας επιλεγμένων');

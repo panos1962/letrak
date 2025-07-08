@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-07-08
 // Created: 2025-07-07
 // @HISTORY END
 //
@@ -68,6 +69,8 @@ $plist = pandora::parameter_get("plist");
 $adidos = adia_get($adapo, $adeos);
 $info = info_get();
 
+$count = 0;
+
 foreach ($plist as $ipalilos) {
 	$query = "UPDATE `letrak`.`parousia` SET " .
 		"`meraora` = NULL, " .
@@ -80,8 +83,12 @@ foreach ($plist as $ipalilos) {
 		"WHERE `deltio` = " . $deltio_kodikos . " " .
 		"AND `ipalilos` = " . $ipalilos;
 	pandora::query($query);
+
+	if (pandora::affected_rows() > 0)
+	$count++;
 }
 
+print $count;
 exit(0);
 
 function adia_get(&$adapo, &$adeos) {
