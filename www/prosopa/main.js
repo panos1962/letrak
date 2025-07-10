@@ -3512,10 +3512,20 @@ prosopa.editorIpovoli = (e) => {
 
 			prosopa.editorAlagiPost(rsp);
 
+			// Αν πρόκειται για νέο υπάλληλο που προέκυψε με
+			// προσθήκη υπαλλήλου, τότε τοποθετούμε τον κέρσορα
+			// στο πεδίο του ωραρίου προκειμένου ο χρήστης να
+			// αποδεχθεί ή να επανακαθορίσει το ωράριου του
+			// υπαλλήλου.
+
 			if (prosopa.editorIpovoliDOM.data('prosthiki'))
 			setTimeout(function() {
 				prosopa.editorIpalilosOrarioDOM.focus();
 			}, 100);
+
+			// Σε άλλη περίπτωση ελέγχουμε αν έχουμε επιλεγμένους
+			// υπαλλήλους προκειμένου να επεναλάβουμε τα στοιχεία
+			// αδείας για τους επιλεγμένους.
 
 			else
 			prosopa.adiaMultiIpovoli(deltio, ipalilos,
@@ -3540,12 +3550,19 @@ prosopa.editorIpovoli = (e) => {
 // επιλεγμένους υπαλλήλους.
 
 prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info) {
+	// Αν δεν πρόκειται για άδεια, τότε δεν προβαίνουμε σε περαιτέρω
+	// ενέργειες, καθώς η παρούσα διαδικασία αφορά στην υποβολή στοιχείων
+	// αδείας σε όλους τους επιλεγμένους υπαλλήλους.
+
+	if (!adidos)
+	return;
+
+	// Κατασκευάζουμε array επιλεγμένων υπαλλήλων εξαιρώντας τον τρέχοντα
+	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας.
+
 	let plist = prosopa.epilogiList(true, ipalilos);
 
 	if (plist.length <= 0)
-	return;
-
-	if (!adidos)
 	return;
 
 	$.post({
