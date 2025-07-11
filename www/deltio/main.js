@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-07-11
 // Updated: 2025-01-16
 // Updated: 2025-01-14
 // Updated: 2024-11-20
@@ -683,9 +684,6 @@ deltio.browserSetup = () => {
 
 deltio.candiTabsSetup = () => {
 	letrak.arxikiTabDOM.
-	addClass('idnacTab');
-
-	deltio.paleoteraTabDOM.
 	addClass('idnacTab');
 
 	pnd.toolbarLeftDOM.
@@ -1594,8 +1592,6 @@ deltio.deltioProcess = (rsp, opts) => {
 
 	else if (opts.onEmpty)
 	opts.onEmpty();
-
-	deltio.clearCandi();
 
 	if (count)
 	deltio.ananeosi();
