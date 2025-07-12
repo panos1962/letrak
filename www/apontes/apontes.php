@@ -354,6 +354,8 @@ class Apontes {
 	}
 
 	private static function plires() {
+		self::ipalilos_check();
+
 		if (self::$pro->imerominia !== self::$apo->imerominia)
 		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
 
@@ -366,6 +368,45 @@ class Apontes {
 		self::
 		parousia_fetch(self::$pro)::
 		parousia_fetch(self::$apo);
+
+		return __CLASS__;
+	}
+
+	private static function ipalilos_check() {
+		$ilist = [];
+
+		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+			" WHERE `deltio` = " . self::$pro->kodikos;
+
+		$result = pandora::query($query);
+
+		while ($row = $result->fetch_array(MYSQLI_NUM))
+		$ilist[$row[0]] = 1;
+
+		$query = "SELECT `ipalilos` FROM `letrak`.`parousia`" .
+			" WHERE `deltio` = " . self::$apo->kodikos;
+
+		$result = pandora::query($query);
+
+		while ($row = $result->fetch_array(MYSQLI_NUM)) {
+			if (array_key_exists($row[0], $ilist))
+			unset($ilist[$row[0]]);
+
+			else
+			$ilist[$row[0]] = 1;
+		}
+
+		$count = 0;
+		$msg = "Διαφορά υπαλλήλων: ";
+		$enotiko = "";
+
+		foreach ($ilist as $ipalilos => $dummy) {
+			$msg .= $enotiko . $ipalilos;
+			$enotiko = ", ";
+		}
+
+		if ($enotiko)
+		letrak::fatal_error_json($msg);
 
 		return __CLASS__;
 	}
