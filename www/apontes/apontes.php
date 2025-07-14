@@ -354,8 +354,6 @@ class Apontes {
 	}
 
 	private static function plires() {
-		self::ipalilos_check();
-
 		if (self::$pro->imerominia !== self::$apo->imerominia)
 		letrak::fatal_error_json("Διαφορετική ημερομηνία προσέλευσης/αποχώρησης");
 
@@ -366,11 +364,18 @@ class Apontes {
 		letrak::fatal_error_json("Διαφορετικός τίτλος προσέλευσης/αποχώρησης");
 
 		self::
+		ipalilos_check()::
 		parousia_fetch(self::$pro)::
 		parousia_fetch(self::$apo);
 
 		return __CLASS__;
 	}
+
+	// Η function που ακολουθεί καλείται μόνο στα πλήρη παρουσιολόγια
+	// προκειμένου να ελέγξει αν περιέχουν ακριβώς τους ίδιους υπαλλήλους.
+	// Αν υπάρχουν υπάλληλοι στο ένα δελτίο που δεν υπάρχουν στο άλλο
+	// δελτίο, τότε η διαδικασία παρουσίασης απόντων ακυρώνεται και
+	// εμφανίζεται σχετικό μήνυμα στο πεδίο λαθών.
 
 	private static function ipalilos_check() {
 		$ilist = [];
