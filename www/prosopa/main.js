@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-07-14
 // Updated: 2025-07-07
 // Updated: 2025-04-24
 // Updated: 2025-04-23
@@ -1100,7 +1101,7 @@ prosopa.ipografiSintomografia = function(forma) {
 	else if (titlos.match(/^[οΟoO][σΣsS] *$/))
 	titlos = 'Ο συντάκτης';
 
-	else if (titlos.match(/[ηΗhH][σΣsS] *$/))
+	else if (titlos.match(/^[ηΗhH][σΣsS] *$/))
 	titlos = 'Η συντάκτρια';
 
 	forma.titlosDOM.val(titlos);
