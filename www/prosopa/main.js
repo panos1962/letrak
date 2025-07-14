@@ -1085,26 +1085,57 @@ prosopa.ipografiEdit = (e) => {
 
 prosopa.ipografiSintomografia = function(forma) {
 	let titlos = forma.titlosDOM.val();
+	let idiotita = undefined;
+	let monada = undefined;
 
-	if (titlos.match(/^[οΟoO][πΠpP] /))
-	titlos = titlos.replace(/^.. */, 'Ο προϊστάμενος ');
+	if (titlos.match(/^[οΟoO][πΠpP][τΤtαΑaATδΔdD]? /)) {
+		idiotita = 'Ο προϊστάμενος';
+		monada = titlos.substring(2, 3);
+	}
 
-	else if (titlos.match(/^[ηΗhH][πΠpP] /))
-	titlos = titlos.replace(/^.. */, 'Η προϊσταμένη ');
+	else if (titlos.match(/^[ηΗhH][πΠpP][τΤtαΑaATδΔdD]? /)) {
+		idiotita = 'Η προϊσταμένη';
+		monada = titlos.substring(2, 3);
+	}
 
-	else if (titlos.match(/^[οΟoO][αΑaA] /))
-	titlos = titlos.replace(/^.. */, 'Ο αναπληρωτής προϊστάμενος ');
+	else if (titlos.match(/^[οΟoO][αΑaA][τΤtαΑaATδΔdD]? /)) {
+		idiotita = 'Ο αναπληρωτής προϊστάμενος';
+		monada = titlos.substring(2, 3);
+	}
 
-	else if (titlos.match(/^[ηΗhH][αΑaA] /))
-	titlos = titlos.replace(/^.. */, 'Η αναπληρώτρια προϊσταμένη ');
+	else if (titlos.match(/^[ηΗhH][αΑaA][τΤtαΑaATδΔdD]? /)) {
+		idiotita = 'Η αναπληρώτρια προϊσταμένη';
+		monada = titlos.substring(2, 3);
+	}
 
 	else if (titlos.match(/^[οΟoO][σΣsS] *$/))
-	titlos = 'Ο συντάκτης';
+	idiotita = 'Ο συντάκτης';
 
 	else if (titlos.match(/^[ηΗhH][σΣsS] *$/))
-	titlos = 'Η συντάκτρια';
+	idiotita = 'Η συντάκτρια';
 
+	else
+	return prosopa;
+
+	if (monada === undefined)
+	monada = ' ';
+
+	else if (monada.match(/^[τΤtT]$/))
+	monada = ' Τμήματος ';
+
+	else if (monada.match(/^[αΑaA]$/))
+	monada = ' Αυτοτελούς Τμήματος ';
+
+	else if (monada.match(/^[δΔdD]$/))
+	monada = ' Διεύθυνσης ';
+
+	else
+	return prosopa;
+
+	titlos = titlos.replace(/^[^ ].* /, idiotita + monada);
 	forma.titlosDOM.val(titlos);
+
+	return prosopa;
 };
 
 prosopa.ipografiEditExec = function(forma) {
