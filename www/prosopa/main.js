@@ -1121,13 +1121,13 @@ prosopa.ipografiSintomografia = function(forma) {
 	monada = ' ';
 
 	else if (monada.match(/^[τΤtT]$/))
-	monada = ' Τμήματος ';
+	monada = ' Τμ. ';
 
 	else if (monada.match(/^[αΑaA]$/))
-	monada = ' Αυτοτελούς Τμήματος ';
+	monada = ' αυτοτελούς Τμ. ';
 
 	else if (monada.match(/^[δΔdD]$/))
-	monada = ' Διεύθυνσης ';
+	monada = ' Δ/νσης ';
 
 	else
 	return prosopa;
