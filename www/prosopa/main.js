@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-07-16
 // Updated: 2025-07-14
 // Updated: 2025-07-07
 // Updated: 2025-04-24
@@ -1074,14 +1075,17 @@ prosopa.ipografiEdit = (e) => {
 };
 
 // Στον τίτλο της υπογραφής επιτρέπουμε συντομογραφίες που αφορούν στην
-// ιδιότητα του υπογράφοντος. Πιοσ συγκεκριμένα ισχύουν τα εξής:
+// ιδιότητα του υπογράφοντος. Πιο συγκεκριμένα ισχύουν τα εξής:
 //
-//	ΟΠ	Ο προϊστάμενος
-//	ΗΠ	Η προϊσταμένη
-//	ΟΑ	Ο αναπληρωτής προϊστάμενος
-//	ΗΑ	Η αναπληρώτρια προϊσταμένη
+//	ΟΠx	Ο προϊστάμενος
+//	ΗΠx	Η προϊσταμένη
+//	ΟΑx	Ο αναπληρωτής προϊστάμενος
+//	ΗΑx	Η αναπληρώτρια προϊσταμένη
 //	ΟΣ	Ο συντάκτης
 //	ΗΣ	Η συντάκτρια
+//
+// όπου "x" είναι "Δ" για Διεύθυνση, "Τ" για Τμήμα και "Α" για Αυτοτελές
+// Τμήμα.
 
 prosopa.ipografiSintomografia = function(forma) {
 	let titlos = forma.titlosDOM.val();
@@ -1093,7 +1097,7 @@ prosopa.ipografiSintomografia = function(forma) {
 		monada = titlos.substring(2, 3);
 	}
 
-	else if (titlos.match(/^[ηΗhH][πΠpP][τΤtαΑaATδΔdD]? /)) {
+	else if (titlos.match(/^[ηΗhHiI][πΠpP][τΤtαΑaATδΔdD]? /)) {
 		idiotita = 'Η προϊσταμένη';
 		monada = titlos.substring(2, 3);
 	}
@@ -1103,7 +1107,7 @@ prosopa.ipografiSintomografia = function(forma) {
 		monada = titlos.substring(2, 3);
 	}
 
-	else if (titlos.match(/^[ηΗhH][αΑaA][τΤtαΑaATδΔdD]? /)) {
+	else if (titlos.match(/^[ηΗhHiI][αΑaA][τΤtαΑaATδΔdD]? /)) {
 		idiotita = 'Η αναπληρώτρια προϊσταμένη';
 		monada = titlos.substring(2, 3);
 	}
@@ -1111,7 +1115,7 @@ prosopa.ipografiSintomografia = function(forma) {
 	else if (titlos.match(/^[οΟoO][σΣsS] *$/))
 	idiotita = 'Ο συντάκτης';
 
-	else if (titlos.match(/^[ηΗhH][σΣsS] *$/))
+	else if (titlos.match(/^[ηΗhHiI][σΣsS] *$/))
 	idiotita = 'Η συντάκτρια';
 
 	else
@@ -1124,7 +1128,7 @@ prosopa.ipografiSintomografia = function(forma) {
 	monada = ' Τμ. ';
 
 	else if (monada.match(/^[αΑaA]$/))
-	monada = ' αυτοτελούς Τμ. ';
+	monada = ' Αυτοτελούς Τμ. ';
 
 	else if (monada.match(/^[δΔdD]$/))
 	monada = ' Δ/νσης ';
@@ -1132,7 +1136,7 @@ prosopa.ipografiSintomografia = function(forma) {
 	else
 	return prosopa;
 
-	titlos = titlos.replace(/^[^ ].* /, idiotita + monada);
+	titlos = titlos.replace(/^[^ ]+ ?/, idiotita + monada);
 	forma.titlosDOM.val(titlos);
 
 	return prosopa;
