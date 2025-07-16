@@ -1122,7 +1122,7 @@ prosopa.ipografiSintomografia = function(forma) {
 	return prosopa;
 
 	if (monada === undefined)
-	monada = ' ';
+	monada = '';
 
 	else if (monada.match(/^[τΤtT]$/))
 	monada = ' Τμ. ';
