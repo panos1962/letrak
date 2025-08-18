@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-18
 // Updated: 2025-07-16
 // Updated: 2025-07-14
 // Updated: 2025-07-07
@@ -153,7 +154,7 @@ prosopa.minima = {
 	'ipografiAkirosiTabLabel': 'Αναίρεση',
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
-	'ergaliaTabLabel': 'Επεξεργασία',
+	'ergaliaTabLabel': 'Εργαλεία',
 	'winpakTabLabel': 'WIN&ndash;PAK',
 	'katharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
