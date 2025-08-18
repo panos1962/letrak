@@ -24,7 +24,6 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
-// Updated: 2025-08-18
 // Updated: 2025-07-11
 // Updated: 2025-01-16
 // Updated: 2025-01-14
@@ -108,8 +107,8 @@ deltio.minima = {
 	'diagrafiTitle': 'Διαγραφή επιλεγμένου παρουσιολογίου',
 	'klonosTabLabel': 'Κλώνος',
 	'klonosTitle': 'Κλωνοποίηση επιλεγμένου παρουσιολογίου',
-	'epexergasiaTabLabel': 'Εργαλεία',
-	'epexergasiaTitle': 'Εργαλεία επεξεργασίας επιλεγμένου παρουσιολογίου',
+	'epexergasiaTabLabel': 'Επεξεργασία',
+	'epexergasiaTitle': 'Επεξεργασία επιλεγμένου παρουσιολογίου',
 	'leptomeriesTabLabel': 'Λεπτομέρειες',
 	'leptomeriesTitle': 'Λεπτομέρειες επιλεγμένου παρουσιολογίου',
 	'reportsTabLabel': 'Εκτυπώσεις',
