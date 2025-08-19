@@ -956,15 +956,21 @@ prosopa.ipografiInsert = (e) => {
 
 prosopa.ipografiInsertExec = function(forma) {
 	pnd.fyiMessage('Προσθήκη υπογραφής…');
+	prosopa.ipografiSintomografia(forma);
+
+	let taxinomisi = forma.taxinomisiDOM.val();
+	let armodios = forma.armodiosDOM.val();
+	let titlos = forma.titlosDOM.val();
 
 	$.post({
 		'url': 'ipografiInsert.php',
 		'dataType': 'json',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
-			'taxinomisi': forma.taxinomisiDOM.val(),
-			'armodios': forma.armodiosDOM.val(),
-			'titlos': forma.titlosDOM.val(),
+			'taxinomisi': taxinomisi,
+			'armodios': armodios,
+			'titlos': titlos,
+			'ipiresia': prosopa.deltio.ipiresiaGet(),
 		},
 		'success': (rsp) => prosopa.ipografiInsertPost(rsp, forma),
 		'error': (err) => {
@@ -1147,12 +1153,6 @@ prosopa.ipografiSintomografia = function(forma) {
 
 prosopa.ipografiEditExec = function(forma) {
 	pnd.fyiMessage('Ενημέρωση υπογραφής…');
-
-	// Όταν κάνουμε υποβολή υπογραφής ενώ βρισκόμαστε στο πεδίο αλλαγής
-	// τίτλου, το change event εκτελείται μετά την υποβολή και συνεπώς
-	// δεν θα εφαρμοστεί η ανάπτυξη συντομογραφιών. Για το λόγο αυτό
-	// επιτελούμε ανάπτυξη συντομογραφιών και σε αυτό το σημείο.
-
 	prosopa.ipografiSintomografia(forma);
 
 	$.post({
