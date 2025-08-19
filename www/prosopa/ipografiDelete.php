@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2021-05-23
 // Updated: 2020-05-12
 // Updated: 2020-05-06
@@ -68,9 +69,15 @@ $taxinomisi = pandora::parameter_get("taxinomisi");
 if (letrak::ipografi_invalid_taxinomisi($taxinomisi))
 letrak::fatal_error_json("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
 
+$ipiresia = pandora::parameter_get("ipiresia");
+$kinisi = pandora::parameter_get("kinisi");
+
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
+
+letrak::katagrafi($prosvasi->ipalilos_get(), $kodikos, $ipiresia,
+	"ΔΙΑΓΡΑΦΗ ΑΡΜΟΔΙΟΥ", $kinisi);
 
 $query = "DELETE FROM `letrak`.`ipografi` " .
 	" WHERE (`deltio` = " . $kodikos . ")" .
@@ -82,6 +89,7 @@ letrak::fatal_error_json("Απέτυχε η διαγραφή υπογραφής"
 
 $deltio->ekremes_update();
 letrak::ipografes_taxinomisi($kodikos);
+
 pandora::commit();
 
 print '{';

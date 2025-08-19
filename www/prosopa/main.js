@@ -1235,6 +1235,13 @@ prosopa.ipografiDiagrafi = (e) => {
 	return prosopa.fyiError('Απροσδιόριστη υπογραφή προς διαγραφή');
 
 	let taxinomisi = dom.data('ipografi').taxinomisiGet();
+	let armodios = dom.data('ipografi').armodiosGet();
+	let onomateponimo = dom.children('.ipografiOnomateponimo').text();
+	let titlos = dom.data('ipografi').titlosGet();
+
+	let kinisi = armodios + ':';
+	kinisi += onomateponimo + ':';
+	kinisi += titlos;
 
 	pnd.fyiMessage('Διαγραφή υπογραφής…');
 	$.post({
@@ -1243,6 +1250,8 @@ prosopa.ipografiDiagrafi = (e) => {
 		'data': {
 			'deltio': prosopa.deltioKodikos,
 			'taxinomisi': taxinomisi,
+			'ipiresia': prosopa.deltio.ipiresiaGet(),
+			'kinisi': kinisi,
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {

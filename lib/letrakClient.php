@@ -20,6 +20,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2024-11-16
 // Updated: 2021-03-08
 // Updated: 2020-06-06
@@ -212,6 +213,35 @@ XXX 2024-11-16
 		}
 
 		print ']';
+	}
+
+	// Η function "katagrafi" δημιουργεί records καταγραφής σημαντικών
+	// κινήσεων που επιτελούν οι χρήστες. Τέτοιες κινήσεις είναι κυρίως
+	// διαγραφές δελτίων και μεταβολές στους υπογράφοντες. Ως παραμέτρους
+	// περνάμε τον χρήστη, τον κωδικό παρουσιολογίου, την υπηρεσία του
+	// παρουσιολογίου, το είδος της κίνησης, και ένα string με χρήσιμα
+	// δεδομένα της καταγραφόμενης κίνησης.
+
+	public static function katagrafi($xristis, $deltio,
+		$ipiresia, $idos, $data) {
+
+		$query = "INSERT INTO `letrak`.`katagrafi` (" .
+				"`ipalilos`, " .
+				"`deltio`, " .
+				"`ipiresia`, " .
+				"`idos`, " .
+				"`data` " .
+			") VALUES (" .
+				$xristis . ", " .
+				$deltio . ", " .
+				pandora::sql_string($ipiresia) . ", " .
+				pandora::sql_string($idos) . ", " .
+				pandora::sql_string($data) .
+			")";
+		pandora::query($query);
+
+		if (pandora::affected_rows() !== 1)
+		letrak::fatal_error_json("Απέτυχε η καταγραφή κίνησης");
 	}
 
 	// Η function "fatal_error" χρησιμοποιείται κυρίως μέσα από
