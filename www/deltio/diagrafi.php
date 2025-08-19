@@ -16,6 +16,7 @@
 // @FILE END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2020-05-18
 // Created: 2020-04-22
 // @HISTORY END
@@ -52,6 +53,19 @@ if ($prosvasi->oxi_update_ipiresia($ipiresia))
 letrak::fatal_error("Δεν έχετε δικαίωμα διαγραφής παρουσιολογίου");
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+$ipalilos = $prosvasi->ipalilos_get();
+
+$onomateponimo = Ipalilos::onomateponimo($ipalilos);
+
+if (!$onomateponimo)
+letrak::fatal_error_json("Δεν βρέθηκε υπάλληλος με κωδικό " . $ipalilos);
+
+$kinisi .= $ipalilos . ":";
+$kinisi .= $onomateponimo;
+
+letrak::katagrafi($ipalilos, $kodikos, $ipiresia,
+	"ΔΙΑΓΡΑΦΗ ΔΕΛΤΙΟΥ", $kinisi);
 
 $query = "DELETE FROM `letrak`.`deltio` WHERE `kodikos` = " . $kodikos;
 pandora::query($query);

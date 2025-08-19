@@ -21,6 +21,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2021-03-31
 // Updated: 2021-05-30
 // Updated: 2021-05-23
@@ -623,6 +624,22 @@ class Ipalilos {
 		$this->xparam_set($row[0], $row[1]);
 
 		return $this;
+	}
+
+	// Η function "onomateponimo" επιστρέφει το ονοματεπώυμο υπαλλήλου
+	// του οποίου τον κωδικό περνάμε ως παράμετρο. Αν ο υπάλληλος δεν
+	// υπάρχει, επιστρέφει FALSE.
+
+	public static function onomateponimo($kodikos) {
+		$query = "SELECT `eponimo`, `onoma`, `patronimo`" .
+			" FROM " . letrak::erpota12("ipalilos") .
+			" WHERE `kodikos` = " . $kodikos;
+		$row = pandora::first_row($query);
+
+		if ($row)
+		return rtrim($row[0]) . " " . rtrim($row[1]);
+
+		return FALSE;
 	}
 }
 

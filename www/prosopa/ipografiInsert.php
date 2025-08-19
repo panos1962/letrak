@@ -67,15 +67,10 @@ $armodios = pandora::parameter_get("armodios");
 if (letrak::ipalilos_invalid_kodikos($armodios))
 letrak::fatal_error_json("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
 
-$query = "SELECT `eponimo`, `onoma`" .
-	" FROM " . letrak::erpota12("ipalilos") .
-	" WHERE `kodikos` = " . $armodios;
-$row = pandora::first_row($query, MYSQLI_NUM);
+$onomateponimo = Ipalilos::onomateponimo($armodios);
 
-if (!$row)
+if (!$onomateponimo)
 letrak::fatal_error_json("Δεν βρέθηκε υπάλληλος με κωδικό " . $armodios);
-
-$onomateponimo = rtrim($row[0]) . " " . rtrim($row[1]);
 
 $taxinomisi = pandora::parameter_get("taxinomisi");
 

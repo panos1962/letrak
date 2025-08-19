@@ -157,15 +157,10 @@ function akirosi() {
 	global $ipiresia;
 	global $xristis;
 
-	$query = "SELECT `eponimo`, `onoma`" .
-		" FROM " . letrak::erpota12("ipalilos") .
-		" WHERE `kodikos` = " . $xristis;
-	$row = pandora::first_row($query, MYSQLI_NUM);
+	$onomateponimo = Ipalilos::onomateponimo($xristis);
 
-	if (!$row)
+	if (!$onomateponimo)
 	letrak::fatal_error_json("Δεν βρέθηκε υπογράφων με κωδικό " . $xristis);
-
-	$onomateponimo = rtrim($row[0]) . " " . rtrim($row[1]);
 
 	$query = "SELECT MIN(`taxinomisi`) FROM `letrak`.`ipografi`" .
 		" WHERE (`deltio` = " . $kodikos . ")" .
@@ -177,7 +172,7 @@ function akirosi() {
 
 	$taxinomisi = $row[0];
 
-	$kinisi .= $taxinomisi . ":";
+	$kinisi = $taxinomisi . ":";
 	$kinisi .= $xristis . ":";
 	$kinisi .= $onomateponimo;
 
