@@ -970,7 +970,6 @@ prosopa.ipografiInsertExec = function(forma) {
 			'taxinomisi': taxinomisi,
 			'armodios': armodios,
 			'titlos': titlos,
-			'ipiresia': prosopa.deltio.ipiresiaGet(),
 		},
 		'success': (rsp) => prosopa.ipografiInsertPost(rsp, forma),
 		'error': (err) => {
@@ -1155,15 +1154,20 @@ prosopa.ipografiEditExec = function(forma) {
 	pnd.fyiMessage('Ενημέρωση υπογραφής…');
 	prosopa.ipografiSintomografia(forma);
 
+	let taxinomisi = forma.taxinomisiDOM.val();
+	let armodios = forma.armodiosDOM.val();
+	let titlos = forma.titlosDOM.val();
+
 	$.post({
 		'url': 'ipografiEdit.php',
 		'dataType': 'json',
 		'data': {
 			'deltio': prosopa.deltioKodikos,
 			'isimonixat': forma.isimonixat,
-			'taxinomisi': forma.taxinomisiDOM.val(),
-			'armodios': forma.armodiosDOM.val(),
-			'titlos': forma.titlosDOM.val(),
+			'taxinomisi': taxinomisi,
+			'armodios': armodios,
+			'titlos': titlos,
+			'ipiresia': prosopa.deltio.ipiresiaGet(),
 		},
 		'success': (rsp) => prosopa.ipografiEditPost(rsp, forma),
 		'error': (err) => {
@@ -1239,7 +1243,8 @@ prosopa.ipografiDiagrafi = (e) => {
 	let onomateponimo = dom.children('.ipografiOnomateponimo').text();
 	let titlos = dom.data('ipografi').titlosGet();
 
-	let kinisi = armodios + ':';
+	let kinisi = taxinomisi + ':';
+	kinisi += armodios + ':';
 	kinisi += onomateponimo + ':';
 	kinisi += titlos;
 
@@ -1319,6 +1324,7 @@ prosopa.ipografiPraxi = (e, praxi) => {
 			'deltio': prosopa.deltioKodikos,
 			'armodios': ipografi.armodiosGet(),
 			'praxi': praxi,
+			'ipiresia': prosopa.deltio.ipiresiaGet(),
 		},
 		'success': (rsp) => prosopa.ipografesRefreshErrorCheck(rsp),
 		'error': (err) => {

@@ -69,7 +69,6 @@ $taxinomisi = pandora::parameter_get("taxinomisi");
 if (letrak::ipografi_invalid_taxinomisi($taxinomisi))
 letrak::fatal_error_json("Μη αποδεκτός ταξινομικός αριθμός υπογραφής");
 
-$ipiresia = pandora::parameter_get("ipiresia");
 $kinisi = pandora::parameter_get("kinisi");
 
 ///////////////////////////////////////////////////////////////////////////////@

@@ -83,7 +83,6 @@ if ($taxinomisi && letrak::ipografi_invalid_taxinomisi($taxinomisi))
 letrak::fatal_error_json("Μη αποδεκτός ταξινομικός αριθμός");
 
 $titlos = pandora::parameter_get("titlos");
-$ipiresia = pandora::parameter_get("ipiresia");
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -100,10 +99,10 @@ if ($taxinomisi) {
 else
 $taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 
-$kinisi .= $armodios;
-$kinisi .= ":" . $onomateponimo;
-$kinisi .= ":" . $titlos;
-$kinisi .= ":" . $taxinomisi;
+$kinisi .= $taxinomisi . ":";
+$kinisi .= $armodios . ":";
+$kinisi .= $onomateponimo . ":";
+$kinisi .= $titlos;
 
 letrak::katagrafi($prosvasi->ipalilos_get(), $kodikos, $ipiresia,
 	"ΠΡΟΣΘΗΚΗ ΑΡΜΟΔΙΟΥ", $kinisi);

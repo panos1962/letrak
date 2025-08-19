@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2021-05-23
 // Updated: 2020-05-06
 // Updated: 2020-05-04
@@ -72,6 +73,16 @@ $armodios = pandora::parameter_get("armodios");
 if (letrak::ipalilos_invalid_kodikos($armodios))
 letrak::fatal_error_json("Μη αποδεκτός αριθμός μητρώου υπογράφοντος υπαλλήλου");
 
+$query = "SELECT `eponimo`, `onoma`" .
+	" FROM " . letrak::erpota12("ipalilos") .
+	" WHERE `kodikos` = " . $armodios;
+$row = pandora::first_row($query, MYSQLI_NUM);
+
+if (!$row)
+letrak::fatal_error_json("Δεν βρέθηκε υπάλληλος με κωδικό " . $armodios);
+
+$onomateponimo = rtrim($row[0]) . " " . rtrim($row[1]);
+
 $taxinomisi = pandora::parameter_get("taxinomisi");
 
 if (!isset($taxinomisi))
@@ -85,6 +96,14 @@ $titlos = pandora::parameter_get("titlos");
 ///////////////////////////////////////////////////////////////////////////////@
 
 pandora::autocommit(FALSE);
+
+$kinisi .= $taxinomisi . ":";
+$kinisi .= $armodios . ":";
+$kinisi .= $onomateponimo . ":";
+$kinisi .= $titlos;
+
+letrak::katagrafi($prosvasi->ipalilos_get(), $kodikos, $ipiresia,
+	"ΜΕΤΑΒΟΛΗ ΑΡΜΟΔΙΟΥ", $kinisi);
 
 $query = "SELECT COUNT(*) FROM `letrak`.`ipografi`" .
 	" WHERE `deltio` = " . $kodikos;

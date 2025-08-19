@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2021-05-23
 // Updated: 2020-05-06
 // Updated: 2020-05-04
@@ -53,6 +54,8 @@ letrak::fatal_error_json("Αδυναμία εντοπισμού παρουσιο
 
 if ($deltio->is_klisto())
 letrak::fatal_error_json("Το παρουσιολόγιο έχει κλείσει");
+
+$ipiresia = $deltio->ipiresia_get();
 
 $armodios = pandora::parameter_get("armodios");
 
@@ -151,7 +154,18 @@ function kirosi() {
 function akirosi() {
 	global $kodikos;
 	global $deltio;
+	global $ipiresia;
 	global $xristis;
+
+	$query = "SELECT `eponimo`, `onoma`" .
+		" FROM " . letrak::erpota12("ipalilos") .
+		" WHERE `kodikos` = " . $xristis;
+	$row = pandora::first_row($query, MYSQLI_NUM);
+
+	if (!$row)
+	letrak::fatal_error_json("Δεν βρέθηκε υπογράφων με κωδικό " . $xristis);
+
+	$onomateponimo = rtrim($row[0]) . " " . rtrim($row[1]);
 
 	$query = "SELECT MIN(`taxinomisi`) FROM `letrak`.`ipografi`" .
 		" WHERE (`deltio` = " . $kodikos . ")" .
@@ -161,10 +175,19 @@ function akirosi() {
 	if (!$row)
 	letrak::fatal_error_json("Αδυναμία εντοπισμού αρμοδίου υπογράφοντος");
 
+	$taxinomisi = $row[0];
+
+	$kinisi .= $taxinomisi . ":";
+	$kinisi .= $xristis . ":";
+	$kinisi .= $onomateponimo;
+
+	letrak::katagrafi($xristis, $kodikos, $ipiresia,
+		"ΑΝΑΙΡΕΣΗ ΚΥΡΩΣΗΣ", $kinisi);
+
 	$query = "UPDATE `letrak`.`ipografi`" .
 		" SET `checkok` = NULL" .
 		" WHERE (`deltio` = " . $kodikos . ")" .
-		" AND (`taxinomisi` >= " . $row[0] . ")";
+		" AND (`taxinomisi` >= " . $taxinomisi . ")";
 	pandora::query($query);
 
 	if (!pandora::affected_rows())
