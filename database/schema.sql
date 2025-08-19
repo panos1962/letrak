@@ -66,6 +66,7 @@
 -- @DESCRIPTION END
 --
 -- @HISTORY BEGIN
+-- Updated: 2025-08-19
 -- Updated: 2025-01-22
 -- Updated: 2024-12-18
 -- Updated: 2022-12-13
@@ -387,6 +388,66 @@ COMMENT = 'Πίνακας πιθανών ωραρίων υπαλλήλων'
 ;
 
 COMMIT WORK
+;
+
+-- Ο πίνακας "katagrafi" κρατάει σημαντικές κινήσεις που επιτελούν οι χρήστες.
+-- Αυτές οι κινήσεις μπορεί να φανούν χρήσιμες σε περιπτώσεις όπου αναζητούμε
+-- ποιος και πότε έχει διαγράψει παρουσιολόγια, ποιος και πότε έχει αλλοιώσει
+-- στοιχεία των αρμοδίων ενός παρουσιολογίου κοκ.
+
+CREATE TABLE `katagrafi` (
+	`ipalilos`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Κωδικός χρήστη',
+	`meraora`	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`deltio`	MEDIUMINT UNSIGNED NOT NULL COMMENT 'Κωδικός παρουσιολογίου',
+	`ipiresia`	VARCHAR(20) NOT NULL COMMENT 'Υπηρεσία παρουσιολογίου',
+	`idos`		ENUM (
+		'ΔΙΑΓΡΑΦΗ ΔΕΛΤΙΟΥ',
+		'ΠΡΟΣΘΗΚΗ ΑΡΜΟΔΙΟΥ',
+		'ΜΕΤΑΒΟΛΗ ΑΡΜΟΔΙΟΥ',
+		'ΔΙΑΓΡΑΦΗ ΑΡΜΟΔΙΟΥ',
+		'ΑΝΑΙΡΕΣΗ ΚΥΡΩΣΗΣ'
+	) NOT NULL COMMENT 'Είδος κίνησης',
+	`data`		VARCHAR(256) NOT NULL COMMENT 'Δεδομένα κίνησης',
+
+	INDEX (
+		`deltio`
+	) USING HASH,
+
+	INDEX (
+		`ipiresia`,
+		`imerominia`
+	) USING BTREE
+)
+
+COMMENT = 'Πίνακας καταγραφής σημαντικών κινήσεων'
+;
+
+-------------------------------------------------------------------------------@
+
+\! [ -w /dev/tty ] && echo "Creating views…" >/dev/tty
+
+-- Το view "poupios" είναι χρήσιμο κατά τη διαχείριση των δικαιωμάτων, καθώς
+-- συνδυάζει τα στοιχεία πρόσβασης (πίνακας "prosvasi") με τα στοιχεία τού
+-- υπαλλήλου (πίνακας "ipalilos"). Έτσι ο χρήστης βλέπει χρήσιμα στοιχεία
+-- του υπαλλήλου (επώνυμο, όνομα, τηλέφωνο κλπ) και όχι μόνο τον αριθμό
+-- μητρώου.
+
+CREATE VIEW `erpota`.`poupios` AS
+
+SELECT
+`erpota1`.`ipalilos`.`kodikos`,
+`erpota1`.`ipalilos`.`eponimo`,
+`erpota1`.`ipalilos`.`onoma`,
+`erpota1`.`ipalilos`.`patronimo`,
+`erpota`.`prosvasi`.`tilefono`,
+`erpota`.`prosvasi`.`ipiresia`,
+`erpota`.`prosvasi`.`level`,
+`erpota`.`prosvasi`.`password`
+
+FROM `erpota1`.`ipalilos`, `erpota`.`prosvasi`
+
+WHERE `erpota1`.`ipalilos`.`kodikos` = `erpota`.`prosvasi`.`ipalilos`
+
 ;
 
 -------------------------------------------------------------------------------@
