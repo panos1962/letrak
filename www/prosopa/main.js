@@ -156,6 +156,7 @@ prosopa.minima = {
 	'ipografiAkirosiTabTitle': 'Αναίρεση υπογραφής',
 
 	'ergaliaTabLabel': 'Εργαλεία',
+	'ergaliaTabLabelTitle': 'Εργαλεία διαχείρισης παρουσιολογίου',
 	'winpakTabLabel': 'WIN&ndash;PAK',
 	'katharismos': 'Καθαρισμός',
 	'katagrafiOrario': 'Από ωράριο',
@@ -1327,6 +1328,7 @@ prosopa.ergaliaSetup = () => {
 
 	append(prosopa.ergaliaTabDOM = letrak.tabDOM().
 	addClass('prosopaPliktro').
+	attr('title', prosopa.minima.ergaliaTabLabelTitle).
 	text(prosopa.minima.ergaliaTabLabel).
 	on('click', function(e) {
 		e.stopPropagation();
