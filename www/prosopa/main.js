@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-19
 // Updated: 2025-08-18
 // Updated: 2025-07-16
 // Updated: 2025-07-14
@@ -1385,7 +1386,7 @@ prosopa.ergaliaSetup = () => {
 	prosopa.ergaliaDOM = $('#ergalia').
 	dialog({
 		'resizable': false,
-		'title': 'Eπεξεργασία',
+		'title': prosopa.minima.ergaliaTabLabel,
 		'width': '220px',
 		'height': 'auto',
 		'position': {
