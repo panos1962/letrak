@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2021-05-23
 // Updated: 2020-05-06
@@ -172,9 +173,9 @@ function akirosi() {
 
 	$taxinomisi = $row[0];
 
-	$kinisi = $taxinomisi . ":";
-	$kinisi .= $xristis . ":";
-	$kinisi .= $onomateponimo;
+	$kinisi = $xristis . ":";
+	$kinisi .= $onomateponimo . ":";
+	$kinisi .= $taxinomisi;
 
 	letrak::katagrafi($xristis, $kodikos, $ipiresia,
 		"ΑΝΑΙΡΕΣΗ ΚΥΡΩΣΗΣ", $kinisi);

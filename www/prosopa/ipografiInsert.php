@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2021-05-23
 // Updated: 2020-05-06
@@ -94,9 +95,9 @@ if ($taxinomisi) {
 else
 $taxinomisi = LETRAK_IPOGRAFI_TAXINOMISI_MAX;
 
-$kinisi .= $taxinomisi . ":";
-$kinisi .= $armodios . ":";
+$kinisi = $armodios . ":";
 $kinisi .= $onomateponimo . ":";
+$kinisi .= $taxinomisi . ":";
 $kinisi .= $titlos;
 
 letrak::katagrafi($prosvasi->ipalilos_get(), $kodikos, $ipiresia,

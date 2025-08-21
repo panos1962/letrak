@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2025-08-18
 // Updated: 2025-07-16
@@ -1243,9 +1244,9 @@ prosopa.ipografiDiagrafi = (e) => {
 	let onomateponimo = dom.children('.ipografiOnomateponimo').text();
 	let titlos = dom.data('ipografi').titlosGet();
 
-	let kinisi = taxinomisi + ':';
-	kinisi += armodios + ':';
+	let kinisi = armodios + ':';
 	kinisi += onomateponimo + ':';
+	kinisi += taxinomisi + ':';
 	kinisi += titlos;
 
 	pnd.fyiMessage('Διαγραφή υπογραφής…');

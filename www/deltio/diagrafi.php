@@ -16,6 +16,7 @@
 // @FILE END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2020-05-18
 // Created: 2020-04-22
@@ -61,8 +62,11 @@ $onomateponimo = Ipalilos::onomateponimo($ipalilos);
 if (!$onomateponimo)
 letrak::fatal_error_json("Δεν βρέθηκε υπάλληλος με κωδικό " . $ipalilos);
 
+$kinisi = "";
 $kinisi .= $ipalilos . ":";
-$kinisi .= $onomateponimo;
+$kinisi .= $onomateponimo . ":";
+$kinisi .= $deltio->imerominia_get("Y-m-d") . ":";
+$kinisi .= $deltio->prosapo_get();
 
 letrak::katagrafi($ipalilos, $kodikos, $ipiresia,
 	"ΔΙΑΓΡΑΦΗ ΔΕΛΤΙΟΥ", $kinisi);
