@@ -22,6 +22,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-08-28
 // Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2021-05-23
@@ -127,6 +128,11 @@ function kirosi() {
 	if ($row[0] != $xristis)
 	letrak::fatal_error_json("Δεν έχετε δικαίωμα κύρωσης");
 
+	/*
+	XXX
+	deltio_check($deltio);
+	*/
+
 	pandora::autocommit(FALSE);
 
 	$query = "UPDATE `letrak`.`ipografi`" .
@@ -151,6 +157,125 @@ function kirosi() {
 
 	return $katastasi;
 }
+
+function deltio_check($deltio) {
+	$plist = parousies_select($deltio->kodikos);
+	parousies_check($plist);
+
+	// Αναζητούμε τυχόν συμπληρωματικό δελτίο.
+
+	$imerominia = $deltio->imerominia->format("Y-m-d");
+	$ipiresia = $deltio->ipiresia;
+	$perigrafi = $deltio->perigrafi;
+
+	$query = "SELECT `kodikos`, `prosapo`" .
+		" FROM `letrak`.`deltio`" .
+		" WHERE `imerominia` = " . pandora::sql_string($imerominia) .
+		" AND `ipiresia` = " . pandora::sql_string($ipiresia) .
+		" AND `perigrafi` = " . pandora::sql_string($perigrafi) .
+		" AND `kodikos` <> " . $deltio->kodikos;
+	$result = pandora::query($query);
+
+	$count = 0;
+
+	while ($row = $result->fetch_array(MYSQLI_NUM)) {
+		$oitled = $row[0];
+		$opasorp = $row[1];
+		$count++;
+	}
+
+	// Αν εντοπιστούν περισσότερα από ένα συμπληρωματικά δελτία, τότε
+	// θα πρέπει να διαγραφούν τα πλεονάζοντα συμπληρωματικά δελτία
+	// πριν την κύρωση του δελτίου που επιχειρούμε να κυρώσουμε.
+
+	if ($count > 1)
+	letrak::fatal_error_json("Πλεονάζοντα συμπληρωματικά δελτία");
+
+	// Αν δεν εντοπιστούν συμπληρωματικά δελτία, τότε σημαίνει ότι το
+	// προς κύρωση δελτίο πρέπει να είναι δελτίο προσέλευσης, αλλιώς
+	// φαίνεται ότι έχει διαγραφεί το δελτίο σχετικό δελτίο προσέλευσης
+	// και θα πρέπει να ξαναφτιαχτεί πριν προχωρήσουμε στην κύρωση του
+	// δελτίου (αποχώρησης) που επιχειρούμε να κυρώσουμε.
+
+	if (!$count) {
+		if ($deltio->is_proselefsi())
+		return;
+
+		letrak::fatal_error_json("Δεν υπάρχει σχετικό δελτίο προσέλευσης");
+	}
+
+	// Έχουμε εντοπίσει ακριβώς ένα συμπληρωματικό δελτίο και ελέγχουμε
+	// αν είναι όντως συμπηρωματικό.
+
+	if ($deltio->is_proselefsi() && ($opasorp != LETRAK_DELTIO_PROSAPO_APOXORISI))
+	letrak::fatal_error_json("Το σχετικό δελτίο δεν είναι δελτίο αποχώρησης");
+
+	if ($deltio->is_apoxorisi() && ($opasorp != LETRAK_DELTIO_PROSAPO_PROSELEFSI))
+	letrak::fatal_error_json("Το σχετικό δελτίο δεν είναι δελτίο προσέλευσης");
+
+	// Έχουμε εντοπίσει σχετικό δελτίο και θα προβούμε σε περαιτέρω
+	// ελέγχους μεταξύ των δύο δελτίων, αλλά μόνο εφόσον το εν λόγω
+	// συμπληρωματικό δελτίο έχει κυρωθεί από τον συντάκτη.
+
+	$query = "SELECT `armodios`" .
+		" FROM `letrak`.`ipografi`" .
+		" WHERE `deltio` = " . $oitled .
+		" AND `taxinomisi` = 1" .
+		" AND `checkok` IS NOT NULL";
+	$row = pandora::first_row($query);
+
+	// Αν το σχετικό δελτίο δεν έχει κυρωθεί από τον συντάκτη, σημαίνει
+	// ότι το εν λόγω δελτίο είναι υπό κατασκευή και δεν προβαίνουμε σε
+	// περαιτέρω ελέγχους.
+
+	if (!$row)
+	return;
+
+	// Το σχετικό δελτίο έχει κυρωθεί από τον συντάκτη και θα επιλέξουμε
+	// τις παρουσίες του, προκειμένου να τις συγκρίνουμε με τις παρουσίες
+	// του δελτίου που επιχειρούμε να κυρώσουμε.
+
+	$tsilp = parousies_select($oitled);
+
+// XXX
+}
+
+function parousies_select($deltio) {
+	$query = "SELECT `ipalilos`, `meraora`," .
+		" `adidos`, `adapo`, `adeos`, `excuse`" .
+		" FROM `letrak`.`parousia`" .
+		" WHERE `deltio` = " . $deltio;
+	$result = pandora::query($query);
+
+	$plist = [];
+
+	while ($row = $result->fetch_array(MYSQLI_ASSOC))
+	$plist[$row["ipalilos"]] = $row;
+
+	return $plist;
+}
+
+function parousies_check($plist) {
+	$error = "Σφάλματα: ";
+	$enotiko = "";
+
+	foreach ($plist as $ipalilos => $parousia) {
+		if (parousia_check($parousia))
+		continue;
+
+		$error .= $enotiko . $ipalilos;
+		$enotiko = ", ";
+	}
+
+	if ($enotiko)
+	letrak::fatal_error_json($error);
+}
+
+function parousia_check($parousia) {
+	return TRUE;
+}
+
+///////////////////////////////////////////////////////////////////////////////@
 
 function akirosi() {
 	global $kodikos;
