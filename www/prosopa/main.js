@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-09-11
 // Updated: 2025-08-21
 // Updated: 2025-08-19
 // Updated: 2025-08-18
@@ -2209,6 +2210,19 @@ prosopa.editorSetup = () => {
 	}));
 
 	prosopa.editorInfoDOM = $('#peInfo').
+	on('keydown', function(e) {
+		e.stopPropagation();
+
+		// Αν κατά την πληκτρολόγηση κειμένου στο πεδίο παρατηρήσεων,
+		// πατηθεί το πλήκτρο [Enter], κάνουμε υποβολή. Αν θέλουμε
+		// αλλαγή γραμμής, μπορούμε να πατήσουμε [Shift]+[Enter].
+
+		switch (e.key) {
+		case 'Enter':
+			if (!e.shiftKey)
+			prosopa.editorIpovoliDOM.trigger('click');
+		}
+	}).
 	on('change', function(e) {
 		e.stopPropagation();
 		prosopa.infoChange($(this));
