@@ -2219,8 +2219,10 @@ prosopa.editorSetup = () => {
 
 		switch (e.key) {
 		case 'Enter':
-			if (!e.shiftKey)
-			prosopa.editorIpovoliDOM.trigger('click');
+			if (!e.shiftKey) {
+				prosopa.infoChange($(this));
+				prosopa.editorIpovoliDOM.trigger('click');
+			}
 		}
 	}).
 	on('change', function(e) {
@@ -3072,7 +3074,6 @@ prosopa.infoErgasiaRepo = function(fld, info) {
 	dr = dr.getTime();
 	let dp = prosopa.deltio.imerominia.getTime();
 
-console.log(dp, dr);
 	if (dp < dr)
 	info = 'ΘΑ ΕΡΓΑΣΤΕΙ ' + dmy[1] + '-' + dmy[2] + '-' + dmy[3];
 
