@@ -315,7 +315,11 @@ CREATE TABLE `parousia` (
 	PRIMARY KEY (
 		`deltio`,
 		`ipalilos`
-	) USING BTREE
+	) USING BTREE,
+
+	INDEX (
+		`ipalilos`
+	) USING HASH
 )
 
 COMMENT = 'Πίνακας εγγραφών παρουσιολογίου'
