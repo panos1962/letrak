@@ -415,7 +415,7 @@ CREATE TABLE `katagrafi` (
 
 	INDEX (
 		`ipiresia`,
-		`imerominia`
+		`meraora`
 	) USING BTREE
 )
 
