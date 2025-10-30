@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-10-30
 // Updated: 2025-09-11
 // Updated: 2025-08-21
 // Updated: 2025-08-19
@@ -3552,6 +3553,7 @@ prosopa.editorIpovoli = (e) => {
 	let adidos = prosopa.editorAdidosDOM.val();
 	let adapo = prosopa.editorAdapoDOM.val();
 	let adeos = prosopa.editorAdeosDOM.val();
+	let exeresi = prosopa.editorExcuseDOM.val();
 	let info = prosopa.editorInfoDOM.val();
 
 	$.post({
@@ -3600,7 +3602,7 @@ prosopa.editorIpovoli = (e) => {
 
 			else
 			prosopa.adiaMultiIpovoli(deltio, ipalilos,
-				adidos, adapo, adeos, info);
+				adidos, adapo, adeos, exeresi, info);
 		},
 		'error': (err) => {
 			pnd.fyiError('Σφάλμα υποβολής στοιχείων παρουσίας');
@@ -3620,16 +3622,24 @@ prosopa.editorIpovoli = (e) => {
 // την υποβολή στοιχείων αδείας του τρέχοντος υπαλλήλου και σε όλους τους
 // επιλεγμένους υπαλλήλους.
 
-prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info) {
-	// Αν δεν πρόκειται για άδεια, τότε δεν προβαίνουμε σε περαιτέρω
-	// ενέργειες, καθώς η παρούσα διαδικασία αφορά στην υποβολή στοιχείων
-	// αδείας σε όλους τους επιλεγμένους υπαλλήλους.
+prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exeresi, info) {
+	let adex = false;
 
-	if (!adidos)
+	if (adidos)
+	adex = true;
+
+	else if (exeresi)
+	adex = true;
+
+	// Αν δεν πρόκειται για άδεια ή εξαίρεση, τότε δεν προβαίνουμε σε
+	// περαιτέρω ενέργειες, καθώς η παρούσα διαδικασία αφορά στην υποβολή
+	// στοιχείων αδείας ή εξαίρεσης σε όλους τους επιλεγμένους υπαλλήλους.
+
+	if (!adex)
 	return;
 
 	// Κατασκευάζουμε array επιλεγμένων υπαλλήλων εξαιρώντας τον τρέχοντα
-	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας.
+	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας/εξαίρεσης.
 
 	let plist = prosopa.epilogiList(true, ipalilos);
 
@@ -3645,6 +3655,7 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info
 			'adidos': adidos,
 			'adapo': adapo,
 			'adeos': adeos,
+			'exeresi': exeresi,
 			'info': info,
 		},
 		'success': (rsp) => {
@@ -3652,7 +3663,7 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, info
 			prosopa.ananeosi();
 		},
 		'error': (err) => {
-			pnd.fyiError('Σφάλμα υποβολής στοιχείων αδείας επιλεγμένων');
+			pnd.fyiError('Σφάλμα υποβολής στοιχείων αδείας/εξαίρεσης επιλεγμένων');
 			console.error(err);
 		},
 	});

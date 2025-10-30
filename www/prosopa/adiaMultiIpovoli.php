@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-10-30
 // Updated: 2025-07-08
 // Created: 2025-07-07
 // @HISTORY END
@@ -67,6 +68,7 @@ lathos("Access denied");
 
 $plist = pandora::parameter_get("plist");
 $adidos = adia_get($adapo, $adeos);
+$exeresi = exeresi_get();
 $info = info_get();
 
 $count = 0;
@@ -75,10 +77,10 @@ foreach ($plist as $ipalilos) {
 	$query = "UPDATE `letrak`.`parousia` SET " .
 		"`meraora` = NULL, " .
 		"`kataxorisi` = NULL, " .
-		"`excuse` = NULL, " .
 		"`adidos` = " . $adidos . ", " .
 		"`adapo` = " . $adapo . ", " .
 		"`adeos` = " . $adeos . ", " .
+		"`excuse` = " . $exeresi . "," .
 		"`info` = " . $info . " " .
 		"WHERE `deltio` = " . $deltio_kodikos . " " .
 		"AND `ipalilos` = " . $ipalilos;
@@ -196,6 +198,18 @@ function adia_get(&$adapo, &$adeos) {
 	}
 
 	return pandora::sql_string($adidos);
+}
+
+function exeresi_get() {
+	$exeresi = pandora::parameter_get("exeresi");
+
+	if (!isset($exeresi))
+	return "NULL";
+
+	if (!$exeresi)
+	return "NULL";
+
+	return pandora::sql_string(trim($exeresi));
 }
 
 function info_get() {
