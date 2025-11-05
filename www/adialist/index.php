@@ -16,6 +16,14 @@
 // @FILE END
 //
 // @DESCRIPTION BEGIN
+// Το παρόν πρόγραμμα δημιουργεί πρόχειρο report αδειών υπαλλήλου κατ' έτος.
+// Πιο συγκεκριμένα, δίνουμε ως παράμετρο "etos" το έτος και ως παράμετρο
+// "ipalilos" τον κωδικό υπαλλήλου, και το πρόγραμμα εκτυπώνει (ως text) τις
+// άδειες του δοθέντος υπαλλήλου για το δοθέν έτος.
+//
+// Η εκτύπωση περιλαμβάνει δύο σκέλη: Στο πρώτο σκέλος εμφανίζονται οι άδειες
+// αναλυτικά, ενώ στο δεύτερο σκέλος εμφανίζονται οι άδειες συγκεντρωτικά
+// κατά είδος.
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
@@ -27,18 +35,67 @@
 ///////////////////////////////////////////////////////////////////////////////@
 
 define("SEP", " | ");
+define("GRA", "_________________________________________________________\n\n");
+
 require_once("../../local/conf.php");
 require_once(LETRAK_BASEDIR . "/www/lib/letrak.php");
-
-$ipalilos = pandora::parameter_get("ipalilos");
-$etos = pandora::parameter_get("etos");
 
 pandora::
 header_data()::
 session_init()::
 database();
 
+if (!array_key_exists("letrak_session_ipalilos", $_SESSION))
+exit("Διαπιστώθηκε ανώνυμη χρήση!");
+
 letrak::prosvasi_check();
+
+$err = FALSE;
+
+$x = pandora::parameter_get("ipalilos");
+
+if (!$x)
+$x = json_decode($_SESSION["letrak_session_ipalilos"])->kodikos;
+
+$ipalilos = intval($x);
+
+if ($ipalilos != $x) {
+	print $x . ": λανθασμένος κωδικός υπαλλήλου!\n";
+	$err = TRUE;
+}
+
+$x = pandora::parameter_get("etos");
+
+if (!$x)
+$etos = date("Y");
+
+else {
+	$etos = intval($x);
+
+	if (($etos != $x) || ($etos < 2020) || ($etos > 2100)) {
+		print $x . ": λανθασμένο έτος!\n";
+		$err = TRUE;
+	}
+}
+
+if ($err)
+exit(1);
+
+$query = "SELECT `eponimo`, `onoma`, `patronimo`" .
+" FROM " . letrak::erpota12("ipalilos") .
+" WHERE `kodikos` = " . $ipalilos;
+$row = pandora::first_row($query, MYSQLI_NUM);
+
+if (!$row)
+exit("Δεν βρέθηκε ο υπάλληλος!");
+
+print "[ " . $ipalilos . "] " .
+$row[0] . " " .
+$row[1] . " " .
+mb_substr($row[2], 0, 3) . PHP_EOL;
+print "Report αδειών έτους " . $etos . PHP_EOL;
+print GRA;
+
 
 $query = "SELECT `adidos`, `adapo`, `adeos`, `info`" .
 " FROM `letrak`.`parousia`" .
@@ -63,8 +120,7 @@ while ($row = $result->fetch_array(MYSQLI_NUM)) {
 	$row[0] . SEP .
 	$row[1] . SEP .
 	$row[2] . SEP .
-	$row[3] . SEP .
-	PHP_EOL;
+	$row[3] . PHP_EOL;
 
 	if (array_key_exists($row[0], $total))
 	$total[$row[0]]++;
@@ -78,7 +134,7 @@ while ($row = $result->fetch_array(MYSQLI_NUM)) {
 if (!$count)
 exit(0);
 
-print "__________________\n\n";
+print GRA;
 
 foreach ($total as $idos => $meres)
 print $idos . ": " . $meres . PHP_EOL;
