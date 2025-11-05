@@ -81,7 +81,7 @@ exit(0);
 print "__________________\n\n";
 
 foreach ($total as $idos => $meres)
-print $idos . ": " . $meres;
+print $idos . ": " . $meres . PHP_EOL;
 
 $result->close();
 exit(0);
