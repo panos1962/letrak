@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-12-29
 // Updated: 2025-06-19
 // Updated: 2025-04-24
 // Updated: 2025-04-23
@@ -261,6 +262,9 @@ document_body();
 <div id="ergalia">
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopoInsert">
 		Προσθήκη υπαλλήλου
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaAntistrofiEpilegmenon">
+		Αντιστροφή επιλεγμένων
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiEpilegmenon">
 		Διαγραφή επιλεγμένων

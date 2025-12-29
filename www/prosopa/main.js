@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-12-29
 // Updated: 2025-10-30
 // Updated: 2025-09-11
 // Updated: 2025-08-21
@@ -1364,6 +1365,9 @@ prosopa.ergaliaSetup = () => {
 		prosopa.parousiaEdit(e);
 	});
 
+	$('#prosopaAntistrofiEpilegmenon').
+	on('click', (e) => prosopa.antistrofiEpilegmenon(e));
+
 	$('#prosopaDiagrafiEpilegmenon').
 	on('click', (e) => prosopa.diagrafiEpilegmenon(e, true));
 
@@ -1432,6 +1436,24 @@ prosopa.ergaliaHide = () => {
 };
 
 ///////////////////////////////////////////////////////////////////////////////@
+
+// Η function "antistrofiEpilegmenon" μετατρέπει τους μη επιλεγμένους σε
+// επιλεγμένους και το αντίστροφο.
+
+prosopa.antistrofiEpilegmenon = function(e) {
+	e.stopPropagation();
+
+	prosopa.browserDOM.children('.parousia').each(function() {
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+		let epilegmeno = ordinalDOM.hasClass('parousiaEpilogi');
+
+		if (epilegmeno)
+		ordinalDOM.removeClass('parousiaEpilogi');
+
+		else
+		ordinalDOM.addClass('parousiaEpilogi');
+	});
+};
 
 // Η function "diagrafiEpilegmenon" καλείται από τις επιλογές "Διαγραφή
 // επιλεγμένων", ή "Διαγραφή μη επιλεγμένων" του βασικού μενού επεξεργασίας
