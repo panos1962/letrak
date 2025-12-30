@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-12-30
 // Updated: 2025-12-29
 // Updated: 2025-06-19
 // Updated: 2025-04-24
@@ -269,20 +270,11 @@ document_body();
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiEpilegmenon">
 		Διαγραφή επιλεγμένων
 	</div>
-	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiMiEpilegmenon">
-		Διαγραφή μη επιλεγμένων
-	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="orarioAlagiEpilegmenon">
 		Ωράριο επιλεγμένων
 	</div>
-	<div class="ergalioTab prosopaPliktroUpdate" id="orarioAlagiMiEpilegmenon">
-		Ωράριο μη επιλεγμένων
-	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="iperoriaEpilegmenon">
 		Υπερωρίες επιλεγμένων
-	</div>
-	<div class="ergalioTab prosopaPliktroUpdate" id="iperoriaMiEpilegmenon">
-		Υπερωρίες μη επιλεγμένων
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="apoOrarioOla">
 		Άντε γειά!

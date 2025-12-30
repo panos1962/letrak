@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2025-12-30
 // Updated: 2025-12-29
 // Updated: 2025-10-30
 // Updated: 2025-09-11
@@ -1371,24 +1372,13 @@ prosopa.ergaliaSetup = () => {
 	$('#prosopaDiagrafiEpilegmenon').
 	on('click', (e) => prosopa.diagrafiEpilegmenon(e, true));
 
-	$('#prosopaDiagrafiMiEpilegmenon').
-	on('click', (e) => prosopa.diagrafiEpilegmenon(e, false));
-
 	$('#orarioAlagiEpilegmenon').
 	attr('title', 'Αλλαγή ωραρίου επιλεγμένων').
 	on('click', (e) => prosopa.orarioEpilegmenon(e, true));
 
-	$('#orarioAlagiMiEpilegmenon').
-	attr('title', 'Αλλαγή ωραρίου μη επιλεγμένων').
-	on('click', (e) => prosopa.orarioEpilegmenon(e, false));
-
 	$('#iperoriaEpilegmenon').
 	attr('title', 'Υπερωρίες επιλεγμένων').
 	on('click', (e) => prosopa.iperoriaEpilegmenon(e, true));
-
-	$('#iperoriaMiEpilegmenon').
-	attr('title', 'Υπερωρία μη επιλεγμένων').
-	on('click', (e) => prosopa.iperoriaEpilegmenon(e, false));
 
 	prosopa.protipoMetatropiDOM = $('#protipoMetatropi').
 	on('click', (e) => prosopa.protipoMetatropi(e));
@@ -1461,10 +1451,10 @@ prosopa.antistrofiEpilegmenon = function(e) {
 // δεύτερη παράμετρος είναι πιο σημαντική και δείχνει αν επιλέχθηκε διαγραφή
 // επιλεγμένων (true), ή διαγραφή μη επιλεγμένων (false).
 
-prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
+prosopa.diagrafiEpilegmenon = function(e) {
 	e.stopPropagation();
 
-	let plist = prosopa.epilogiList(epilegmenoi);
+	let plist = prosopa.epilogiList();
 
 	let countOla = prosopa.browserDOM.children().length;
 	let countEpi = plist.length;
@@ -1480,14 +1470,9 @@ prosopa.diagrafiEpilegmenon = function(e, epilegmenoi) {
 		erotisi = 'Να διαγραφούν όλοι οι υπάλληλοι του παρουσιολογίου;';
 	}
 
-	else if (epilegmenoi) {
+	else {
 		titlos = 'Διαγραφή επιλεγμένων υπαλλήλων';
 		erotisi = 'Να διαγραφούν οι επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
-	}
-
-	else {
-		titlos = 'Διαγραφή μη επιλεγμένων υπαλλήλων';
-		erotisi = 'Να διαγραφούν οι μη επιλεγμένοι υπάλληλοι του παρουσιολογίου;';
 	}
 
 	let dialogDOM = $('<div>').
@@ -1550,10 +1535,10 @@ prosopa.diagrafiEpilegmenonExec = (plist, msg) => {
 // δεύτερη παράμετρος είναι πιο σημαντική και δείχνει αν επιλέχθηκε αλλαγή
 // ωραρίου επιλεγμένων (true), ή αλλαγή ωραρίου μη επιλεγμένων (false).
 
-prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
+prosopa.orarioEpilegmenon = function(e) {
 	e.stopPropagation();
 
-	let plist = prosopa.epilogiList(epilegmenoi);
+	let plist = prosopa.epilogiList();
 
 	let countOla = prosopa.browserDOM.children().length;
 	let countEpi = plist.length;
@@ -1569,14 +1554,9 @@ prosopa.orarioEpilegmenon = function(e, epilegmenoi) {
 		erotisi = 'Να αλλάξει το ωράριο σε όλους τους υπαλλήλους;';
 	}
 
-	else if (epilegmenoi) {
+	else {
 		titlos = 'Αλλαγή ωραρίου επιλεγμένων υπαλλήλων';
 		erotisi = 'Να αλλάξει το ωράριο στους επιλεγμένους υπαλλήλους;';
-	}
-
-	else {
-		titlos = 'Αλλαγή ωραρίου μη επιλεγμένων υπαλλήλων';
-		erotisi = 'Να αλλάξει το ωράριο στους μη επιλεγμένους υπαλλήλους;';
 	}
 
 	let html = '<p>' + erotisi + '</p>' +
@@ -1650,10 +1630,10 @@ prosopa.orarioEpilegmenonExec = (plist, orario, msg) => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.iperoriaEpilegmenon = function(e, epilegmenoi) {
+prosopa.iperoriaEpilegmenon = function(e) {
 	e.stopPropagation();
 
-	let plist = prosopa.epilogiList(epilegmenoi);
+	let plist = prosopa.epilogiList();
 
 	let countOla = prosopa.browserDOM.children().length;
 	let countEpi = plist.length;
@@ -1669,14 +1649,9 @@ prosopa.iperoriaEpilegmenon = function(e, epilegmenoi) {
 		erotisi = 'Να δοθούν υπερωρίες σε όλους τους υπαλλήλους;';
 	}
 
-	else if (epilegmenoi) {
+	else {
 		titlos = 'Υπερωρίες στους επιλεγμένους υπαλλήλους';
 		erotisi = 'Να δοθούν υπερωρίες στους επιλεγμένους υπαλλήλους;';
-	}
-
-	else {
-		titlos = 'Υπερωρίες στους μη επιλεγμένους υπαλλήλους';
-		erotisi = 'Να δοθούν υπερωρίες στους μη επιλεγμένους υπαλλήλους;';
 	}
 
 	let html = '<p>' + erotisi + '</p>' +
@@ -1842,7 +1817,7 @@ prosopa.telefteaEpilogiSave = function(fld) {
 // επιλεγμένων υπαλλήλων. Αν υπάρχει κωδικός υπαλλήλου ως δεύτερη
 // παράμετρος, τότε αυτός ο υπάλληλος εξαιρείται από τους επιλεγμένους.
 
-prosopa.epilogiList = function(epilegmenoi, exereteos) {
+prosopa.epilogiList = function(exereteos) {
 	let plist = {};
 
 	// Αρχικά δημιουργούμε λίστα με properties τους κωδικούς των
@@ -1865,7 +1840,7 @@ prosopa.epilogiList = function(epilegmenoi, exereteos) {
 		if (ipalilos == exereteos)
 		return;
 
-		if ((epilegmenoi && epilegmeno) || ((!epilegmenoi) && (!epilegmeno)))
+		if (epilegmeno)
 		plist[ipalilos] = true;
 	});
 
@@ -3663,7 +3638,7 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exer
 	// Κατασκευάζουμε array επιλεγμένων υπαλλήλων εξαιρώντας τον τρέχοντα
 	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας/εξαίρεσης.
 
-	let plist = prosopa.epilogiList(true, ipalilos);
+	let plist = prosopa.epilogiList(ipalilos);
 
 	if (plist.length <= 0)
 	return;
