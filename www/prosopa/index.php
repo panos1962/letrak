@@ -24,6 +24,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-02
 // Updated: 2025-12-30
 // Updated: 2025-12-29
 // Updated: 2025-06-19
@@ -266,6 +267,9 @@ document_body();
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaAntistrofiEpilegmenon">
 		Αντιστροφή επιλεγμένων
+	</div>
+	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaEpilogiEkremon">
+		Επιλογή εκκρεμών εγγραφών
 	</div>
 	<div class="ergalioTab prosopaPliktroUpdate" id="prosopaDiagrafiEpilegmenon">
 		Διαγραφή επιλεγμένων

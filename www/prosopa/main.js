@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-02
 // Updated: 2025-12-30
 // Updated: 2025-12-29
 // Updated: 2025-10-30
@@ -1369,6 +1370,9 @@ prosopa.ergaliaSetup = () => {
 	$('#prosopaAntistrofiEpilegmenon').
 	on('click', (e) => prosopa.antistrofiEpilegmenon(e));
 
+	$('#prosopaEpilogiEkremon').
+	on('click', (e) => prosopa.epilogiEkremon(e));
+
 	$('#prosopaDiagrafiEpilegmenon').
 	on('click', (e) => prosopa.diagrafiEpilegmenon(e, true));
 
@@ -1401,7 +1405,7 @@ prosopa.ergaliaSetup = () => {
 	dialog({
 		'resizable': false,
 		'title': prosopa.minima.ergaliaTabLabel,
-		'width': '220px',
+		'width': '250px',
 		'height': 'auto',
 		'position': {
 			'my': 'left top',
@@ -1441,6 +1445,28 @@ prosopa.antistrofiEpilegmenon = function(e) {
 		ordinalDOM.removeClass('parousiaEpilogi');
 
 		else
+		ordinalDOM.addClass('parousiaEpilogi');
+	});
+};
+
+// Η function "epilogiEkremon" επιλέγει όλες τις εγγραφές που δεν έχουν
+// συμπληρωμένη μέρα/ώρα προσέλευσης και δεν έχουν συμπληρωμένη άδεια
+// ή εξαίρεση.
+
+prosopa.epilogiEkremon = function(e) {
+	e.stopPropagation();
+
+	prosopa.browserDOM.children('.parousia').each(function() {
+		let ordinalDOM = $(this).children('.parousiaOrdinal');
+
+		ordinalDOM.removeClass('parousiaEpilogi');
+
+		if ($(this).children('.parousiaMeraora').text())
+		return;
+
+		if ($(this).children('.parousiaExcuse').text())
+		return;
+
 		ordinalDOM.addClass('parousiaEpilogi');
 	});
 };
