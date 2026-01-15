@@ -25,6 +25,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-15
 // Updated: 2025-01-08
 // Updated: 2024-12-02
 // Updated: 2024-11-27
@@ -331,6 +332,14 @@ apontes.adiaCheck = function(proselefsi, apoxorisi) {
 		if ((apoxorisi[i].adapo !== proselefsi[i].adapo) ||
 			(apoxorisi[i].adeos !== proselefsi[i].adeos)) {
 			apontes.setError(i, "Διαφορετικό διάστημα αδείας προσέλευσης/αποχώρησης");
+			continue;
+		}
+
+		// Πρόκειται για άδεια. Αν υπάρχει ΚΑΙ ώρα αποχώρησης έχουμε
+		// πρόβλημα.
+
+		if (apoxorisi[i].meraora) {
+			apontes.setError(i, "Εντοπίστηκε άδεια ΚΑΙ ώρα αποχώρησης");
 			continue;
 		}
 
