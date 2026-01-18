@@ -1,0 +1,168 @@
+/*******************************************************************************
+*
+* @BEGIN
+*
+* @COPYRIGHT BEGIN
+* Copyright (C) 2019 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+* @COPYRIGHT END
+*
+* @FILETYPE BEGIN
+* stylus
+* @FILETYPE END
+*
+* @FILE BEGIN
+* www/admin/main.styl —— Αρχείο προδιαγραφών CSS για τη βασική σελίδα
+* διαχείρισης (admin).
+* @FILE END
+*
+* @HISTORY BEGIN
+* Updated: 2025-01-10
+* Updated: 2022-03-11
+* Updated: 2022-03-09
+* Updated: 2022-03-08
+* Updated: 2022-03-07
+* Updated: 2022-03-06
+* Created: 2022-03-05
+* @HISTORY END
+*
+* @END
+*
+*******************************************************************************/
+
+@import '../mnt/pandora/lib/common.styl'
+@import '../lib/common.styl'
+
+table, th, td
+	padding 0px 0.5em
+	border-style solid
+	border-width 1px
+	border-color #000000
+	border-collapse collapse
+	font-weight normal
+
+th
+	color #666666
+
+tr:nth-child(even)
+	background-color: #f9f0cb
+
+tr:nth-child(odd)
+	background-color: #fffddd
+
+$onomaWidth = 16em
+$emailWidth = 16em
+
+.pnd-ofelimo
+	position relative
+	padding 0px
+
+#kritiriaForma
+	label
+		width 8em
+	input
+		font-size $fontSizeInput
+	> .letrak-formaPanel
+		> input
+			font-family $fontSteno
+			font-size $fontSizeNormal
+
+.kritiriaFormaEconomy
+	height 166px !important
+	cursor ns-resize
+
+#kritiriaKarta
+	width 5em
+
+#kritiriaEfarmogiLabel
+	padding-left 6px
+	width auto !important
+
+#kritiriaKodikos
+	width 5em
+
+#kritiriaEponimo
+	width $onomaWidth
+
+#kritiriaOnoma
+	width $onomaWidth
+
+#kritiriaPatronimo
+	width $onomaWidth
+
+#kritiriaIpemail
+	width $emailWidth
+
+#kritiriaPremail
+	width $emailWidth
+
+#kritiriaEfarmogi
+#kritiriaImerominia
+	width 6em
+
+#ilist
+	display none
+	position absolute
+	padding 10px 0px
+	left 500px
+	> table
+		font-family "Roboto Condensed", "Trebuchet MS", "Helvetica", sans-serif;
+		background-color cornsilk
+		white-space nowrap
+
+.ilistRow
+	cursor pointer
+
+.ilistKodikos
+	text-align right
+	max-width 3em
+
+.ilistEponimo
+	overflow hidden
+	width 9em
+
+.ilistOnoma
+	width 6em
+
+.ilistPatronimo
+	width 2em
+
+.ilistKarta
+	width 3em
+
+.ilistKartaOld
+	color #525252
+
+.ilistIpemail
+	width 9em
+
+.ilistPremail
+	width 9em
+
+.invalidEmail
+	color red
+
+.candiRow
+	background-color #ffed8c !important
+	color #004678
+	text-shadow 1px 0px 0px
+
+#elist
+	display none
+	position fixed
+	top 300px
+	left 10px
+	padding 4px
+	max-height 0px
+	overflow-y scroll
+	background-color cornsilk
+
+#ilist
+#elist
+	font-size 90%
+
+.elistRow
+	cursor pointer
+	&:hover
+		background-color #ffed8c !important
+		color #004678
+		text-shadow 1px 0px 0px
