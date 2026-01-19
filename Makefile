@@ -43,7 +43,7 @@ all:
 	(cd www/diafores && make)
 	(cd www/checkin && make)
 	(cd www/apontes && make)
-	(cd www/parousia && make)
+	(cd www/parspec && make)
 
 test:
 	make -s all
