@@ -17,6 +17,7 @@
 # @FILE END
 #
 # @HISTORY BEGIN
+# Updated: 2026-01-19
 # Updated: 2024-11-17
 # Updated: 2022-03-05
 # Updated: 2021-06-21
@@ -42,6 +43,7 @@ all:
 	(cd www/diafores && make)
 	(cd www/checkin && make)
 	(cd www/apontes && make)
+	(cd www/parousia && make)
 
 test:
 	make -s all
