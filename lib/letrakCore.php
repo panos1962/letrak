@@ -161,7 +161,7 @@ class letrakCore {
 	}
 
 	public static function ipalilos_valid_karta($karta) {
-		return pandora::is_integer($karta, 10000, 99999);
+		return pandora::is_integer($karta, 1000, 99999);
 	}
 
 	public static function ipalilos_invalid_karta($karta) {
