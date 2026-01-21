@@ -400,7 +400,7 @@ admin.kritiriaFormaClear = (e) => {
 	for (let fld in admin.kritiriaFormaFlist)
 	admin['kritiria' + fld + 'DOM'].val('');
 
-	admin.kritiriaKartaDOM.val('').focus();
+	admin.kritiriaEponimoDOM.val('').focus();
 	pnd.fyiClear();
 	return admin;
 };
