@@ -16,6 +16,8 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-21
+// Updated: 2026-01-20
 // Updated: 2025-04-01
 // Updated: 2025-03-24
 // Updated: 2025-01-10
@@ -40,12 +42,6 @@ const letrak =
 require('../lib/letrak.js');
 const admin = {};
 
-// Χρησιμοποιούμε το global singleton "LETRAK" ως μέσο κοινοποίησης constant
-// αντικειμένων προκειμένου να είναι αυτά προσπελάσιμα από children windows,
-// όπως είναι η σελίδα "prosopa" κλπ.
-
-self.LETRAK = {};
-
 admin.minima = {
 	"kritiriaKartaLabel": "Κάρτα",
 	"kritiriaEfarmogiLabel": "από",
@@ -63,16 +59,10 @@ pnd.domInit(() => {
 	return letrak.arxikiSelida(admin);
 
 	// Πρόσβαση στο γενικό ευρετήριο προσωπικού έχουν όσοι διαθέτουν
-	// δικαιώματα "UPDATE" και "ADMIN", ασχέτως υπηρεσίας.
+	// δικαίωμα "ADMIN" σε όλες τις υπηρεσίες.
 
-	switch (letrak.xristisProsvasiGet()) {
-	case 'UPDATE':
-	case 'ADMIN':
-		break;
-	default:
-		self.location = '../mnt/pandora/lib/radioActive.html';
-		return admin;
-	}
+	if (letrak.prosvasiOxiAdmin(''))
+	self.location = '../mnt/pandora/lib/radioActive.html';
 
 	pnd.
 	toolbarSetup().
@@ -93,6 +83,7 @@ admin.selidaSetup = () => {
 	ribbonCopyrightSetup();
 
 	admin.
+	readerSetup().
 	kritiriaSetup().
 	ilistSetup().
 	elistSetup();
@@ -111,6 +102,27 @@ admin.selidaSetup = () => {
 
 	return admin;
 };
+
+admin.readerSetup = function() {
+	pnd.fyiMessage('Επιλογή καρταναγνωστών…');
+	$.post({
+		'url': 'epilogiReader.php',
+		'success': (rsp) => admin.parseReader(rsp),
+		'error': (e) => {
+			pnd.fyiError('Αδυναμία επιλογής καρταναγνωστών');
+			console.error(e);
+		},
+	});
+
+	return admin;
+};
+
+admin.parseReader = function(data) {
+	pnd.fyiClear();
+	admin.reader = data;
+	console.log(admin.reader);
+	return admin;
+}
 
 ///////////////////////////////////////////////////////////////////////////////@
 
@@ -247,7 +259,7 @@ admin.kritiriaSetup = () => {
 	css('text-align', 'center');
 
 	setTimeout(() => {
-		admin.kritiriaKartaDOM.focus();
+		admin.kritiriaEponimoDOM.focus();
 	}, 0);
 
 	pnd.ofelimoDOM.
@@ -468,7 +480,9 @@ admin.parseEvent = (rsp) => {
 		append($('<td>').
 		text(x.e)).
 		append($('<td>').
-		text(x.r)));
+		text(x.r)).
+		append($('<td>').
+		text(admin.reader[x.r])));
 	}
 
 	admin.elistDOM.

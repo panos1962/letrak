@@ -19,6 +19,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-21
 // Updated: 2025-04-15
 // Updated: 2020-03-08
 // Created: 2020-03-07
@@ -38,13 +39,8 @@ database();
 
 $prosvasi = letrak::prosvasi_check();
 
-switch ($prosvasi->epipedo_get()) {
-case 'UPDATE':
-case 'ADMIN':
-	break;
-default:
-	lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση");
-}
+if ($prosvasi->ipiresia_oxi_admin(''))
+lathos("Διαπιστώθηκε ελλιπής εξουσιοδότηση κατά τν επιλογή υπαλλήλων");
 
 $x = pandora::parameter_get("Karta");
 
