@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-26
 // Updated: 2026-01-02
 // Updated: 2025-12-30
 // Updated: 2025-12-29
@@ -4224,6 +4225,8 @@ letrak.parousia.prototype.domGet = function(ordinal) {
 	addClass('parousiaMeraoraPiragmeno').
 	html('&#x25E3;'));
 
+	let adex = this.excuseAdiaGet();
+
 	let dom = $('<div>').
 	data('parousia', this).
 	addClass('parousia').
@@ -4259,14 +4262,14 @@ letrak.parousia.prototype.domGet = function(ordinal) {
 
 	append($('<div>').
 	addClass('parousiaExcuse').
-	text(this.excuseAdiaGet())).
+	text(adex)).
 
 	append($('<div>').
 	attr('title', 'Παρατηρήσεις').
 	addClass('parousiaInfo').
 	text(this.infoAdiaGet()));
 
-	if (this.adidosGet() && meraora)
+	if (adex && meraora)
 	dom.addClass('parousiaAdiaAndMeraora')
 
 	return dom;
