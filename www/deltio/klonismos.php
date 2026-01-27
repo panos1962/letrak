@@ -153,12 +153,36 @@ $query = "UPDATE `letrak`.`parousia`" .
 	" AND (`adeos` < '" . $imerominia . "')";
 pandora::query($query);
 
+// Θέτουμε προσωρινά είδος αδείας "@" σε παρουσίες που δεν αφορούν σε άδεια
+// και έχουν συγκεκριμένα σχόλια.
+
+$query = "UPDATE `letrak`.`parousia`" .
+	" SET `adidos` = '@'" .
+	" WHERE (`deltio` = " . $kodikos . ")" .
+	" AND (`adidos` IS NULL)" .
+	" AND (`info` IN (" .
+		"'ΠΡΟΣΩΡΙΝΗ ΤΟΠΟΘΕΤΗΣΗ'" .
+	"))";
+
+pandora::query($query);
+
 // Διαγράφουμε σχόλια που δεν αφορούν σε άδειες.
 
 $query = "UPDATE `letrak`.`parousia`" .
 	" SET `info` = ''" .
 	" WHERE (`deltio` = " . $kodikos . ")" .
 	" AND (`adidos` IS NULL)";
+
+pandora::query($query);
+
+// Επαναφέρουμε τις παρουσίες που δεν αφορούν σε άδεια και έχουν προσωρινό
+// είδος αδείας "@".
+
+$query = "UPDATE `letrak`.`parousia`" .
+	" SET `adidos` = NULL" .
+	" WHERE (`deltio` = " . $kodikos . ")" .
+	" AND (`adidos` = '@')";
+
 pandora::query($query);
 
 pandora::query("SET @tax := 0");
