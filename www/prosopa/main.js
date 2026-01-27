@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-01-27
 // Updated: 2026-01-26
 // Updated: 2026-01-02
 // Updated: 2025-12-30
@@ -3079,11 +3080,18 @@ prosopa.ipalilosZoomClose = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
+prosopa.sintomografia = {
+	"ΠΤ": "ΠΡΟΣΩΡΙΝΗ ΤΟΠΟΘΕΤΗΣΗ",
+};
+
 prosopa.infoChange = function(fld) {
 	let info = fld.val().trim();
 	fld.val(info);
 
-	if (info.match(/^@/))
+	if (prosopa.sintomografia.hasOwnProperty(info))
+	fld.val(prosopa.sintomografia[info]);
+
+	else if (info.match(/^@/))
 	return prosopa.infoErgasiaRepo(fld, info);
 };
 
