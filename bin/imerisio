@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+progname="$(basename $0)"
+
+usage() {
+	echo "usage: ${progname} [ OPTIONS ]" >&2
+	exit 1
+}
+
+[ -z "${LETRAK_BASEDIR}" ] &&
+LETRAK_BASEDIR="/var/opt/letrak"
+
+checkdate() {
+	date -d "${1}" '+%Y-%m-%d' 2>/dev/null && return 0
+
+	echo "${progname}: ${1}: invalid date" >&2
+	return 1
+}
+	
+apo=
+eos=
+
+err=
+
+while getopts ":af:t:" opt
+do
+	case "${opt}" in
+	f)
+		apo="$(checkdate "${OPTARG}")" || err=1
+		;;
+	t)
+		eos="$(checkdate "${OPTARG}")" || err=1
+		;;
+	\?)
+		echo "${progname}: -${OPTARG}: invalid option" >&2
+		err=1
+		;;
+	\:)
+		echo "${progname}: -${OPTARG}: missing argument" >&2
+		err=1
+		;;
+	esac
+done
+
+[ -n "${err}" ] && usage
+
+shift $(expr ${OPTIND} - 1)
+[ $# -ne 0 ] && usage
+
+awk \
+-v progname="${progname}" \
+-v apo="${apo}" \
+-v eos="${eos}" \
+-f "${LETRAK_BASEDIR}/lib/imerisio.awk" 
