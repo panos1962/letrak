@@ -7,6 +7,7 @@ usage() {
 OPTIONS
 -------
 -u dbuser
+-p
 -i υπηρεσία
 -f από
 -t έως" >&2
@@ -24,17 +25,21 @@ checkdate() {
 }
 
 user=
+pass="read"
 ipmask=
 apo=
 eos=
 
 err=
 
-while getopts ":u:i:f:t:" opt
+while getopts ":u:pi:f:t:" opt
 do
 	case "${opt}" in
 	u)
 		dbuser="${OPTARG}"
+		;;
+	p)
+		pass=""
 		;;
 	i)
 		ipmask="${ipmask},${OPTARG}"
@@ -64,6 +69,7 @@ shift $(expr ${OPTIND} - 1)
 awk \
 -v progname="${progname}" \
 -v dbuser="${dbuser}" \
+-v pass="${pass}" \
 -v ipmask="${ipmask}" \
 -v apo="${apo}" \
 -v eos="${eos}" \

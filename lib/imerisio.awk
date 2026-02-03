@@ -7,7 +7,9 @@ BEGIN {
 	else
 	spawk_sesami["dbuser"] = "admin"
 
+	if (pass)
 	spawk_sesami["dbpassword"] = spawk_getpass()
+
 	spawk_null = ""
 
 	read_ipiresia()
