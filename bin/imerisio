@@ -24,8 +24,8 @@ checkdate() {
 	return 1
 }
 
-user=
-pass="read"
+dbuser=
+dbpass="read"
 ipmask=
 apo=
 eos=
@@ -39,7 +39,7 @@ do
 		dbuser="${OPTARG}"
 		;;
 	p)
-		pass=""
+		dbpass=""
 		;;
 	i)
 		ipmask="${ipmask},${OPTARG}"
@@ -69,7 +69,7 @@ shift $(expr ${OPTIND} - 1)
 awk \
 -v progname="${progname}" \
 -v dbuser="${dbuser}" \
--v pass="${pass}" \
+-v dbpass="${dbpass}" \
 -v ipmask="${ipmask}" \
 -v apo="${apo}" \
 -v eos="${eos}" \
