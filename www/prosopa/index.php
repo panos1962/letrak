@@ -215,6 +215,7 @@ document_body();
 			<option value="ΑΙΜΟΔΟΣΙΑ">ΑΙΜΟΔΟΣΙΑ</option>
 			<option value="ΕΟΡΤΗ">ΕΟΡΤΗ</option>
 			<option value="ΑΣΘΕΝΕΙΑ">ΑΣΘΕΝΕΙΑ</option>
+			<option value="ΣΤΑΣΗ ΕΡΓΑΣΙΑΣ">ΣΤΑΣΗ ΕΡΓΑΣΙΑΣ</option>
 			<option value="ΠΕΝΘΟΣ">ΠΕΝΘΟΣ</option>
 			<option value="ΕΚΤΑΚΤΩΣ">ΕΚΤΑΚΤΩΣ</option>
 			</select>
