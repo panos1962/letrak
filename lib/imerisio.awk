@@ -10,6 +10,7 @@ BEGIN {
 	if (dbpass)
 	spawk_sesami["dbpassword"] = spawk_getpass()
 
+	spawk_sesami["dbcharset"] = "utf8"
 	spawk_null = ""
 
 	read_ipiresia()
