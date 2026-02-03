@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-02-03
 // Updated: 2026-01-27
 // Updated: 2026-01-26
 // Updated: 2026-01-02
@@ -3714,12 +3715,19 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exer
 
 // Η function "gonikiCheck" ελέγχει την καταχώρηση γονικής εξαίρεσης όσον
 // αφορά στο χρονκό διάστημα που ΠΡΕΠΕΙ να τίθεται ως σχόλιο.
+// Παρόμοια με τη γονική εξαίρεση λειτουργεί και η εξαίρεση της στάσης
+// εργασίας.
 
 prosopa.gonikiCheck = function() {
 	let exeresi = prosopa.editorExcuseDOM.val();
 
-	if (exeresi !== 'ΓΟΝΙΚΗ')
-	return false;
+	switch (exeresi) {
+	case 'ΓΟΝΙΚΗ':
+	case 'ΣΤΑΣΗ ΕΡΓΑΣΙΑΣ':
+		break;
+	default:
+		return false;
+	}
 
 	let sxolio = prosopa.editorInfoDOM.val();
 
