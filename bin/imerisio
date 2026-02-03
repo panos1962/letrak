@@ -3,7 +3,13 @@
 progname="$(basename $0)"
 
 usage() {
-	echo "usage: ${progname} [ OPTIONS ]" >&2
+	echo "usage: ${progname} [ OPTIONS ]
+OPTIONS
+-------
+-u dbuser
+-i υπηρεσία
+-f από
+-t έως" >&2
 	exit 1
 }
 
@@ -16,16 +22,20 @@ checkdate() {
 	echo "${progname}: ${1}: invalid date" >&2
 	return 1
 }
-	
+
+user=
 ipmask=
 apo=
 eos=
 
 err=
 
-while getopts ":i:f:t:" opt
+while getopts ":u:i:f:t:" opt
 do
 	case "${opt}" in
+	u)
+		dbuser="${OPTARG}"
+		;;
 	i)
 		ipmask="${ipmask},${OPTARG}"
 		;;
@@ -53,6 +63,7 @@ shift $(expr ${OPTIND} - 1)
 
 awk \
 -v progname="${progname}" \
+-v dbuser="${dbuser}" \
 -v ipmask="${ipmask}" \
 -v apo="${apo}" \
 -v eos="${eos}" \

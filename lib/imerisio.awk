@@ -1,7 +1,12 @@
 @load "spawk"
 
 BEGIN {
+	if (dbuser)
+	spawk_sesami["dbuser"] = dbuser
+
+	else
 	spawk_sesami["dbuser"] = "admin"
+
 	spawk_sesami["dbpassword"] = spawk_getpass()
 	spawk_null = ""
 
