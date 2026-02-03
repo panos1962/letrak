@@ -17,14 +17,18 @@ checkdate() {
 	return 1
 }
 	
+ipiresia=
 apo=
 eos=
 
 err=
 
-while getopts ":af:t:" opt
+while getopts ":i:f:t:" opt
 do
 	case "${opt}" in
+	i)
+		ipiresia="${ipiresia},${OPTARG}"
+		;;
 	f)
 		apo="$(checkdate "${OPTARG}")" || err=1
 		;;
@@ -49,6 +53,7 @@ shift $(expr ${OPTIND} - 1)
 
 awk \
 -v progname="${progname}" \
+-v ipiresia="${ipiresia}" \
 -v apo="${apo}" \
 -v eos="${eos}" \
 -f "${LETRAK_BASEDIR}/lib/imerisio.awk" 
