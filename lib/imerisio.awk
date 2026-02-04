@@ -13,9 +13,11 @@ BEGIN {
 	spawk_sesami["dbcharset"] = "utf8"
 	spawk_null = ""
 
+	onomateponimo_width = 40
+
 	read_ipiresia()
 	read_ipalilos()
-	diaxoristiko()
+	grami_init()
 
 	query = "SELECT `kodikos`, `imerominia`, `perigrafi`, " \
 		"`ipiresia`, `prosapo` " \
@@ -40,22 +42,40 @@ BEGIN {
 	exit(0)
 }
 
-function process_deltio(deltio,			query, row, parousia, adia, plist, i, n) {
+function process_deltio(deltio,			query, row, parousia, adia, i) {
 	epikefalida(deltio)
 
-	print "\nΠαρουσίες"
-	diaxoristiko1(9)
+	enotita("Παρουσίες")
 
-	query = "SELECT `ipalilos`, `orario`, `karta`, `adidos`, `excuse`, " \
-		"`adapo`, `adeos`, `info`, `meraora` " \
-		"FROM `letrak`.`parousia` " \
-		"WHERE `deltio` = " deltio[1]
+	query = "SELECT" \
+		" `letrak`.`parousia`.`ipalilos`," \
+		" `letrak`.`parousia`.`orario`," \
+		" `letrak`.`parousia`.`karta`," \
+		" `letrak`.`parousia`.`adidos`," \
+		" `letrak`.`parousia`.`excuse`," \
+		" `letrak`.`parousia`.`adapo`," \
+		" `letrak`.`parousia`.`adeos`," \
+		" `letrak`.`parousia`.`info`," \
+		" `letrak`.`parousia`.`meraora`," \
+		" `erpota1`.`ipalilos`.`eponimo`," \
+		" `erpota1`.`ipalilos`.`onoma`," \
+		" `erpota1`.`ipalilos`.`patronimo`" \
+		" FROM" \
+		" `letrak`.`parousia`" \
+		" INNER JOIN `erpota1`.`ipalilos` ON" \
+		" `letrak`.`parousia`.`ipalilos` = `erpota1`.`ipalilos`.`kodikos`" \
+		" WHERE `deltio` = " deltio[1] \
+		" ORDER BY" \
+		" `erpota1`.`ipalilos`.`eponimo`," \
+		" `erpota1`.`ipalilos`.`onoma`," \
+		" `erpota1`.`ipalilos`.`patronimo`," \
+		" `letrak`.`parousia`.`ipalilos`"
 	spawk_submit(query)
 
-	i = 0
-
-	while (spawk_fetchrow(row)) {
-		parousia = sprintf("%-40.40s %10.10s", ipalilos[row[1]], row[2])
+	for (i = 1; spawk_fetchrow(row); i++) {
+		parousia = sprintf("%-*.*s %10.10s", \
+			onomateponimo_width, onomateponimo_width, \
+			ipalilos[row[1]], row[2])
 
 		if (row[5])
 		adia = row[5]
@@ -75,27 +95,21 @@ function process_deltio(deltio,			query, row, parousia, adia, plist, i, n) {
 		if (row[8])
 		parousia = parousia " " row[8]
 
-		plist[i++] = parousia
+		printf("%3d. %s\n", i, parousia)
 	}
 
-	n = asort(plist)
-
-	for (i = 1; i <= n; i++)
-	printf("%3d. %s\n", i, plist[i])
-
-	diaxoristiko2(120)
+	diaxoristiko(120)
 }
 
 function epikefalida(deltio,		monada) {
-	print "\nΣτοιχεία δελτίου προσέλευσης/αποχώρησης"
-	diaxoristiko1(39)
+	enotita("Στοιχεία δελτίου προσέλευσης/αποχώρησης")
 
 	epikefalida_item("Κωδικός", deltio[1])
 	epikefalida_item("Ημερομηνία", deltio[2])
 	epikefalida_item("Είδος", deltio[5])
 
-	print_ipiresia("Διεύθυνση", substr(deltio[4], 0, 3))
-	print_ipiresia("Τμήμα", substr(deltio[4], 0, 7))
+	print_ipiresia("Διεύθυνση", substr(deltio[4], 1, 3))
+	print_ipiresia("Τμήμα", substr(deltio[4], 1, 7))
 
 	if (deltio[3] != ipiresia[deltio[4]])
 	epikefalida_item("Περιγραφή", deltio[3])
@@ -112,8 +126,7 @@ function epikefalida_item(key, val) {
 }
 
 function ipografes(deltio,		query, row, i) {
-	print "\nΥπογράφοντες"
-	diaxoristiko1(12)
+	enotita("Υπογράφοντες")
 
 	query = "SELECT `armodios`, `titlos`, `checkok`, `taxinomisi`" \
 		" FROM `letrak`.`ipografi` WHERE `deltio` = " deltio \
@@ -123,7 +136,13 @@ function ipografes(deltio,		query, row, i) {
 	for (i = 1; spawk_fetchrow(row); i++) {
 		if (!row[2])
 		row[2] = "Συντάκτης/Συντάκτρια"
-		printf("%3d. %-40.40s %s (%s)\n", i, ipalilos[row[1]], row[2], row[3])
+
+		if (!row[3])
+		row[3] = "*** ΑΝΥΠΟΓΡΑΦΟ ***"
+
+		printf("%3d. %-*.*s %s (%s)\n", \
+			i, onomateponimo_width, onomateponimo_width, \
+			ipalilos[row[1]], row[2], row[3])
 	}
 }
 
@@ -154,18 +173,31 @@ function read_ipiresia(			query, row) {
 	ipiresia[row[1]] = row[2]
 }
 
-function read_ipalilos(			query, row) {
+function read_ipalilos(			query, row, \
+	onomateponimo, kodikos, s, l1, l2) {
+
 	query = "SELECT `kodikos`, `eponimo`, `onoma`, `patronimo` " \
 		"FROM `erpota1`.`ipalilos`"
 
 	spawk_submit(query)
 
-	while (spawk_fetchrow(row))
-	ipalilos[row[1]] = row[2] " " row[3] " " substr(row[4], 0, 3) \
-		" [ " row[1] " ]"
+	while (spawk_fetchrow(row)) {
+		onomateponimo = row[2] " " row[3] " " substr(row[4], 1, 3)
+		kodikos = " [" row[1] "]"
+
+		s = onomateponimo kodikos
+		l1 = onomateponimo_width - length(s)
+
+		if (l1 < 0) {
+			l2 = length(onomateponimo)
+			s = substr(onomateponimo, 1, l2 + l1) kodikos
+		}
+
+		ipalilos[row[1]] = s
+	}
 }
 
-function diaxoristiko(				i) {
+function grami_init(				i) {
 	grami1 = ""
 	grami2 = ""
 
@@ -175,10 +207,13 @@ function diaxoristiko(				i) {
 	}
 }
 
-function diaxoristiko1(len) {
-	print substr(grami1, 0, len)
+function enotita(s, len) {
+	if (s)
+	print "\n" s
+
+	print substr(grami1, 1, length(s))
 }
 
-function diaxoristiko2(len) {
-	print substr(grami2, 0, len)
+function diaxoristiko(len) {
+	print substr(grami2, 1, len)
 }
