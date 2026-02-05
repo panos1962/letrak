@@ -75,7 +75,7 @@ function process_deltio(deltio,			query, row, parousia, adia, i) {
 
 	for (i = 1; spawk_fetchrow(row); i++) {
 		if (row[13] != "WINPAK")
-		row[13] = "▸"
+		row[13] = "*"
 
 		else
 		row[13] = " "
