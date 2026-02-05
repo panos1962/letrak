@@ -45,7 +45,7 @@ BEGIN {
 function process_deltio(deltio,			query, row, parousia, adia, i) {
 	epikefalida(deltio)
 
-	enotita("Παρουσίες")
+	enotita(header_parousia)
 
 	query = "SELECT" \
 		" `letrak`.`parousia`.`ipalilos`," \
@@ -59,7 +59,8 @@ function process_deltio(deltio,			query, row, parousia, adia, i) {
 		" `letrak`.`parousia`.`meraora`," \
 		" `erpota1`.`ipalilos`.`eponimo`," \
 		" `erpota1`.`ipalilos`.`onoma`," \
-		" `erpota1`.`ipalilos`.`patronimo`" \
+		" `erpota1`.`ipalilos`.`patronimo`," \
+		" `letrak`.`parousia`.`kataxorisi`" \
 		" FROM" \
 		" `letrak`.`parousia`" \
 		" INNER JOIN `erpota1`.`ipalilos` ON" \
@@ -73,9 +74,15 @@ function process_deltio(deltio,			query, row, parousia, adia, i) {
 	spawk_submit(query)
 
 	for (i = 1; spawk_fetchrow(row); i++) {
-		parousia = sprintf("%-*.*s %10.10s", \
+		if (row[13] != "WINPAK")
+		row[13] = "▸"
+
+		else
+		row[13] = " "
+
+		parousia = sprintf("%-*.*s %s%11.11s", \
 			onomateponimo_width, onomateponimo_width, \
-			ipalilos[row[1]], row[2])
+			ipalilos[row[1]], row[13], row[2])
 
 		if (row[5])
 		adia = row[5]
@@ -98,7 +105,7 @@ function process_deltio(deltio,			query, row, parousia, adia, i) {
 		printf("%3d. %s\n", i, parousia)
 	}
 
-	diaxoristiko(120)
+	diaxoristiko(110)
 }
 
 function epikefalida(deltio,		monada) {
@@ -205,6 +212,10 @@ function grami_init(				i) {
 		grami1 = grami1 "-"
 		grami2 = grami2 "="
 	}
+
+	header_parousia = sprintf("%4s %-*.*s  %-11.11s %s", \
+		"", onomateponimo_width, onomateponimo_width, \
+		"Ονοματεπώνυμο", "Ωράριο", "Προσέλευση/Αποχώρηση")
 }
 
 function enotita(s, len) {
