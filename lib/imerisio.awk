@@ -27,7 +27,7 @@ BEGIN {
 	where_and("`imerominia` >= " spawk_escape(apo))
 
 	if (eos)
-	where_and("`imerominia` <= " spawk_escape(eos))
+	where_and("`imerominia` < " spawk_escape(eos))
 
 	if (ipmask)
 	process_ipiresia(ipmask)
