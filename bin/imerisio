@@ -11,7 +11,7 @@
 # @FILETYPE END
 #
 # @FILE BEGIN
-# bin/imerisio —— Εκτύπωση δελτίων κατά ημερομηνία και οργανική μονάδα
+# bin/imerisio —— Εκτύπωση δελτίων κατά οργανική μονάδα και ημερομηνία
 # @FILE END
 #
 # @DESCRIPTION BEGIN
