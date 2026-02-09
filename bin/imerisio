@@ -1,5 +1,35 @@
 #!/usr/bin/env bash
 
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2026 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# bash
+# @FILETYPE END
+#
+# @FILE BEGIN
+# bin/imerisio —— Εκτύπωση δελτίων κατά ημερομηνία και οργανική μονάδα
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+#
+# Το παρόν πρόγραμμα εκτυπώνει δελτία, το ένα κάτω από το άλλο, για
+# συγκεκριμένο χρονικό διάστημα και συγκεκριμένες οργανικές μονάδες.
+# Κύριος σκοπός του προγράμματος είναι να παραχθεί text file που να
+# περιέχει την ζητούμενη πληροφορία, κυρίως για λόγους εφεδρείας
+# (harcopy backup).
+#
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2026-02-09
+# @HISTORY END
+#
+# @END
+
 progname="$(basename $0)"
 
 usage() {

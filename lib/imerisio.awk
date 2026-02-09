@@ -1,3 +1,31 @@
+#!/usr/bin/env awk -f
+
+# @BEGIN
+#
+# @COPYRIGHT BEGIN
+# Copyright (C) 2026 Panos I. Papadopoulos <panos1962_AT_gmail_DOT_com>
+# @COPYRIGHT END
+#
+# @FILETYPE BEGIN
+# awk
+# @FILETYPE END
+#
+# @FILE BEGIN
+# lib/imerisio.awk —— Επιλογή και εκτύπωση δελτίων (hardcopy backup)
+# @FILE END
+#
+# @DESCRIPTION BEGIN
+# Το παρόν πρόγραμμα χρησιμοποιείται από το πρόγραμμα "imerisio" με σκοπό
+# την επιλογή και την εκτύπωση δελτίων, κυρίως για λόγους εφεδρείας
+# (hardcopy backup).
+# @DESCRIPTION END
+#
+# @HISTORY BEGIN
+# Created: 2026-02-09
+# @HISTORY END
+#
+# @END
+
 @load "spawk"
 
 BEGIN {
