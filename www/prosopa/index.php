@@ -152,7 +152,7 @@ document_body();
 			<option value="ΤΗΛΕΡΓΑΣΙΑ" class="peAdidosOmadaKanoniki">ΤΗΛΕΡΓΑΣΙΑ</option>
 			<option value="ΕΚ ΠΕΡΙΤΡΟΠΗΣ" class="peAdidosOmadaKanoniki">ΕΚ ΠΕΡΙΤΡΟΠΗΣ</option>
 			<option value="ΑΡΘΡΟ 55" class="peAdidosOmadaKanoniki">ΑΡΘΡΟ 55</option>
-			<option value="ΜΟΝΟΓΟΝΕΑΣ" class="peAdidosOmadaMonogoneas">ΜΟΝΟΓΟΝΕΑΣ</option>
+			<option value="ΜΟΝΟΓΟΝΕΪΚΗ" class="peAdidosOmadaKanoniki">ΜΟΝΟΓΟΝΕΪΚΗ</option>
 
 			<option value="ΑΣΘΕΝΕΙΑ" class="peAdidosOmadaIgia">ΑΣΘΕΝΕΙΑ</option>
 			<option value="ΑΝΑΡΡΩΤΙΚΗ" class="peAdidosOmadaIgia">ΑΝΑΡΡΩΤΙΚΗ</option>
