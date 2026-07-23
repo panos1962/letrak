@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-07-23
 // Updated: 2026-02-03
 // Updated: 2026-01-27
 // Updated: 2026-01-26
@@ -3497,6 +3498,15 @@ prosopa.katagrafiGet = (e, dom) => {
 	prosopa.editorMeraoraDOM.
 	val(x);
 
+	// Εφόσον επιστρέπεται, επιχειρούμε να κάνουμε υποβολή στοιχείων
+	// παρουσίας, φροντίζοντας να φαίνεται ότι η μέρα/ώρα παρουσίας
+	// έχει τεθεί από το σύστημα και όχι από τον συντάκτη.
+
+	if (!prosopa.ipovoliDisabled())
+	prosopa.editorIpovoli(undefined, {
+		'kataxorisi': 'WINPAK',
+	});
+
 	return prosopa;
 };
 
@@ -3544,9 +3554,12 @@ prosopa.katagrafiApoOrarioGet = () => {
 
 ///////////////////////////////////////////////////////////////////////////////@
 
-prosopa.editorIpovoli = (e) => {
+prosopa.editorIpovoli = (e, opts) => {
 	if (e)
 	e.stopPropagation();
+
+	if (opts === undefined)
+	opts = {};
 
 	let x = prosopa.ipalilosZoomDOM.children('.ipalilosZoomEpilogi')
 
@@ -3597,6 +3610,7 @@ prosopa.editorIpovoli = (e) => {
 	let adeos = prosopa.editorAdeosDOM.val();
 	let exeresi = prosopa.editorExcuseDOM.val();
 	let info = prosopa.editorInfoDOM.val();
+	let kataxorisi = opts.kataxorisi;
 
 	$.post({
 		'url': 'parousiaIpovoli.php',
@@ -3612,6 +3626,7 @@ prosopa.editorIpovoli = (e) => {
 			'adeos': adeos,
 			'excuse': prosopa.editorExcuseDOM.val(),
 			'info': info,
+			'kataxorisi': kataxorisi,
 		},
 		'success': (rsp) => {
 			// Σε περίπτωση που εισήχθη νέος υπάλληλος πρέπει να

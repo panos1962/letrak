@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-07-23
 // Updated: 2023-10-15
 // Updated: 2021-05-27
 // Updated: 2020-06-26
@@ -159,6 +160,13 @@ $kataxorisi = pandora::sql_string($kataxorisi);
 
 else
 $kataxorisi = "NULL";
+
+// Αν έχει δοθεί παράμετρος "kataxorisi", ακυρώνουμε οποιονδήποτε τρόπο
+// καταχώρησης έχει συναχθεί και θέτουμε «καρφωτά» τον τρόπο καταχώρησης
+// σύμφωνα με την τιμή που έχει δοθεί.
+
+if (array_key_exists("kataxorisi", $_POST))
+$kataxorisi = pandora::sql_string($_POST["kataxorisi"]);
 
 $query = $action . " INTO `letrak`.`parousia` " .
 	"(`deltio`, `ipalilos`, `orario`, `karta`, `meraora`, `kataxorisi`," .
