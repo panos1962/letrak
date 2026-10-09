@@ -30,6 +30,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-10-09
 // Updated: 2026-07-23
 // Updated: 2026-02-03
 // Updated: 2026-01-27
@@ -3654,11 +3655,11 @@ prosopa.editorIpovoli = (e, opts) => {
 			}, 100);
 
 			// Σε άλλη περίπτωση ελέγχουμε αν έχουμε επιλεγμένους
-			// υπαλλήλους προκειμένου να επεναλάβουμε τα στοιχεία
-			// αδείας για τους επιλεγμένους.
+			// υπαλλήλους προκειμένου να επαναλάβουμε τα στοιχεία
+			// αδείας, εξαίρεσης, σχολίων για τους επιλεγμένους.
 
 			else
-			prosopa.adiaMultiIpovoli(deltio, ipalilos,
+			prosopa.multiIpovoli(deltio, ipalilos,
 				adidos, adapo, adeos, exeresi, info);
 		},
 		'error': (err) => {
@@ -3674,12 +3675,12 @@ prosopa.editorIpovoli = (e, opts) => {
 	return false;
 };
 
-// Η function "adiaMultiIpovoli" καλείται όταν κάνουμε υποβολή στοιχείων
-// αδείας έχοντας επιλεγμένους υπαλλήλους. Αυτή η ενέργεια έχει ως αποτέλεσμα
-// την υποβολή στοιχείων αδείας του τρέχοντος υπαλλήλου και σε όλους τους
-// επιλεγμένους υπαλλήλους.
+// Η function "multiIpovoli" καλείται όταν κάνουμε υποβολή στοιχείων αδείας,
+// εξαίρεσης, σχολίου, έχοντας επιλεγμένους υπαλλήλους. Αυτή η ενέργεια έχει
+// ως αποτέλεσμα την υποβολή των εν λόγω στοιχείων του τρέχοντος υπαλλήλου
+// και σε όλους τους επιλεγμένους υπαλλήλους.
 
-prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exeresi, info) {
+prosopa.multiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exeresi, info) {
 	let adex = false;
 
 	if (adidos)
@@ -3688,15 +3689,19 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exer
 	else if (exeresi)
 	adex = true;
 
-	// Αν δεν πρόκειται για άδεια ή εξαίρεση, τότε δεν προβαίνουμε σε
-	// περαιτέρω ενέργειες, καθώς η παρούσα διαδικασία αφορά στην υποβολή
-	// στοιχείων αδείας ή εξαίρεσης σε όλους τους επιλεγμένους υπαλλήλους.
+	else if (info)
+	adex = true;
+
+	// Αν δεν πρόκειται για άδεια, εξαίρεση, ή σχόλιο τότε δεν προβαίνουμε
+	// σε περαιτέρω ενέργειες, καθώς η παρούσα διαδικασία αφορά στην υποβολή
+	// στοιχείων αδείας, εξαίρεσης ή σχολίου σε όλους τους επιλεγμένους υπαλλήλους.
 
 	if (!adex)
 	return;
 
 	// Κατασκευάζουμε array επιλεγμένων υπαλλήλων εξαιρώντας τον τρέχοντα
-	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας/εξαίρεσης.
+	// υπάλληλο για τον οποίον επιτελέσαμε υποβολή στοιχείων αδείας,
+	// εξαίρεσης, ή σχολίου.
 
 	let plist = prosopa.epilogiList(ipalilos);
 
@@ -3704,7 +3709,7 @@ prosopa.adiaMultiIpovoli = function(deltio, ipalilos, adidos, adapo, adeos, exer
 	return;
 
 	$.post({
-		'url': 'adiaMultiIpovoli.php',
+		'url': 'multiIpovoli.php',
 		'dataType': 'text',
 		'data': {
 			'deltio': deltio,
