@@ -23,6 +23,7 @@
 // @DESCRIPTION END
 //
 // @HISTORY BEGIN
+// Updated: 2026-11-04
 // Updated: 2025-04-16
 // Updated: 2022-03-31
 // Updated: 2020-06-11
@@ -166,14 +167,18 @@ $query = "UPDATE `letrak`.`parousia`" .
 
 pandora::query($query);
 
-// Διαγράφουμε σχόλια που δεν αφορούν σε άδειες.
+// Εφόσον δεν πρόκειται για δελτίο αποχώρησης, διαγράφουμε σχόλια που δεν
+// αφορούν σε άδειες. Στα δελτία αποχώρησης επαναλαμβάνουμε τυχόν σχόλια
+// που υπάρχουν στο δελτίο προσέλευσης.
 
-$query = "UPDATE `letrak`.`parousia`" .
-	" SET `info` = ''" .
-	" WHERE (`deltio` = " . $kodikos . ")" .
-	" AND (`adidos` IS NULL)";
+if ($prosapo != LETRAK_DELTIO_PROSAPO_APOXORISI) {
+	$query = "UPDATE `letrak`.`parousia`" .
+		" SET `info` = ''" .
+		" WHERE (`deltio` = " . $kodikos . ")" .
+		" AND (`adidos` IS NULL)";
 
-pandora::query($query);
+	pandora::query($query);
+}
 
 // Επαναφέρουμε τις παρουσίες που δεν αφορούν σε άδεια και έχουν προσωρινό
 // είδος αδείας "@".
