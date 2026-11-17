@@ -23,11 +23,11 @@ BEGIN {
 	}
 
 	for (i in total_ores)
-	print ipalilos(i), total_ores[i] " ώρες", total_lepta[i] " λεπτά"
+	printf "%44.44s %4d ώρες %4d λεπτά\n", ipalilos(i), total_ores[i], total_lepta[i]
 }
 
 function process_deltio(deltio,				query, parousia) {
-	query = "SELECT `ipalilos`, `orario`, `adidos`, `meraora`" \
+	query = "SELECT `ipalilos`, `orario`, `adidos`, `excuse`, `meraora`" \
 		" FROM `parousia`" \
 		" WHERE `deltio` = " deltio["kodikos"]
 
@@ -39,26 +39,31 @@ function process_deltio(deltio,				query, parousia) {
 }
 
 function process_parousia(deltio, parousia,			orario, \
-	meraora, diafora) {
+	meraora, diafora, adex) {
 
 	if (split(parousia["orario"], orario, "-") != 2)
 	return error(deltio["imerominia"] "@" parousia[""] ": λανθασμένο ωράριο")
 
 	meraora = substr(parousia["meraora"], 0, 11)
 
-	diafora = 0
+	adex = ""
+	diafora = "-----"
 
-	if ((deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ") && proselefsi)
+	if (parousia["adidos"])
+	adex = parousia["adidos"]
+
+	else if (parousia["excuse"])
+	adex = parousia["excuse"]
+	
+	else if ((deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ") && proselefsi)
 	diafora = diafora_calc(parousia["ipalilos"], parousia["meraora"], meraora orario[1])
 
-	if ((deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ") && apoxorisi)
+	else if ((deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ") && apoxorisi)
 	diafora = diafora_calc(parousia["ipalilos"], meraora orario[2], parousia["meraora"])
 
-	if (!diafora)
-	return
-
-	print deltio["imerominia"], deltio["prosapo"], \
-		ipalilos(parousia["ipalilos"]), parousia["adidos"], diafora
+	printf "%10s %10s %44.44s %5.5s %-20.20s\n", deltio["imerominia"], \
+		deltio["prosapo"], ipalilos(parousia["ipalilos"]), \
+		diafora, parousia["adidos"]
 }
 
 function diafora_calc(ipalilos, meraora1, meraora2,		query, diafora, a, m) {
@@ -69,11 +74,13 @@ function diafora_calc(ipalilos, meraora1, meraora2,		query, diafora, a, m) {
 
 	spawk_fetchone(diafora)
 
-	split(diafora[1], a, ":")
+	if (split(diafora[1], a, ":") != 3)
+	return ""
+
 	m = (a[1] * 60) + a[2]
 
 	if (m < orio)
-	return 0
+	return ""
 
 	total_ores[ipalilos] += a[1]
 	total_lepta[ipalilos] += a[2]
