@@ -46,14 +46,13 @@ function process_parousia(deltio, parousia,			orario, \
 
 	meraora = substr(parousia["meraora"], 0, 11)
 
-	if (deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ")
+	diafora = 0
+
+	if ((deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ") && proselefsi)
 	diafora = diafora_calc(parousia["ipalilos"], parousia["meraora"], meraora orario[1])
 
-	else if (deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ")
+	if ((deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ") && apoxorisi)
 	diafora = diafora_calc(parousia["ipalilos"], meraora orario[2], parousia["meraora"])
-
-	else
-	return error(deltio["imerominia"] ": ακαθόριστη προσέλευση/αποχώρηση")
 
 	if (!diafora)
 	return
