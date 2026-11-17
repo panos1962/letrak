@@ -1,5 +1,6 @@
 BEGIN {
 	OFS = "\t"
+	spawk_null = ""
 
 	orio += 0
 
