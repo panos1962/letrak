@@ -31,7 +31,7 @@ BEGIN {
 	}
 
 	for (i in total_ores)
-	printf "%44.44s %4d ώρες %4d λεπτά\n", ipalilos(i), total_ores[i], total_lepta[i]
+	printf "%66.66s %4d ώρες %4d λεπτά\n", ipalilos(i), total_ores[i], total_lepta[i]
 }
 
 function process_deltio(deltio,				query, parousia) {
