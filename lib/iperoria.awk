@@ -10,8 +10,15 @@ BEGIN {
 	query = "SELECT `kodikos`, `imerominia`, `prosapo`" \
 		" FROM `deltio`" \
 		" WHERE `ipiresia` LIKE " spawk_escape(ipiresia) \
-		" AND `imerominia` BETWEEN '" etos "-01-01' AND '" etos "-12-31'" \
-		" ORDER BY `imerominia`, `kodikos`"
+		" AND `imerominia` BETWEEN '" etos "-01-01' AND '" etos "-12-31'"
+
+	if (proselefsi && (!apoxorisi))
+	query = query " AND `prosapo` = 'ΠΡΟΣΕΛΕΥΣΗ'"
+
+	else if (apoxorisi && (!proselefsi))
+	query = query " AND `prosapo` = 'ΑΠΟΧΩΡΗΣΗ'"
+
+	query = query " ORDER BY `imerominia`, `kodikos`"
 
 	if (spawk_submit(query, "ASSOC") != 3)
 	fatal(query ": SQL error")
@@ -56,10 +63,10 @@ function process_parousia(deltio, parousia,			orario, \
 	else if (parousia["excuse"])
 	adex = parousia["excuse"]
 	
-	else if ((deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ") && proselefsi)
+	else if (deltio["prosapo"] == "ΠΡΟΣΕΛΕΥΣΗ")
 	diafora = diafora_calc(parousia["ipalilos"], parousia["meraora"], meraora orario[1])
 
-	else if ((deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ") && apoxorisi)
+	else if (deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ")
 	diafora = diafora_calc(parousia["ipalilos"], meraora orario[2], parousia["meraora"])
 
 	printf "%10s %10s %44.44s %5.5s %-20.20s\n", deltio["imerominia"], \
