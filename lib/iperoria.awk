@@ -31,7 +31,8 @@ BEGIN {
 	}
 
 	for (i in total_ores)
-	printf "%66.66s %5d ώρες %5d λεπτά\n", ipalilos(i), total_ores[i], total_lepta[i]
+	printf "%66.66s %5d ώρες %5d λεπτά\n", ipalilos(i), total_ores[i], \
+		total_lepta[i] | "sort"
 }
 
 function process_deltio(deltio,				query, parousia) {
@@ -68,6 +69,9 @@ function process_parousia(deltio, parousia,			orario, \
 
 	else if (deltio["prosapo"] == "ΑΠΟΧΩΡΗΣΗ")
 	diafora = diafora_calc(parousia["ipalilos"], meraora orario[2], parousia["meraora"])
+
+	if (total)
+	return
 
 	printf "%10s %10s %44.44s %5.5s %-20.20s\n", deltio["imerominia"], \
 		deltio["prosapo"], ipalilos(parousia["ipalilos"]), \

@@ -11,11 +11,12 @@ usage() {
 }
 
 err=
-orio=30
 proselefsi=
 apoxorisi=
+total=
+orio=30
 
-while getopts ":pam:" opt
+while getopts ":patm:" opt
 do
 	case "${opt}" in
 	p)
@@ -23,6 +24,9 @@ do
 		;;
 	a)
 		apoxorisi=1
+		;;
+	t)
+		total=1
 		;;
 	m)
 		orio="${OPTARG}"
@@ -53,6 +57,7 @@ exec awk \
 -v yyyymm="${2}" \
 -v proselefsi="${proselefsi}" \
 -v apoxorisi="${apoxorisi}" \
+-v total="${total}" \
 -v orio="${orio}" \
 -f "${LETRAK_BASEDIR}/lib/std.awk" \
 -f "${LETRAK_BASEDIR}/lib/iperoria.awk"
